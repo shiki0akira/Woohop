@@ -20,20 +20,40 @@
       "source": "/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/avalon/:path*",
       "destination": "/avalon/:lang/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:page(game|rules)",
+      "destination": "/avalon/:lang/:page",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:page(game|rules)/",
+      "destination": "/avalon/:lang/:page",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/",
+      "destination": "/avalon/:lang",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:path+/",
+      "destination": "/avalon/:lang/:path",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
-      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)",
-      "destination": "/avalon/index.html"
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:page(game|rules)",
+      "destination": "/avalon/:lang/:page/index.html"
     },
     {
-      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/",
-      "destination": "/avalon/index.html"
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)",
+      "destination": "/avalon/:lang/index.html"
     },
     {
       "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:path*",
-      "destination": "/avalon/index.html"
+      "destination": "/avalon/:lang/index.html"
     }
   ]
 }

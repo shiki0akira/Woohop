@@ -21,13 +21,18 @@ const speechLangMap = {
   es: 'es-ES',
 };
 
-export function useSpeech(lang) {
+export function useSpeech(lang, { onComplete } = {}) {
   const supported = Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance);
 
   const [rate, setRate] = useState(1);
   const rateRef = useRef(rate);
 
   const lastTextRef = useRef('');
+  const utteranceIdRef = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     rateRef.current = rate;
@@ -37,10 +42,17 @@ export function useSpeech(lang) {
     (text) => {
       if (!supported) return false;
       lastTextRef.current = text;
+      utteranceIdRef.current += 1;
+      const utteranceId = utteranceIdRef.current;
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = speechLangMap[lang] || lang || 'en-US';
       utterance.rate = rateRef.current;
+      // cancel() 中斷播放時瀏覽器多半觸發的是 error 事件而不是 end，
+      // 但這裡仍用 utteranceId 比對，避免舊的 utterance 事件在被取代後才觸發時誤判成「唸完了」。
+      utterance.onend = () => {
+        if (utteranceId === utteranceIdRef.current) onCompleteRef.current?.();
+      };
 
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);

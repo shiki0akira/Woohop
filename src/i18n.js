@@ -78,6 +78,7 @@ i18n.use(initReactI18next).init({
   lng: defaultLang,
   fallbackLng: defaultLang,
   interpolation: { escapeValue: false },
+  returnObjects: true,
 });
 
 export function normalizeLang(lang) {

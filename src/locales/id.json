@@ -12,8 +12,8 @@
     "light": "Terang"
   },
   "home": {
-    "title": "Narasi Avalon",
-    "description": "Pilih jumlah pemain dan sesuaikan peran.",
+    "title": "Narator Suara Avalon",
+    "description": "Narator suara Avalon otomatis membacakan naskah pembawa acara dan narasi. Atur jumlah pemain, lihat peran yang disarankan, dan sesuaikan susunan sebelum mulai.",
     "playerCount": "Pemain",
     "recommendation": "Susunan yang disarankan",
     "good": "Baik",
@@ -27,7 +27,7 @@
     "description": "Ikuti instruksi suara.",
     "speaking": "Panduan suara siap.",
     "unsupported": "Sintesis suara tidak tersedia.",
-    "summary": "Pilihan saat ini"
+    "summary": "Naskah narasi"
   },
   "rules": {
     "title": "Aturan",
@@ -40,7 +40,19 @@
       "Pemain jahat kecuali Oberon, buka mata dan saling mengenali.",
       "Percival, buka mata. Merlin dan Morgana, angkat jempol.",
       "Semua pemain, buka mata."
-    ]
+    ],
+    "narration": {
+      "closeEyes": "Semuanya, tutup mata dan julurkan kepalan tangan ke depan.",
+      "evilRecognize": "Pihak jahat, buka mata dan saling mengenali satu sama lain.",
+      "evilRecognizeOberon": "Kecuali Oberon, pihak jahat, buka mata dan saling mengenali satu sama lain.",
+      "evilClose": "Pihak jahat, tutup mata.",
+      "merlinSee": "Merlin, buka mata. Pihak jahat, angkat jempol agar Merlin mengenali kalian.",
+      "merlinSeeMordred": "Merlin, buka mata. Kecuali Mordred, pihak jahat, angkat jempol agar Merlin mengenali kalian.",
+      "merlinClose": "Merlin, tutup mata. Pihak jahat, turunkan jempol.",
+      "percivalSee": "Percival, buka mata. Merlin dan Morgana, angkat jempol agar Percival melihat kalian.",
+      "percivalClose": "Percival, tutup mata. Merlin dan Morgana, turunkan jempol.",
+      "openEyes": "Semuanya, buka mata. Permainan dimulai."
+    }
   },
   "roles": {
     "merlin": "Merlin",

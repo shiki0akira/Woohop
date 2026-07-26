@@ -12,8 +12,8 @@
     "light": "Hell"
   },
   "home": {
-    "title": "Avalon Voice",
-    "description": "Wählen Sie die Anzahl der Spieler, sehen Sie sich die vorgeschlagenen Rollen an und passen Sie die Aufstellung an, bevor Sie starten.",
+    "title": "Avalon Sprachassistent",
+    "description": "Der Avalon Sprachassistent liest den Spielleiter-Text und die Erzählung automatisch vor. Wählen Sie die Anzahl der Spieler, sehen Sie sich die vorgeschlagenen Rollen an und passen Sie die Aufstellung an, bevor Sie starten.",
     "playerCount": "Spieler",
     "recommendation": "Empfohlene Aufstellung",
     "good": "Gut",
@@ -27,7 +27,7 @@
     "description": "Folgen Sie den gesprochenen Anweisungen und geben Sie das Gerät weiter, wenn nötig.",
     "speaking": "Sprachführung ist bereit.",
     "unsupported": "Die Sprachsynthese ist in diesem Browser nicht verfügbar.",
-    "summary": "Aktuelle Auswahl"
+    "summary": "Erzählskript"
   },
   "rules": {
     "title": "Regeln",
@@ -44,7 +44,19 @@
     "speed": "Sprechgeschwindigkeit",
     "pause": "Pause",
     "resume": "Weiter",
-    "restart": "Neu starten"
+    "restart": "Neu starten",
+    "narration": {
+      "closeEyes": "Alle schließen bitte die Augen und strecken eine Faust nach vorne.",
+      "evilRecognize": "Die böse Seite öffnet bitte die Augen und erkennt einander.",
+      "evilRecognizeOberon": "Außer Oberon öffnet die böse Seite bitte die Augen und erkennt einander.",
+      "evilClose": "Die böse Seite schließt bitte die Augen.",
+      "merlinSee": "Merlin öffnet bitte die Augen. Die böse Seite hebt bitte den Daumen, damit Merlin euch erkennt.",
+      "merlinSeeMordred": "Merlin öffnet bitte die Augen. Außer Mordred hebt die böse Seite bitte den Daumen, damit Merlin euch erkennt.",
+      "merlinClose": "Merlin schließt bitte die Augen. Die böse Seite senkt bitte den Daumen.",
+      "percivalSee": "Percival öffnet bitte die Augen. Merlin und Morgana heben bitte den Daumen, damit Percival euch sieht.",
+      "percivalClose": "Percival schließt bitte die Augen. Merlin und Morgana senken bitte den Daumen.",
+      "openEyes": "Alle öffnen bitte die Augen. Das Spiel beginnt."
+    }
   },
   "roles": {
     "merlin": "Merlin",

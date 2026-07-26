@@ -12,8 +12,8 @@
     "light": "Claro"
   },
   "home": {
-    "title": "Narração Avalon",
-    "description": "Escolha o número de jogadores e ajuste as funções.",
+    "title": "Narrador de voz Avalon",
+    "description": "O narrador de voz Avalon lê automaticamente o roteiro do mestre de jogo e a narração em voz alta. Escolha o número de jogadores, veja os papéis sugeridos e ajuste a configuração antes de começar.",
     "playerCount": "Jogadores",
     "recommendation": "Configuração recomendada",
     "good": "Bons",
@@ -27,7 +27,7 @@
     "description": "Siga as instruções de voz.",
     "speaking": "O guia de voz está pronto.",
     "unsupported": "A síntese de voz não está disponível.",
-    "summary": "Seleção atual"
+    "summary": "Roteiro de narração"
   },
   "rules": {
     "title": "Regras",
@@ -40,7 +40,19 @@
       "Os jogadores do mal, exceto Oberon, abram os olhos e identifiquem-se.",
       "Percival, abra os olhos. Merlim e Morgana, levantem o polegar.",
       "Todos os jogadores, abram os olhos."
-    ]
+    ],
+    "narration": {
+      "closeEyes": "Todos, fechem os olhos e estendam um punho à frente.",
+      "evilRecognize": "Lado do mal, abram os olhos e reconheçam uns aos outros.",
+      "evilRecognizeOberon": "Exceto Oberon, o lado do mal abra os olhos e reconheçam uns aos outros.",
+      "evilClose": "Lado do mal, fechem os olhos.",
+      "merlinSee": "Merlim, abra os olhos. Lado do mal, levantem o polegar para que Merlim reconheça vocês.",
+      "merlinSeeMordred": "Merlim, abra os olhos. Exceto Mordred, o lado do mal levante o polegar para que Merlim reconheça vocês.",
+      "merlinClose": "Merlim, feche os olhos. Lado do mal, abaixem o polegar.",
+      "percivalSee": "Percival, abra os olhos. Merlim e Morgana, levantem o polegar para que Percival veja vocês.",
+      "percivalClose": "Percival, feche os olhos. Merlim e Morgana, abaixem o polegar.",
+      "openEyes": "Todos, abram os olhos. O jogo começa."
+    }
   },
   "roles": {
     "merlin": "Merlim",

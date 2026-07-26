@@ -12,8 +12,8 @@
     "light": "Jasny"
   },
   "home": {
-    "title": "Narracja Avalonu",
-    "description": "Wybierz liczbę graczy i dostosuj role.",
+    "title": "Głosowy narrator Avalon",
+    "description": "Głosowy narrator Avalon automatycznie odczytuje scenariusz prowadzącego i narrację na głos. Wybierz liczbę graczy, sprawdź sugerowane role i dostosuj skład przed rozpoczęciem.",
     "playerCount": "Gracze",
     "recommendation": "Zalecany układ",
     "good": "Dobrzy",
@@ -27,7 +27,7 @@
     "description": "Podążaj za instrukcjami głosowymi.",
     "speaking": "Przewodnik głosowy jest gotowy.",
     "unsupported": "Synteza mowy jest niedostępna.",
-    "summary": "Aktualny wybór"
+    "summary": "Scenariusz narracji"
   },
   "rules": {
     "title": "Zasady",
@@ -40,7 +40,19 @@
       "Zli gracze z wyjątkiem Oberona, otwórzcie oczy i rozpoznajcie sojuszników.",
       "Percivalu, otwórz oczy. Merlin i Morgana, pokażcie kciuk w górę.",
       "Wszyscy, otwórzcie oczy."
-    ]
+    ],
+    "narration": {
+      "closeEyes": "Wszyscy, zamknijcie oczy i wyciągnijcie pięść przed siebie.",
+      "evilRecognize": "Strona zła, otwórzcie oczy i rozpoznajcie się nawzajem.",
+      "evilRecognizeOberon": "Z wyjątkiem Oberona, strona zła, otwórzcie oczy i rozpoznajcie się nawzajem.",
+      "evilClose": "Strona zła, zamknijcie oczy.",
+      "merlinSee": "Merlinie, otwórz oczy. Strona zła, podnieście kciuk, aby Merlin was rozpoznał.",
+      "merlinSeeMordred": "Merlinie, otwórz oczy. Z wyjątkiem Mordreda, strona zła, podnieście kciuk, aby Merlin was rozpoznał.",
+      "merlinClose": "Merlinie, zamknij oczy. Strona zła, opuśćcie kciuk.",
+      "percivalSee": "Percivalu, otwórz oczy. Merlinie i Morgano, podnieście kciuk, aby Percival was zobaczył.",
+      "percivalClose": "Percivalu, zamknij oczy. Merlinie i Morgano, opuśćcie kciuk.",
+      "openEyes": "Wszyscy, otwórzcie oczy. Gra się zaczyna."
+    }
   },
   "roles": {
     "merlin": "Merlin",

@@ -12,8 +12,8 @@
     "light": "Sáng"
   },
   "home": {
-    "title": "Trợ lý Avalon",
-    "description": "Chọn số người chơi và điều chỉnh vai trò.",
+    "title": "Trợ lý giọng nói Avalon",
+    "description": "Trợ lý giọng nói Avalon tự động đọc lời dẫn của người quản trò và lời tường thuật. Chọn số người chơi, xem vai trò được đề xuất và điều chỉnh trước khi bắt đầu.",
     "playerCount": "Người chơi",
     "recommendation": "Thiết lập đề xuất",
     "good": "Phe tốt",
@@ -27,14 +27,26 @@
     "description": "Làm theo các hướng dẫn bằng giọng nói.",
     "speaking": "Hướng dẫn thoại đã sẵn sàng.",
     "unsupported": "Trình duyệt này không hỗ trợ tổng hợp giọng nói.",
-    "summary": "Lựa chọn hiện tại"
+    "summary": "Lời tường thuật"
   },
   "rules": {
     "title": "Luật chơi",
     "description": "Avalon là trò chơi suy luận vai trò ẩn."
   },
   "voice": {
-    "intro": "Chào mừng đến với Avalon."
+    "intro": "Chào mừng đến với Avalon.",
+    "narration": {
+      "closeEyes": "Tất cả hãy nhắm mắt lại và đưa nắm tay ra phía trước.",
+      "evilRecognize": "Phe ác hãy mở mắt và nhận diện đồng đội của mình.",
+      "evilRecognizeOberon": "Ngoại trừ Oberon, phe ác hãy mở mắt và nhận diện đồng đội của mình.",
+      "evilClose": "Phe ác hãy nhắm mắt lại.",
+      "merlinSee": "Merlin hãy mở mắt. Phe ác hãy giơ ngón cái để Merlin nhận ra các bạn.",
+      "merlinSeeMordred": "Merlin hãy mở mắt. Ngoại trừ Mordred, phe ác hãy giơ ngón cái để Merlin nhận ra các bạn.",
+      "merlinClose": "Merlin hãy nhắm mắt. Phe ác hãy hạ ngón cái xuống.",
+      "percivalSee": "Percival hãy mở mắt. Merlin và Morgana hãy giơ ngón cái để Percival nhìn thấy các bạn.",
+      "percivalClose": "Percival hãy nhắm mắt. Merlin và Morgana hãy hạ ngón cái xuống.",
+      "openEyes": "Tất cả hãy mở mắt. Trò chơi bắt đầu."
+    }
   },
   "roles": {
     "merlin": "Merlin",
