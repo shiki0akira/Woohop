@@ -27,7 +27,7 @@
     "description": "Follow the spoken setup instructions and pass the device when needed.",
     "speaking": "Speech guide is ready.",
     "unsupported": "Speech synthesis is unavailable in this browser.",
-    "summary": "Current selection"
+    "summary": "Narration script"
   },
   "rules": {
     "title": "Rules",
@@ -44,7 +44,19 @@
     "speed": "Speed",
     "pause": "Pause",
     "resume": "Resume",
-    "restart": "Restart"
+    "restart": "Restart",
+    "narration": {
+      "closeEyes": "Everyone, please close your eyes and hold out a fist in front of you.",
+      "evilRecognize": "Evil players, please open your eyes and recognize each other.",
+      "evilRecognizeOberon": "Except Oberon, evil players, please open your eyes and recognize each other.",
+      "evilClose": "Evil players, please close your eyes.",
+      "merlinSee": "Merlin, please open your eyes. Evil players, please raise your thumb so Merlin can recognize you.",
+      "merlinSeeMordred": "Merlin, please open your eyes. Except Mordred, evil players, please raise your thumb so Merlin can recognize you.",
+      "merlinClose": "Merlin, please close your eyes. Evil players, please lower your thumb.",
+      "percivalSee": "Percival, please open your eyes. Merlin and Morgana, please raise your thumb so Percival can see you.",
+      "percivalClose": "Percival, please close your eyes. Merlin and Morgana, please lower your thumb.",
+      "openEyes": "Everyone, please open your eyes. The game begins."
+    }
   },
   "roles": {
     "merlin": "Merlin",

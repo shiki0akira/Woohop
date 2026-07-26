@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ROLE_CONFIGS, ROLE_ORDER } from '../constants/roles';
+import { gameSlug } from '../i18n';
+import { trackEvent } from '../analytics';
 
 export default function Home() {
   const { lang } = useParams();
@@ -15,6 +17,10 @@ export default function Home() {
   const lockedRoles = ['merlin'];
   const mismatch = useMemo(() => selectedRoles.length !== recommended.roles.length, [selectedRoles, recommended]);
   const canStart = !mismatch && requiredRoles.every((role) => selectedRoles.includes(role));
+
+  useEffect(() => {
+    trackEvent('avalon_game_setup_start', { lang });
+  }, [lang]);
 
   const toggleRole = (role) => {
     if (requiredRoles.includes(role)) return;
@@ -84,7 +90,14 @@ export default function Home() {
         type="button"
         className={`w-full rounded-2xl px-6 py-4 font-semibold text-white ${canStart ? 'bg-indigo-600' : 'bg-indigo-400 cursor-not-allowed'}`}
         disabled={!canStart}
-        onClick={() => navigate(`/${lang}/avalon/game`, { state: { playerCount, selectedRoles } })}
+        onClick={() => {
+          trackEvent('avalon_game_start', {
+            lang,
+            player_count: playerCount,
+            role_config: selectedRoles.join(','),
+          });
+          navigate(`/${gameSlug}/${lang}/game`, { state: { playerCount, selectedRoles } });
+        }}
       >
         {t('home.start')}
       </button>

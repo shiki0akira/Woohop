@@ -3,20 +3,29 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSpeech } from '../hooks/useSpeech';
 import VoicePlayer from '../components/VoicePlayer';
+import { trackEvent } from '../analytics';
 
 const PAUSE_AFTER_MS = 1000;
 const RECORDED_VOLUME_GAIN = 2;
 
 export default function Game() {
   const { lang } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { state } = useLocation();
   const selectedRoles = state?.selectedRoles || [];
+  const playerCount = state?.playerCount;
 
   const hasRole = useCallback((role) => selectedRoles.includes(role), [selectedRoles]);
 
   const [recordedAvailable, setRecordedAvailable] = useState(false);
   const [probeDone, setProbeDone] = useState(false);
+
+  const handleComplete = useCallback(
+    (mode) => {
+      trackEvent('avalon_game_completed', { lang, player_count: playerCount, mode });
+    },
+    [lang, playerCount],
+  );
 
   const {
     speak: speechSpeak,
@@ -26,7 +35,7 @@ export default function Game() {
     rate,
     setRate,
     supported: speechSupported,
-  } = useSpeech(lang);
+  } = useSpeech(lang, { onComplete: () => handleComplete('tts') });
 
   const rateRef = useRef(rate);
   useEffect(() => {
@@ -99,8 +108,28 @@ export default function Game() {
     }
   }, [recordedAvailable, speechSpeak]);
 
-  const rawScript = t('voice.script');
-  const script = Array.isArray(rawScript) ? rawScript.join('\n') : (typeof rawScript === 'string' ? rawScript : JSON.stringify(rawScript));
+  // 依所選角色組出旁白台詞，分支邏輯跟上面 recorded.steps 的音檔順序完全一致，
+  // 讓畫面顯示的台詞和實際播放的語音一段一段對得起來。
+  // 有 voice.narration（分段稿）就用角色感知版本；沒有的語言退回舊的 voice.script 平稿。
+  const script = useMemo(() => {
+    const hasNarration = Boolean(i18n.getResource(lang, 'translation', 'voice.narration'));
+    if (hasNarration) {
+      const seg = (key) => t(`voice.narration.${key}`);
+      const lines = [seg('closeEyes')];
+      lines.push(hasRole('oberon') ? seg('evilRecognizeOberon') : seg('evilRecognize'));
+      lines.push(seg('evilClose'));
+      lines.push(hasRole('mordred') ? seg('merlinSeeMordred') : seg('merlinSee'));
+      lines.push(seg('merlinClose'));
+      if (hasRole('percival')) {
+        lines.push(seg('percivalSee'));
+        lines.push(seg('percivalClose'));
+      }
+      lines.push(seg('openEyes'));
+      return lines.join('\n');
+    }
+    const rawScript = t('voice.script');
+    return Array.isArray(rawScript) ? rawScript.join('\n') : (typeof rawScript === 'string' ? rawScript : JSON.stringify(rawScript));
+  }, [t, i18n, lang, hasRole]);
 
   const audioRef = useRef(null);
   if (audioRef.current === null) audioRef.current = new Audio();
@@ -282,16 +311,22 @@ export default function Game() {
         if (runId !== runIdRef.current) return;
         await wait(step.waitAfterMs);
       }
+
+      if (runId === runIdRef.current) handleComplete('recorded');
     };
 
     run();
-  }, [ensureRecordedAudioGraph, recorded.steps, stopDelay, wait]);
+  }, [ensureRecordedAudioGraph, recorded.steps, stopDelay, wait, handleComplete]);
 
   const isRecordedMode = recordedAvailable;
 
   const pause = isRecordedMode ? pauseRecorded : speechPause;
   const resume = isRecordedMode ? resumeRecorded : speechResume;
-  const restart = isRecordedMode ? startRecorded : speechRestart;
+  const restart = useCallback(() => {
+    trackEvent('avalon_game_restarted', { lang, player_count: playerCount });
+    if (isRecordedMode) startRecorded();
+    else speechRestart();
+  }, [isRecordedMode, startRecorded, speechRestart, lang, playerCount]);
   const supported = isRecordedMode ? true : speechSupported;
 
   useEffect(() => {
@@ -302,9 +337,9 @@ export default function Game() {
     if (isRecordedMode) {
       startRecorded();
     } else {
-      speechSpeak(t('voice.script'));
+      speechSpeak(script);
     }
-  }, [probeDone, isRecordedMode, startRecorded, speechSpeak, t]);
+  }, [probeDone, isRecordedMode, startRecorded, speechSpeak, script]);
 
   useEffect(() => {
     if (!isRecordedMode) return;
@@ -338,9 +373,9 @@ export default function Game() {
   const onSpeak = useCallback(
     () => {
       if (isRecordedMode) startRecorded();
-      else speechSpeak(t('voice.script'));
+      else speechSpeak(script);
     },
-    [isRecordedMode, speechSpeak, startRecorded, t],
+    [isRecordedMode, speechSpeak, startRecorded, script],
   );
 
   return (
@@ -365,7 +400,6 @@ export default function Game() {
       <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
         <h2 className="text-xl font-semibold">{t('game.summary')}</h2>
         <pre className="mt-3 whitespace-pre-wrap rounded-xl bg-slate-100 p-4 text-sm dark:bg-slate-800">{script}</pre>
-        <pre className="mt-3 overflow-auto rounded-xl bg-slate-100 p-4 text-sm dark:bg-slate-800">{JSON.stringify(state, null, 2)}</pre>
       </section>
     </main>
   );

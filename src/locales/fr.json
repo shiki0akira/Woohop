@@ -12,8 +12,8 @@
     "light": "Clair"
   },
   "home": {
-    "title": "Narration Avalon",
-    "description": "Choisissez le nombre de joueurs et ajustez les rôles.",
+    "title": "Narrateur vocal Avalon",
+    "description": "Le narrateur vocal Avalon lit automatiquement le texte de l'animateur et la narration à voix haute. Choisissez le nombre de joueurs, consultez les rôles suggérés et ajustez la configuration avant de commencer.",
     "playerCount": "Joueurs",
     "recommendation": "Configuration recommandée",
     "good": "Bon",
@@ -27,7 +27,7 @@
     "description": "Suivez les instructions vocales.",
     "speaking": "Le guide vocal est prêt.",
     "unsupported": "La synthèse vocale n'est pas disponible.",
-    "summary": "Sélection actuelle"
+    "summary": "Texte de narration"
   },
   "rules": {
     "title": "Règles",
@@ -40,7 +40,19 @@
       "Les forces du mal sauf Oberon, ouvrez les yeux et identifiez-vous.",
       "Percival, ouvrez les yeux. Merlin et Morgane, montrez le pouce levé.",
       "Tout le monde, ouvrez les yeux."
-    ]
+    ],
+    "narration": {
+      "closeEyes": "Tout le monde, fermez les yeux et tendez un poing devant vous.",
+      "evilRecognize": "Le camp du Mal, ouvrez les yeux et reconnaissez-vous.",
+      "evilRecognizeOberon": "Sauf Oberon, le camp du Mal, ouvrez les yeux et reconnaissez-vous.",
+      "evilClose": "Le camp du Mal, fermez les yeux.",
+      "merlinSee": "Merlin, ouvre les yeux. Le camp du Mal, levez le pouce pour que Merlin vous reconnaisse.",
+      "merlinSeeMordred": "Merlin, ouvre les yeux. Sauf Mordred, le camp du Mal, levez le pouce pour que Merlin vous reconnaisse.",
+      "merlinClose": "Merlin, ferme les yeux. Le camp du Mal, baissez le pouce.",
+      "percivalSee": "Percival, ouvre les yeux. Merlin et Morgane, levez le pouce pour que Percival vous voie.",
+      "percivalClose": "Percival, ferme les yeux. Merlin et Morgane, baissez le pouce.",
+      "openEyes": "Tout le monde, ouvrez les yeux. La partie commence."
+    }
   },
   "roles": {
     "merlin": "Merlin",

@@ -12,8 +12,8 @@
     "light": "Claro"
   },
   "home": {
-    "title": "Narración Avalon",
-    "description": "Elige el número de jugadores y ajusta los roles.",
+    "title": "Narrador de voz de Avalon",
+    "description": "El narrador de voz de Avalon lee en voz alta el guion del anfitrión y la narración de forma automática. Elige el número de jugadores, revisa los roles sugeridos y ajusta la configuración antes de empezar.",
     "playerCount": "Jugadores",
     "recommendation": "Configuración recomendada",
     "good": "Buenos",
@@ -27,7 +27,7 @@
     "description": "Sigue las instrucciones habladas.",
     "speaking": "La guía de voz está lista.",
     "unsupported": "La síntesis de voz no está disponible.",
-    "summary": "Selección actual"
+    "summary": "Guion de narración"
   },
   "rules": {
     "title": "Reglas",
@@ -40,7 +40,19 @@
       "Los jugadores malvados excepto Oberón, abran los ojos e identifíquense.",
       "Percival, abre los ojos. Merlín y Morgana, levanten el pulgar.",
       "Todos los jugadores, abran los ojos."
-    ]
+    ],
+    "narration": {
+      "closeEyes": "Todos, cierren los ojos y extiendan un puño frente a ustedes.",
+      "evilRecognize": "Bando del mal, abran los ojos y reconózcanse entre ustedes.",
+      "evilRecognizeOberon": "Excepto Oberón, el bando del mal, abran los ojos y reconózcanse entre ustedes.",
+      "evilClose": "Bando del mal, cierren los ojos.",
+      "merlinSee": "Merlín, abre los ojos. Bando del mal, levanten el pulgar para que Merlín los reconozca.",
+      "merlinSeeMordred": "Merlín, abre los ojos. Excepto Mordred, el bando del mal, levanten el pulgar para que Merlín los reconozca.",
+      "merlinClose": "Merlín, cierra los ojos. Bando del mal, bajen el pulgar.",
+      "percivalSee": "Percival, abre los ojos. Merlín y Morgana, levanten el pulgar para que Percival los vea.",
+      "percivalClose": "Percival, cierra los ojos. Merlín y Morgana, bajen el pulgar.",
+      "openEyes": "Todos, abran los ojos. Comienza el juego."
+    }
   },
   "roles": {
     "merlin": "Merlín",
