@@ -44,20 +44,16 @@
   ],
   "rewrites": [
     {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:page(game|rules)",
+      "destination": "/avalon/:lang/:page/index.html"
+    },
+    {
       "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)",
-      "destination": "/avalon/index.html"
-    },
-    {
-      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/",
-      "destination": "/avalon/index.html"
-    },
-    {
-      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:path+/",
-      "destination": "/avalon/index.html"
+      "destination": "/avalon/:lang/index.html"
     },
     {
       "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:path*",
-      "destination": "/avalon/index.html"
+      "destination": "/avalon/:lang/index.html"
     }
   ]
 }
