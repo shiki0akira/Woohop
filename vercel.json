@@ -40,6 +40,21 @@
       "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:path+/",
       "destination": "/avalon/:lang/:path",
       "permanent": true
+    },
+    {
+      "source": "/avalon/index.html",
+      "destination": "/avalon/zh-TW",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/index.html",
+      "destination": "/avalon/:lang",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|pl|ru|vi|pt|it|nl|cs|sv|th|id|es|zh-CN)/:page(game|rules)/index.html",
+      "destination": "/avalon/:lang/:page",
+      "permanent": true
     }
   ],
   "rewrites": [
