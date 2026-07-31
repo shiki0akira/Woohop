@@ -6,6 +6,15 @@
 
 完整架構規劃見 `web100_00_Homepage` repo 裡的 `ARCHITECTURE.md`（子路徑策略、Cloudflare Worker 路由總機、repo 命名慣例、共用 design tokens）。這裡只記錄跟這個專案直接相關的事。
 
+## 配色 / UI
+
+色階定義在 `tailwind.config.js` 的 `palette`，名稱與數值跟 Figma 變數庫、`web100_00_Homepage/design-tokens.css` 三邊一致（Primary / Secondary / Accent / Neutral）。**改配色的順序是 Figma → design-tokens.css → 這裡**，不要只改一邊。
+
+- `neutral` 會蓋掉 Tailwind 內建的同名色階，這是刻意的；不要再用 `slate-*` 或內建 `neutral-*`
+- 共用的元件樣式在 `src/index.css` 的 `@layer components`：`.nav-pill`（玻璃導覽列）、`.btn-outline`、`.btn-solid`、`.surface`（卡片）
+- 背景光暈與顆粒是 `body::before` / `body::after`（`z-index: -1`）。**任何全頁的外層容器都不要上底色**，會把光暈整片蓋掉——`src/App.jsx` 最外層那個 div 就是為了這個才只留 `min-h-screen`
+- 實心按鈕的文字用 `neutral-900` 而不是白色：白字疊 `primary-600` 只有 2.71:1，過不了 WCAG AA
+
 ## 網址結構
 
 `/avalon/{lang}/...`，遊戲代號在前、語言在後（例如 `/avalon/zh-TW/game`）。這個順序是全系列的規則，不要改回語言在前。

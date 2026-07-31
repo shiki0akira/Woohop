@@ -380,9 +380,9 @@ export default function Game() {
 
   return (
     <main className="mx-auto max-w-3xl p-4 space-y-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+      <section className="surface">
         <h1 className="text-3xl font-bold">{t('game.title')}</h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-300">{t('game.description')}</p>
+        <p className="mt-2 text-neutral-900/70 dark:text-neutral-200/70">{t('game.description')}</p>
         <p className="mt-4">{supported ? t('game.speaking') : t('game.unsupported')}</p>
         <div className="mt-4">
           <VoicePlayer
@@ -397,9 +397,11 @@ export default function Game() {
           />
         </div>
       </section>
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+      <section className="surface">
         <h2 className="text-xl font-semibold">{t('game.summary')}</h2>
-        <pre className="mt-3 whitespace-pre-wrap rounded-xl bg-slate-100 p-4 text-sm dark:bg-slate-800">{script}</pre>
+        <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-secondary-700/30 bg-secondary-600/10 p-4 text-sm dark:border-primary-600/30 dark:bg-primary-600/10">
+          {script}
+        </pre>
       </section>
     </main>
   );

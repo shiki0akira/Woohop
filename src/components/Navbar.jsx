@@ -4,29 +4,27 @@ import { useTranslation } from 'react-i18next';
 import { gameSlug } from '../i18n';
 import LangSwitcher from './LangSwitcher';
 import ThemeToggle from './ThemeToggle';
+import BackToHome from './BackToHome';
 
 export default function Navbar() {
   const { lang } = useParams();
   const { t } = useTranslation();
 
   return (
-    <header className="border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
-      <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 p-4">
-        <div className="flex items-center gap-3">
-          <a href={`/${lang}/`} className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-            ← Web100
-          </a>
-          <Link to={`/${gameSlug}/${lang}`} className="font-bold">
-            {t('nav.title')}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link to={`/${gameSlug}/${lang}/rules`} className="rounded-xl border border-slate-300 px-3 py-2 text-sm">
-            {t('nav.rules')}
-          </Link>
-          <LangSwitcher />
-          <ThemeToggle />
-        </div>
+    // 浮在內容上的玻璃膠囊，不是整條橫幅。寬 600、內距 8，跟首頁的 header 完全一致。
+    <header className="nav-pill sticky top-4 z-10 mx-auto mt-4 flex w-[min(600px,calc(100%-2rem))] items-center justify-between gap-3 py-2 pl-2 pr-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <BackToHome />
+        <Link to={`/${gameSlug}/${lang}`} className="truncate font-bold">
+          {t('nav.title')}
+        </Link>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <Link to={`/${gameSlug}/${lang}/rules`} className="btn-outline">
+          {t('nav.rules')}
+        </Link>
+        <LangSwitcher />
+        <ThemeToggle />
       </div>
     </header>
   );

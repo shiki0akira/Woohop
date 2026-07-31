@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * 這裡只放「Tailwind utility 表達不了」的東西：背景光暈、顆粒、玻璃導覽列。
+ * 顏色一律用 tailwind.config.js 的色階（跟 Figma 變數同名），不要在這裡另外寫死 hex，
+ * 半透明的部分因為要疊在漸層上、Tailwind 的 /opacity 語法寫起來反而更難讀，才直接寫 rgba。
+ */
+
 :root {
   color-scheme: light;
 }
@@ -11,15 +17,113 @@ html.dark {
 }
 
 body {
-  @apply bg-white text-slate-900 antialiased transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100;
+  @apply min-h-screen bg-neutral-200 text-neutral-900 antialiased transition-colors duration-200 dark:bg-neutral-900 dark:text-neutral-200;
+}
+
+/* 背景兩顆光暈，對應設計稿左上／右下的大圓。
+   用橢圓百分比尺寸，比例在任何視窗寬度下都跟稿子一致。 */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  background-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(233, 237, 251, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(251, 229, 255, 0.8) 0%, transparent 100%);
+}
+
+html.dark body::before {
+  background-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(37, 44, 75, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(77, 43, 83, 0.8) 0%, transparent 100%);
+}
+
+/* 顆粒只長在光暈上，不是鋪滿整頁——對應 Figma 光暈圖層的 Noise 效果
+   （Multi、noise size 2、density 100%、opacity 15%；baseFrequency = 1 / noise size）。 */
+body::after {
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncA type='discrete' tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(0, 0, 0, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(0, 0, 0, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
 }
 
 button,
 select,
-input {
+input,
+a {
   @apply transition-colors duration-200;
 }
 
+/* 展開的選單是系統畫的，會沿用頁面色而不是按鈕色，要另外指定才讀得到 */
 select option {
-  @apply bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100;
+  @apply bg-neutral-200 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-200;
+}
+
+/*
+ * 深色模式走 Primary、淺色模式走 Secondary。
+ * ⚠️ 不能直接把 Primary/700 換成 Secondary/700——Secondary 整條色階比 Primary 亮，
+ *   白字疊 Secondary/700 只有 2.97:1。淺色模式的對應一律比深色模式再深一階：
+ *   實心底 Secondary/800（白字 5.46:1）、描邊 Secondary/800（玻璃底上 4.87:1）。
+ */
+@layer components {
+  /* 導覽列的玻璃膠囊。Figma：深色 Primary/600 30%、淺色 Secondary/600 20%，Background blur 4 */
+  .nav-pill {
+    @apply rounded-pill;
+    background: rgba(243, 164, 251, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  html.dark .nav-pill {
+    background: rgba(135, 153, 233, 0.3);
+  }
+
+  /* 外框式按鈕：透明底 + 描邊 + 跟頁面同色的文字。
+     disabled 用整體降透明度——WCAG 1.4.3 不強制非互動元件的對比度，
+     這裡淡化到看不出可點擊即可，不用另外配一組色階。 */
+  .btn-outline {
+    @apply inline-flex h-10 items-center justify-center rounded-pill border-[1.5px]
+           border-secondary-800 bg-transparent px-4 text-sm font-semibold text-neutral-900
+           hover:bg-secondary-600/[0.22]
+           disabled:cursor-not-allowed disabled:opacity-40
+           dark:border-primary-400 dark:text-neutral-200 dark:hover:bg-primary-600/[0.22];
+  }
+
+  /* 實心按鈕是「立體」款：底色 + 正下方一塊沒有模糊的實色陰影當厚度。
+     hover 時厚度從 3 變 2、按鈕同步往下 1（總高不變），看起來像被壓下去；按著時整個貼平。
+     淺色 Secondary/500 配 Secondary/900 圖示（7.45:1），深色 Primary/700 配白圖示（4.34:1）。
+
+     disabled（例如阿瓦隆角色選擇裡鎖定的角色）改用「壓扁」語言，跟可點擊的立體感反過來：
+     拿掉厚度陰影、換成整條色階裡淺兩階的底色，代表「陷進去、按不動」。
+     文字保留清楚可讀（角色名稱仍是有用資訊），不用淡化到看不清楚：
+     淺色 Secondary/800 on Secondary/200 是 4.62:1，深色 Primary/400 on Primary/800 也是 4.62:1。 */
+  .btn-solid {
+    @apply inline-flex h-10 items-center justify-center rounded-pill border-0 px-4
+           text-sm font-semibold transition-[background-color,box-shadow,transform] duration-150
+           bg-secondary-500 text-secondary-900 shadow-[0_3px_0_theme(colors.secondary.600)]
+           hover:translate-y-px hover:bg-secondary-600 hover:shadow-[0_2px_0_theme(colors.secondary.700)]
+           active:translate-y-[3px] active:shadow-[0_0_0_theme(colors.secondary.700)]
+           disabled:pointer-events-none disabled:cursor-not-allowed disabled:translate-y-0
+           disabled:bg-secondary-200 disabled:text-secondary-800 disabled:shadow-none
+           dark:bg-primary-700 dark:text-white dark:shadow-[0_3px_0_theme(colors.primary.800)]
+           dark:hover:bg-primary-800 dark:hover:shadow-[0_2px_0_theme(colors.primary.900)]
+           dark:active:shadow-[0_0_0_theme(colors.primary.900)]
+           dark:disabled:bg-primary-800 dark:disabled:text-primary-400 dark:disabled:shadow-none;
+  }
+
+  /* 卡片：半透明表面 + accent 描邊，讓背景光暈透出來 */
+  .surface {
+    @apply rounded-2xl border border-secondary-700/40 bg-neutral-200 p-6
+           shadow-[0_2px_8px_rgba(77,43,83,0.08)] backdrop-blur-sm
+           dark:border-primary-600/[0.28] dark:bg-white/[0.04] dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)];
+  }
 }

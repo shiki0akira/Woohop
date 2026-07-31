@@ -13,8 +13,10 @@ export default function Home() {
   const recommended = ROLE_CONFIGS[String(playerCount)];
   const [selectedRoles, setSelectedRoles] = useState(recommended.roles);
 
+  // 每一種人數的建議配置都一定包含這三個角色（見 constants/roles.js），
+  // 所以「不能取消勾選」跟「按鈕要顯示成鎖定」用的是同一組角色，不要拆成兩個陣列——
+  // 拆開就會發生實際擋得住點擊、但按鈕看起來還是可以按的狀況。
   const requiredRoles = ['merlin', 'assassin', 'morgana'];
-  const lockedRoles = ['merlin'];
   const mismatch = useMemo(() => selectedRoles.length !== recommended.roles.length, [selectedRoles, recommended]);
   const canStart = !mismatch && requiredRoles.every((role) => selectedRoles.includes(role));
 
@@ -31,16 +33,16 @@ export default function Home() {
 
   return (
     <main className="mx-auto max-w-4xl p-4 space-y-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <section className="surface">
         <h1 className="text-3xl font-bold">{t('home.title')}</h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-300">{t('home.description')}</p>
+        <p className="mt-2 text-neutral-900/70 dark:text-neutral-200/70">{t('home.description')}</p>
       </section>
 
-      <section className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:grid-cols-2">
+      <section className="surface grid gap-4 md:grid-cols-2">
         <label className="space-y-2">
           <span className="font-medium">{t('home.playerCount')}</span>
           <select
-            className="w-full rounded-xl border border-slate-300 bg-transparent p-3"
+            className="btn-outline w-full justify-start px-4"
             value={playerCount}
             onChange={(e) => {
               const next = Number(e.target.value);
@@ -64,11 +66,13 @@ export default function Home() {
           <p>
             {t('home.good')} {recommended.good} / {t('home.evil')} {recommended.evil}
           </p>
-          <p className="text-sm text-slate-500">{recommended.roles.map((role) => t(`roles.${role}`)).join('、')}</p>
+          <p className="text-sm text-neutral-900/70 dark:text-neutral-200/70">
+            {recommended.roles.map((role) => t(`roles.${role}`)).join('、')}
+          </p>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <section className="surface">
         <h2 className="text-xl font-semibold">{t('home.roleConfig')}</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {ROLE_ORDER.map((role) => (
@@ -76,19 +80,23 @@ export default function Home() {
               key={role}
               type="button"
               onClick={() => toggleRole(role)}
-              className={`rounded-full px-4 py-2 border ${selectedRoles.includes(role) ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'border-slate-300'} ${lockedRoles.includes(role) ? 'cursor-not-allowed opacity-80' : ''}`}
-              disabled={lockedRoles.includes(role)}
+              className={selectedRoles.includes(role) ? 'btn-solid' : 'btn-outline'}
+              disabled={requiredRoles.includes(role)}
             >
               {t(`roles.${role}`)}
             </button>
           ))}
         </div>
-        {mismatch && <p className="mt-3 text-amber-500">{t('home.mismatch')}</p>}
+        {mismatch && <p className="mt-3 font-medium text-secondary-900 dark:text-secondary-500">{t('home.mismatch')}</p>}
       </section>
 
       <button
         type="button"
-        className={`w-full rounded-2xl px-6 py-4 font-semibold text-white ${canStart ? 'bg-indigo-600' : 'bg-indigo-400 cursor-not-allowed'}`}
+        className={`w-full rounded-2xl border-0 px-6 py-4 text-lg font-semibold transition-[background-color,box-shadow,transform] duration-150 ${
+          canStart
+            ? 'bg-secondary-500 text-secondary-900 shadow-[0_3px_0_theme(colors.secondary.600)] hover:translate-y-px hover:bg-secondary-600 hover:shadow-[0_2px_0_theme(colors.secondary.700)] active:translate-y-[3px] active:shadow-[0_0_0_theme(colors.secondary.700)] dark:bg-primary-700 dark:text-white dark:shadow-[0_3px_0_theme(colors.primary.800)] dark:hover:bg-primary-800 dark:hover:shadow-[0_2px_0_theme(colors.primary.900)]'
+            : 'cursor-not-allowed bg-secondary-200 text-secondary-800 shadow-none dark:bg-primary-800 dark:text-primary-400'
+        }`}
         disabled={!canStart}
         onClick={() => {
           trackEvent('avalon_game_start', {

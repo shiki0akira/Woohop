@@ -17,19 +17,17 @@ export default function VoicePlayer({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
-          disabled={!supported}
-          onClick={() => onSpeak(text)}
-        >
-          Speak
+        {/* 主要動作用實心，其餘播放控制用外框，視覺上分出主次。
+            disabled 樣式（壓扁/淡化）已經內建在 .btn-solid / .btn-outline，不用另外疊 utility */}
+        <button type="button" className="btn-solid px-6" disabled={!supported} onClick={() => onSpeak(text)}>
+          {t('voice.speak', 'Speak')}
         </button>
 
         <label className="inline-flex items-center gap-2">
           <span className="text-sm">{t('voice.speed')}</span>
+          {/* 這顆保留系統原生的下拉箭頭；導覽列那顆語言選單才另外畫 Material 的箭頭 */}
           <select
-            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+            className="btn-outline px-3"
             value={rate}
             disabled={!supported}
             onChange={(e) => setRate(Number(e.target.value))}
@@ -44,30 +42,15 @@ export default function VoicePlayer({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
-          disabled={!supported}
-          onClick={pause}
-        >
+        <button type="button" className="btn-outline" disabled={!supported} onClick={pause}>
           {t('voice.pause')}
         </button>
 
-        <button
-          type="button"
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
-          disabled={!supported}
-          onClick={resume}
-        >
+        <button type="button" className="btn-outline" disabled={!supported} onClick={resume}>
           {t('voice.resume')}
         </button>
 
-        <button
-          type="button"
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
-          disabled={!supported}
-          onClick={restart}
-        >
+        <button type="button" className="btn-outline" disabled={!supported} onClick={restart}>
           {t('voice.restart')}
         </button>
       </div>
