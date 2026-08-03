@@ -23,15 +23,17 @@ for (const item of itemsToMove) {
   }
 }
 
-// favicon 要兩份：public/ 的檔案會留在 dist 根目錄，但 Vite 會把 index.html 裡的
+// 圖示要兩份：public/ 的檔案會留在 dist 根目錄，但 Vite 會把 index.html 裡的
 // /favicon.svg 改寫成 /avalon/favicon.svg（因為 base 是 /avalon/），所以再複製一份進去。
 // 根目錄那份留著，vercel.app 網域下有些工具會直接去抓 /favicon.svg。
-const favicon = path.join(distDir, 'favicon.svg');
-if (existsSync(favicon)) {
-  copyFileSync(favicon, path.join(avalonDir, 'favicon.svg'));
-  console.log('Copied favicon.svg -> dist/avalon/favicon.svg');
-} else {
-  console.warn('⚠️  public/favicon.svg not found in build output, skipping.');
+for (const icon of ['favicon.svg', 'apple-touch-icon.png']) {
+  const src = path.join(distDir, icon);
+  if (existsSync(src)) {
+    copyFileSync(src, path.join(avalonDir, icon));
+    console.log(`Copied ${icon} -> dist/avalon/${icon}`);
+  } else {
+    console.warn(`⚠️  public/${icon} not found in build output, skipping.`);
+  }
 }
 
 console.log('Postbuild restructure complete.');
