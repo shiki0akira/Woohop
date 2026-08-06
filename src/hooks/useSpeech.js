@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+// 對應 src/i18n.js 的 supportedLangs，語言增減時要一起改。
 const speechLangMap = {
   'zh-TW': 'zh-TW',
   'zh-CN': 'zh-CN',
@@ -8,21 +9,15 @@ const speechLangMap = {
   fr: 'fr-FR',
   ja: 'ja-JP',
   ko: 'ko-KR',
-  vi: 'vi-VN',
-  pl: 'pl-PL',
-  ru: 'ru-RU',
-  pt: 'pt-PT',
-  it: 'it-IT',
-  nl: 'nl-NL',
-  cs: 'cs-CZ',
-  sv: 'sv-SE',
-  th: 'th-TH',
-  id: 'id-ID',
   es: 'es-ES',
 };
 
 export function useSpeech(lang, { onComplete } = {}) {
-  const supported = Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance);
+  // typeof window 的判斷是給 scripts/prerender.js 用的：那支腳本在 Node 裡把真正的元件
+  // 渲染成靜態 HTML，沒有 window。其餘用到 speechSynthesis 的地方都在 callback 或 effect 裡，
+  // 只有這行會在 render 當下執行，所以只有這裡需要守。
+  const supported =
+    typeof window !== 'undefined' && Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance);
 
   const [rate, setRate] = useState(1);
   const rateRef = useRef(rate);

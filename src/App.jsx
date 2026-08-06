@@ -55,18 +55,33 @@ function LangLayout() {
   );
 }
 
-export default function App() {
+// 路由表與 Provider 拆出來單獨匯出，是為了讓 scripts/prerender.js 能用同一棵元件樹搭配
+// StaticRouter 在 Node 裡渲染成靜態 HTML。瀏覽器走 BrowserRouter、預渲染走 StaticRouter，
+// 中間的東西完全共用——預渲染的畫面因此不可能跟實際畫面長得不一樣。
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to={`/${gameSlug}/${defaultLang}`} replace />} />
+      <Route path={`${gameSlug}/:lang/*`} element={<LangLayout />} />
+      <Route path="*" element={<Navigate to={`/${gameSlug}/${defaultLang}`} replace />} />
+    </Routes>
+  );
+}
+
+export function AppProviders({ children }) {
   return (
     <ThemeProvider>
-      <GameProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to={`/${gameSlug}/${defaultLang}`} replace />} />
-            <Route path={`${gameSlug}/:lang/*`} element={<LangLayout />} />
-            <Route path="*" element={<Navigate to={`/${gameSlug}/${defaultLang}`} replace />} />
-          </Routes>
-        </BrowserRouter>
-      </GameProvider>
+      <GameProvider>{children}</GameProvider>
     </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AppProviders>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AppProviders>
   );
 }

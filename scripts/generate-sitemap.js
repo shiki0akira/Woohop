@@ -8,7 +8,7 @@ import path from 'node:path';
 
 const SITE = 'https://www.vibeweb100.com';
 const GAME_SLUG = 'avalon';
-const SUPPORTED_LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'pl', 'ru', 'vi', 'pt', 'it', 'nl', 'cs', 'sv', 'th', 'id', 'es', 'zh-CN'];
+const SUPPORTED_LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 const DEFAULT_LANG = 'zh-TW';
 const PAGES = ['', 'game', 'rules'];
 

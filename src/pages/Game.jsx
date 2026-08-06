@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSpeech } from '../hooks/useSpeech';
 import VoicePlayer from '../components/VoicePlayer';
 import { trackEvent } from '../analytics';
+import { ROLE_CONFIGS, DEFAULT_PLAYER_COUNT } from '../constants/roles';
 
 const PAUSE_AFTER_MS = 1000;
 const RECORDED_VOLUME_GAIN = 2;
@@ -12,8 +13,12 @@ export default function Game() {
   const { lang } = useParams();
   const { t, i18n } = useTranslation();
   const { state } = useLocation();
-  const selectedRoles = state?.selectedRoles || [];
-  const playerCount = state?.playerCount;
+  // 直接開 /avalon/{lang}/game（從搜尋結果點進來、或重新整理）時沒有 location.state。
+  // 退回預設人數的建議配置，而不是空陣列——空陣列會讓台詞整段是空的，而預渲染的靜態 HTML
+  // 寫的是預設配置的台詞，兩邊對不上就變成 cloaking。ROLE_CONFIGS 的 roles 是模組層級的
+  // 固定參考，每次 render 拿到的是同一個陣列，不會讓下面的 useCallback/useMemo 失效。
+  const playerCount = state?.playerCount ?? DEFAULT_PLAYER_COUNT;
+  const selectedRoles = state?.selectedRoles || ROLE_CONFIGS[String(playerCount)].roles;
 
   const hasRole = useCallback((role) => selectedRoles.includes(role), [selectedRoles]);
 
@@ -132,7 +137,10 @@ export default function Game() {
   }, [t, i18n, lang, hasRole]);
 
   const audioRef = useRef(null);
-  if (audioRef.current === null) audioRef.current = new Audio();
+  // typeof Audio 的判斷是給 scripts/prerender.js 用的（Node 裡沒有 Audio）。這行在 render
+  // 當下就執行，是整個元件唯一會在預渲染時碰到瀏覽器 API 的地方；其餘都在 effect/callback 裡，
+  // 那些在瀏覽器才跑，那時 audioRef.current 已經是真的 Audio 了。
+  if (audioRef.current === null && typeof Audio !== 'undefined') audioRef.current = new Audio();
 
   const audioCtxRef = useRef(null);
   const gainNodeRef = useRef(null);

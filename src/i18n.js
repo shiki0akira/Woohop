@@ -6,20 +6,10 @@ import de from './locales/de.json';
 import fr from './locales/fr.json';
 import ja from './locales/ja.json';
 import ko from './locales/ko.json';
-import pl from './locales/pl.json';
-import ru from './locales/ru.json';
-import vi from './locales/vi.json';
-import pt from './locales/pt.json';
-import it from './locales/it.json';
-import nl from './locales/nl.json';
-import cs from './locales/cs.json';
-import sv from './locales/sv.json';
-import th from './locales/th.json';
-import id from './locales/id.json';
 import es from './locales/es.json';
 import zhCN from './locales/zh-CN.json';
 
-export const supportedLangs = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'pl', 'ru', 'vi', 'pt', 'it', 'nl', 'cs', 'sv', 'th', 'id', 'es', 'zh-CN'];
+export const supportedLangs = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 export const defaultLang = 'zh-TW';
 
 // 這個專案在網域底下的固定路徑前綴。網址結構固定為 /avalon/{lang}/...
@@ -34,16 +24,6 @@ export const localeLabels = {
   fr: 'Français',
   ja: '日本語',
   ko: '한국어',
-  pl: 'Polski',
-  ru: 'Русский',
-  vi: 'Tiếng Việt',
-  pt: 'Português',
-  it: 'Italiano',
-  nl: 'Nederlands',
-  cs: 'Čeština',
-  sv: 'Svenska',
-  th: 'ไทย',
-  id: 'Bahasa Indonesia',
   es: 'Español',
   'zh-CN': '简体中文',
 };
@@ -55,16 +35,6 @@ export const localeData = {
   fr,
   ja,
   ko,
-  pl,
-  ru,
-  vi,
-  pt,
-  it,
-  nl,
-  cs,
-  sv,
-  th,
-  id,
   es,
   'zh-CN': zhCN,
 };

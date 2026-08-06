@@ -19,7 +19,7 @@
 
 `/avalon/{lang}/...`，遊戲代號在前、語言在後（例如 `/avalon/zh-TW/game`）。這個順序是全系列的規則，不要改回語言在前。
 
-- 18 種語言，代碼定義在 `src/i18n.js` 的 `supportedLangs`
+- 8 種語言，代碼定義在 `src/i18n.js` 的 `supportedLangs`
 - 語言驗證/normalize、canonical、hreflang 都靠 `src/i18n.js` 裡的工具函式，改路由前先看這支檔案
 
 ## 部署
@@ -33,6 +33,10 @@
 - GA4 測量 ID：`G-S7PE5687BG`，裝在 `index.html`，`send_page_view: false`，改由 `src/App.jsx` 的 `LangLayout` 在路由/語言切換時手動送出 `page_view`（SPA 路由變化不會自動觸發，這是特別處理過的部分，不要移除）
 - 語言切換時會寫入 `web100_lang` cookie（`persistLangPreference`，在 `src/i18n.js`），這是給未來 Cloudflare Worker 判斷語言優先權用的，全站共用，不要改 cookie 名稱
 - 各語言的 SEO title/description 在 `src/locales/{lang}.json` 的 `seo` 欄位，zh-TW/en/ja/ko/zh-CN 已經有做關鍵字優化，其餘語言是基本翻譯
+- **預渲染是必要的，不能拿掉**：`scripts/prerender.js` 透過 Vite 的 `ssrLoadModule` 載入 `src/entry-server.jsx`，用 `renderToStaticMarkup` 把**真正的元件**渲染成靜態 HTML。沒有這道流程的話，8 種語言會共用同一份中文 title 且 `#root` 是空的
+- 預渲染用的是真元件而不是手抄 HTML 字串。以前是手抄，元件改了 class 但腳本沒同步，畫面就會在 React 掛載時閃一下（發生過兩次）。要動預渲染時**不要退回手抄字串**
+- 元件裡任何在 **render 當下**（不是 effect/callback 裡）碰到瀏覽器 API 的地方都要加 `typeof window/Audio !== 'undefined'` 守衛，否則預渲染會在 Node 裡爆掉。目前有兩處：`src/hooks/useSpeech.js` 的 `supported`、`src/pages/Game.jsx` 的 `audioRef` 初始化
+- `src/pages/Game.jsx` 沒有 `location.state` 時要退回預設人數的建議配置。直接開 `/avalon/{lang}/game` 會走這條路，退回空陣列的話畫面台詞是空的、但預渲染的 HTML 有台詞，兩邊對不上就是 cloaking
 
 ## 常見任務起手式
 
