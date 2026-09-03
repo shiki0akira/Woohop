@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+  </head>
+
+  <body>
+    {{header}}
+
+    <main id="main">
+      <!-- 首頁：建立房間 / 加入房間。跟系列其他專案一致，首頁只負責這兩件事 -->
+      <section class="view" id="view-home">
+        <div class="hero">
+          <h1>{{heroTitle}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="two-col">
+          <section class="surface">
+            <h2>{{createHeading}}</h2>
+            <label class="field-label" for="max-players">{{maxPlayersLabel}}</label>
+            <input
+              class="field"
+              id="max-players"
+              type="number"
+              inputmode="numeric"
+              min="2"
+              max="30"
+              step="1"
+              value="10"
+            />
+            <p class="hint">{{maxPlayersHint}}</p>
+            <button class="btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
+            <p class="form-error" id="create-error" role="alert" hidden></p>
+          </section>
+
+          <section class="surface">
+            <h2>{{joinHeading}}</h2>
+            <label class="field-label" for="join-code">{{roomCodeLabel}}</label>
+            <input
+              class="field field-code"
+              id="join-code"
+              type="text"
+              inputmode="latin"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              maxlength="4"
+              placeholder="{{roomCodePlaceholder}}"
+            />
+            <button class="btn-outline btn-block" id="join-room" type="button">{{joinButton}}</button>
+            <p class="form-error" id="join-error" role="alert" hidden></p>
+          </section>
+        </div>
+
+        <p class="rules-link"><a href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </section>
+
+      <!--
+        設定與出題：建好房之後、挑頭像之前，跟 03_PreferenceMatch 的流程一致。
+        這時還沒連上 WebSocket，尺寸／獲勝條件／保底題／題庫都先留在前端，
+        等主持人連進房間才由 syncSettingsOnce 一次送上去。
+
+        大廳裡按「改設定」也會回到這一頁，差別只在按鈕文字（見 app.js 的 showSetup）。
+      -->
+      <section class="view" id="view-setup" hidden>
+        <section class="surface">
+          <h2>{{settingsHeading}}</h2>
+
+          <span class="field-label">{{sizeLabel}}</span>
+          <div class="seg" id="size-seg" role="radiogroup" aria-label="{{sizeLabel}}"></div>
+          <p class="hint">{{sizeHint}}</p>
+
+          <span class="field-label">{{targetLinesLabel}}</span>
+          <div class="seg" id="lines-seg" role="radiogroup" aria-label="{{targetLinesLabel}}"></div>
+          <p class="hint" id="lines-hint"></p>
+
+          <span class="field-label">{{winnerCountLabel}}</span>
+          <div class="seg" id="winner-seg" role="radiogroup" aria-label="{{winnerCountLabel}}"></div>
+          <p class="hint">{{winnerCountHint}}</p>
+
+          <label class="switch-row">
+            <span>{{hostPlaysLabel}}</span>
+            <input class="switch" type="checkbox" id="host-plays" checked />
+          </label>
+          <p class="hint">{{hostPlaysHint}}</p>
+
+          <label class="switch-row">
+            <span>{{selfClaimLabel}}</span>
+            <input class="switch" type="checkbox" id="self-claim" />
+          </label>
+          <p class="hint">{{selfClaimHint}}</p>
+        </section>
+
+        <!-- 保底題。只有 3×3 / 5×5 有中央格，4×4 時整張卡片由 app.js 收掉 -->
+        <section class="surface" id="anchor-card" hidden>
+          <h2>{{anchorHeading}}</h2>
+          <p class="hint">{{anchorHint}}</p>
+          <!-- 保底題只要一道，所以是單選，不是「加到清單裡」。
+               最後一個選項就是自訂：直接打字即生效，沒有「加入」按鈕 -->
+          <div id="anchor-options">
+            <div id="anchor-choices"></div>
+            <label class="check-row">
+              <input type="radio" name="anchor" value="__custom__" id="anchor-custom-radio" />
+              <span>{{anchorCustomLabel}}</span>
+            </label>
+            <input
+              class="field anchor-custom-field"
+              id="anchor-custom"
+              type="text"
+              maxlength="60"
+              autocomplete="off"
+              placeholder="{{anchorCustomPlaceholder}}"
+            />
+          </div>
+        </section>
+
+        <!-- 題庫。左邊分類挑題、右邊已選清單，跟 03 的出題頁同一套結構 -->
+        <section class="surface">
+          <div class="section-head">
+            <h2>{{questionsHeading}}</h2>
+            <span class="counter" id="question-count"></span>
+          </div>
+          <div class="setup-cols">
+            <div class="setup-pick">
+              <div id="category-list"></div>
+
+              <div class="custom-box">
+                <label class="field-label" for="custom-input">{{customLabel}}</label>
+                <div class="row">
+                  <input
+                    class="field"
+                    id="custom-input"
+                    type="text"
+                    maxlength="60"
+                    autocomplete="off"
+                    placeholder="{{customPlaceholder}}"
+                  />
+                  <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="setup-chosen">
+              <div class="chosen-head">
+                <h3 class="chosen-heading">{{selectedHeading}}</h3>
+                <div class="row">
+                  <button class="btn-outline btn-mini" id="random-pick" type="button">{{randomButton}}</button>
+                  <button class="btn-outline btn-mini" id="clear-pick" type="button">{{clearButton}}</button>
+                </div>
+              </div>
+              <ul class="chosen-list" id="selected-list"></ul>
+            </div>
+          </div>
+
+          <button class="btn-solid btn-block" id="setup-done" type="button"></button>
+          <p class="form-error" id="setup-error" role="alert" hidden></p>
+        </section>
+      </section>
+
+      <!-- 名字與頭像。版面與欄位順序跟 02 / 03 的加入頁一致：narrow 的卡片
+           （.avatar-option .avatar 是 width:100%，卡片不收窄頭像就會撐爆）、
+           頭像在上、暱稱在下。主持人也要填，他同時也是玩家 -->
+      <section class="view" id="view-profile" hidden>
+        <section class="surface narrow">
+          <h1 class="join-title" id="join-title"></h1>
+
+          <span class="field-label">{{avatarLabel}}</span>
+          <div class="avatar-picker" id="avatar-picker" role="radiogroup" aria-label="{{avatarLabel}}"></div>
+
+          <label class="field-label" for="nickname">{{nicknameLabel}}</label>
+          <input
+            class="field"
+            id="nickname"
+            type="text"
+            maxlength="16"
+            autocomplete="nickname"
+            placeholder="{{nicknamePlaceholder}}"
+          />
+          <button class="btn-solid btn-block" id="profile-done" type="button">{{profileContinue}}</button>
+          <p class="form-error" id="profile-error" role="alert" hidden></p>
+        </section>
+      </section>
+
+      <!-- 房間。跟 03 一樣是「一個 view + 依狀態切換卡片」，不是三個獨立的 view：
+           房間列（身分、離開）在所有階段都要在同一個位置 -->
+      <section class="view" id="view-room" hidden>
+        <div class="room-bar">
+          <span class="role-badge" id="role-badge"></span>
+          <span class="room-bar-actions">
+            <!-- 遊戲太久沒人達標時的退路。跟「關閉房間」擺在一起，兩顆都會跳確認 -->
+            <button class="btn-outline btn-danger" id="end-game" type="button" hidden>{{endButton}}</button>
+            <button class="btn-outline btn-danger" id="exit-room" type="button"></button>
+          </span>
+        </div>
+
+        <!-- 大廳：房號與 QR -->
+        <section class="surface share" id="share-card">
+          <div class="share-code">
+            <span class="field-label">{{roomCodeCaption}}</span>
+            <strong class="room-code" id="room-code">····</strong>
+            <p class="hint">{{shareHint}}</p>
+            <button class="btn-outline" id="copy-link" type="button">{{copyLinkButton}}</button>
+            <p class="share-url" id="share-url"></p>
+          </div>
+          <div class="qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+        </section>
+
+        <!-- 大廳：成員名單與開始 -->
+        <section class="surface" id="lobby-card">
+          <div class="section-head">
+            <h2>{{playersHeading}}</h2>
+            <span class="counter" id="player-count"></span>
+          </div>
+          <ul class="player-list" id="player-list"></ul>
+          <p class="hint" id="waiting-hint">{{waitingForHost}}</p>
+
+          <!-- 按鈕順序與樣式跟 03_PreferenceMatch 的大廳一致：
+               主要動作（開始遊戲）在上、次要動作（改設定）在下、提示置中 -->
+          <div id="host-lobby" hidden>
+            <button class="btn-solid btn-block" id="start-game" type="button">{{startButton}}</button>
+            <button class="btn-outline btn-block" id="edit-settings" type="button">{{editSettingsButton}}</button>
+            <p class="hint" id="settings-summary"></p>
+            <p class="form-error" id="start-error" role="alert" hidden></p>
+          </div>
+        </section>
+
+        <!-- 進行中。手機上三個分頁切換，寬螢幕並排 -->
+        <div class="tabs" id="play-tabs" role="tablist" hidden>
+          <button class="tab" id="tab-card" type="button" role="tab" aria-selected="true">{{screenCard}}</button>
+          <button class="tab" id="tab-requests" type="button" role="tab" aria-selected="false">
+            {{screenRequests}}<span class="tab-badge" id="tab-requests-badge" hidden></span>
+          </button>
+        </div>
+
+        <!--
+          進行中的版面：格子在左、題目清單在右、「待你確認」在格子下方（桌機）。
+          手機沒有左右，改用上方分頁切換：我的卡片（格子＋題目）／待你確認。
+        -->
+        <div class="play-grid" id="play-grid" hidden>
+          <section class="pane" id="pane-card">
+            <section class="surface" id="card-box">
+              <div class="progress-head">
+                <h2 id="progress-lines"></h2>
+                <span class="role-badge is-win" id="progress-badge" hidden></span>
+                <p class="hint" id="progress-cells"></p>
+              </div>
+              <!-- 達標訊息自己一行：跟「打勾 N 格」擠同一行會把標題壓成兩行 -->
+              <p class="hint progress-note" id="progress-note" hidden></p>
+              <div class="bingo-card" id="bingo-card"></div>
+              <p class="hint">{{cardHint}}</p>
+            </section>
+
+            <!-- 沒有卡的人（純控場的主持人／中途加入的旁觀者）看到的說明 -->
+            <section class="surface" id="spectator-box" hidden>
+              <h2 id="spectator-title"></h2>
+              <p id="spectator-desc"></p>
+            </section>
+
+            <!-- 純控場的主持人沒有自己的卡，改成即時看全場進度 -->
+            <section class="surface" id="board-box" hidden>
+              <h2>{{boardHeading}}</h2>
+              <ol class="board-list" id="board-list"></ol>
+            </section>
+          </section>
+
+          <section class="pane" id="pane-list">
+            <section class="surface">
+              <h2>{{listHeading}}</h2>
+              <ul class="cell-list" id="cell-list"></ul>
+            </section>
+          </section>
+
+          <section class="pane" id="pane-requests" hidden>
+            <section class="surface">
+              <h2>{{incomingHeading}}</h2>
+              <ul class="req-list" id="incoming-list"></ul>
+              <p class="empty" id="incoming-empty">{{incomingEmpty}}</p>
+            </section>
+          </section>
+        </div>
+
+        <!-- 結算 -->
+        <section class="surface" id="results-card" hidden>
+          <h2>{{endedHeading}}</h2>
+          <p class="hint">{{endedDesc}}</p>
+          <ol class="board-list" id="final-list"></ol>
+          <button class="btn-solid btn-block" id="reset-room" type="button" hidden>{{resetButton}}</button>
+        </section>
+      </section>
+
+      <!-- 致命錯誤：房間不存在、人數已滿、這一輪已開始 -->
+      <section class="view" id="view-error" hidden>
+        <div class="hero">
+          <h1 id="error-title"></h1>
+          <p id="error-desc"></p>
+        </div>
+        <p class="rules-link"><a href="{{base}}/{{lang}}/">{{backHome}}</a></p>
+      </section>
+    </main>
+
+    <!-- 選人視窗：點某一格之後開。名單排除自己（CONCEPT.md 第四節） -->
+    <dialog class="modal" id="pick-dialog">
+      <h2 id="pick-question"></h2>
+      <p class="hint">{{pickHint}}</p>
+      <ul class="pick-list" id="pick-list"></ul>
+      <p class="empty" id="pick-empty" hidden>{{pickEmpty}}</p>
+      <div class="modal-actions">
+        <button class="btn-outline" id="pick-self-claim" type="button" hidden>{{selfClaimButton}}</button>
+        <button class="btn-outline" id="pick-cancel" type="button">{{pickCancel}}</button>
+      </div>
+    </dialog>
+
+    <!-- 破壞性動作的二次確認（離開、關房、結束、再玩一輪）。
+         用跟系列一致的 .modal，不用原生 confirm() -->
+    <dialog class="modal" id="confirm-dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-desc"></p>
+      <div class="modal-actions">
+        <button class="btn-outline" id="confirm-cancel" type="button">{{cancelButton}}</button>
+        <button class="btn-solid" id="confirm-ok" type="button"></button>
+      </div>
+    </dialog>
+
+    <!-- 主持人關掉房間時，玩家看到的通知。只有一顆按鈕，按了回首頁 -->
+    <dialog class="modal" id="closed-dialog">
+      <h2>{{roomClosedTitle}}</h2>
+      <p>{{roomClosedDesc}}</p>
+      <div class="modal-actions">
+        <button class="btn-solid" id="closed-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    <!-- 被主持人移出房間時看到的通知 -->
+    <dialog class="modal" id="kicked-dialog">
+      <h2>{{kickedTitle}}</h2>
+      <p>{{kickedDesc}}</p>
+      <div class="modal-actions">
+        <button class="btn-solid" id="kicked-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    <div class="conn-banner" id="conn-banner" role="status" hidden></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    {{footer}}
+
+    <script src="{{base}}/vendor/qrcode.js"></script>
+    <script>
+      window.T = {{stringsJson}};
+      window.QUESTIONS = {{questionsJson}};
+      window.AVATARS = {{avatarsJson}};
+      window.BINGO = {{bingoJson}};
+      window.MATCH = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        page: '',
+        siteOrigin: '{{siteOrigin}}',
+        workerOrigin: '{{workerOrigin}}',
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

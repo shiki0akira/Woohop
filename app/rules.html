@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+  </head>
+
+  <body>
+    {{header}}
+
+    <main id="main">
+      <section class="view">
+        <div class="hero">
+          <h1>{{rulesTitle}}</h1>
+          <p>{{rulesIntro}}</p>
+        </div>
+
+        <section class="surface prose">
+          <h2>{{rulesHostHeading}}</h2>
+          <ol>
+            {{rulesHostList}}
+          </ol>
+        </section>
+
+        <section class="surface prose">
+          <h2>{{rulesPlayerHeading}}</h2>
+          <ol>
+            {{rulesPlayerList}}
+          </ol>
+        </section>
+
+        <section class="surface prose faq">
+          <h2>{{rulesFaqHeading}}</h2>
+          {{rulesFaqList}}
+        </section>
+
+        <p class="rules-back"><a href="{{base}}/{{lang}}/">{{rulesBack}}</a></p>
+      </section>
+    </main>
+
+    {{footer}}
+
+    <script>
+      window.MATCH = { lang: '{{lang}}', base: '{{base}}', page: 'rules/' };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+  </body>
+</html>
