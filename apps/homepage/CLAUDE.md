@@ -6,7 +6,7 @@ Web100 系列的作品集入口首頁。純 HTML/CSS/JS、沒有框架，部署�
 
 ## 先讀這個
 
-完整架構規劃在同一個 repo 的 `ARCHITECTURE.md`，包含子路徑策略、Cloudflare Worker 路由總機規劃、repo 命名慣例、共用 design tokens、網址結構規則。改動任何跟路由/新專案接入有關的東西之前，先看那份文件。
+完整架構規劃在 monorepo 的 `docs/ARCHITECTURE.md`，包含子路徑策略、Cloudflare Worker 路由總機規劃、repo 命名慣例、共用 design tokens、網址結構規則。改動任何跟路由/新專案接入有關的東西之前，先看那份文件。
 
 ## 這個 repo 的職責
 

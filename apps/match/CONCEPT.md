@@ -1,7 +1,7 @@
 # 喜好二選一（Web100 系列第三個專案）
 
 > 狀態：**已正式上線**（https://www.vibeweb100.com/match/）。這份文件記玩法與決定，實作細節在各檔案的註解裡。
-> 系列整體架構（子路徑策略、網址結構、共用 design tokens、repo 命名）在 `web100_00_Homepage/ARCHITECTURE.md`。
+> 系列整體架構（子路徑策略、網址結構、共用 design tokens、repo 命名）在 `docs/ARCHITECTURE.md`。
 
 ## 一句話簡介
 

@@ -70,4 +70,4 @@ npm run deploy
 
 - 玩法、規則推演與所有設計決策：`CONCEPT.md`
 - 題庫的內容準則與主持人的替換建議：`QUESTIONS.md`
-- Web100 系列整體架構：`web100_00_Homepage` repo 的 `ARCHITECTURE.md`
+- Web100 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`

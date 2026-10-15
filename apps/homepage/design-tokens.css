@@ -10,7 +10,7 @@
  * 要用哪一組、怎麼切換（class、data-attribute、prefers-color-scheme）由各專案自己決定。
  *
  * 色階與 Figma 變數庫同名（Primary / Secondary / Accent / Neutral），
- * 匯入用的 JSON 是 figma-variables.json（放在 web100 工作目錄，不在這個 repo 裡）。
+ * 匯入用的 JSON 是 figma-variables.json（monorepo 的 docs/figma-variables.json）。
  */
 
 :root {

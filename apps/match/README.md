@@ -41,4 +41,4 @@ npm run test:smoke
 ## 文件
 
 - 玩法、演算法與所有設計決策：`CONCEPT.md`
-- Web100 系列整體架構：`web100_00_Homepage` repo 的 `ARCHITECTURE.md`
+- Web100 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`

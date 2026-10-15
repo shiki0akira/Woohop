@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 // Web100 系列共用色階，跟 Figma 變數庫與首頁 design-tokens.css 同名同值。
-// 要改配色先動 Figma，再同步 web100_00_Homepage/design-tokens.css，最後才是這裡。
+// 要改配色先動 Figma，再同步 apps/homepage/design-tokens.css，最後才是這裡。
 //
 // ⚠️ neutral 會蓋掉 Tailwind 內建的同名色階（只蓋 200~900 這幾階）。
 // 這是刻意的：在這個設計系統裡 neutral 就是指這組值，不要再用內建的 neutral/slate。

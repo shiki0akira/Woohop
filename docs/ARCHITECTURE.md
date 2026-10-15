@@ -74,12 +74,29 @@ vibeweb100.com/game003/*         → 第 3 個專案
 
 ## 5. Repo 策略
 
-維持「一個專案一個 GitHub repo」，不做 monorepo：
-- 各專案技術棧、部署平台不同，合併管理反而綁手綁腳
-- 一個專案出狀況不會拖累其他專案
-- 獨立部署、獨立回滾
+**2026-10 起改成 monorepo（`woohop`）**：00～05 併進同一個 repo，各自的 git 歷史用 subtree 保留。006 幸福模擬器維持獨立 repo。
 
-命名慣例：`web100_00_Homepage`、`web100_01_Avalon-Voice`、`web100_02_BuzzerGame`……依序編號。
+```
+woohop/
+├─ apps/
+│  ├─ homepage/   ← web100_00_Homepage        （Vercel，Root Directory = apps/homepage）
+│  ├─ avalon/     ← web100_01_Avalon-Voice    （Vercel，Root Directory = apps/avalon）
+│  ├─ buzzer/     ← web100_02_BuzzerGame      （Workers，在資料夾內 npm run deploy）
+│  ├─ match/      ← web100_03_PreferenceMatch （同上）
+│  ├─ bingo/      ← web100_04_HappyBingo      （同上）
+│  └─ bomb/       ← web100_05_TimeBomb        （同上）
+├─ packages/      ← 之後的共用程式（design tokens、房間系統、頁首頁尾、帶領播放器）
+└─ docs/          ← 本文件、改版企劃、figma-variables.json
+```
+
+改的理由：改版要做共用房間系統、共用 design tokens 與頁首頁尾、帶領播放器模板，分 repo 時這些只能各複製一份，改一次要動六個地方。
+
+原本「一個專案一個 repo」想保護的東西仍然成立：
+- **獨立部署**：每個 `apps/*` 各自部署，Worker 名稱、`*.workers.dev` 網址、首頁的 rewrite 都沒變
+- **獨立回滾**：Worker 用 `wrangler rollback`、Vercel 用各專案自己的部署歷史，互不影響
+- 資料夾用**網址代號**命名（`/match/` ↔ `apps/match`），不再用編號
+
+文件裡出現的 `web100_0X_...` 是舊的專案名稱，對照上表即可。
 
 ## 5.1 已移除語言的 301 轉址
 

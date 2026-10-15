@@ -1,7 +1,7 @@
 # 定時炸彈——小組破冰遊戲設計文件
 
 > 狀態：**已上線**（2026-08-29）。這份文件記玩法與所有設計決策，實作細節在各檔案的註解裡。
-> 系列整體架構（子路徑策略、網址結構、共用 design tokens、repo 命名）在 `web100_00_Homepage/ARCHITECTURE.md`。
+> 系列整體架構（子路徑策略、網址結構、共用 design tokens、repo 命名）在 `docs/ARCHITECTURE.md`。
 > 題庫本身的內容準則與主持人的替換建議在 `QUESTIONS.md`。
 
 ## 一、遊戲簡介

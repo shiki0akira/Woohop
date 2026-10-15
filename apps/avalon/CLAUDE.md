@@ -1,14 +1,14 @@
 # web100_01_Avalon-Voice
 
-阿瓦隆桌遊的語音主持工具，Web100 系列第一個專案。這個 repo **只負責阿瓦隆語音本身**，不含首頁（首頁在獨立的 `web100_00_Homepage` repo）。
+阿瓦隆桌遊的語音主持工具，Web100 系列第一個專案。這個 repo **只負責阿瓦隆語音本身**，不含首頁（首頁在同一個 monorepo 的 `apps/homepage`）。
 
 ## 整體架構
 
-完整架構規劃見 `web100_00_Homepage` repo 裡的 `ARCHITECTURE.md`（子路徑策略、Cloudflare Worker 路由總機、repo 命名慣例、共用 design tokens）。這裡只記錄跟這個專案直接相關的事。
+完整架構規劃見 monorepo 的 `docs/ARCHITECTURE.md`（子路徑策略、Cloudflare Worker 路由總機、repo 命名慣例、共用 design tokens）。這裡只記錄跟這個專案直接相關的事。
 
 ## 配色 / UI
 
-色階定義在 `tailwind.config.js` 的 `palette`，名稱與數值跟 Figma 變數庫、`web100_00_Homepage/design-tokens.css` 三邊一致（Primary / Secondary / Accent / Neutral）。**改配色的順序是 Figma → design-tokens.css → 這裡**，不要只改一邊。
+色階定義在 `tailwind.config.js` 的 `palette`，名稱與數值跟 Figma 變數庫、`apps/homepage/design-tokens.css` 三邊一致（Primary / Secondary / Accent / Neutral）。**改配色的順序是 Figma → design-tokens.css → 這裡**，不要只改一邊。
 
 - `neutral` 會蓋掉 Tailwind 內建的同名色階，這是刻意的；不要再用 `slate-*` 或內建 `neutral-*`
 - 共用的元件樣式在 `src/index.css` 的 `@layer components`：`.nav-pill`（玻璃導覽列）、`.btn-outline`、`.btn-solid`、`.surface`（卡片）

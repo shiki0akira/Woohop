@@ -24,4 +24,4 @@ npm run dev
 ## 文件
 
 - 這個 repo 的架構決策與注意事項：`CLAUDE.md`
-- Web100 系列整體架構：`web100_00_Homepage` repo 的 `ARCHITECTURE.md`
+- Web100 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`
