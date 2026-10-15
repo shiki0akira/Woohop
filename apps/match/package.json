@@ -1,0 +1,19 @@
+{
+  "name": "web100-03-preference-match",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web100 系列第 3 個小遊戲：喜好二選一 O/X 偏好配對破冰工具（Cloudflare Workers + Durable Objects）",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "npm run build && wrangler dev",
+    "dev:lan": "npm run build && wrangler dev --ip 0.0.0.0",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test test/*.test.js",
+    "test:smoke": "node test/smoke.mjs"
+  },
+  "devDependencies": {
+    "qrcode-generator": "^1.4.4",
+    "wrangler": "^4.118.0"
+  }
+}
