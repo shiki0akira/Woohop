@@ -11,7 +11,7 @@
 - **不取中文名**，台灣人可以直接念 Woohop
 - **logo 沿用**現有自製的 W 色塊字母，視覺色彩方向從 logo 取色
 - 改名時 `<title>`、`og:site_name`、schema.org `WebSite.name` 寫 Woohop，`alternateName` 保留 Web100
-- **repo 改成 monorepo（`woohop`）**，見 [ARCHITECTURE.md](ARCHITECTURE.md) 第 5 節；006 幸福模擬器維持獨立 repo
+- **repo 改成 monorepo（`Woohop`）**，見 [ARCHITECTURE.md](ARCHITECTURE.md) 第 5 節；006 幸福模擬器維持獨立 repo
 
 ---
 

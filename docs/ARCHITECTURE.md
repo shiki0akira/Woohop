@@ -74,10 +74,10 @@ vibeweb100.com/game003/*         → 第 3 個專案
 
 ## 5. Repo 策略
 
-**2026-10 起改成 monorepo（`woohop`）**：00～05 併進同一個 repo，各自的 git 歷史用 subtree 保留。006 幸福模擬器維持獨立 repo。
+**2026-10 起改成 monorepo（`Woohop`）**：00～05 併進同一個 repo，各自的 git 歷史用 subtree 保留。006 幸福模擬器維持獨立 repo。
 
 ```
-woohop/
+Woohop/
 ├─ apps/
 │  ├─ homepage/   ← web100_00_Homepage        （Vercel，Root Directory = apps/homepage）
 │  ├─ avalon/     ← web100_01_Avalon-Voice    （Vercel，Root Directory = apps/avalon）
