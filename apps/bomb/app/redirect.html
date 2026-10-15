@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="{{defaultLang}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{pageTitle}}</title>
+
+    <!--
+      /bomb/ 這個沒帶語言的網址只負責把人送到對的語言頁，本身沒有內容。
+
+      前面幾個專案（02/03/04）是由 Worker 讀 cookie 判斷再回 302，這個專案沒有後端
+      （CONCEPT.md 2.1），所以改在瀏覽器裡判斷。判斷順序照 ARCHITECTURE.md 第 6 節：
+      localStorage → web100_lang cookie → 瀏覽器語言 → 預設語言。
+
+      SEO 上這一頁是 noindex + canonical 指向預設語言頁：它會回 200 而不是 302，
+      不 noindex 的話 Google 會把它當成跟 /bomb/zh-TW/ 重複的另一頁。
+    -->
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="{{canonical}}" />
+
+    <script>
+      (function () {
+        var LANGS = {{langsJson}};
+        var DEFAULT = '{{defaultLang}}';
+        var BASE = '{{base}}';
+
+        function known(value) {
+          return value && LANGS.indexOf(value) !== -1 ? value : '';
+        }
+
+        function fromCookie() {
+          var match = document.cookie.match(/(?:^|;\s*)web100_lang=([^;]+)/);
+          if (!match) return '';
+          try {
+            return known(decodeURIComponent(match[1]));
+          } catch (e) {
+            return '';
+          }
+        }
+
+        // 瀏覽器給的是 zh-TW / zh-Hant-TW / zh 之類，先找完全相符的，
+        // 再退一步用主語言碼配（en-GB → en）。zh 不做寬鬆比對：
+        // 猜錯簡繁比讓它落到預設值更煩人。
+        function fromBrowser() {
+          var list = navigator.languages || [navigator.language || ''];
+          for (var i = 0; i < list.length; i += 1) {
+            var hit = known(list[i]);
+            if (hit) return hit;
+          }
+          for (var j = 0; j < list.length; j += 1) {
+            var head = String(list[j]).split('-')[0];
+            if (head === 'zh') continue;
+            var loose = known(head);
+            if (loose) return loose;
+          }
+          return '';
+        }
+
+        var lang = '';
+        try {
+          lang = known(localStorage.getItem('web100-lang'));
+        } catch (e) {
+          /* 無痕模式或封鎖 storage */
+        }
+        if (!lang) lang = fromCookie();
+        if (!lang) lang = fromBrowser();
+        if (!lang) lang = DEFAULT;
+
+        // replace 而不是 assign：這一頁不該留在上一頁／下一頁的歷程裡，
+        // 不然使用者按返回會回到這裡、又被轉走，等於返回鍵壞掉
+        location.replace(BASE + '/' + lang + '/');
+      })();
+    </script>
+  </head>
+
+  <body>
+    <!-- JS 被關掉時唯一的出口。爬蟲也走這條，所以每個語言都要列出來 -->
+    <noscript>
+      <p><a href="{{base}}/{{defaultLang}}/">{{pageTitle}}</a></p>
+    </noscript>
+  </body>
+</html>

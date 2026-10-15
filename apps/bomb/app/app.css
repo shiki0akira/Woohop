@@ -1,0 +1,1323 @@
+/*
+ * 色票、圓角、間距一律用 design-tokens.css 的變數，這裡不寫死任何 hex。
+ *
+ * 深淺色：<html class="light"> 表示淺色，深色是預設值——對應 design-tokens.css
+ * 「深色是語意層預設、淺色是 -light 平行變數」的寫法。class 掛在 <html> 是因為
+ * 決定主題的那段 script 在 <head> 裡就要跑完，那時 <body> 還不存在。
+ *
+ * 「導覽列」到「頁尾」之間的區塊跟 00 Homepage / 01 Avalon / 02 Buzzer /
+ * 03 Match / 04 Bingo 共用同一套值，**不要在這個檔案裡改它們**——要改就回去
+ * 改 ARCHITECTURE.md 第 7 節與各專案那份，整個系列一起動。這個專案自己的樣式
+ * 全部集中在最後「定時炸彈專屬」那一段。
+ */
+
+html.light {
+  --color-bg: var(--color-bg-light);
+  --color-bg-card: var(--color-bg-card-light);
+  --color-text: var(--color-text-light);
+  --color-text-muted: var(--color-text-muted-light);
+  --color-accent-text: var(--color-accent-text-light);
+  --color-brand-surface: var(--color-brand-surface-light);
+  --color-brand-text: var(--color-brand-text-light);
+  --color-brand-logo: var(--color-brand-logo-light);
+  --color-glow-1: var(--color-glow-1-light);
+  --color-glow-2: var(--color-glow-2-light);
+  --shadow-card: var(--shadow-card-light);
+
+  /* ⚠️ 淺色模式「整組改走 Secondary」是 Homepage 現行的做法，但線上的
+     design-tokens.css 還停在舊版（outline/border 仍是 Primary，而且根本沒有
+     --color-surface-glass-light）。在那份檔案補齊之前，這裡直接從 Secondary
+     primitive 算出來——用 color-mix 而不是寫死 rgba，色階之後改了這裡會跟著動。 */
+  --color-accent: var(--secondary-700);
+  --color-outline: var(--secondary-800);
+  --color-outline-hover: color-mix(in srgb, var(--secondary-600) 22%, transparent);
+  --color-border: color-mix(in srgb, var(--secondary-700) 45%, transparent);
+  --color-surface-glass: color-mix(in srgb, var(--secondary-600) 20%, transparent);
+
+  /* 實心按鈕淺色走 Secondary、深色走 Primary。淺色的每一階都比深色再深一階：
+     Secondary 整條色階比 Primary 亮，直接對調的話白字疊上去過不了 WCAG AA。 */
+  --btn-face: var(--secondary-500);
+  --btn-face-hover: var(--secondary-600);
+  --btn-edge: var(--secondary-600);
+  --btn-edge-hover: var(--secondary-700);
+  --btn-text: var(--secondary-900);
+  --btn-disabled-face: var(--secondary-200);
+  --btn-disabled-text: var(--secondary-800);
+
+  /* 問答型固定走 Primary（藍）、動作型固定走 Secondary（粉），兩個主題都一樣。
+     不能直接用 --btn-face：它在淺色模式是 Secondary，問答型會跟著變粉色。
+     這一組的配法與數值跟 03_PreferenceMatch 的 O／X 鍵完全相同，
+     淺色模式：500 當底、300 當未選中的底、600 當厚度、900 當文字、700 當圖示。 */
+  --pick-a-face: var(--primary-500);
+  --pick-a-soft: var(--primary-300);
+  --pick-a-edge: var(--primary-600);
+  --pick-a-text: var(--primary-900);
+  --pick-a-mark: var(--primary-700);
+
+  --pick-b-face: var(--secondary-500);
+  --pick-b-soft: var(--secondary-300);
+  --pick-b-edge: var(--secondary-600);
+  --pick-b-text: var(--secondary-900);
+  --pick-b-mark: var(--secondary-700);
+
+  color-scheme: light;
+}
+
+:root {
+  --btn-face: var(--primary-700);
+  --btn-face-hover: var(--primary-800);
+  --btn-edge: var(--primary-800);
+  --btn-edge-hover: var(--primary-900);
+  --btn-text: #ffffff;
+  --btn-disabled-face: var(--primary-800);
+  --btn-disabled-text: var(--primary-400);
+
+  --pick-a-face: var(--primary-700);
+  /* 未選中的底色：夠濃才看得出兩顆的差別，但不能濃到跟「已選中」搞混 */
+  --pick-a-soft: color-mix(in srgb, var(--primary-600) 26%, transparent);
+  --pick-a-edge: var(--primary-800);
+  --pick-a-text: #ffffff;
+  --pick-a-mark: var(--primary-400);
+
+  /* 深色模式下 Secondary/500 太亮，白字壓不住，往下兩階換成 800 */
+  --pick-b-face: var(--secondary-800);
+  --pick-b-soft: color-mix(in srgb, var(--secondary-700) 26%, transparent);
+  --pick-b-edge: var(--secondary-900);
+  --pick-b-text: #ffffff;
+  --pick-b-mark: var(--secondary-500);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 背景兩顆光暈 + 只長在光暈上的顆粒，跟系列其他專案同一套（比例、noise 參數都一致）。
+   任何全頁容器都不要再上底色，會把光暈整片蓋掉。 */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  background-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, var(--color-glow-1) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, var(--color-glow-2) 0%, transparent 100%);
+}
+
+body::after {
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncA type='discrete' tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(0, 0, 0, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(0, 0, 0, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+}
+
+h1,
+h2 {
+  margin: 0;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+/* ---------- 導覽列 ---------- */
+
+.nav-pill {
+  position: sticky;
+  top: var(--space-2);
+  z-index: 10;
+  margin: var(--space-2) auto 0;
+  width: min(600px, calc(100% - 2rem));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+  padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.nav-right {
+  flex-shrink: 0;
+}
+
+/* 左上是回系列首頁的品牌鈕。40px 見方跟右側控制項等高，兩邊的導覽列才會對齊。 */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-surface);
+  transition: background 0.15s ease;
+}
+
+.brand:hover {
+  background: var(--color-outline-hover);
+}
+
+.brand svg {
+  width: 25px;
+  height: 20px;
+  fill: var(--color-brand-logo);
+}
+
+.nav-title {
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 420px 是量出來的臨界點：導覽列扣掉標誌、規則、語言下拉（此時已縮到 124）、
+   深淺色鈕與間距之後，剛好還能給標題 4 個中文字的寬度。再窄下去只會剩
+   「定時…」這種看不出是什麼的殘字，那還不如不顯示——標誌一樣連回首頁，
+   頁面的 h1 也說明了這是什麼工具。
+   ⚠️ 別把這個值往上調：460px 那種明明還有一百多 px 空間的寬度也會被藏掉。 */
+@media (max-width: 420px) {
+  .nav-title {
+    display: none;
+  }
+}
+
+/* 語言下拉：外觀是外框式（透明底 + 描邊 + 跟頁面同色的文字），但**不套 .btn-outline**。
+   .btn-outline 帶 display: inline-flex，套在 <select> 上會讓原生下拉的位置與高度算不準。
+   規則、尺寸、hover 行為都跟 web100_00_Homepage 的導覽列一致。 */
+select {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  height: 40px;
+  width: 140px;
+  padding: 0 2.1rem 0 0.9rem;
+  border: 1.5px solid var(--color-outline);
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  color: inherit;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* 窄螢幕上把語言下拉縮窄，讓標題留得住。124px 是量出來的下限：
+   最長的選項是 Français，扣掉左右內距剛好放得下。
+   ⚠️ 這段一定要放在上面 `select` 基礎規則之後，同分特異性靠順序決勝，
+   放前面會被 width: 140px 蓋掉。 */
+@media (max-width: 520px) {
+  select {
+    width: 124px;
+  }
+}
+
+.select-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* 箭頭用 mask + currentColor，才會自動跟著深淺色模式與 hover 換色
+   （Material Symbols Rounded / keyboard_arrow_down） */
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M465-363.5q-7-2.5-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5q-8 0-15-2.5Z'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M465-363.5q-7-2.5-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5q-8 0-15-2.5Z'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+}
+
+.select-wrap:hover select {
+  border-color: var(--color-accent);
+  background-color: var(--color-outline-hover);
+}
+
+select:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* 展開的選單是系統畫的，會沿用頁面色而不是按鈕色，要另外指定才讀得到 */
+select option {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* 深淺色切換是實心式（accent 填色 + 對比色圖示），跟語言下拉共用 40px 高度。 */
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--btn-face);
+  color: var(--btn-text);
+  /* 沒有模糊的實色陰影 = 按鈕的厚度 */
+  box-shadow: 0 3px 0 var(--btn-edge);
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* 圖示一律用 Material Symbols Rounded（24px / wght 400 / GRAD 0 / opsz 24），
+   直接內嵌 SVG 並吃 currentColor，不載入整套字型 */
+.icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* hover：厚度從 3 變 2、按鈕同步往下 1，總高度不變 = 被壓下去的感覺 */
+.theme-toggle:hover {
+  background-color: var(--btn-face-hover);
+  box-shadow: 0 2px 0 var(--btn-edge-hover);
+  transform: translateY(1px);
+}
+
+/* 按著時整個貼平 */
+.theme-toggle:active {
+  box-shadow: 0 0 0 var(--btn-edge-hover);
+  transform: translateY(3px);
+}
+
+/* 兩顆圖示都在 HTML 裡，用 CSS 決定顯示哪顆：切換時不用重畫 DOM，也不會在 JS 跑之前閃 */
+.icon-light {
+  display: none;
+}
+
+html.light .icon-dark {
+  display: none;
+}
+
+html.light .icon-light {
+  display: block;
+}
+
+/* ---------- 按鈕 ---------- */
+
+/* 實心按鈕是「立體」款：底色 + 正下方一塊沒有模糊的實色陰影當厚度。
+   hover 時厚度 3→2、按鈕同步往下 1（總高不變）＝被壓下去；按著時整個貼平。 */
+.btn-solid,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-solid {
+  border: 0;
+  background: var(--btn-face);
+  color: var(--btn-text);
+  box-shadow: 0 3px 0 var(--btn-edge);
+}
+
+.btn-solid:hover:not(:disabled) {
+  background: var(--btn-face-hover);
+  box-shadow: 0 2px 0 var(--btn-edge-hover);
+  transform: translateY(1px);
+}
+
+.btn-solid:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--btn-edge-hover);
+  transform: translateY(3px);
+}
+
+/* disabled 用「壓扁」表示不能點，跟可點擊的立體感相反：拿掉厚度、底色換淺兩階。
+   文字保持看得清楚（4.62:1），不是單純疊 opacity。 */
+.btn-solid:disabled {
+  background: var(--btn-disabled-face);
+  color: var(--btn-disabled-text);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  border: 1.5px solid var(--color-outline);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--color-outline-hover);
+}
+
+/* 外框式按鈕本來就沒有厚度可以拿掉，直接整體降透明度
+   （WCAG 1.4.3 不強制非互動元件的對比度） */
+.btn-outline:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+/* ---------- 版面 ---------- */
+
+main {
+  flex: 1;
+  width: min(720px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* 手機上把上下留白收掉一半。桌機的 space-4 在窄螢幕會變成導覽列底下一整塊空白，
+   而手機的畫面高度本來就珍貴——尤其進行中那一頁是垂直置中的，
+   上面多留的每一 px 都會把題目跟按鈕一起往下推。 */
+@media (max-width: 640px) {
+  main {
+    padding: var(--space-2) 0;
+  }
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/*
+ * hidden 屬性要蓋得過自己的 display。
+ *
+ * 瀏覽器預設的 [hidden]{display:none} 是 UA 樣式，**任何**作者寫的 display 都贏過它，
+ * 所以有自訂 display 的元件掛上 hidden 之後照樣看得見。統一在這裡壓回去。
+ */
+[hidden] {
+  display: none !important;
+}
+
+.view[hidden] {
+  display: none;
+}
+
+.hero h1 {
+  margin-bottom: var(--space-1);
+}
+
+.hero p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.surface {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.surface.center {
+  text-align: center;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.counter {
+  color: var(--color-accent-text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* ---------- 規則頁 ---------- */
+
+.rules-link {
+  margin: 0;
+  text-align: center;
+}
+
+.rules-link a {
+  color: var(--color-accent-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rules-link a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.prose ol,
+.prose ul {
+  margin: var(--space-2) 0 0;
+  padding-left: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.prose li + li {
+  margin-top: var(--space-1);
+}
+
+.faq-item + .faq-item {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.faq-item h3 {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-body);
+  font-weight: 600;
+}
+
+.faq-item p {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.rules-back {
+  margin: 0;
+  text-align: center;
+}
+
+/* ---------- 表單 ---------- */
+
+.field-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* 同一張卡片裡的第二組標籤，要跟上一組的控制項拉開，不然黏成一團看不出分界 */
+.field-label-gap {
+  margin-top: var(--space-2);
+}
+
+.field {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.field:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.form-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-accent-text);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-1);
+  align-items: flex-start;
+}
+
+.row .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.empty {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- 確認彈窗 ---------- */
+
+.modal {
+  width: min(400px, calc(100% - 2rem));
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card);
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.modal p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+/* ---------- 問答型 / 動作型 兩顆大按鈕 ---------- */
+
+/* symbol 的定義本體不顯示，只給 <use> 引用 */
+.icon-sprite {
+  display: none;
+}
+
+.pick-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  /* 標題與底下第一個控制項之間固定 12px，跟引爆時間那張卡的 .seg-3 一致 */
+  margin-top: 0.75rem;
+}
+
+/*
+ * 結構與立體語言跟 03_PreferenceMatch 的答題鍵一致：未選中是線框 + 淺底，
+ * 選中整顆填滿。這一頁只有這一個真正要做的決定，所以按鈕做大、單手按得到，
+ * 選了哪一邊低頭一眼就看得出來，不是靠一個小勾。
+ */
+.pick-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: var(--space-3) var(--space-1);
+  border: 2px solid var(--pick-edge);
+  border-radius: var(--radius);
+  background: var(--pick-soft);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  /* 立體感：3px 的厚度陰影，按下去會沉下去（ARCHITECTURE 第 7 節） */
+  box-shadow: 0 3px 0 var(--pick-edge);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  /* 手機單手也按得到，兩顆各佔一半寬、夠高 */
+  min-height: 8.5rem;
+}
+
+.pick-button:hover {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 var(--pick-edge);
+}
+
+.pick-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--pick-edge);
+}
+
+.pick-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.pick-icon {
+  display: block;
+  color: var(--pick-mark);
+}
+
+.pick-icon svg {
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
+  fill: currentColor;
+}
+
+.pick-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pick-count {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 每一顆把自己的色組指派給共用變數，上面的規則就不用寫兩份 */
+.pick-ask {
+  --pick-soft: var(--pick-a-soft);
+  --pick-edge: var(--pick-a-edge);
+  --pick-mark: var(--pick-a-mark);
+}
+
+.pick-dare {
+  --pick-soft: var(--pick-b-soft);
+  --pick-edge: var(--pick-b-edge);
+  --pick-mark: var(--pick-b-mark);
+}
+
+/*
+ * 選中之後整顆填滿，圖示回到跟文字同色。
+ *
+ * 用 --pick-a-face / --pick-a-text 這組，不要用 --color-accent + --color-accent-text：
+ * accent-text 是設計給「深色背景上的文字」，疊在 accent 填底上對比只有 2.5:1，字會糊掉。
+ */
+.pick-ask[aria-pressed='true'] {
+  background: var(--pick-a-face);
+  color: var(--pick-a-text);
+}
+
+.pick-dare[aria-pressed='true'] {
+  background: var(--pick-b-face);
+  color: var(--pick-b-text);
+}
+
+.pick-button[aria-pressed='true'] .pick-icon {
+  color: inherit;
+}
+
+/* ---------- 一排單選 ---------- */
+
+/*
+ * 選項排成一排，比下拉少一次點擊、也一眼看得到全部選項。
+ * 底層還是 <input type="radio">，鍵盤方向鍵與螢幕閱讀器都照舊，只是把圓點藏起來。
+ */
+.seg {
+  display: grid;
+  gap: 0.4rem;
+}
+
+/* 三顆區間鍵是唯一直接接在卡片標題底下的一排，所以那 12px 掛在這裡。
+   跟「題目」那張卡的 .pick-buttons 對齊——原本一邊 0、一邊 16px，並排看得出來一鬆一緊 */
+.seg-3 {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 0.75rem;
+}
+
+/*
+ * 三顆一排的區間鍵，放的是「30 Sek.–2 Min.」這種兩段式文字，比下面那兩排的
+ * 單一數值長得多。德文在 375px 下量出來剛好頂到框線（92px 的格子、字寬 92px），
+ * 所以這一排——**也只有這一排**——字級降一階、允許在破折號後折行，
+ * 高度改成 min-height 撐得開兩行。
+ *
+ * 選擇器掛在 .seg-3 底下而不是改 .seg-item 本體：那顆是共用元件，
+ * 動它會連帶影響最短／最長那兩排。
+ */
+.seg-3 .seg-item {
+  height: auto;
+  min-height: 44px;
+  padding: 0.3rem 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+}
+
+.seg-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.seg-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.seg-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border: 1.5px solid var(--color-outline);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+}
+
+/* 圓點藏起來但保留在無障礙樹裡（不能用 display:none，那樣鍵盤就選不到） */
+.seg-item input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.seg-item:hover {
+  border-color: var(--color-outline-hover);
+}
+
+.seg-item:has(input:checked) {
+  background: var(--btn-face);
+  border-color: var(--btn-edge);
+  color: var(--btn-text);
+  font-weight: 700;
+}
+
+.seg-item:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* 「最長」比「最短」小的組合不存在，那些選項直接壓扁停用（app.js 的 clampRange） */
+.seg-item:has(input:disabled) {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   定時炸彈專屬（05_TimeBomb）
+   上面的區塊是跟 00 Homepage / 01 Avalon / 02 Buzzer / 03 Match / 04 Bingo
+   共用的元件，不要在這裡覆寫它們——要改就回去改共用的那份，六個專案一起動。
+   ========================================================================== */
+
+/* ---------- 設定畫面 ---------- */
+
+/* 「自訂」那兩排時間的開關。刻意做成文字連結的份量、不做成按鈕：
+   它是這張卡片裡最不重要的東西，長得像按鈕會跟上面三顆區間搶注意力 */
+.timer-toggle {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: var(--space-2);
+  padding: 0.2rem 0;
+  border: none;
+  background: none;
+  color: var(--color-accent-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.timer-toggle::after {
+  content: '▾';
+  font-size: 0.75rem;
+  transition: transform 0.12s ease;
+}
+
+.timer-toggle[aria-expanded='true']::after {
+  transform: rotate(180deg);
+}
+
+.timer-toggle:hover {
+  text-decoration: underline;
+}
+
+/* 自訂題目的入口。題數靠在標題旁邊，跟「牌堆 90 題」那顆計數器同一套語言 */
+.custom-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.custom-open-count {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* 一題都還沒加的時候整個不出現，不要留一個空的括號 */
+.custom-open-count:empty {
+  display: none;
+}
+
+.custom-row {
+  margin-top: var(--space-2);
+}
+
+/* 分類下拉要撐滿整行（導覽列那顆是固定 140px，這裡不能沿用） */
+.select-wrap-block {
+  display: flex;
+  width: 100%;
+}
+
+.select-wrap-block select {
+  width: 100%;
+}
+
+.custom-list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  /* 加太多題就自己捲，不要把整張卡片撐開 */
+  max-height: 18rem;
+  overflow-y: auto;
+}
+
+.custom-list:empty {
+  display: none;
+}
+
+.custom-list li {
+  display: flex;
+  /* 分類標籤與 ✕ 跟題目文字對齊在同一條中線上。flex-start 的話兩者會貼著
+     第一行的頂端，題目只有一行時看起來就是整排往上偏了幾 px */
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-border);
+  /* 自訂題標一個左邊條，跟內建題庫區分開 */
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius);
+  font-size: 15px;
+}
+
+.custom-list .text {
+  flex: 1;
+  min-width: 0;
+}
+
+.custom-list .cat-tag {
+  flex: none;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.chosen-remove {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0 0.15rem;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+.chosen-remove:hover {
+  color: var(--color-accent-text);
+}
+
+/*
+ * 「開始遊戲」是這一頁唯一的出口，做得比一般 btn-block 厚一階。
+ *
+ * sticky：它在文件流裡還是排在設定底下，但捲動時會黏在畫面底部——**不管上面
+ * 放了多少設定，一載入就看得到它**。實測時看到的行為是有人滑到一半、看到一個
+ * 空的輸入框就停住了，根本沒滑到這顆；壓縮版面只是把它往上推，黏住才是保證。
+ * 捲到最底時它自然落回原位，不會蓋住底下的「玩法」連結。
+ */
+.btn-start {
+  position: sticky;
+  bottom: var(--space-2);
+  z-index: 2;
+  min-height: 56px;
+  margin-top: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- 進行中 ---------- */
+
+/* 題型標籤。份量刻意壓到最小——它是給眼角餘光看的，
+   真正要讀的是底下那一題，標籤搶戲就本末倒置了 */
+.task-tag {
+  align-self: center;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--pick-edge);
+  border-radius: var(--radius-pill);
+  background: var(--pick-soft);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.tag-ask {
+  --pick-soft: var(--pick-a-soft);
+  --pick-edge: var(--pick-a-edge);
+}
+
+.tag-dare {
+  --pick-soft: var(--pick-b-soft);
+  --pick-edge: var(--pick-b-edge);
+}
+
+/*
+ * 這一頁只有兩件東西：題目、以及一條佔滿寬度的「完成」。
+ * 沒有剩餘時間、沒有已抽題數、沒有進度條——理由見 CONCEPT.md 2.2、2.3。
+ */
+/*
+ * 卡片貼著導覽列下方，既不撐滿也不置中。
+ *
+ * 撐滿過（`flex: 1` 在 .play-card 上）：題目黏在上緣、按鈕掉到畫面最底，中間空一大塊。
+ * 置中也試過：按鈕位置好了，但導覽列底下多出一塊什麼都沒有的留白，
+ * 手機上特別明顯——那塊空白比它省下的距離更礙眼。
+ * 貼上去之後，題目一載入就在視線裡，按鈕大約落在畫面一半的高度，拇指構得到。
+ */
+.view-play {
+  flex: 1;
+  min-height: 0;
+  justify-content: flex-start;
+}
+
+/* 題目與傳遞鍵在同一張卡片裡。卡片高度跟著內容走，不撐滿 */
+.play-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  text-align: center;
+}
+
+.bomb svg {
+  display: block;
+  width: 84px;
+  height: 84px;
+}
+
+.bomb-body,
+.bomb-cap {
+  fill: var(--color-text);
+}
+
+.bomb-fuse {
+  stroke: var(--color-text-muted);
+}
+
+.bomb-spark {
+  fill: var(--color-accent);
+  /* transform-box 不設成 fill-box 的話，scale 會以整張 SVG 的原點算，
+     火花會飛到畫面外而不是原地閃 */
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spark 1s steps(2, jump-none) infinite;
+}
+
+@keyframes spark {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.65);
+    opacity: 0.55;
+  }
+}
+
+/*
+ * 題目字級用 clamp：手機上要一眼讀完（傳過來的人只有幾秒），
+ * 桌機上又不能大到一句話佔滿整個畫面。
+ */
+.task-text {
+  margin: 0;
+  max-width: 22em;
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/*
+ * 「完成」佔滿整條；「換一題」平常不在畫面上，同一題停滿 5 秒才從右邊滑進來
+ * （app.js 的 armStuckHint 掛上 .show-skip）。
+ *
+ * 一開始就擺兩顆的話，等於一上來就告訴每個人「你可以不做」——那顆按鈕會從
+ * 救生圈變成捷徑。等真的卡住了再出現，它才是幫忙的，不是誘惑。
+ *
+ * 用 flex + max-width 做動畫，不是 grid-template-columns 的 fr 內插：
+ * fr 的下限是 min-content，收到 0fr 也還是文字寬度，要壓成 minmax(0, 0fr) 才會消失，
+ * 但那樣德文的「Überspringen」（不能斷的長字）展開後會被 overflow 切掉。
+ * max-width 只在收合時裁切，展開後是 auto 寬度，長字照樣完整。
+ */
+.pass-row {
+  display: flex;
+  align-items: stretch;
+}
+
+/* ⚠️ 一定要排除 .pass-skip。跳過鍵也帶著 .pass-bar，寫成 `.pass-row .pass-bar`
+   的話它的特異性（0,2,0）會蓋過 .pass-skip 的 `flex: 0 0 auto`（0,1,0），
+   跳過鍵就跟著 flex:1 長成跟「完成」一樣寬——主次整個沒了（踩過一次）。 */
+.pass-row .pass-bar:not(.pass-skip) {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 傳遞鍵。手機單手拿著、站著按，所以夠厚、夠寬 */
+.pass-bar {
+  width: 100%;
+  min-height: 84px;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--btn-face);
+  color: var(--btn-text);
+  box-shadow: 0 4px 0 var(--btn-edge);
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.pass-bar:hover {
+  background: var(--btn-face-hover);
+  box-shadow: 0 2px 0 var(--btn-edge-hover);
+  transform: translateY(2px);
+}
+
+.pass-bar:active {
+  box-shadow: 0 0 0 var(--btn-edge-hover);
+  transform: translateY(4px);
+}
+
+.pass-bar:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * 跳過鍵走外框式：跟「完成」明顯不同一階，不要兩顆看起來一樣重要。
+ * 收合狀態是寬度 0、透明、往右偏一點；.show-skip 一掛上就滑進來。
+ * 收合時 app.js 會一併把它 disabled，鍵盤 Tab 不會停在一顆看不見的按鈕上。
+ */
+.pass-skip {
+  /* flex-basis 交給內容，寬度由 max-width 控制 */
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 0;
+  padding: 0;
+  border: 0 solid var(--color-outline);
+  background: transparent;
+  color: var(--color-text);
+  box-shadow: none;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(1rem);
+  transition:
+    max-width 0.32s ease,
+    padding 0.32s ease,
+    margin-left 0.32s ease,
+    border-width 0.32s ease,
+    opacity 0.24s ease 0.06s,
+    transform 0.24s ease 0.06s;
+}
+
+/* 12rem 放得下最長的「Überspringen」（約 8.4rem），
+   又不會在展開動畫裡衝過頭——max-width 是上限，實際寬度仍由內容決定 */
+.pass-row.show-skip .pass-skip {
+  max-width: 12rem;
+  margin-left: var(--space-1);
+  padding: 0 var(--space-2);
+  border-width: 1.5px;
+  opacity: 1;
+  transform: none;
+}
+
+.pass-row.show-skip .pass-skip:hover {
+  background: var(--color-outline-hover);
+  box-shadow: none;
+  transform: none;
+}
+
+.pass-row.show-skip .pass-skip:active {
+  background: var(--color-outline-hover);
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+.play-hint {
+  text-align: center;
+}
+
+/* 同一題停滿 5 秒才換成這行（app.js 的 armStuckHint）。
+   只加重顏色與字重，不改字級——字級一變，整頁的高度會跟著跳一下 */
+.play-hint.is-stuck {
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+
+/* ---------- 爆炸 ---------- */
+
+.boom-mark svg {
+  display: block;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto var(--space-2);
+  fill: var(--color-accent);
+  animation: boom-pop 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) 1;
+}
+
+@keyframes boom-pop {
+  from {
+    transform: scale(0.3) rotate(-25deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.boom-card p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+
+.boom-stats {
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 時間與題數是這一句裡唯一有資訊的東西，從 muted 的說明文字裡拉出來
+   （.boom-card p 把整段染成 muted，所以顏色要在這裡寫回去） */
+.boom-card .boom-stats .stat {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.boom-card .btn-block:first-of-type {
+  margin-top: var(--space-3);
+}
+
+/* ---------- 頁尾 ---------- */
+
+/* 分隔線要滿版，跟阿瓦隆與首頁一致：<footer> 本身不限寬、只負責上緣那條線，
+   內容再用一層 .footer-inner 收到跟主內容一樣的寬度並置中。
+   把寬度限制下在 <footer> 上的話，線會跟著縮成內容寬度，兩側留白。 */
+.site-footer {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-2);
+  border-top: 1px solid var(--color-accent);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.footer-inner {
+  width: min(720px, calc(100% - 2rem));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.site-footer a {
+  color: inherit;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.project-id {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

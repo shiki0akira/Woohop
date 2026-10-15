@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body>
+    <!--
+      設定畫面那兩顆按鈕的圖示。Material Symbols Rounded（24px / wght 400 / GRAD 0 /
+      opsz 24），依 ARCHITECTURE.md 第 7 節直接內嵌 SVG、fill 吃 currentColor，
+      不載整套字型——為了兩顆圖示多背一個字型檔不划算。
+      forum = 問答型（講話）、theater_comedy = 動作型（演一個動作）。
+    -->
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-ask" viewBox="0 -960 960 960">
+        <path
+          d="M840-136q-8 0-15-3t-13-9l-92-92H320q-33 0-56.5-23.5T240-320v-40h440q33 0 56.5-23.5T760-440v-280h40q33 0 56.5 23.5T880-640v463q0 18-12 29.5T840-136ZM160-473l47-47h393v-280H160v327Zm-40 137q-16 0-28-11.5T80-377v-423q0-33 23.5-56.5T160-880h440q33 0 56.5 23.5T680-800v280q0 33-23.5 56.5T600-440H240l-92 92q-6 6-13 9t-15 3Zm40-184v-280 280Z"
+        />
+      </symbol>
+      <symbol id="icon-dare" viewBox="0 -960 960 960">
+        <path
+          d="M760-660q17 0 28.5-11.5T800-700q0-17-11.5-28.5T760-740q-17 0-28.5 11.5T720-700q0 17 11.5 28.5T760-660Zm-160 0q17 0 28.5-11.5T640-700q0-17-11.5-28.5T600-740q-17 0-28.5 11.5T560-700q0 17 11.5 28.5T600-660Zm24.5 71.5Q598-577 586-551q-5 10 2.5 18.5T608-524h144q12 0 19.5-8.5T774-551q-12-26-38.5-37.5T680-600q-29 0-55.5 11.5ZM110-150q-70-70-70-170v-200q0-33 23.5-56.5T120-600h320q33 0 56.5 23.5T520-520v200q0 100-70 170T280-80q-100 0-170-70Zm283-57q47-47 47-113v-200H120v200q0 66 47 113t113 47q66 0 113-47Zm527-593v200q0 102-70 171t-171 69q-17 0-33.5-2t-32.5-7q-16-5-23-20t-2-31q5-16 20-23.5t31-2.5q11 3 21 4.5t21 1.5q66 0 112.5-47T840-600v-200H520v100q0 17-11.5 28.5T480-660q-17 0-28.5-11.5T440-700v-100q0-33 23.5-56.5T520-880h320q33 0 56.5 23.5T920-800ZM200-380q17 0 28.5-11.5T240-420q0-17-11.5-28.5T200-460q-17 0-28.5 11.5T160-420q0 17 11.5 28.5T200-380Zm188.5-11.5Q400-403 400-420t-11.5-28.5Q377-460 360-460t-28.5 11.5Q320-437 320-420t11.5 28.5Q343-380 360-380t28.5-11.5ZM333-255q25-11 39-35 5-11-1-20.5t-17-9.5H206q-11 0-17 9.5t-1 20.5q14 24 39 35t53 11q28 0 53-11Zm-53-85Zm390-280Z"
+        />
+      </symbol>
+    </svg>
+    {{header}}
+
+    <main id="main">
+      <!--
+        設定畫面。這個專案沒有房間、沒有加入流程（CONCEPT.md 2.1），
+        所以首頁就是設定畫面——打開網頁看到的第一件事就是「要玩什麼、炸多久」。
+      -->
+      <section class="view" id="view-setup">
+        <div class="hero">
+          <h1>{{heroTitle}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <section class="surface">
+          <h2>{{timerHeading}}</h2>
+
+          <!--
+            平常只露出三個區間（選項本體在 scripts/build.js 的 TIMER.presets）。
+
+            最短／最長那兩排收在「自訂」底下：攤開來是九顆按鈕加兩個標籤，還帶著
+            一條要讀完才懂的規則（最長不能小於最短）——第一次打開的人得先解一道題，
+            才走得到下面的「開始遊戲」。
+          -->
+          <div class="seg seg-3" id="preset-seg" role="radiogroup" aria-label="{{timerHeading}}"></div>
+
+          <button
+            class="timer-toggle"
+            id="timer-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="timer-custom"
+          >
+            {{timerCustomToggle}}
+          </button>
+
+          <div id="timer-custom" hidden>
+            <span class="field-label">{{minTimeLabel}}</span>
+            <div class="seg seg-4" id="min-seg" role="radiogroup" aria-label="{{minTimeLabel}}"></div>
+
+            <span class="field-label field-label-gap">{{maxTimeLabel}}</span>
+            <div class="seg seg-5" id="max-seg" role="radiogroup" aria-label="{{maxTimeLabel}}"></div>
+
+            <!-- 這段說明只在展開時出現。收合狀態下三顆區間本身已經講完該講的，
+                 多一行灰字只是把「開始遊戲」再往下推 -->
+            <p class="hint">{{timerHint}}</p>
+          </div>
+        </section>
+
+        <section class="surface">
+          <div class="section-head">
+            <h2>{{questionsHeading}}</h2>
+            <span class="counter" id="deck-count"></span>
+          </div>
+
+          <!--
+            左右兩顆大按鈕（問答型 / 動作型），由 app.js 依 CATEGORY_GROUPS 產生。
+
+            做成按鈕而不是一排打勾框，是因為這一頁只有這一個真正要做的決定：
+            按鈕大、單手按得到，選了哪邊填滿、沒選的維持線框，低頭看一眼就知道
+            （跟 03_PreferenceMatch 的答題鍵同一套語言）。題目本文不列出來——
+            90 題全攤開會變成一面牆，而要決定的是「哪一邊」，不是「哪幾題」。
+          -->
+          <div class="pick-buttons" id="pick-buttons"></div>
+
+          <!--
+            自訂題目搬進 #custom-modal，這裡只留一顆按鈕。
+
+            原本那一整塊表單就長在「開始遊戲」正上方，第一次玩的人滑到這裡看到的
+            最後一樣東西是一個空的輸入框加一個下拉——讀起來像「這裡沒填完不能走」，
+            結果是停在這一頁不動。想加題目的是玩過幾次的人，讓他們多按一下就好。
+          -->
+          <button class="btn-outline btn-block custom-open" id="open-custom" type="button">
+            <span>{{customLabel}}</span>
+            <span class="custom-open-count" id="custom-open-count"></span>
+          </button>
+        </section>
+
+        <p class="form-error" id="deck-warning" role="status" hidden></p>
+        <button class="btn-solid btn-block btn-start" id="start-game" type="button">{{startButton}}</button>
+
+        <p class="rules-link"><a href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </section>
+
+      <!--
+        遊戲進行中。畫面上只有三件東西：這一題屬於哪一型、這一題，以及一條佔滿寬度的「完成」。
+        刻意不放剩餘時間、不放已抽題數、不放任何進度——看得到倒數的話，
+        最後十秒沒有人肯接手機（CONCEPT.md 2.2）。
+      -->
+      <section class="view view-play" id="view-play" hidden>
+        <!-- 題目與傳遞鍵收在同一張卡片裡：那兩個是同一件事的兩半
+             （「做這個」→「做完了」），分開浮在背景上會像兩個不相干的東西 -->
+        <section class="surface play-card">
+          <div class="stage">
+            <div class="bomb" id="bomb" role="img" aria-label="{{bombAlt}}">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <path
+                  class="bomb-body"
+                  d="M27 20a19 19 0 1 0 19 19 19 19 0 0 0-19-19Zm0 6a13 13 0 0 1 13 13 3 3 0 0 1-6 0 7 7 0 0 0-7-7 3 3 0 0 1 0-6Z"
+                />
+                <path class="bomb-cap" d="M40.6 21.3 45 16.9l6.6 6.6-4.4 4.4-7.6-7.6Z" />
+                <path
+                  class="bomb-fuse"
+                  d="M48 18c3-4 8-4 9-8"
+                  fill="none"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+                <circle class="bomb-spark" cx="58" cy="9" r="3.5" />
+              </svg>
+            </div>
+            <!-- 這一題是問答型還是動作型。拿到手機的人先掃到這個，就知道
+                 接下來是要用講的還是要離開椅子，不用讀完整句才反應過來 -->
+            <span class="task-tag" id="task-tag"></span>
+            <p class="task-text" id="task-text" aria-live="polite"></p>
+          </div>
+
+          <!--
+            「完成」平常佔滿整條。「換一題」一開始是收合＋disabled 的，同一題停滿
+            5 秒才由 app.js 掛上 .show-skip 從右邊滑進來（見 armStuckHint）。
+            一上來就擺兩顆，等於先告訴每個人「你可以不做」——那顆鍵會從救生圈變成捷徑。
+          -->
+          <div class="pass-row">
+            <button class="pass-bar" id="pass-button" type="button">{{passButton}}</button>
+            <button class="pass-bar pass-skip" id="skip-button" type="button" disabled>{{skipButton}}</button>
+          </div>
+        </section>
+
+        <!-- 同一題停滿 5 秒，app.js 會把這行換成「按換一題」的提示（armStuckHint） -->
+        <p class="hint play-hint" id="play-hint">{{playHint}}</p>
+      </section>
+
+      <!-- 爆炸。輸家是誰現場都看得到，所以這裡不記名、不記分（CONCEPT.md 六） -->
+      <section class="view" id="view-boom" hidden>
+        <section class="surface center boom-card">
+          <div class="boom-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <path
+                d="m32 2 6.6 12.2L51 8.6l-3.4 13.2 13.6-.9-9.4 9.9 12.2 6.2-12.2 6.2 9.4 9.9-13.6-.9L51 55.4l-12.4-5.6L32 62l-6.6-12.2L13 55.4l3.4-13.2-13.6.9 9.4-9.9L0 27l12.2-6.2-9.4-9.9 13.6.9L13 8.6l12.4 5.6L32 2Z"
+              />
+            </svg>
+          </div>
+          <h1>{{boomTitle}}</h1>
+          <p class="boom-stats" id="boom-stats"></p>
+
+          <button class="btn-solid btn-block" id="play-again" type="button">{{againButton}}</button>
+          <button class="btn-outline btn-block" id="back-to-setup" type="button">{{backToSetupButton}}</button>
+        </section>
+      </section>
+    </main>
+
+    <!--
+      自訂題目。開這個彈窗時會 pushState 一格，Android 的返回鍵才會是「關掉彈窗」
+      而不是直接離開網站（見 app.js 的 openCustomModal / onPopState）。
+    -->
+    <dialog class="modal modal-custom" id="custom-modal">
+      <h2>{{customLabel}}</h2>
+      <p>{{customHint}}</p>
+
+      <div class="row custom-row">
+        <input
+          class="field"
+          id="custom-input"
+          type="text"
+          maxlength="80"
+          autocomplete="off"
+          placeholder="{{customPlaceholder}}"
+          aria-label="{{customLabel}}"
+        />
+        <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+      </div>
+
+      <label class="field-label field-label-gap" for="custom-group">{{customCategoryLabel}}</label>
+      <span class="select-wrap select-wrap-block">
+        <select id="custom-group"></select>
+      </span>
+
+      <ul class="chosen-list custom-list" id="custom-list"></ul>
+      <p class="empty" id="custom-empty">{{customEmpty}}</p>
+
+      <div class="modal-actions">
+        <button class="btn-solid" id="custom-done" type="button">{{customDoneButton}}</button>
+      </div>
+    </dialog>
+
+    <!-- 返回鍵與「改設定」共用這個確認：遊戲中離開等於這一輪作廢（CONCEPT.md 2.11） -->
+    <dialog class="modal" id="leave-modal">
+      <h2>{{leaveTitle}}</h2>
+      <p>{{leaveDesc}}</p>
+      <div class="modal-actions">
+        <button class="btn-outline" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn-solid" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.BOMB = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        page: '',
+        T: {{stringsJson}},
+        questions: {{questionsJson}},
+        timer: {{timerJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

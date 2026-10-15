@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body>
+    {{header}}
+
+    <main id="main">
+      <section class="view">
+        <div class="hero">
+          <h1>{{rulesTitle}}</h1>
+          <p>{{rulesIntro}}</p>
+        </div>
+
+        <section class="surface prose">
+          <h2>{{rulesHostHeading}}</h2>
+          <ol>
+            {{rulesHostList}}
+          </ol>
+        </section>
+
+        <section class="surface prose">
+          <h2>{{rulesPlayerHeading}}</h2>
+          <ol>
+            {{rulesPlayerList}}
+          </ol>
+        </section>
+
+        <!--
+          深入說明。**只有部分語言有**（目前是 zh-TW），rulesArticle 沒填的語言
+          這一整塊就不會出現——寧可某些語言少一段，也不要把中文丟翻譯 API 生一批
+          薄內容出來湊字數（app/strings.js 開頭那段的理由）。
+        -->
+        {{rulesArticle}}
+
+        <section class="surface prose faq">
+          <h2>{{rulesFaqHeading}}</h2>
+          {{rulesFaqList}}
+        </section>
+
+        <p class="rules-back"><a href="{{base}}/{{lang}}/">{{rulesBack}}</a></p>
+      </section>
+    </main>
+
+    {{footer}}
+
+    <script>
+      window.BOMB = { lang: '{{lang}}', base: '{{base}}', page: 'rules/' };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+  </body>
+</html>

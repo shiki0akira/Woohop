@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "web100-05-time-bomb",
+  "compatibility_date": "2025-11-01",
+
+  /*
+   * **沒有 `main`，這是一個只有靜態資源的 Worker。**
+   *
+   * 02/03/04 都是「assets binding + Durable Object」，那個 `main` 是為了 DO 與 API 而存在的。
+   * 這個專案沒有後端（CONCEPT.md 2.1），連語言轉址都在瀏覽器裡做（app/redirect.html），
+   * 所以一行 Worker 程式都不需要——多寫一個只會把請求原樣轉給 ASSETS 的 fetch handler，
+   * 只是多一層可以寫錯的東西。
+   *
+   * `dist` 是 scripts/build.js 產生的，不進版控。
+   */
+  "assets": {
+    "directory": "./dist",
+
+    /*
+     * 目錄自動補 index.html（預設值，寫出來是因為整個站都靠它）：
+     *   /bomb/        → dist/bomb/index.html（語言轉址頁）
+     *   /bomb/zh-TW/  → dist/bomb/zh-TW/index.html
+     */
+    "html_handling": "auto-trailing-slash",
+
+    /*
+     * 找不到就回 404，**不要**回 index.html。
+     *
+     * ARCHITECTURE.md 第 3.1 節：整個網域只有一個 404，就是首頁那張。首頁的 vercel.json
+     * 用白名單列出實際存在的路徑，沒列到的網址根本不會轉發過來；真的漏轉過來的，
+     * 這裡回真 404 而不是 200 + 首頁內容（那會變成 soft 404）。
+     */
+    "not_found_handling": "none"
+  },
+
+  "observability": { "enabled": true }
+}

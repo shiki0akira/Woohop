@@ -1,0 +1,17 @@
+{
+  "name": "web100-05-time-bomb",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web100 系列第 5 個小遊戲：定時炸彈，一台手機傳著玩的破冰遊戲（Cloudflare Workers 靜態資源）",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "npm run build && wrangler dev",
+    "dev:lan": "npm run build && wrangler dev --ip 0.0.0.0",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.118.0"
+  }
+}
