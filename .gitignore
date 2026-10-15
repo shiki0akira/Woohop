@@ -1,0 +1,19 @@
+# 依賴與建置產物
+node_modules/
+dist/
+
+# 本機環境與平台連結
+.env
+.env*
+.dev.vars
+.vercel
+.wrangler/
+.preview/
+.DS_Store
+
+# Claude Code 本機設定（launch.json 有本機絕對路徑）
+.claude/launch.json
+.claude/settings.local.json
+
+# 搬遷期間的舊 repo 資料夾
+/web100_0*/
