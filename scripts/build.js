@@ -36,6 +36,24 @@ const TIMER = {
   maxOptions: [60, 120, 180, 300, 360],
   defaultMin: 60,
   defaultMax: 180,
+  /*
+   * 設定畫面平常**只露出這三顆**，最短／最長那兩排收在「自訂」底下。
+   *
+   * 兩排攤開來是九顆按鈕加兩個標籤，而且還帶著一條要讀完才懂的規則
+   * （最長不能小於最短）——主持人第一次打開就得先解一道題，才走得到「開始遊戲」。
+   * 收成三個區間之後，這一頁要做的決定剩下「快一點還是慢一點」。
+   *
+   * 按鈕上只寫區間本身（「30 秒–2 分」），不另外取名字：區間就是最清楚的說明，
+   * 而且不用為了三顆按鈕多翻八種語言。
+   *
+   * defaultMin / defaultMax 必須剛好等於其中一顆，不然一打開三顆都不亮，
+   * 看起來像還沒選（checkTimer 會擋）。
+   */
+  presets: [
+    { id: 'fast', min: 30, max: 120 },
+    { id: 'normal', min: 60, max: 180 },
+    { id: 'slow', min: 180, max: 360 },
+  ],
 };
 
 // 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
@@ -49,7 +67,25 @@ const RAW_TOKENS = new Set([
   'rulesHostList',
   'rulesPlayerList',
   'rulesFaqList',
+  'rulesArticle',
+  'jsonLd',
 ]);
+
+/*
+ * 不必每個語言都有的 key。
+ *
+ * rulesArticle 是規則頁那篇長文，**只寫給有讀者的語言**（目前只有 zh-TW）。
+ * 沒有它的語言那一整塊就不出現。刻意不強制八語都要有：把中文丟翻譯 API 生一批
+ * 薄長文出來湊字數，正是 2026/8 那次被演算法降權的成因（app/strings.js 開頭）。
+ */
+const OPTIONAL_KEYS = new Set(['rulesArticle']);
+
+/*
+ * sitemap 的 lastmod。**內容真的有變才手動改這個日期**——
+ * 用 build 當下的時間會讓每次部署都宣稱「內容更新了」，那是假的新鮮度，
+ * 爬蟲被騙幾次之後就不會再認真看這個欄位。
+ */
+const CONTENT_UPDATED = '2026-08-31';
 
 // dir 是語言後面的路徑：遊戲頁在 /bomb/{lang}/、規則頁在 /bomb/{lang}/rules/
 const PAGES = [
@@ -164,6 +200,27 @@ function checkTimer() {
   if (!TIMER.maxOptions.some((value) => value >= biggestMin)) {
     throw new Error(`最短可以選到 ${biggestMin} 秒，但 maxOptions 沒有任何一個接得住`);
   }
+
+  /*
+   * 三顆預設的每個值都要真的在選項裡：點了預設之後畫面會把它寫回 settings，
+   * 值不在選項裡的話「自訂」展開時那一排會一顆都不亮。
+   */
+  for (const preset of TIMER.presets) {
+    if (!TIMER.minOptions.includes(preset.min)) {
+      throw new Error(`預設 ${preset.id} 的最短 ${preset.min} 秒不在 minOptions 裡`);
+    }
+    if (!TIMER.maxOptions.includes(preset.max)) {
+      throw new Error(`預設 ${preset.id} 的最長 ${preset.max} 秒不在 maxOptions 裡`);
+    }
+    if (preset.max < preset.min) {
+      throw new Error(`預設 ${preset.id} 的最長比最短還短`);
+    }
+  }
+
+  // 一打開沒有任何一顆亮著，看起來就像「還沒選」——那正是這次改版要消掉的東西
+  if (!TIMER.presets.some((p) => p.min === TIMER.defaultMin && p.max === TIMER.defaultMax)) {
+    throw new Error('預設值不等於任何一顆時間預設，設定畫面一打開會三顆都不亮');
+  }
 }
 
 // 漏翻的 key 在執行期會變成空字串，很難發現，所以在這裡先擋下來
@@ -174,8 +231,8 @@ function checkStrings() {
     if (!STRINGS[lang]) throw new Error(`strings.js 少了 ${lang} 這份文案`);
 
     const keys = Object.keys(STRINGS[lang]).sort();
-    const missing = reference.filter((key) => !keys.includes(key));
-    const extra = keys.filter((key) => !reference.includes(key));
+    const missing = reference.filter((key) => !keys.includes(key) && !OPTIONAL_KEYS.has(key));
+    const extra = keys.filter((key) => !reference.includes(key) && !OPTIONAL_KEYS.has(key));
 
     if (missing.length) throw new Error(`${lang} 少了這些 key：${missing.join(', ')}`);
     if (extra.length) throw new Error(`${lang} 多了 ${DEFAULT_LANG} 沒有的 key：${extra.join(', ')}`);
@@ -185,7 +242,7 @@ function checkStrings() {
    * 分組的顯示名稱是「group + 首字大寫」組出來的，漏一個會讓設定畫面那顆按鈕沒有標題。
    *
    * 只檢查分組、不檢查 CATEGORIES 裡那五個分類：設定畫面上勾選的單位是分組
-   * （問答型 / 挑戰型兩顆按鈕），五個分類只在 questions.js 裡當題庫的整理方式，
+   * （問答型 / 動作型兩顆按鈕），五個分類只在 questions.js 裡當題庫的整理方式，
    * 對應 QUESTIONS.md 的章節，不會出現在畫面上，所以也不需要八種語言的名字。
    */
   for (const group of CATEGORY_GROUPS) {
@@ -231,6 +288,8 @@ function tokensFor(lang, page, assetVersion) {
     // 一份頁面只有一種語言，帶進全部會讓每頁多背用不到的題庫
     questionsJson: toScriptJson(questionsFor(lang)),
     timerJson: toScriptJson(TIMER),
+    rulesArticle: articleHtml(strings.rulesArticle),
+    jsonLd: jsonLdFor(lang, page, strings),
     rulesHostList: listHtml(strings.rulesHostSteps),
     rulesPlayerList: listHtml(strings.rulesPlayerSteps),
     rulesFaqList: faqHtml(strings.rulesFaq),
@@ -260,6 +319,74 @@ function questionsFor(lang) {
       text: question.text[lang],
     })),
   };
+}
+
+/*
+ * 規則頁的長文。每一節是 { h, p: [段落…] }，沒填就回空字串，
+ * 樣板那一格就整個不見（rules.html 的 {{rulesArticle}}）。
+ */
+/*
+ * 長文段落裡的 **重點** 轉成 <strong>。整頁兩千多字，沒有任何層次的話讀者只會整段跳過。
+ *
+ * **一定要先跳脫再轉換**：跳脫過的文字裡不可能再出現 < 或 >，所以這裡加進去的
+ * <strong> 是唯一的標籤，文案再怎麼寫都插不進別的東西。順序反過來就是一個注入點。
+ * 也刻意只支援這一種語法——這是 build 腳本，不是要做一套 Markdown。
+ */
+function emphasise(text) {
+  return escapeHtml(text).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+}
+
+function articleHtml(sections) {
+  if (!Array.isArray(sections) || !sections.length) return '';
+
+  return sections
+    .map((section) => {
+      const paragraphs = section.p.map((text) => `          <p>${emphasise(text)}</p>`).join('\n');
+      return `<section class="surface prose">
+          <h2>${escapeHtml(section.h)}</h2>
+${paragraphs}
+        </section>`;
+    })
+    .join('\n\n        ');
+}
+
+/*
+ * 結構化資料。遊戲頁宣告自己是一個「免費、打開就能玩的網頁應用」，規則頁把 FAQ 標起來。
+ * 這是給機器讀「這一頁是什麼」用的——對這個站特別重要，因為搜尋「破冰遊戲」的人
+ * 看到的幾乎都是文章，而這裡是一個可以直接玩的工具，那個差別要講得夠明白。
+ *
+ * 內容一律取自同一份 STRINGS，不另外寫一套，才不會畫面改了 JSON-LD 還停在舊文案。
+ */
+function jsonLdFor(lang, page, strings) {
+  const url = ORIGIN + pagePath(lang, page);
+
+  const data =
+    page.dir === 'rules'
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          inLanguage: lang,
+          mainEntity: strings.rulesFaq.map((item) => ({
+            '@type': 'Question',
+            name: item.q,
+            acceptedAnswer: { '@type': 'Answer', text: item.a },
+          })),
+        }
+      : {
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: strings.navTitle,
+          url,
+          description: strings.seoDesc,
+          inLanguage: lang,
+          applicationCategory: 'GameApplication',
+          operatingSystem: 'Any',
+          browserRequirements: 'Requires JavaScript',
+          isAccessibleForFree: true,
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
+        };
+
+  return `<script type="application/ld+json">${toScriptJson(data)}</script>`;
 }
 
 function listHtml(items) {
@@ -302,7 +429,13 @@ function sitemap() {
           `    <xhtml:link rel="alternate" hreflang="${other}" href="${ORIGIN}${pagePath(other, page)}" />`,
       ).join('\n');
       entries.push(
-        ['  <url>', `    <loc>${ORIGIN}${pagePath(lang, page)}</loc>`, alternates, '  </url>'].join('\n'),
+        [
+          '  <url>',
+          `    <loc>${ORIGIN}${pagePath(lang, page)}</loc>`,
+          `    <lastmod>${CONTENT_UPDATED}</lastmod>`,
+          alternates,
+          '  </url>',
+        ].join('\n'),
       );
     }
   }

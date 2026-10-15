@@ -29,22 +29,25 @@ export default {
     'Explota en un momento aleatorio dentro de este intervalo. El tiempo restante no se muestra nunca.',
   minTimeLabel: 'Como mínimo',
   maxTimeLabel: 'Como máximo',
+  timerCustomToggle: 'Intervalo personalizado',
   secondsUnit: '{n} s',
   minutesUnit: '{n} min',
+  timeRange: '{min}–{max}',
 
   questionsHeading: 'Pruebas',
   deckCount: '{n} en el mazo',
   groupAsk: 'Preguntas',
-  groupDare: 'Retos',
+  groupDare: 'Acciones',
   catCount: '{n} pruebas',
 
   deckEmptyWarning: 'Elige al menos una categoría para empezar.',
   deckThinWarning: 'Solo hay {n} en el mazo: pueden repetirse pruebas dentro de una misma ronda.',
 
-  customLabel: 'Añadir las vuestras',
+  customLabel: 'Vuestras pruebas',
   customPlaceholder: 'p. ej.: di tu comida favorita',
   customCategoryLabel: 'Ponla en',
   customAddButton: 'Añadir',
+  customDoneButton: 'Listo',
   customEmpty: 'Todavía no has añadido ninguna prueba propia.',
   customRemoveLabel: 'Borrar esta prueba',
   customHint: 'Tus pruebas se quedan en este dispositivo y seguirán aquí la próxima vez.',
@@ -74,12 +77,13 @@ export default {
   leaveCancel: 'Seguir jugando',
 
   // ---------- página de reglas ----------
+  rulesTitle: 'Cómo se juega a la bomba de tiempo',
   rulesIntro:
     'Un móvil y todos en círculo. Aparece una prueba, quien tiene el móvil la hace y lo pasa. La bomba explota en un momento aleatorio y el tiempo restante no se muestra nunca. Quien lo tenga entonces pierde la ronda.',
   rulesHostHeading: 'Antes de empezar (quien saca el móvil)',
   rulesHostSteps: [
-    'Elige Preguntas, Retos o las dos. ¿Mucha cara nueva? Empieza solo con Preguntas.',
-    '¿Queréis meter vuestras bromas internas? Añade unas cuantas en «Añadir las vuestras» y colócalas en un lado.',
+    'Elige Preguntas, Acciones o las dos. ¿Mucha cara nueva? Empieza solo con Preguntas.',
+    '¿Queréis meter vuestras bromas internas? Añade unas cuantas en «Vuestras pruebas» y colócalas en un lado.',
     'Ajusta la mecha. Para la primera ronda, el 1–3 minutos por defecto va perfecto; cuando el grupo se anime, prueba 30 segundos a 2 minutos.',
     'Di tres frases para arrancar: haz lo que pone en pantalla, pulsa Hecho y pásalo, y quien lo tenga al explotar pierde la ronda.',
   ],
@@ -106,7 +110,7 @@ export default {
     },
     {
       q: '¿Podemos añadir nuestras propias pruebas?',
-      a: 'Sí. Usa «Añadir las vuestras» en la pantalla de ajustes y colócala en una categoría: seguirá ahí la próxima vez. Se queda en este dispositivo y no se sube a ningún sitio.',
+      a: 'Sí. Usa «Vuestras pruebas» en la pantalla de ajustes y colócala en una categoría: seguirá ahí la próxima vez. Se queda en este dispositivo y no se sube a ningún sitio.',
     },
     {
       q: 'Ir pasando un móvil de mano en mano me da un poco de cosa.',

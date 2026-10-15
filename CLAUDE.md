@@ -37,6 +37,10 @@
 
 做法是開始遊戲時 `pushState` 一格，返回鍵先吃掉它；`onPopState` 判斷當前畫面決定要攔還是放行。要離開時**先切回設定畫面再 `history.back()`**，`onPopState` 才會走 `'setup'` 那條直接 return，不會又推一格回去。`history.length` 不會隨著反覆按返回而增長（測過）。
 
+**自訂題目彈窗也吃一格 history**：開的時候 `pushState`，返回鍵就是「關掉彈窗」而不是離開網站（設定畫面的返回鍵本來就是直接退出，少了這條，在彈窗裡按返回會連整個遊戲一起關掉）。`onPopState` 的第一件事就是判斷彈窗開著沒有，開著就只關彈窗。
+
+⚠️ 收掉那一格的時機**不要掛在 `<dialog>` 的 `close` 事件上**——那個事件在各家 WebView 的支援度不一致（開發時用的內嵌瀏覽器就完全不發，連自己 `createElement` 出來的 dialog 也不發），漏發一次就多留一格，返回鍵得多按一次才離得開。做法是每條關閉路徑（「完成」、返回鍵、Esc）各自收掉那一格，由 `customOpen` 這個旗標擋掉「同一次關閉被兩條路徑各收一次」。`isCustomOpen()` 也讀旗標，不讀 DOM 的 `open` 屬性。反覆開關十次 `history.length` 不變（測過）。
+
 ## 題庫（`app/questions.js`）
 
 90 題 × 8 種語言，分五個分類（`talk` / `voice` / `quickfire` / `gesture` / `interact`），`CATEGORY_GROUPS` 把它們分成兩組。
@@ -51,13 +55,18 @@
 
 ## 引爆時間的選項在 `scripts/build.js`
 
-`TIMER`（`minOptions` / `maxOptions` / 預設值）的**單一來源在 build 腳本裡**，build 時內嵌成 `window.BOMB.timer`。`app.js` 不自己另外寫一份——兩邊各有一份的話，改了選項卻忘了改預設值，就會出現「預設值不在選項裡、五顆按鈕一顆都沒亮」。`checkTimer()` 會在 build 時擋下這種組合。
+`TIMER`（`minOptions` / `maxOptions` / `presets` / 預設值）的**單一來源在 build 腳本裡**，build 時內嵌成 `window.BOMB.timer`。`app.js` 不自己另外寫一份——兩邊各有一份的話，改了選項卻忘了改預設值，就會出現「預設值不在選項裡、五顆按鈕一顆都沒亮」。`checkTimer()` 會在 build 時擋下這種組合。
 
-「最長」小於「最短」的選項直接 `disabled`（壓扁樣式），不是選了再跳錯誤。
+設定畫面平常**只露出 `presets` 那三顆區間**，最短／最長那兩排收在「自訂區間」底下（CONCEPT.md 2.2）。`checkTimer()` 一起守著三件事：每顆預設的 min/max 都真的在選項裡、max 不小於 min、而且 `defaultMin`/`defaultMax` 剛好等於其中一顆——最後這條漏了的話，一打開三顆都不亮，看起來像「還沒選」。
+
+- 預設按鈕上只寫區間本身（「30 秒–2 分」），不取名字，所以加一顆預設**不用動 locales**
+- 存檔的區間對不到任何預設時，`loadSettings()` 會強制把「自訂區間」展開
+- 「最長」小於「最短」的選項直接 `disabled`（壓扁樣式），不是選了再跳錯誤
+- ⚠️ 那一排是 `.seg-3`，字級與換行規則跟 `.seg-4` / `.seg-5` **不一樣**（見「配色 / UI」）
 
 ## 前端結構
 
-沒有 bundler。三個畫面（設定／進行中／爆炸）在同一份 HTML 裡靠 `showScreen()` 切換，共用同一個網址。
+沒有 bundler。三個畫面（設定／進行中／爆炸）在同一份 HTML 裡靠 `showScreen()` 切換，共用同一個網址。自訂題目是**同一頁的 `<dialog>`，不是第四個畫面、也不是另一個網址**——開一個 `/bomb/{lang}/custom/` 的話，那是八種語言各多一頁「只有兩個輸入框、幾乎沒有內文」的頁面進 sitemap，正是 2026/8 那次被演算法降權的樣態（`app/strings.js` 開頭）。順帶也不用回首頁的 `vercel.json` 補白名單。
 
 - **文案唯一來源是 `app/strings.js` + `app/locales/`**。`scripts/build.js` 用它替換 `template.html` 的 `{{token}}`，每個語言各產生一份靜態頁，同時把該語言內嵌成 `window.BOMB.T`。對不到值的 token 會**直接讓 build 失敗**
 - 題庫只內嵌「這一頁那個語言」的文字，不是八種全帶
@@ -68,7 +77,9 @@
 色票、圓角、間距全部來自 `https://www.vibeweb100.com/design-tokens.css`（外部引用，**不要把變數複製進這個 repo**）。`app.css` 裡不寫死 hex。
 
 - `app.css` 從開頭到「定時炸彈專屬」那條分隔線之間，是跟 00～04 共用的元件（導覽列、按鈕、表單、彈窗、頁尾）。**不要在這個檔案裡覆寫它們**，要改就回去改共用的那份，六個專案一起動
-- 設定畫面那兩顆按鈕（`.pick-button`）的色組與立體語言，數值跟 03_PreferenceMatch 的 O／X 鍵完全相同。問答型固定 Primary、挑戰型固定 Secondary，兩個主題都一樣——不能改用 `--btn-face`，它在淺色模式是 Secondary，問答型會跟著變粉色
+- 設定畫面那兩顆按鈕（`.pick-button`）的色組與立體語言，數值跟 03_PreferenceMatch 的 O／X 鍵完全相同。問答型固定 Primary、動作型固定 Secondary，兩個主題都一樣——不能改用 `--btn-face`，它在淺色模式是 Secondary，問答型會跟著變粉色
+- ⚠️ `.seg-3`（三顆引爆區間）**不能跟 `.seg-4` / `.seg-5` 共用 `.seg-item` 的尺寸**：它放的是「30 Sek.–2 Min.」這種兩段式文字，德文在 375px 下量出來剛好把 92px 的格子塞滿、貼死框線。所以那一排單獨降一階字級（0.8rem）、`white-space: normal`、`height: auto` + `min-height: 44px`，讓德文在破折號後折成兩行。修改預設區間或新增語言時，**這一條要在 375px 用德文實測**
+- 「開始遊戲」（`.btn-start`）是 `position: sticky; bottom`，捲動時黏在畫面底部（CONCEPT.md 2.14）。它靠的是祖先都沒有 `overflow: hidden`——`main` / `.view` 現在都沒有，之後要在那兩層加 overflow 前先想一下這顆鍵
 - 深淺色用 `<html class="light">` 表示淺色，深色是預設值。class 掛在 `<html>` 而不是 `<body>`：決定主題那段 script 在 `<head>` 就要跑完，那時 `<body>` 還不存在
 - 頁尾那條分隔線要**滿版**：寬度限制下在 `.footer-inner`，不是 `<footer>` 本身
 - 導覽列在 420px 以下才隱藏標題（量過的臨界點，別往上調）；語言下拉在 520px 以下縮到 124px，那條規則**一定要放在基礎 `select` 規則之後**

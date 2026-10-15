@@ -2,6 +2,7 @@
 <html lang="{{htmlLang}}">
   <head>
     {{head}}
+    {{jsonLd}}
   </head>
 
   <body>
@@ -9,7 +10,7 @@
       設定畫面那兩顆按鈕的圖示。Material Symbols Rounded（24px / wght 400 / GRAD 0 /
       opsz 24），依 ARCHITECTURE.md 第 7 節直接內嵌 SVG、fill 吃 currentColor，
       不載整套字型——為了兩顆圖示多背一個字型檔不划算。
-      forum = 問答型（講話）、theater_comedy = 挑戰型（演一個動作）。
+      forum = 問答型（講話）、theater_comedy = 動作型（演一個動作）。
     -->
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-ask" viewBox="0 -960 960 960">
@@ -39,13 +40,36 @@
         <section class="surface">
           <h2>{{timerHeading}}</h2>
 
-          <span class="field-label">{{minTimeLabel}}</span>
-          <div class="seg seg-4" id="min-seg" role="radiogroup" aria-label="{{minTimeLabel}}"></div>
+          <!--
+            平常只露出三個區間（選項本體在 scripts/build.js 的 TIMER.presets）。
 
-          <span class="field-label field-label-gap">{{maxTimeLabel}}</span>
-          <div class="seg seg-5" id="max-seg" role="radiogroup" aria-label="{{maxTimeLabel}}"></div>
+            最短／最長那兩排收在「自訂」底下：攤開來是九顆按鈕加兩個標籤，還帶著
+            一條要讀完才懂的規則（最長不能小於最短）——第一次打開的人得先解一道題，
+            才走得到下面的「開始遊戲」。
+          -->
+          <div class="seg seg-3" id="preset-seg" role="radiogroup" aria-label="{{timerHeading}}"></div>
 
-          <p class="hint">{{timerHint}}</p>
+          <button
+            class="timer-toggle"
+            id="timer-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="timer-custom"
+          >
+            {{timerCustomToggle}}
+          </button>
+
+          <div id="timer-custom" hidden>
+            <span class="field-label">{{minTimeLabel}}</span>
+            <div class="seg seg-4" id="min-seg" role="radiogroup" aria-label="{{minTimeLabel}}"></div>
+
+            <span class="field-label field-label-gap">{{maxTimeLabel}}</span>
+            <div class="seg seg-5" id="max-seg" role="radiogroup" aria-label="{{maxTimeLabel}}"></div>
+
+            <!-- 這段說明只在展開時出現。收合狀態下三顆區間本身已經講完該講的，
+                 多一行灰字只是把「開始遊戲」再往下推 -->
+            <p class="hint">{{timerHint}}</p>
+          </div>
         </section>
 
         <section class="surface">
@@ -55,7 +79,7 @@
           </div>
 
           <!--
-            左右兩顆大按鈕（問答型 / 挑戰型），由 app.js 依 CATEGORY_GROUPS 產生。
+            左右兩顆大按鈕（問答型 / 動作型），由 app.js 依 CATEGORY_GROUPS 產生。
 
             做成按鈕而不是一排打勾框，是因為這一頁只有這一個真正要做的決定：
             按鈕大、單手按得到，選了哪邊填滿、沒選的維持線框，低頭看一眼就知道
@@ -64,29 +88,17 @@
           -->
           <div class="pick-buttons" id="pick-buttons"></div>
 
-          <div class="custom-box">
-            <label class="field-label" for="custom-input">{{customLabel}}</label>
-            <div class="row">
-              <input
-                class="field"
-                id="custom-input"
-                type="text"
-                maxlength="80"
-                autocomplete="off"
-                placeholder="{{customPlaceholder}}"
-              />
-              <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
-            </div>
+          <!--
+            自訂題目搬進 #custom-modal，這裡只留一顆按鈕。
 
-            <label class="field-label field-label-gap" for="custom-group">{{customCategoryLabel}}</label>
-            <span class="select-wrap select-wrap-block">
-              <select id="custom-group"></select>
-            </span>
-
-            <ul class="chosen-list custom-list" id="custom-list"></ul>
-            <p class="empty" id="custom-empty">{{customEmpty}}</p>
-            <p class="hint">{{customHint}}</p>
-          </div>
+            原本那一整塊表單就長在「開始遊戲」正上方，第一次玩的人滑到這裡看到的
+            最後一樣東西是一個空的輸入框加一個下拉——讀起來像「這裡沒填完不能走」，
+            結果是停在這一頁不動。想加題目的是玩過幾次的人，讓他們多按一下就好。
+          -->
+          <button class="btn-outline btn-block custom-open" id="open-custom" type="button">
+            <span>{{customLabel}}</span>
+            <span class="custom-open-count" id="custom-open-count"></span>
+          </button>
         </section>
 
         <p class="form-error" id="deck-warning" role="status" hidden></p>
@@ -96,7 +108,7 @@
       </section>
 
       <!--
-        遊戲進行中。畫面上只有兩件東西：這一題，以及一條佔滿寬度的「完成」。
+        遊戲進行中。畫面上只有三件東西：這一題屬於哪一型、這一題，以及一條佔滿寬度的「完成」。
         刻意不放剩餘時間、不放已抽題數、不放任何進度——看得到倒數的話，
         最後十秒沒有人肯接手機（CONCEPT.md 2.2）。
       -->
@@ -122,6 +134,9 @@
                 <circle class="bomb-spark" cx="58" cy="9" r="3.5" />
               </svg>
             </div>
+            <!-- 這一題是問答型還是動作型。拿到手機的人先掃到這個，就知道
+                 接下來是要用講的還是要離開椅子，不用讀完整句才反應過來 -->
+            <span class="task-tag" id="task-tag"></span>
             <p class="task-text" id="task-text" aria-live="polite"></p>
           </div>
 
@@ -158,6 +173,40 @@
         </section>
       </section>
     </main>
+
+    <!--
+      自訂題目。開這個彈窗時會 pushState 一格，Android 的返回鍵才會是「關掉彈窗」
+      而不是直接離開網站（見 app.js 的 openCustomModal / onPopState）。
+    -->
+    <dialog class="modal modal-custom" id="custom-modal">
+      <h2>{{customLabel}}</h2>
+      <p>{{customHint}}</p>
+
+      <div class="row custom-row">
+        <input
+          class="field"
+          id="custom-input"
+          type="text"
+          maxlength="80"
+          autocomplete="off"
+          placeholder="{{customPlaceholder}}"
+          aria-label="{{customLabel}}"
+        />
+        <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+      </div>
+
+      <label class="field-label field-label-gap" for="custom-group">{{customCategoryLabel}}</label>
+      <span class="select-wrap select-wrap-block">
+        <select id="custom-group"></select>
+      </span>
+
+      <ul class="chosen-list custom-list" id="custom-list"></ul>
+      <p class="empty" id="custom-empty">{{customEmpty}}</p>
+
+      <div class="modal-actions">
+        <button class="btn-solid" id="custom-done" type="button">{{customDoneButton}}</button>
+      </div>
+    </dialog>
 
     <!-- 返回鍵與「改設定」共用這個確認：遊戲中離開等於這一輪作廢（CONCEPT.md 2.11） -->
     <dialog class="modal" id="leave-modal">

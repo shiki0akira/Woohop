@@ -44,7 +44,7 @@ html.light {
   --btn-disabled-face: var(--secondary-200);
   --btn-disabled-text: var(--secondary-800);
 
-  /* 問答型固定走 Primary（藍）、挑戰型固定走 Secondary（粉），兩個主題都一樣。
+  /* 問答型固定走 Primary（藍）、動作型固定走 Secondary（粉），兩個主題都一樣。
      不能直接用 --btn-face：它在淺色模式是 Secondary，問答型會跟著變粉色。
      這一組的配法與數值跟 03_PreferenceMatch 的 O／X 鍵完全相同，
      淺色模式：500 當底、300 當未選中的底、600 當厚度、900 當文字、700 當圖示。 */
@@ -636,7 +636,7 @@ main {
   margin-top: var(--space-3);
 }
 
-/* ---------- 問答型 / 挑戰型 兩顆大按鈕 ---------- */
+/* ---------- 問答型 / 動作型 兩顆大按鈕 ---------- */
 
 /* symbol 的定義本體不顯示，只給 <use> 引用 */
 .icon-sprite {
@@ -647,7 +647,8 @@ main {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-2);
-  margin-top: var(--space-2);
+  /* 標題與底下第一個控制項之間固定 12px，跟引爆時間那張卡的 .seg-3 一致 */
+  margin-top: 0.75rem;
 }
 
 /*
@@ -759,6 +760,32 @@ main {
   gap: 0.4rem;
 }
 
+/* 三顆區間鍵是唯一直接接在卡片標題底下的一排，所以那 12px 掛在這裡。
+   跟「題目」那張卡的 .pick-buttons 對齊——原本一邊 0、一邊 16px，並排看得出來一鬆一緊 */
+.seg-3 {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 0.75rem;
+}
+
+/*
+ * 三顆一排的區間鍵，放的是「30 Sek.–2 Min.」這種兩段式文字，比下面那兩排的
+ * 單一數值長得多。德文在 375px 下量出來剛好頂到框線（92px 的格子、字寬 92px），
+ * 所以這一排——**也只有這一排**——字級降一階、允許在破折號後折行，
+ * 高度改成 min-height 撐得開兩行。
+ *
+ * 選擇器掛在 .seg-3 底下而不是改 .seg-item 本體：那顆是共用元件，
+ * 動它會連帶影響最短／最長那兩排。
+ */
+.seg-3 .seg-item {
+  height: auto;
+  min-height: 44px;
+  padding: 0.3rem 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+}
+
 .seg-4 {
   grid-template-columns: repeat(4, 1fr);
 }
@@ -822,17 +849,59 @@ main {
 
 /* ---------- 設定畫面 ---------- */
 
-/* 自己出題獨立框起來：它跟上面那疊分類是不同性質的東西，
-   沒有框線會像是掛在最後一個分類底下 */
-.custom-box {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 0.75rem;
-  margin-top: var(--space-3);
+/* 「自訂」那兩排時間的開關。刻意做成文字連結的份量、不做成按鈕：
+   它是這張卡片裡最不重要的東西，長得像按鈕會跟上面三顆區間搶注意力 */
+.timer-toggle {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: var(--space-2);
+  padding: 0.2rem 0;
+  border: none;
+  background: none;
+  color: var(--color-accent-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-.custom-box .hint {
-  margin-bottom: 0;
+.timer-toggle::after {
+  content: '▾';
+  font-size: 0.75rem;
+  transition: transform 0.12s ease;
+}
+
+.timer-toggle[aria-expanded='true']::after {
+  transform: rotate(180deg);
+}
+
+.timer-toggle:hover {
+  text-decoration: underline;
+}
+
+/* 自訂題目的入口。題數靠在標題旁邊，跟「牌堆 90 題」那顆計數器同一套語言 */
+.custom-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.custom-open-count {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* 一題都還沒加的時候整個不出現，不要留一個空的括號 */
+.custom-open-count:empty {
+  display: none;
+}
+
+.custom-row {
+  margin-top: var(--space-2);
 }
 
 /* 分類下拉要撐滿整行（導覽列那顆是固定 140px，這裡不能沿用） */
@@ -901,15 +970,51 @@ main {
   color: var(--color-accent-text);
 }
 
-/* 「開始遊戲」是這一頁唯一的出口，做得比一般 btn-block 厚一階 */
+/*
+ * 「開始遊戲」是這一頁唯一的出口，做得比一般 btn-block 厚一階。
+ *
+ * sticky：它在文件流裡還是排在設定底下，但捲動時會黏在畫面底部——**不管上面
+ * 放了多少設定，一載入就看得到它**。實測時看到的行為是有人滑到一半、看到一個
+ * 空的輸入框就停住了，根本沒滑到這顆；壓縮版面只是把它往上推，黏住才是保證。
+ * 捲到最底時它自然落回原位，不會蓋住底下的「玩法」連結。
+ */
 .btn-start {
+  position: sticky;
+  bottom: var(--space-2);
+  z-index: 2;
   min-height: 56px;
   margin-top: 0;
   font-size: 1.05rem;
   font-weight: 700;
+  box-shadow: var(--shadow-card);
 }
 
 /* ---------- 進行中 ---------- */
+
+/* 題型標籤。份量刻意壓到最小——它是給眼角餘光看的，
+   真正要讀的是底下那一題，標籤搶戲就本末倒置了 */
+.task-tag {
+  align-self: center;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--pick-edge);
+  border-radius: var(--radius-pill);
+  background: var(--pick-soft);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.tag-ask {
+  --pick-soft: var(--pick-a-soft);
+  --pick-edge: var(--pick-a-edge);
+}
+
+.tag-dare {
+  --pick-soft: var(--pick-b-soft);
+  --pick-edge: var(--pick-b-edge);
+}
 
 /*
  * 這一頁只有兩件東西：題目、以及一條佔滿寬度的「完成」。

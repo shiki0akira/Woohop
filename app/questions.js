@@ -8,7 +8,7 @@
  * 分類就是主持人在設定畫面勾選的單位（CONCEPT.md 2.4）：
  *   talk      問答型         45 題
  *   voice     聲音與模仿     13 題  ┐
- *   quickfire 快問快答       10 題  │ 這四類合起來是題庫文件說的「挑戰型」45 題
+ *   quickfire 快問快答       10 題  │ 這四類合起來是題庫文件說的「動作型」45 題
  *   gesture   表情與肢體     12 題  │
  *   interact  跟旁邊的人互動 10 題  ┘
  *
@@ -25,7 +25,7 @@
 export const CATEGORIES = ['talk', 'voice', 'quickfire', 'gesture', 'interact'];
 
 /*
- * 設定畫面把分類分成兩組顯示（問答型 / 挑戰型）。這裡只是分組用的中繼資料，
+ * 設定畫面把分類分成兩組顯示（問答型 / 動作型）。這裡只是分組用的中繼資料，
  * 抽題邏輯完全不看它——牌堆是「勾選到的分類」整副洗牌，沒有 50/50 的類別平衡
  * （兩類本來就都是 45 題，比例已經是平的，見 QUESTIONS.md）。
  */
@@ -667,7 +667,7 @@ export const QUESTIONS = [
     },
   },
 
-  // ---------- 挑戰型：聲音與模仿（13 題）----------
+  // ---------- 動作型：聲音與模仿（13 題）----------
   {
     id: 'voice.animalGuess',
     category: 'voice',
@@ -774,14 +774,14 @@ export const QUESTIONS = [
     id: 'voice.dialectFruits',
     category: 'voice',
     text: {
-      'zh-TW': '用台語說出三種水果！',
-      en: 'Name three fruits in another language or dialect you know!',
-      ja: '方言で果物を三つ言って！',
-      ko: '사투리로 과일 세 가지를 말해 보세요!',
-      de: 'Nenne drei Obstsorten in einem Dialekt oder einer anderen Sprache!',
-      fr: 'Nomme trois fruits dans une autre langue ou un patois que tu connais !',
-      es: '¡Di tres frutas en otro idioma o dialecto que conozcas!',
-      'zh-CN': '用方言说出三种水果！',
+      'zh-TW': '用台語說出兩種水果！',
+      en: 'Name two fruits in another language or dialect you know!',
+      ja: '方言で果物を二つ言って！',
+      ko: '사투리로 과일 두 가지를 말해 보세요!',
+      de: 'Nenne zwei Obstsorten in einem Dialekt oder einer anderen Sprache!',
+      fr: 'Nomme deux fruits dans une autre langue ou un patois que tu connais !',
+      es: '¡Di dos frutas en otro idioma o dialecto que conozcas!',
+      'zh-CN': '用方言说出两种水果！',
     },
   },
   {
@@ -841,47 +841,47 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 'voice.threeAnimals',
+    id: 'voice.twoAnimals',
     category: 'voice',
     text: {
-      'zh-TW': '學三種動物叫聲！',
-      en: 'Make the sounds of three different animals!',
-      ja: '動物の鳴き声を三種類まねして！',
-      ko: '동물 소리 세 가지를 흉내 내 보세요!',
-      de: 'Ahme die Geräusche von drei verschiedenen Tieren nach!',
-      fr: 'Imite les cris de trois animaux différents !',
-      es: '¡Imita los sonidos de tres animales distintos!',
-      'zh-CN': '学三种动物叫声！',
+      'zh-TW': '學兩種動物叫聲！',
+      en: 'Make the sounds of two different animals!',
+      ja: '動物の鳴き声を二種類まねして！',
+      ko: '동물 소리 두 가지를 흉내 내 보세요!',
+      de: 'Ahme die Geräusche von zwei verschiedenen Tieren nach!',
+      fr: 'Imite les cris de deux animaux différents !',
+      es: '¡Imita los sonidos de dos animales distintos!',
+      'zh-CN': '学两种动物叫声！',
     },
   },
 
-  // ---------- 挑戰型：快問快答（10 題）----------
+  // ---------- 動作型：快問快答（10 題）----------
   {
-    id: 'quickfire.fiveFruits',
+    id: 'quickfire.threeFruits',
     category: 'quickfire',
     text: {
-      'zh-TW': '說出五個水果的名字，中間不能停超過兩秒！',
-      en: 'Name five fruits without pausing more than two seconds between them!',
-      ja: '果物の名前を五つ、二秒以上止まらずに言って！',
-      ko: '과일 이름 다섯 개를 2초 이상 멈추지 않고 말해 보세요!',
-      de: 'Nenne fünf Obstsorten, ohne länger als zwei Sekunden zu stocken!',
-      fr: 'Nomme cinq fruits sans t’arrêter plus de deux secondes !',
-      es: '¡Di cinco frutas sin parar más de dos segundos entre una y otra!',
-      'zh-CN': '说出五个水果的名字，中间不能停超过两秒！',
+      'zh-TW': '說出三個水果的名字，中間不能停超過兩秒！',
+      en: 'Name three fruits without pausing more than two seconds between them!',
+      ja: '果物の名前を三つ、二秒以上止まらずに言って！',
+      ko: '과일 이름 세 개를 2초 이상 멈추지 않고 말해 보세요!',
+      de: 'Nenne drei Obstsorten, ohne länger als zwei Sekunden zu stocken!',
+      fr: 'Nomme trois fruits sans t’arrêter plus de deux secondes !',
+      es: '¡Di tres frutas sin parar más de dos segundos entre una y otra!',
+      'zh-CN': '说出三个水果的名字，中间不能停超过两秒！',
     },
   },
   {
-    id: 'quickfire.fiveCountries',
+    id: 'quickfire.threeCountries',
     category: 'quickfire',
     text: {
-      'zh-TW': '十秒內說出五個國家的名字！',
-      en: 'Name five countries in ten seconds!',
-      ja: '十秒以内に国名を五つ言って！',
-      ko: '10초 안에 나라 이름 다섯 개를 말해 보세요!',
-      de: 'Nenne in zehn Sekunden fünf Länder!',
-      fr: 'Cite cinq pays en dix secondes !',
-      es: '¡Di cinco países en diez segundos!',
-      'zh-CN': '十秒内说出五个国家的名字！',
+      'zh-TW': '十秒內說出三個國家的名字！',
+      en: 'Name three countries in ten seconds!',
+      ja: '十秒以内に国名を三つ言って！',
+      ko: '10초 안에 나라 이름 세 개를 말해 보세요!',
+      de: 'Nenne in zehn Sekunden drei Länder!',
+      fr: 'Cite trois pays en dix secondes !',
+      es: '¡Di tres países en diez segundos!',
+      'zh-CN': '十秒内说出三个国家的名字！',
     },
   },
   {
@@ -916,28 +916,28 @@ export const QUESTIONS = [
     id: 'quickfire.fridgeItems',
     category: 'quickfire',
     text: {
-      'zh-TW': '說出五樣冰箱裡常會有的東西！',
-      en: 'Name five things you usually find in a fridge!',
-      ja: '冷蔵庫によく入っているものを五つ言って！',
-      ko: '냉장고에 흔히 있는 것 다섯 가지를 말해 보세요!',
-      de: 'Nenne fünf Dinge, die meistens im Kühlschrank sind!',
-      fr: 'Cite cinq choses qu’on trouve souvent dans un frigo !',
-      es: '¡Di cinco cosas que suele haber en una nevera!',
-      'zh-CN': '说出五样冰箱里常会有的东西！',
+      'zh-TW': '說出三樣冰箱裡常會有的東西！',
+      en: 'Name three things you usually find in a fridge!',
+      ja: '冷蔵庫によく入っているものを三つ言って！',
+      ko: '냉장고에 흔히 있는 것 세 가지를 말해 보세요!',
+      de: 'Nenne drei Dinge, die meistens im Kühlschrank sind!',
+      fr: 'Cite trois choses qu’on trouve souvent dans un frigo !',
+      es: '¡Di tres cosas que suele haber en una nevera!',
+      'zh-CN': '说出三样冰箱里常会有的东西！',
     },
   },
   {
-    id: 'quickfire.fiveIdioms',
+    id: 'quickfire.threeIdioms',
     category: 'quickfire',
     text: {
-      'zh-TW': '連續說出五個成語！',
-      en: 'Rattle off five idioms or set phrases in a row!',
-      ja: '四字熟語かことわざを五つ続けて言って！',
-      ko: '사자성어나 속담 다섯 개를 연달아 말해 보세요!',
-      de: 'Sag fünf Redewendungen am Stück auf!',
-      fr: 'Enchaîne cinq expressions toutes faites !',
-      es: '¡Suelta cinco refranes o frases hechas seguidos!',
-      'zh-CN': '连续说出五个成语！',
+      'zh-TW': '連續說出三個成語！',
+      en: 'Rattle off three idioms or set phrases in a row!',
+      ja: '四字熟語かことわざを三つ続けて言って！',
+      ko: '사자성어나 속담 세 개를 연달아 말해 보세요!',
+      de: 'Sag drei Redewendungen am Stück auf!',
+      fr: 'Enchaîne trois expressions toutes faites !',
+      es: '¡Suelta tres refranes o frases hechas seguidos!',
+      'zh-CN': '连续说出三个成语！',
     },
   },
   {
@@ -959,31 +959,31 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 'quickfire.fiveApps',
+    id: 'quickfire.threeApps',
     category: 'quickfire',
     text: {
-      'zh-TW': '十秒內說出五個手機 App 的名字！',
-      en: 'Name five phone apps in ten seconds!',
-      ja: '十秒以内にスマホアプリの名前を五つ言って！',
-      ko: '10초 안에 휴대폰 앱 이름 다섯 개를 말해 보세요!',
-      de: 'Nenne in zehn Sekunden fünf Handy-Apps!',
-      fr: 'Cite cinq applis de téléphone en dix secondes !',
-      es: '¡Di cinco aplicaciones del móvil en diez segundos!',
-      'zh-CN': '十秒内说出五个手机 App 的名字！',
+      'zh-TW': '十秒內說出三個手機 App 的名字！',
+      en: 'Name three phone apps in ten seconds!',
+      ja: '十秒以内にスマホアプリの名前を三つ言って！',
+      ko: '10초 안에 휴대폰 앱 이름 세 개를 말해 보세요!',
+      de: 'Nenne in zehn Sekunden drei Handy-Apps!',
+      fr: 'Cite trois applis de téléphone en dix secondes !',
+      es: '¡Di tres aplicaciones del móvil en diez segundos!',
+      'zh-CN': '十秒内说出三个手机 App 的名字！',
     },
   },
   {
     id: 'quickfire.thingsInRoom',
     category: 'quickfire',
     text: {
-      'zh-TW': '說出五種在這個房間裡看得到的東西！',
-      en: 'Name five things you can see in this room!',
-      ja: 'この部屋の中に見えるものを五つ言って！',
-      ko: '이 방에서 보이는 것 다섯 가지를 말해 보세요!',
-      de: 'Nenne fünf Dinge, die du in diesem Raum sehen kannst!',
-      fr: 'Cite cinq choses que tu vois dans cette pièce !',
-      es: '¡Di cinco cosas que puedas ver en esta sala!',
-      'zh-CN': '说出五种在这个房间里看得到的东西！',
+      'zh-TW': '說出三種在這個房間裡看得到的東西！',
+      en: 'Name three things you can see in this room!',
+      ja: 'この部屋の中に見えるものを三つ言って！',
+      ko: '이 방에서 보이는 것 세 가지를 말해 보세요!',
+      de: 'Nenne drei Dinge, die du in diesem Raum sehen kannst!',
+      fr: 'Cite trois choses que tu vois dans cette pièce !',
+      es: '¡Di tres cosas que puedas ver en esta sala!',
+      'zh-CN': '说出三种在这个房间里看得到的东西！',
     },
   },
   {
@@ -1002,7 +1002,7 @@ export const QUESTIONS = [
     },
   },
 
-  // ---------- 挑戰型：表情與肢體（12 題）----------
+  // ---------- 動作型：表情與肢體（12 題）----------
   {
     id: 'gesture.emotionFace',
     category: 'gesture',
@@ -1060,17 +1060,17 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 'gesture.threeFaces',
+    id: 'gesture.twoFaces',
     category: 'gesture',
     text: {
-      'zh-TW': '連續做出三個不同的鬼臉！',
-      en: 'Pull three different silly faces in a row!',
-      ja: '違う変顔を三つ続けてやって！',
-      ko: '서로 다른 우스꽝스러운 표정 세 개를 연달아 지어 보세요!',
-      de: 'Schneide drei verschiedene Grimassen hintereinander!',
-      fr: 'Fais trois grimaces différentes à la suite !',
-      es: '¡Pon tres muecas distintas seguidas!',
-      'zh-CN': '连续做出三个不同的鬼脸！',
+      'zh-TW': '連續做出兩個不同的鬼臉！',
+      en: 'Pull two different silly faces in a row!',
+      ja: '違う変顔を二つ続けてやって！',
+      ko: '서로 다른 우스꽝스러운 표정 두 개를 연달아 지어 보세요!',
+      de: 'Schneide zwei verschiedene Grimassen hintereinander!',
+      fr: 'Fais deux grimaces différentes à la suite !',
+      es: '¡Pon dos muecas distintas seguidas!',
+      'zh-CN': '连续做出两个不同的鬼脸！',
     },
   },
   {
@@ -1088,17 +1088,17 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 'gesture.threeMimes',
+    id: 'gesture.twoMimes',
     category: 'gesture',
     text: {
-      'zh-TW': '用手勢演出「開車」「游泳」「刷牙」三個動作！',
-      en: 'Mime driving, swimming and brushing your teeth!',
-      ja: '「運転」「泳ぐ」「歯みがき」の三つをジェスチャーでやって！',
-      ko: '“운전”, “수영”, “양치질” 세 동작을 몸짓으로 표현해 보세요!',
-      de: 'Mime Autofahren, Schwimmen und Zähneputzen!',
-      fr: 'Mime conduire, nager et se brosser les dents !',
-      es: '¡Haz mímica de conducir, nadar y lavarte los dientes!',
-      'zh-CN': '用手势演出「开车」「游泳」「刷牙」三个动作！',
+      'zh-TW': '用手勢演出「開車」「游泳」兩個動作！',
+      en: 'Mime driving and swimming!',
+      ja: '「運転」「泳ぐ」の二つをジェスチャーでやって！',
+      ko: '“운전”, “수영” 두 동작을 몸짓으로 표현해 보세요!',
+      de: 'Mime Autofahren und Schwimmen!',
+      fr: 'Mime conduire et nager !',
+      es: '¡Haz mímica de conducir y nadar!',
+      'zh-CN': '用手势演出「开车」「游泳」两个动作！',
     },
   },
   {
@@ -1119,14 +1119,14 @@ export const QUESTIONS = [
     id: 'gesture.selfiePoses',
     category: 'gesture',
     text: {
-      'zh-TW': '假裝你在自拍，擺三個不同的姿勢！',
-      en: 'Pretend to take a selfie, striking three different poses!',
-      ja: '自撮りのふりをして、違うポーズを三つ決めて！',
-      ko: '셀카 찍는 척하면서 서로 다른 포즈 세 개를 취해 보세요!',
-      de: 'Tu so, als machtest du ein Selfie, mit drei verschiedenen Posen!',
-      fr: 'Fais semblant de prendre un selfie avec trois poses différentes !',
-      es: '¡Haz como si te hicieras un selfi con tres poses distintas!',
-      'zh-CN': '假装你在自拍，摆三个不同的姿势！',
+      'zh-TW': '假裝你在自拍，擺兩個不同的姿勢！',
+      en: 'Pretend to take a selfie, striking two different poses!',
+      ja: '自撮りのふりをして、違うポーズを二つ決めて！',
+      ko: '셀카 찍는 척하면서 서로 다른 포즈 두 개를 취해 보세요!',
+      de: 'Tu so, als machtest du ein Selfie, mit zwei verschiedenen Posen!',
+      fr: 'Fais semblant de prendre un selfie avec deux poses différentes !',
+      es: '¡Haz como si te hicieras un selfi con dos poses distintas!',
+      'zh-CN': '假装你在自拍，摆两个不同的姿势！',
     },
   },
   {
@@ -1172,7 +1172,7 @@ export const QUESTIONS = [
     },
   },
 
-  // ---------- 挑戰型：跟旁邊的人互動（10 題）----------
+  // ---------- 動作型：跟旁邊的人互動（10 題）----------
   {
     id: 'interact.highFive',
     category: 'interact',

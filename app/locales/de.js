@@ -29,22 +29,25 @@ export default {
     'Die Bombe geht zu einem zufälligen Zeitpunkt in diesem Bereich hoch. Die Restzeit wird nie angezeigt.',
   minTimeLabel: 'Mindestens',
   maxTimeLabel: 'Höchstens',
+  timerCustomToggle: 'Eigener Bereich',
   secondsUnit: '{n} Sek.',
   minutesUnit: '{n} Min.',
+  timeRange: '{min}–{max}',
 
   questionsHeading: 'Aufgaben',
   deckCount: '{n} im Stapel',
   groupAsk: 'Fragen',
-  groupDare: 'Mutproben',
+  groupDare: 'Aktionen',
   catCount: '{n} Aufgaben',
 
   deckEmptyWarning: 'Wähle mindestens eine Kategorie aus, um zu starten.',
   deckThinWarning: 'Nur {n} im Stapel — Aufgaben können sich innerhalb einer Runde wiederholen.',
 
-  customLabel: 'Eigene Aufgabe',
+  customLabel: 'Eigene Aufgaben',
   customPlaceholder: 'z. B. Nenne dein Lieblingsessen',
   customCategoryLabel: 'Einsortieren unter',
   customAddButton: 'Hinzufügen',
+  customDoneButton: 'Fertig',
   customEmpty: 'Du hast noch keine eigenen Aufgaben angelegt.',
   customRemoveLabel: 'Diese Aufgabe löschen',
   customHint: 'Eigene Aufgaben bleiben auf diesem Gerät und sind beim nächsten Mal wieder da.',
@@ -74,12 +77,13 @@ export default {
   leaveCancel: 'Weiterspielen',
 
   // ---------- Regelseite ----------
+  rulesTitle: 'Zeitbombe: so wird gespielt',
   rulesIntro:
     'Ein Handy, alle im Kreis. Eine Aufgabe erscheint, wer das Handy hält, erledigt sie und gibt weiter. Die Bombe geht zu einem zufälligen Zeitpunkt hoch, die Restzeit wird nie angezeigt. Wer sie dann hält, verliert die Runde.',
   rulesHostHeading: 'Vor dem Start (wer das Handy dabei hat)',
   rulesHostSteps: [
-    'Wähl Fragen, Mutproben oder beides. Viele neue Gesichter? Fang nur mit Fragen an.',
-    'Eigene Insider einbauen? Leg unter „Eigene Aufgabe“ ein paar an und ordne sie einer Seite zu.',
+    'Wähl Fragen, Aktionen oder beides. Viele neue Gesichter? Fang nur mit Fragen an.',
+    'Eigene Insider einbauen? Leg unter „Eigene Aufgaben“ ein paar an und ordne sie einer Seite zu.',
     'Zündschnur einstellen. Für die erste Runde passen die voreingestellten 1–3 Minuten; wenn alle warm sind, probiert 30 Sekunden bis 2 Minuten.',
     'Sag drei Sätze zum Start: mach, was auf dem Bildschirm steht; tippe auf Fertig und gib weiter; wer es beim Knall hält, verliert die Runde.',
   ],
@@ -106,7 +110,7 @@ export default {
     },
     {
       q: 'Können wir eigene Aufgaben ergänzen?',
-      a: 'Ja. Über „Eigene Aufgabe“ auf der Einstellungsseite hinzufügen und einer Kategorie zuordnen — beim nächsten Mal ist sie wieder da. Sie bleibt auf diesem Gerät und wird nirgendwohin hochgeladen.',
+      a: 'Ja. Über „Eigene Aufgaben“ auf der Einstellungsseite hinzufügen und einer Kategorie zuordnen — beim nächsten Mal ist sie wieder da. Sie bleibt auf diesem Gerät und wird nirgendwohin hochgeladen.',
     },
     {
       q: 'Ein Handy von Hand zu Hand weiterreichen ist mir unangenehm.',

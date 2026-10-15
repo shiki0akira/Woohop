@@ -32,6 +32,8 @@
     groups: DATA.groups.slice(),
     min: TIMER.defaultMin,
     max: TIMER.defaultMax,
+    // 「自訂」那兩排有沒有展開。跟著設定一起記住，調過一次的人下次打開還在
+    timerCustom: false,
   };
 
   var custom = [];
@@ -66,17 +68,25 @@
   };
 
   var el = {
+    presetSeg: document.getElementById('preset-seg'),
+    timerToggle: document.getElementById('timer-toggle'),
+    timerCustom: document.getElementById('timer-custom'),
     minSeg: document.getElementById('min-seg'),
     maxSeg: document.getElementById('max-seg'),
     pickButtons: document.getElementById('pick-buttons'),
     deckCount: document.getElementById('deck-count'),
     deckWarning: document.getElementById('deck-warning'),
+    openCustom: document.getElementById('open-custom'),
+    customOpenCount: document.getElementById('custom-open-count'),
+    customModal: document.getElementById('custom-modal'),
     customInput: document.getElementById('custom-input'),
     customGroup: document.getElementById('custom-group'),
     customAdd: document.getElementById('custom-add'),
     customList: document.getElementById('custom-list'),
     customEmpty: document.getElementById('custom-empty'),
+    customDone: document.getElementById('custom-done'),
     startGame: document.getElementById('start-game'),
+    taskTag: document.getElementById('task-tag'),
     taskText: document.getElementById('task-text'),
     passRow: document.querySelector('.pass-row'),
     passButton: document.getElementById('pass-button'),
@@ -179,8 +189,13 @@
       }
       if (TIMER.minOptions.indexOf(saved.min) !== -1) settings.min = saved.min;
       if (TIMER.maxOptions.indexOf(saved.max) !== -1) settings.max = saved.max;
+      if (typeof saved.timerCustom === 'boolean') settings.timerCustom = saved.timerCustom;
     }
     clampRange();
+
+    // 存檔裡的區間對不到任何一顆預設時一定要展開，否則三顆都不亮，
+    // 而使用者完全看不到自己上次選的是什麼
+    if (!presetFor(settings.min, settings.max)) settings.timerCustom = true;
 
     var savedCustom = readJson(CUSTOM_KEY, []);
     if (Array.isArray(savedCustom)) {
@@ -214,8 +229,63 @@
   // ---------- 設定畫面 ----------
 
   function renderSegs() {
+    buildPresetSeg();
     buildSeg(el.minSeg, 'min', TIMER.minOptions, settings.min);
     buildSeg(el.maxSeg, 'max', TIMER.maxOptions, settings.max);
+    syncTimerCustom();
+  }
+
+  function presetFor(min, max) {
+    for (var i = 0; i < TIMER.presets.length; i += 1) {
+      if (TIMER.presets[i].min === min && TIMER.presets[i].max === max) return TIMER.presets[i];
+    }
+    return null;
+  }
+
+  /*
+   * 三顆區間按鈕（選項本體在 scripts/build.js 的 TIMER.presets）。
+   *
+   * 按鈕上只寫區間本身（「30 秒–2 分」），不另外取「快 / 標準 / 慢」那種名字：
+   * 區間就是最清楚的說明，而且不用為了三顆按鈕多翻八種語言。
+   */
+  function buildPresetSeg() {
+    el.presetSeg.textContent = '';
+    var current = presetFor(settings.min, settings.max);
+
+    TIMER.presets.forEach(function (preset) {
+      var label = document.createElement('label');
+      label.className = 'seg-item';
+
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'fuse-preset';
+      input.value = preset.id;
+      input.checked = Boolean(current) && current.id === preset.id;
+
+      input.addEventListener('change', function () {
+        settings.min = preset.min;
+        settings.max = preset.max;
+        // 按了現成的區間就把自訂收起來——那兩排已經沒有東西要看了
+        settings.timerCustom = false;
+        saveSettings();
+        renderSegs();
+      });
+
+      var span = document.createElement('span');
+      span.textContent = fill(T.timeRange, {
+        min: timeLabel(preset.min),
+        max: timeLabel(preset.max),
+      });
+
+      label.appendChild(input);
+      label.appendChild(span);
+      el.presetSeg.appendChild(label);
+    });
+  }
+
+  function syncTimerCustom() {
+    el.timerCustom.hidden = !settings.timerCustom;
+    el.timerToggle.setAttribute('aria-expanded', String(settings.timerCustom));
   }
 
   function buildSeg(container, name, options, current) {
@@ -266,7 +336,7 @@
     DATA.groups.forEach(function (id) {
       var button = document.createElement('button');
       button.type = 'button';
-      // 兩顆各有自己的色組（問答型走 Primary、挑戰型走 Secondary），見 app.css
+      // 兩顆各有自己的色組（問答型走 Primary、動作型走 Secondary），見 app.css
       button.className = 'pick-button pick-' + id;
 
       var icon = document.createElement('span');
@@ -389,6 +459,47 @@
     });
 
     el.customEmpty.hidden = custom.length > 0;
+    // 首頁那顆按鈕帶著題數：不打開彈窗也看得出來自己加過幾題
+    el.customOpenCount.textContent = custom.length ? fill(T.catCount, { n: custom.length }) : '';
+  }
+
+  /*
+   * 開彈窗前先 pushState 一格，返回鍵才會是「關掉彈窗」而不是直接離開網站
+   * ——設定畫面的返回鍵本來就是直接退出（CONCEPT.md 2.11），少了這一步，
+   * 在彈窗裡按返回的人會連整個遊戲一起關掉。
+   */
+  var hasDialog = typeof el.customModal.showModal === 'function';
+
+  /*
+   * 開著沒有靠 <dialog> 的 open 屬性判斷，自己記一個旗標。
+   *
+   * 這支負責的是「推的那一格 history 有沒有收掉」，而收掉的時機**不能**掛在
+   * close 事件上：那個事件的支援度在各家 WebView 裡並不一致（開發時用的
+   * 內嵌瀏覽器就完全不發），漏發一次就會多留一格，返回鍵得多按一次才離得開。
+   * 所以每條關閉路徑都自己收，旗標負責擋掉重複收的情況。
+   */
+  var customOpen = false;
+
+  function isCustomOpen() {
+    return customOpen;
+  }
+
+  function openCustomModal() {
+    customOpen = true;
+    history.pushState({ bomb: 'custom' }, '');
+    if (hasDialog) el.customModal.showModal();
+    else el.customModal.setAttribute('open', ''); // 沒有 <dialog> 的舊瀏覽器：至少露得出來
+  }
+
+  // fromPop：這次關閉是返回鍵造成的，剛剛推的那一格已經被吃掉了，不用再 back 一次
+  function closeCustomModal(fromPop) {
+    if (!customOpen) return; // 同一次關閉被兩條路徑各叫一次（例如按了「完成」又收到 close 事件）
+    customOpen = false;
+
+    if (hasDialog) el.customModal.close();
+    else el.customModal.removeAttribute('open');
+
+    if (!fromPop) history.back();
   }
 
   function buildCustomGroupSelect() {
@@ -682,6 +793,13 @@
     if (!task) return;
     round.drawn += 1;
     el.taskText.textContent = task.text;
+    /*
+     * 題型標籤。自訂題目也帶著 group（addCustom 存的就是 group），所以這裡
+     * 一律拿得到值——不用為自訂題另外做一個「未分類」的樣子。
+     * class 用 tag-{group}，色組直接沿用設定畫面那兩顆按鈕的 --pick-a / --pick-b。
+     */
+    el.taskTag.textContent = groupLabel(task.group);
+    el.taskTag.className = 'task-tag tag-' + task.group;
     armStuckHint();
   }
 
@@ -763,6 +881,12 @@
   }
 
   function onPopState() {
+    // 彈窗開著的話，返回鍵的工作就是關掉它（開的時候推的那一格剛好被這次吃掉）
+    if (isCustomOpen()) {
+      closeCustomModal(true);
+      return;
+    }
+
     if (screen === 'setup') return;
 
     if (screen === 'boom') {
@@ -785,6 +909,23 @@
   }
 
   // ---------- 綁定 ----------
+
+  el.timerToggle.addEventListener('click', function () {
+    settings.timerCustom = !settings.timerCustom;
+    saveSettings();
+    syncTimerCustom();
+  });
+
+  el.openCustom.addEventListener('click', openCustomModal);
+
+  el.customDone.addEventListener('click', function () {
+    closeCustomModal(false);
+  });
+
+  // Esc 關掉時只會發 close 事件、不會經過「完成」那條路，那一格一樣要收掉
+  el.customModal.addEventListener('close', function () {
+    closeCustomModal(false);
+  });
 
   el.customAdd.addEventListener('click', addCustom);
 

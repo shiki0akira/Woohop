@@ -19,7 +19,7 @@ import assert from 'node:assert/strict';
 import { QUESTIONS, CATEGORIES, CATEGORY_GROUPS, checkQuestions } from '../app/questions.js';
 import { LANGS } from '../app/strings.js';
 
-// QUESTIONS.md 的兩張表：問答型 45 題、挑戰型 45 題（拆成四個分類）
+// QUESTIONS.md 的兩張表：問答型 45 題、動作型 45 題（拆成四個分類）
 const EXPECTED_COUNTS = {
   talk: 45,
   voice: 13,
@@ -40,7 +40,7 @@ test('每個分類的題數跟 QUESTIONS.md 一致', () => {
   assert.deepEqual(counts, EXPECTED_COUNTS);
 });
 
-test('問答型與挑戰型各 45 題，合計 90 題', () => {
+test('問答型與動作型各 45 題，合計 90 題', () => {
   const sizeOf = (groupId) =>
     CATEGORY_GROUPS.find((group) => group.id === groupId).categories.reduce(
       (total, category) => total + EXPECTED_COUNTS[category],
@@ -52,13 +52,13 @@ test('問答型與挑戰型各 45 題，合計 90 題', () => {
   assert.equal(QUESTIONS.length, 90);
 });
 
-test('※ 記號剛好 2 題，而且都在挑戰型', () => {
+test('※ 記號剛好 2 題，而且都在動作型', () => {
   const marked = QUESTIONS.filter((question) => question.familiar);
   assert.equal(marked.length, 2, 'QUESTIONS.md 與 CONCEPT.md 都寫死「共 2 題」');
 
   const dare = CATEGORY_GROUPS.find((group) => group.id === 'dare').categories;
   for (const question of marked) {
-    assert.ok(dare.includes(question.category), `${question.id} 應該在挑戰型裡`);
+    assert.ok(dare.includes(question.category), `${question.id} 應該在動作型裡`);
   }
 });
 

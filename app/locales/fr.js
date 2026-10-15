@@ -29,22 +29,25 @@ export default {
     'L’explosion tombe à un instant aléatoire dans cet intervalle. Le temps restant n’est jamais affiché.',
   minTimeLabel: 'Au moins',
   maxTimeLabel: 'Au plus',
+  timerCustomToggle: 'Intervalle personnalisé',
   secondsUnit: '{n} s',
   minutesUnit: '{n} min',
+  timeRange: '{min}–{max}',
 
   questionsHeading: 'Défis',
   deckCount: '{n} dans la pioche',
   groupAsk: 'Questions',
-  groupDare: 'Défis',
+  groupDare: 'Actions',
   catCount: '{n} défis',
 
   deckEmptyWarning: 'Choisis au moins une catégorie pour commencer.',
   deckThinWarning: 'Seulement {n} dans la pioche : des défis peuvent revenir dans une même manche.',
 
-  customLabel: 'Ajouter les tiens',
+  customLabel: 'Vos propres défis',
   customPlaceholder: 'ex. : dis ton plat préféré',
   customCategoryLabel: 'À classer dans',
   customAddButton: 'Ajouter',
+  customDoneButton: 'Terminé',
   customEmpty: 'Tu n’as encore ajouté aucun défi.',
   customRemoveLabel: 'Supprimer ce défi',
   customHint: 'Tes défis restent sur cet appareil et seront encore là la prochaine fois.',
@@ -74,12 +77,13 @@ export default {
   leaveCancel: 'Continuer',
 
   // ---------- page des règles ----------
+  rulesTitle: 'Comment jouer à la bombe à retardement',
   rulesIntro:
     'Un téléphone, tout le monde en cercle. Un défi s’affiche, celui qui a le téléphone le réalise puis le passe. La bombe explose à un instant aléatoire et le temps restant n’est jamais affiché. Celui qui l’a alors en main perd la manche.',
   rulesHostHeading: 'Avant de commencer (celui qui sort le téléphone)',
   rulesHostSteps: [
-    'Choisis Questions, Défis, ou les deux. Beaucoup de nouveaux ? Commence avec Questions seulement.',
-    'Envie d’y glisser vos private jokes ? Ajoute-en quelques-uns via « Ajouter les tiens » et classe-les d’un côté.',
+    'Choisis Questions, Actions, ou les deux. Beaucoup de nouveaux ? Commence avec Questions seulement.',
+    'Envie d’y glisser vos private jokes ? Ajoute-en quelques-uns via « Vos propres défis » et classe-les d’un côté.',
     'Règle la mèche. Pour une première manche, les 1 à 3 minutes par défaut vont très bien ; une fois l’ambiance lancée, essaie 30 secondes à 2 minutes.',
     'Dis trois phrases pour lancer : fais ce qui est affiché, appuie sur Terminé et passe, celui qui l’a quand ça explose perd la manche.',
   ],
@@ -106,7 +110,7 @@ export default {
     },
     {
       q: 'On peut ajouter nos propres défis ?',
-      a: 'Oui. Passe par « Ajouter les tiens » sur l’écran des réglages et classe-le dans une catégorie : il sera encore là la prochaine fois. Tout reste sur cet appareil et n’est jamais envoyé ailleurs.',
+      a: 'Oui. Passe par « Vos propres défis » sur l’écran des réglages et classe-le dans une catégorie : il sera encore là la prochaine fois. Tout reste sur cet appareil et n’est jamais envoyé ailleurs.',
     },
     {
       q: 'Se passer un téléphone de main en main me gêne un peu.',

@@ -28,22 +28,25 @@ export default {
   timerHint: 'It goes off at a random moment inside this range. The screen never shows how long is left.',
   minTimeLabel: 'At least',
   maxTimeLabel: 'At most',
+  timerCustomToggle: 'Custom range',
   secondsUnit: '{n} sec',
   minutesUnit: '{n} min',
+  timeRange: '{min}–{max}',
 
   questionsHeading: 'Tasks',
   deckCount: '{n} in the deck',
   groupAsk: 'Questions',
-  groupDare: 'Dares',
+  groupDare: 'Actions',
   catCount: '{n} tasks',
 
   deckEmptyWarning: 'Pick at least one category to start.',
   deckThinWarning: 'Only {n} in the deck — tasks may repeat within a single round.',
 
-  customLabel: 'Add your own',
+  customLabel: 'Your own tasks',
   customPlaceholder: 'e.g. Name your favourite food',
   customCategoryLabel: 'Put it under',
   customAddButton: 'Add',
+  customDoneButton: 'Done',
   customEmpty: 'You have not added any of your own yet.',
   customRemoveLabel: 'Delete this one',
   customHint: 'Your own tasks stay on this device and will still be here next time.',
@@ -73,12 +76,13 @@ export default {
   leaveCancel: 'Keep playing',
 
   // ---------- rules page ----------
+  rulesTitle: 'How to play Time Bomb',
   rulesIntro:
     'One phone, everyone in a circle. A task appears, whoever is holding the phone does it and passes it on. The bomb goes off at a random moment and the screen never shows how long is left. Whoever is holding it then loses the round.',
   rulesHostHeading: 'Before you start (whoever has the phone)',
   rulesHostSteps: [
-    'Pick Questions, Dares, or both. Lots of new faces? Start with Questions only.',
-    'Want your own in-jokes in there? Add a few under “Add your own” and file them on one side.',
+    'Pick Questions, Actions, or both. Lots of new faces? Start with Questions only.',
+    'Want your own in-jokes in there? Add a few under “Your own tasks” and file them on one side.',
     'Set the fuse. The default 1–3 minutes is right for a first round; once everyone is warmed up, try 30 seconds to 2 minutes.',
     'Say three things to start: do the thing on screen, tap done and pass it on, whoever holds it when it blows loses the round.',
   ],
@@ -105,7 +109,7 @@ export default {
     },
     {
       q: 'Can we add our own tasks?',
-      a: 'Yes. Use “Add your own” on the setup screen and file it under a category — it will still be there next time. They stay on this device and are never uploaded.',
+      a: 'Yes. Open “Your own tasks” on the setup screen and file it under a category — it will still be there next time. They stay on this device and are never uploaded.',
     },
     {
       q: 'Passing a phone around hand to hand feels a bit much.',

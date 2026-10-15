@@ -29,23 +29,26 @@ export default {
   timerHint: '实际爆炸的时间会落在这个区间里随机一点，屏幕上不会显示还剩几秒。',
   minTimeLabel: '最短',
   maxTimeLabel: '最长',
+  timerCustomToggle: '自定义区间',
   secondsUnit: '{n} 秒',
   minutesUnit: '{n} 分',
+  timeRange: '{min}–{max}',
 
   questionsHeading: '题目',
   deckCount: '牌堆 {n} 题',
   groupAsk: '问答型',
-  groupDare: '挑战型',
+  groupDare: '动作型',
   catCount: '{n} 题',
 
   deckEmptyWarning: '至少要选一个分类才能开始。',
   deckThinWarning: '牌堆只有 {n} 题，一轮之内可能会抽到重复的题目。',
 
-  customLabel: '自己出题',
+  customLabel: '自定义题目',
   customPlaceholder: '例如：说出你最喜欢的食物',
   customCategoryLabel: '归到哪一类',
   customAddButton: '加入',
-  customEmpty: '还没有自己出的题目。',
+  customDoneButton: '完成',
+  customEmpty: '还没有自定义的题目。',
   customRemoveLabel: '删掉这题',
   customHint: '自己加的题目会留在这台设备上，下次打开还在。',
 
@@ -74,12 +77,13 @@ export default {
   leaveCancel: '继续玩',
 
   // ---------- 规则页 ----------
+  rulesTitle: '定时炸弹怎么玩',
   rulesIntro:
     '一部手机、一群人围成一圈。屏幕出一题，拿到手机的人做完就传给下一个人；炸弹什么时候炸是随机的，也看不到还剩几秒。炸在谁手上，谁就是这一轮的输家。',
   rulesHostHeading: '开始之前（拿手机的那个人）',
   rulesHostSteps: [
-    '选「问答型」、「挑战型」，或两个都要。新朋友多就先只开问答型。',
-    '想加自己小组的梗，用「自己出题」加几题，选一边归进去。',
+    '选「问答型」、「动作型」，或两个都要。新朋友多就先只开问答型。',
+    '想加自己小组的梗，用「自定义题目」加几题，选一边归进去。',
     '设置引爆区间。第一轮用默认的 1～3 分钟就好，玩开了想快一点再改成 30 秒～2 分钟。',
     '开场讲三句话：做完屏幕上的事、按完成传给下一个人、炸在谁手上谁就是这轮的输家。',
   ],
@@ -106,7 +110,7 @@ export default {
     },
     {
       q: '可以加我们自己的题目吗？',
-      a: '可以。设置界面的「自己出题」加进去、选一个分类，下次打开还在。加的题目留在这台设备上，不会上传。',
+      a: '可以。设置界面的「自定义题目」加进去、选一个分类，下次打开还在。加的题目留在这台设备上，不会上传。',
     },
     {
       q: '手机一直在人手之间传，有点介意。',
