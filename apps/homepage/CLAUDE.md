@@ -18,7 +18,7 @@ Web100 系列的作品集入口首頁。純 HTML/CSS/JS、沒有框架，部署�
 1. `index.html` 的 `STRINGS` 物件裡，每個語言都加上新專案的卡片文案（`xxxTitle`、`xxxDesc`、`xxxTag`）
 2. `scripts/prerender.js` 的替換規則加上對應的 `fill(...)`，新卡片的文字才會進到靜態 HTML。漏掉的話那張卡片對爬蟲來說是空的——replace 對不到位置時會直接讓 build 失敗，不會靜靜產出空頁面
 3. `vercel.json` 的 `rewrites` 加上該專案的代理規則（放在同類規則旁邊即可，語言判斷用的萬用規則在最後，不受影響）。**代理規則要列白名單，不要用 `/xxx/:path*` 全收**：全收的話子專案沒有的網址會回它自己的 404（Vercel 預設那頁或純文字），永遠走不到這個 repo 的 `404.html`。照 `/avalon/*` 的寫法，把語言、實際頁面、靜態資源目錄各列一條，沒列到的自然落回 `dist/404.html`
-4. 更新 `ARCHITECTURE.md` 第 9 節的進度追蹤表
+4. 更新 `docs/ARCHITECTURE.md` 第 9 節的進度追蹤表
 5. 更新 `README.md` 最上面的「專案一覽」表格，補上新專案的**正式網址**與 **GitHub 連結**。這張表是對外的入口，專案上線後網址欄要從「未部署」換成實際網址
 
 `sitemap.xml` 不用手動維護，`prerender.js` 會依 `STRINGS` 的語言清單自動產生（含 hreflang）。

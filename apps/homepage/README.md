@@ -25,7 +25,7 @@ Web100 系列小遊戲/小工具的作品集入口首頁，純 HTML/CSS/JS，不
   1. 在 `index.html` 的 `STRINGS` 裡加上新專案的卡片文案（每個語言都要）
   2. 在 `scripts/prerender.js` 的替換規則加上對應的 `fill(...)`，新卡片的文字才會進到靜態 HTML
   3. 在 `vercel.json` 的 `rewrites` 裡加一條 `/{新專案代號}/*` 代理規則（放在語言萬用規則**之前**）
-  4. 更新 `ARCHITECTURE.md` 第 9 節的進度追蹤表
+  4. 更新 `docs/ARCHITECTURE.md` 第 9 節的進度追蹤表
   5. **更新本文件最上面的「專案一覽」表格**，補上新專案的網址與 GitHub 連結
 
   `sitemap.xml` 不用手動維護，`scripts/prerender.js` 會依 `STRINGS` 的語言清單自動產生。
