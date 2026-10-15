@@ -1,0 +1,364 @@
+{
+  "version": 2,
+  "buildCommand": "node scripts/prerender.js",
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "vibeweb100.com"
+        }
+      ],
+      "destination": "https://www.vibeweb100.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)/avalon/:path*",
+      "destination": "/avalon/en",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)/:page(game|rules)",
+      "destination": "/avalon/en/:page",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)/",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)/:path*",
+      "destination": "/en/",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)",
+      "destination": "/avalon/en",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)/",
+      "destination": "/avalon/en",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(cs|id|it|nl|pl|pt|ru|sv|th|vi)/:path*",
+      "destination": "/avalon/en",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/index.html",
+      "destination": "/:lang/",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "/zh-TW/",
+      "permanent": false
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/avalon",
+      "destination": "/avalon/:lang",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/avalon/",
+      "destination": "/avalon/:lang",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/avalon/:path*",
+      "destination": "/avalon/:lang/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(game|rules)",
+      "destination": "/avalon/:lang/:page",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(game|rules)/",
+      "destination": "/avalon/:lang/:page",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/",
+      "destination": "/avalon/zh-TW",
+      "permanent": false
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "/avalon/:lang",
+      "permanent": true
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:path+/",
+      "destination": "/avalon/:lang/:path",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "/:lang/",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/avalon-sitemap.xml",
+      "destination": "https://web100-01-avalon-voice.vercel.app/sitemap.xml"
+    },
+    {
+      "source": "/avalon",
+      "destination": "https://web100-01-avalon-voice.vercel.app/avalon"
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:lang"
+    },
+    {
+      "source": "/avalon/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(game|rules)",
+      "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:lang/:page"
+    },
+    {
+      "source": "/avalon/:dir(assets|audio)/:path*",
+      "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:dir/:path*"
+    },
+    {
+      "source": "/avalon/:file(favicon.svg|apple-touch-icon.png)",
+      "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:file"
+    },
+    {
+      "source": "/buzzer-sitemap.xml",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/sitemap.xml"
+    },
+    {
+      "source": "/buzzer",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer"
+    },
+    {
+      "source": "/buzzer/",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/"
+    },
+    {
+      "source": "/buzzer/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:lang"
+    },
+    {
+      "source": "/buzzer/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:lang/"
+    },
+    {
+      "source": "/buzzer/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:lang/:page"
+    },
+    {
+      "source": "/buzzer/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:lang/:page/"
+    },
+    {
+      "source": "/buzzer/api/:path*",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/api/:path*"
+    },
+    {
+      "source": "/buzzer/vendor/:path*",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/vendor/:path*"
+    },
+    {
+      "source": "/buzzer/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:file"
+    },
+    {
+      "source": "/match-sitemap.xml",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/sitemap.xml"
+    },
+    {
+      "source": "/match",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match"
+    },
+    {
+      "source": "/match/",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/"
+    },
+    {
+      "source": "/match/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/:lang"
+    },
+    {
+      "source": "/match/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/:lang/"
+    },
+    {
+      "source": "/match/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/:lang/:page"
+    },
+    {
+      "source": "/match/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/:lang/:page/"
+    },
+    {
+      "source": "/match/api/:path*",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/api/:path*"
+    },
+    {
+      "source": "/match/vendor/:path*",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/vendor/:path*"
+    },
+    {
+      "source": "/match/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/:file"
+    },
+    {
+      "source": "/bingo-sitemap.xml",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/sitemap.xml"
+    },
+    {
+      "source": "/bingo",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo"
+    },
+    {
+      "source": "/bingo/",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/"
+    },
+    {
+      "source": "/bingo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/:lang"
+    },
+    {
+      "source": "/bingo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/:lang/"
+    },
+    {
+      "source": "/bingo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/:lang/:page"
+    },
+    {
+      "source": "/bingo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/:lang/:page/"
+    },
+    {
+      "source": "/bingo/api/:path*",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/api/:path*"
+    },
+    {
+      "source": "/bingo/vendor/:path*",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/vendor/:path*"
+    },
+    {
+      "source": "/bingo/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/:file"
+    },
+    {
+      "source": "/bomb-sitemap.xml",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/sitemap.xml"
+    },
+    {
+      "source": "/bomb",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb"
+    },
+    {
+      "source": "/bomb/",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/"
+    },
+    {
+      "source": "/bomb/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:lang"
+    },
+    {
+      "source": "/bomb/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:lang/"
+    },
+    {
+      "source": "/bomb/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:lang/:page"
+    },
+    {
+      "source": "/bomb/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:lang/:page/"
+    },
+    {
+      "source": "/bomb/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:file"
+    },
+    {
+      "source": "/happiness-sitemap.xml",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/sitemap.xml"
+    },
+    {
+      "source": "/happiness",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness"
+    },
+    {
+      "source": "/happiness/",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/"
+    },
+    {
+      "source": "/happiness/:n([1-7])",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:n"
+    },
+    {
+      "source": "/happiness/:n(h[1-7])",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:n"
+    },
+    {
+      "source": "/happiness/zh-TW",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/zh-TW"
+    },
+    {
+      "source": "/happiness/zh-TW/",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/zh-TW/"
+    },
+    {
+      "source": "/happiness/:w(w[1-7])/zh-TW",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:w/zh-TW"
+    },
+    {
+      "source": "/happiness/:w(w[1-7])/zh-TW/",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:w/zh-TW/"
+    },
+    {
+      "source": "/happiness/:w(w[1-7])/zh-TW/:page(p|h)",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:w/zh-TW/:page"
+    },
+    {
+      "source": "/happiness/:w(w[1-7])/zh-TW/:page(p|h)/",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:w/zh-TW/:page/"
+    },
+    {
+      "source": "/happiness/:w(w[1-7])/:file(host.js|notes.js|player.js)",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:w/:file"
+    },
+    {
+      "source": "/happiness/:w(w[1-7])/art/:file*",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/:w/art/:file*"
+    },
+    {
+      "source": "/happiness/shared/:path*",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/shared/:path*"
+    },
+    {
+      "source": "/happiness/api/new-room",
+      "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/api/new-room"
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "/:lang/index.html"
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "/:lang/index.html"
+    }
+  ]
+}

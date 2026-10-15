@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.vibeweb100.com/sitemap.xml
+Sitemap: https://www.vibeweb100.com/avalon-sitemap.xml
+Sitemap: https://www.vibeweb100.com/buzzer-sitemap.xml
+Sitemap: https://www.vibeweb100.com/match-sitemap.xml
+Sitemap: https://www.vibeweb100.com/bingo-sitemap.xml
+Sitemap: https://www.vibeweb100.com/bomb-sitemap.xml
+Sitemap: https://www.vibeweb100.com/happiness-sitemap.xml

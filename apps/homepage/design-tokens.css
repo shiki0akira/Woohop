@@ -1,0 +1,135 @@
+/*
+ * Web100 系列共用 design tokens，唯一來源。
+ * 任何專案都可以直接引用這份檔案，不要複製貼上內容到自己的 repo：
+ *   <link rel="stylesheet" href="https://www.vibeweb100.com/design-tokens.css">
+ * 或在 CSS 裡：
+ *   @import url("https://www.vibeweb100.com/design-tokens.css");
+ *
+ * 只提供變數，不含任何選取器樣式規則，讓純 CSS 專案和 Tailwind 專案都能用。
+ * 深色/淺色目前用一組「-light」後綴的平行變數表示（跟 Homepage 現行做法一致），
+ * 要用哪一組、怎麼切換（class、data-attribute、prefers-color-scheme）由各專案自己決定。
+ *
+ * 色階與 Figma 變數庫同名（Primary / Secondary / Accent / Neutral），
+ * 匯入用的 JSON 是 figma-variables.json（放在 web100 工作目錄，不在這個 repo 裡）。
+ */
+
+:root {
+  --primary-900: #252c4b;
+  --primary-800: #474f80;
+  --primary-700: #6776b5;
+  --primary-600: #8799e9;
+  --primary-500: #9cb0f3;
+  --primary-400: #b8c6f8;
+  --primary-300: #d3dbf9;
+  --primary-200: #e9edfb;
+
+  --secondary-900: #4d2b53;
+  --secondary-800: #855a8d;
+  --secondary-700: #ba82c4;
+  --secondary-600: #f3a4fb;
+  --secondary-500: #f7b9fd;
+  --secondary-400: #f8cafd;
+  --secondary-300: #faddfe;
+  --secondary-200: #fbe5ff;
+
+  --accent-100: #959bee;
+  --accent-200: #a798f0;
+  --accent-300: #be9df5;
+  --accent-400: #cf9ef8;
+  --accent-500: #e29ffb;
+
+  --neutral-900: #252326;
+  --neutral-800: #58545a;
+  --neutral-700: #848189;
+  --neutral-600: #adabb2;
+  --neutral-500: #c6c5c9;
+  --neutral-400: #dfdee2;
+  --neutral-300: #f2f2f4;
+  --neutral-200: #ffffff;
+
+  --primary-600-a30: rgba(135, 153, 233, 0.3);
+  --primary-900-a80: rgba(37, 44, 75, 0.8);
+  --primary-200-a80: rgba(233, 237, 251, 0.8);
+  --secondary-900-a80: rgba(77, 43, 83, 0.8);
+  --secondary-200-a80: rgba(251, 229, 255, 0.8);
+  --secondary-600-a20: rgba(243, 164, 251, 0.2); /* 淺色模式的導覽列玻璃底 */
+
+  --color-bg: var(--neutral-900);
+  --color-bg-card: rgba(255, 255, 255, 0.04);
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.64);
+  --color-accent: var(--primary-600); /* 亮色強調：描邊、焦點框、分隔線 */
+  /* 實心按鈕是「立體」款：底色 + 正下方一塊沒有模糊的深色陰影當厚度，
+     hover 時厚度變薄、按鈕往下位移，看起來像被壓下去。
+     深色模式 Primary/700 配白圖示（4.34:1），hover 壓到 Primary/800（7.78:1）。 */
+  --color-button-surface: var(--primary-700);
+  --color-button-edge: var(--primary-800);
+  --color-button-surface-hover: var(--primary-800);
+  --color-button-edge-hover: var(--primary-900);
+  --color-button-on: #ffffff;
+  --color-accent-on: #ffffff;
+  /* 標籤文字用比 accent 亮兩階的色：Primary/600 疊在深色卡片上只有 3.2～3.8:1，過不了 AA */
+  --color-accent-text: var(--primary-400);
+  /* 品牌膠囊。設計稿上是 #2B2D4F / #E8ECFA，跟色階裡的 Primary/900、Primary/200
+     差 1~6（同一個色票的兩次取值），這裡統一走色階，不另外開新色 */
+  --color-brand-surface: var(--primary-900);
+  --color-brand-text: #ffffff;
+  /* 標誌疊在品牌膠囊上：Primary/500 對 Primary/900 是 6.43:1 */
+  --color-brand-logo: var(--primary-500);
+  --color-outline: var(--primary-400); /* 外框式按鈕的描邊 */
+  --color-outline-hover: rgba(135, 153, 233, 0.22);
+  --color-border: rgba(135, 153, 233, 0.28);
+  --color-tag-bg: rgba(135, 153, 233, 0.18);
+  --color-surface-glass: var(--primary-600-a30);
+  --color-glow-1: var(--primary-900-a80);
+  --color-glow-2: var(--secondary-900-a80);
+
+  /* 淺色模式整組改走 Secondary。
+     注意 Secondary 的色階整體比 Primary 亮，不能直接把 Primary/700 換成 Secondary/700
+     —— 白字疊 Secondary/700 只有 2.97:1，要再深一階到 Secondary/800 才有 5.46:1。
+     所以下面的對應都比深色模式的 Primary 版本再深一階。 */
+  --color-bg-light: var(--neutral-200);
+  --color-bg-card-light: #ffffff;
+  --color-text-light: var(--neutral-900);
+  --color-text-muted-light: rgba(37, 35, 38, 0.68);
+  --color-accent-light: var(--secondary-700); /* 分隔線、焦點框 */
+  --color-accent-text-light: var(--secondary-800);
+  /* 淺色模式的實心鈕：Secondary/500 底 + Secondary/900 圖示（7.45:1），
+     hover 到 Secondary/600（6.45:1）。厚度用再深一階的粉色。 */
+  --color-button-surface-light: var(--secondary-500);
+  --color-button-edge-light: var(--secondary-600);
+  --color-button-surface-hover-light: var(--secondary-600);
+  --color-button-edge-hover-light: var(--secondary-700);
+  --color-button-on-light: var(--secondary-900);
+  /* 膠囊用中性灰而不是 Secondary/200：淺色導覽列的玻璃底疊在白底上實際是 #fdedfe，
+     粉色膠囊疊上去只有 1.05:1，邊界等於不存在。改成 Neutral/300 後明暗雖然還是接近，
+     但灰跟粉是不同色相，看得出來是疊在上面的一塊。膠囊裡的文字有 10.5:1，很安全 */
+  --color-brand-surface-light: var(--neutral-300);
+  --color-brand-text-light: var(--secondary-900);
+  /* 標誌指定用 Secondary/600，疊在 Neutral/300 上是 1.63:1。標誌屬品牌識別，
+     WCAG 1.4.11 的非文字對比不涵蓋 logo，所以低於 3:1 不算違規——
+     但這個色只給標誌，圖示或文字要用 --color-accent-text-light，不要拿這條去套 */
+  --color-brand-logo-light: var(--secondary-600);
+  --color-outline-light: var(--secondary-800);
+  --color-outline-hover-light: rgba(243, 164, 251, 0.22);
+  --color-border-light: rgba(186, 130, 196, 0.45);
+  --color-tag-bg-light: rgba(243, 164, 251, 0.22);
+  --color-surface-glass-light: var(--secondary-600-a20);
+  --color-glow-1-light: var(--primary-200-a80);
+  --color-glow-2-light: var(--secondary-200-a80);
+
+  --font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-size-h1: 2rem;
+  --font-size-h2: 1.5rem;
+  --font-size-body: 1rem;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+
+  --radius: 0.75rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card-light: 0 2px 8px rgba(37, 44, 75, 0.08);
+      }
