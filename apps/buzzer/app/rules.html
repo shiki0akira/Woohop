@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+  </head>
+
+  <body>
+    {{header}}
+
+    <main id="main" class="prose">
+      <div class="hero">
+        <h1>{{rulesH1}}</h1>
+        <p>{{rulesIntro}}</p>
+      </div>
+
+      <section class="surface">
+        <h2>{{howHeading}}</h2>
+        <ol>
+          <li>{{howStep1}}</li>
+          <li>{{howStep2}}</li>
+          <li>{{howStep3}}</li>
+          <li>{{howStep4}}</li>
+        </ol>
+      </section>
+
+      <section class="surface">
+        <h2>{{rulesHostHeading}}</h2>
+        <ul>
+          <li>{{rulesHost1}}</li>
+          <li>{{rulesHost2}}</li>
+          <li>{{rulesHost3}}</li>
+        </ul>
+      </section>
+
+      <section class="surface">
+        <h2>{{rulesPlayerHeading}}</h2>
+        <ul>
+          <li>{{rulesPlayer1}}</li>
+          <li>{{rulesPlayer2}}</li>
+          <li>{{rulesPlayer3}}</li>
+        </ul>
+      </section>
+
+      <section class="surface">
+        <h2>{{rulesJudgeHeading}}</h2>
+        <ul>
+          <li>{{rulesJudge1}}</li>
+          <li>{{rulesJudge2}}</li>
+          <li>{{rulesJudge3}}</li>
+        </ul>
+      </section>
+
+      <section class="surface">
+        <h2>{{rulesFaqHeading}}</h2>
+        <dl class="faq">
+          <dt>{{rulesFaqQ1}}</dt>
+          <dd>{{rulesFaqA1}}</dd>
+          <dt>{{rulesFaqQ2}}</dt>
+          <dd>{{rulesFaqA2}}</dd>
+          <dt>{{rulesFaqQ3}}</dt>
+          <dd>{{rulesFaqA3}}</dd>
+          <dt>{{rulesFaqQ4}}</dt>
+          <dd>{{rulesFaqA4}}</dd>
+        </dl>
+      </section>
+
+      <p class="rules-back">
+        <a class="btn-solid" href="{{base}}/{{lang}}/">{{rulesBackToGame}}</a>
+      </p>
+    </main>
+
+    {{footer}}
+
+    <script>
+      window.BUZZER = { lang: '{{lang}}', base: '{{base}}', page: 'rules/' };
+    </script>
+    <script src="{{base}}/header.js"></script>
+    <script>
+      window.trackPageView('{{base}}/{{lang}}/rules/');
+    </script>
+  </body>
+</html>

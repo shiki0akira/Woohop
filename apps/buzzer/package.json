@@ -1,0 +1,17 @@
+{
+  "name": "web100-02-buzzer-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web100 系列第 2 個小遊戲：現場搶答工具（Cloudflare Workers + Durable Objects）",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "npm run build && wrangler dev",
+    "dev:lan": "npm run build && wrangler dev --ip 0.0.0.0",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "qrcode-generator": "^1.4.4",
+    "wrangler": "^4.118.0"
+  }
+}

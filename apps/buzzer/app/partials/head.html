@@ -1,0 +1,44 @@
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- 跟 Homepage / Avalon 同值。這裡不跟著深淺色切換：系列三個專案都是這個值，
+         而且手機工具列變色會比配色不一致更顯眼 -->
+    <meta name="theme-color" content="#252326" />
+    <title>{{pageTitle}}</title>
+    <meta name="description" content="{{pageDesc}}" />
+    <link rel="canonical" href="{{canonical}}" />
+    {{hreflang}}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{pageTitle}}" />
+    <meta property="og:description" content="{{pageDesc}}" />
+    <meta property="og:url" content="{{canonical}}" />
+    <meta property="og:locale" content="{{ogLocale}}" />
+
+    <!-- 系列共用的 GA4 資源，跟 Homepage / Avalon 同一個 ID。
+         send_page_view 關掉自動送出，改由 header.js / app.js 手動送——遊戲頁的四個畫面
+         共用同一個網址，自動送只會看到一筆，看不出有多少人真的開了房間。 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7PE5687BG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-S7PE5687BG', { send_page_view: false });
+    </script>
+
+    <link rel="icon" href="{{base}}/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="{{base}}/apple-touch-icon.png" />
+
+    <!-- 唯一來源在 web100_00_Homepage，不要把變數複製到這個 repo（ARCHITECTURE.md 第 7 節） -->
+    <link rel="stylesheet" href="https://www.vibeweb100.com/design-tokens.css" />
+    <link rel="stylesheet" href="{{base}}/app.css" />
+
+    <script>
+      // 在畫面畫出來之前決定主題，避免先閃一下另一個配色。
+      // class 掛在 <html> 而不是 <body>：這段跑的時候 <body> 還不存在。
+      // localStorage 的 key 跟系列其他專案一致（web100-theme），不要各專案自己發明。
+      try {
+        var saved = localStorage.getItem('web100-theme');
+        var light = saved ? saved === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+        if (light) document.documentElement.classList.add('light');
+      } catch (e) {}
+    </script>

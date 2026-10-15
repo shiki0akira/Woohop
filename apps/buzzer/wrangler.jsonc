@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "web100-02-buzzer-game",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-11-01",
+
+  // 靜態頁跟 API 走同一個 Worker：WebSocket 與網頁同源，不用處理 CORS，
+  // 也只有一個部署目標。`dist` 是 scripts/build.js 產生的，不進版控。
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // 找不到對應檔案時交給 Worker（例如 /buzzer/ 要依語言轉址、/buzzer/api/* 是 API）
+    "not_found_handling": "none",
+    "run_worker_first": ["/buzzer/api/*"]
+  },
+
+  "durable_objects": {
+    "bindings": [{ "name": "ROOM", "class_name": "BuzzerRoom" }]
+  },
+
+  // SQLite backend 是新專案的預設，也是 Durable Object 免費方案唯一支援的儲存層
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BuzzerRoom"] }],
+
+  "observability": { "enabled": true }
+}

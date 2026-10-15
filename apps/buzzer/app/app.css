@@ -1,0 +1,1034 @@
+/*
+ * 色票、圓角、間距一律用 design-tokens.css 的變數，這裡不寫死任何 hex
+ * （唯一例外是 QR code 的白底，掃描率優先，不跟著主題走）。
+ *
+ * 深淺色：<html class="light"> 表示淺色，深色是預設值——對應 design-tokens.css
+ * 「深色是語意層預設、淺色是 -light 平行變數」的寫法。class 掛在 <html> 是因為
+ * 決定主題的那段 script 在 <head> 裡就要跑完，那時 <body> 還不存在。
+ */
+
+html.light {
+  --color-bg: var(--color-bg-light);
+  --color-bg-card: var(--color-bg-card-light);
+  --color-text: var(--color-text-light);
+  --color-text-muted: var(--color-text-muted-light);
+  --color-accent-text: var(--color-accent-text-light);
+  --color-brand-surface: var(--color-brand-surface-light);
+  --color-brand-text: var(--color-brand-text-light);
+  --color-brand-logo: var(--color-brand-logo-light);
+  --color-glow-1: var(--color-glow-1-light);
+  --color-glow-2: var(--color-glow-2-light);
+  --shadow-card: var(--shadow-card-light);
+
+  /* ⚠️ 淺色模式「整組改走 Secondary」是 Homepage 現行的做法，但線上的
+     design-tokens.css 還停在舊版（outline/border 仍是 Primary，而且根本沒有
+     --color-surface-glass-light）。在那份檔案補齊之前，這裡直接從 Secondary
+     primitive 算出來——用 color-mix 而不是寫死 rgba，色階之後改了這裡會跟著動。
+     等 design-tokens.css 同步之後，這一段就可以換回 var(--xxx-light)。 */
+  --color-accent: var(--secondary-700);
+  --color-outline: var(--secondary-800);
+  --color-outline-hover: color-mix(in srgb, var(--secondary-600) 22%, transparent);
+  --color-border: color-mix(in srgb, var(--secondary-700) 45%, transparent);
+  --color-surface-glass: color-mix(in srgb, var(--secondary-600) 20%, transparent);
+
+  /* 實心按鈕淺色走 Secondary、深色走 Primary。淺色的每一階都比深色再深一階：
+     Secondary 整條色階比 Primary 亮，直接對調的話白字疊上去過不了 WCAG AA。 */
+  --btn-face: var(--secondary-500);
+  --btn-face-hover: var(--secondary-600);
+  --btn-edge: var(--secondary-600);
+  --btn-edge-hover: var(--secondary-700);
+  --btn-text: var(--secondary-900);
+  --btn-disabled-face: var(--secondary-200);
+  --btn-disabled-text: var(--secondary-800);
+
+  color-scheme: light;
+}
+
+:root {
+  --btn-face: var(--primary-700);
+  --btn-face-hover: var(--primary-800);
+  --btn-edge: var(--primary-800);
+  --btn-edge-hover: var(--primary-900);
+  --btn-text: #ffffff;
+  --btn-disabled-face: var(--primary-800);
+  --btn-disabled-text: var(--primary-400);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 背景兩顆光暈 + 只長在光暈上的顆粒，跟系列其他專案同一套（比例、noise 參數都一致）。
+   任何全頁容器都不要再上底色，會把光暈整片蓋掉。 */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  background-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, var(--color-glow-1) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, var(--color-glow-2) 0%, transparent 100%);
+}
+
+body::after {
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncG type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncB type='linear' slope='2' intercept='-0.5'/%3E%3CfeFuncA type='discrete' tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(0, 0, 0, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 53% 95% at 30% 5%, rgba(0, 0, 0, 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 53% 95% at 76% 95%, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+}
+
+h1,
+h2 {
+  margin: 0;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+/* ---------- 導覽列 ---------- */
+
+.nav-pill {
+  position: sticky;
+  top: var(--space-2);
+  z-index: 10;
+  margin: var(--space-2) auto 0;
+  width: min(600px, calc(100% - 2rem));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+  padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.nav-right {
+  flex-shrink: 0;
+}
+
+/* 左上是回系列首頁的品牌鈕。40px 見方跟右側控制項等高，兩邊的導覽列才會對齊。 */
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-surface);
+  transition: background 0.15s ease;
+}
+
+.brand:hover {
+  background: var(--color-outline-hover);
+}
+
+.brand svg {
+  width: 25px;
+  height: 20px;
+  fill: var(--color-brand-logo);
+}
+
+.nav-title {
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 420px 是量出來的臨界點：導覽列扣掉標誌、規則、語言下拉（此時已縮到 124）、
+   深淺色鈕與間距之後，剛好還能給標題 4 個中文字的寬度。再窄下去只會剩
+   「現…」這種看不出是什麼的殘字，那還不如不顯示——標誌一樣連回首頁，
+   頁面的 h1 也說明了這是什麼工具。
+   ⚠️ 別把這個值往上調：460px 那種明明還有一百多 px 空間的寬度也會被藏掉。 */
+@media (max-width: 420px) {
+  .nav-title {
+    display: none;
+  }
+}
+
+
+/* 語言下拉：外觀是外框式（透明底 + 描邊 + 跟頁面同色的文字），但**不套 .btn-outline**。
+   .btn-outline 帶 display: inline-flex，套在 <select> 上會讓原生下拉的位置與高度算不準。
+   規則、尺寸、hover 行為都跟 web100_00_Homepage 的導覽列一致。 */
+select {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  height: 40px;
+  width: 140px;
+  padding: 0 2.1rem 0 0.9rem;
+  border: 1.5px solid var(--color-outline);
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  color: inherit;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* 窄螢幕上把語言下拉縮窄，讓標題留得住。跟阿瓦隆一樣標題一律顯示、
+   放不下才用 ellipsis 截斷——之前用斷點把標題整個隱藏，結果 460px 這種
+   明明還剩一百多 px 的寬度也看不到標題，導覽列左邊空一塊。
+   124px 是量出來的下限：最長的選項是 Français，扣掉左右內距剛好放得下。
+   ⚠️ 這段一定要放在上面 `select` 基礎規則之後，同分特異性靠順序決勝，
+   放前面會被 width: 140px 蓋掉（踩過一次）。 */
+@media (max-width: 520px) {
+  select {
+    width: 124px;
+  }
+}
+
+.select-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* 箭頭用 mask + currentColor，才會自動跟著深淺色模式與 hover 換色
+   （Material Symbols Rounded / keyboard_arrow_down） */
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M465-363.5q-7-2.5-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5q-8 0-15-2.5Z'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M465-363.5q-7-2.5-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5q-8 0-15-2.5Z'/%3E%3C/svg%3E")
+    center / 20px no-repeat;
+}
+
+.select-wrap:hover select {
+  border-color: var(--color-accent);
+  background-color: var(--color-outline-hover);
+}
+
+select:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* 展開的選單是系統畫的，會沿用頁面色而不是按鈕色，要另外指定才讀得到 */
+select option {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* 深淺色切換是實心式（accent 填色 + 對比色圖示），跟語言下拉共用 40px 高度。
+   結構跟 Homepage 的 button.theme-toggle 一致：grid + place-items 置中，
+   顏色下在按鈕上、圖示吃 currentColor。 */
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--btn-face);
+  color: var(--btn-text);
+  /* 沒有模糊的實色陰影 = 按鈕的厚度 */
+  box-shadow: 0 3px 0 var(--btn-edge);
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* 圖示一律用 Material Symbols Rounded（24px / wght 400 / GRAD 0 / opsz 24），
+   直接內嵌 SVG 並吃 currentColor，不載入整套字型 */
+.icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* hover：厚度從 3 變 2、按鈕同步往下 1，總高度不變 = 被壓下去的感覺 */
+.theme-toggle:hover {
+  background-color: var(--btn-face-hover);
+  box-shadow: 0 2px 0 var(--btn-edge-hover);
+  transform: translateY(1px);
+}
+
+/* 按著時整個貼平 */
+.theme-toggle:active {
+  box-shadow: 0 0 0 var(--btn-edge-hover);
+  transform: translateY(3px);
+}
+
+/* 兩顆圖示都在 HTML 裡，用 CSS 決定顯示哪顆：切換時不用重畫 DOM，也不會在 JS 跑之前閃 */
+.icon-light {
+  display: none;
+}
+
+html.light .icon-dark {
+  display: none;
+}
+
+html.light .icon-light {
+  display: block;
+}
+
+/* ---------- 按鈕 ---------- */
+
+/* 實心按鈕是「立體」款：底色 + 正下方一塊沒有模糊的實色陰影當厚度。
+   hover 時厚度 3→2、按鈕同步往下 1（總高不變）＝被壓下去；按著時整個貼平。 */
+.btn-solid,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-solid {
+  border: 0;
+  background: var(--btn-face);
+  color: var(--btn-text);
+  box-shadow: 0 3px 0 var(--btn-edge);
+}
+
+.btn-solid:hover:not(:disabled) {
+  background: var(--btn-face-hover);
+  box-shadow: 0 2px 0 var(--btn-edge-hover);
+  transform: translateY(1px);
+}
+
+.btn-solid:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--btn-edge-hover);
+  transform: translateY(3px);
+}
+
+/* disabled 用「壓扁」表示不能點，跟可點擊的立體感相反：拿掉厚度、底色換淺兩階。
+   文字保持看得清楚（4.62:1），不是單純疊 opacity。 */
+.btn-solid:disabled {
+  background: var(--btn-disabled-face);
+  color: var(--btn-disabled-text);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  border: 1.5px solid var(--color-outline);
+  background: transparent;
+  color: var(--color-text);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--color-outline-hover);
+}
+
+/* 外框式按鈕本來就沒有厚度可以拿掉，直接整體降透明度
+   （WCAG 1.4.3 不強制非互動元件的對比度） */
+.btn-outline:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+/* ---------- 版面 ---------- */
+
+main {
+  flex: 1;
+  width: min(720px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.view[hidden] {
+  display: none;
+}
+
+.hero h1 {
+  margin-bottom: var(--space-1);
+}
+
+.hero p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.surface {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.surface.narrow {
+  width: min(420px, 100%);
+  margin: 0 auto;
+}
+
+.surface.center {
+  text-align: center;
+}
+
+.surface.center .btn-solid {
+  margin-top: var(--space-3);
+}
+
+.two-col {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.counter {
+  color: var(--color-accent-text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* ---------- 規則頁 ---------- */
+
+.rules-link {
+  margin: 0;
+  text-align: center;
+}
+
+.rules-link a {
+  color: var(--color-accent-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rules-link a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.prose ol,
+.prose ul {
+  margin: var(--space-2) 0 0;
+  padding-left: 1.25rem;
+  color: var(--color-text-muted);
+}
+
+.prose li + li {
+  margin-top: var(--space-1);
+}
+
+.faq {
+  margin: var(--space-2) 0 0;
+}
+
+.faq dt {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.faq dd {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.faq dt:not(:first-child) {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.rules-back {
+  margin: 0;
+  text-align: center;
+}
+
+/* ---------- 表單 ---------- */
+
+.field-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.field {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.field:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+textarea.field {
+  resize: vertical;
+  min-height: 5rem;
+}
+
+.field-code {
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.form-error {
+  margin: var(--space-1) 0 0;
+  font-size: 0.85rem;
+  color: var(--color-accent-text);
+}
+
+.form-error[hidden] {
+  display: none;
+}
+
+/* ---------- 主持人：分享區 ---------- */
+
+/* 角色標籤在左、離開／關閉房間在右 */
+.room-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.role-badge {
+  padding: 0.15rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-glass);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* 離開／關閉房間是破壞性操作，但不用紅色——整個系列沒有錯誤色階，
+   臨時開一個紅色會跟品牌色打架。改用比一般外框鈕小一號、字重輕一階，
+   在版面上退到次要位置，真正的攔截交給確認彈窗 */
+.btn-danger {
+  min-height: 32px;
+  padding: 0 0.85rem;
+  font-size: 0.8rem;
+}
+
+/* ---------- 確認彈窗 ---------- */
+
+.modal {
+  width: min(400px, calc(100% - 2rem));
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card);
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.modal p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.share {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 560px) {
+  .share {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.room-code {
+  display: block;
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  color: var(--color-accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.share-url {
+  margin: var(--space-1) 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  word-break: break-all;
+}
+
+/* QR code 一律黑底白框，不跟著主題翻色：掃描率優先，
+   深色模式下把 QR 反白會有不少相機讀不到。 */
+.qr-box {
+  width: 168px;
+  height: 168px;
+  padding: 8px;
+  border-radius: var(--radius);
+  background: #ffffff;
+  justify-self: center;
+}
+
+.qr-box svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- 名單與排名 ---------- */
+
+.player-list,
+.rank-list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.player-list li,
+.rank-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.player-list .name,
+.rank-list .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-list .offline {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* 名單裡的「移出」按鈕：不撐開列高，跟暱稱維持在同一條基線上 */
+.player-list .btn-danger {
+  flex-shrink: 0;
+  min-height: 28px;
+  padding: 0 0.7rem;
+  font-size: 0.75rem;
+}
+
+#start-game-block {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+#start-game-block .btn-block {
+  margin-top: 0;
+}
+
+#start-game-block .hint {
+  text-align: center;
+}
+
+.player-list li.is-offline .name {
+  color: var(--color-text-muted);
+}
+
+.rank-list .place {
+  min-width: 3.5rem;
+  font-weight: 700;
+  color: var(--color-accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-list .delta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 第一名放大 + 換成實心底，一眼看得出誰先按 */
+.rank-list li.first {
+  border-color: transparent;
+  background: var(--btn-face);
+  color: var(--btn-text);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.rank-list li.first .place,
+.rank-list li.first .delta {
+  color: var(--btn-text);
+}
+
+/* 自己那一列描邊加粗，在一長串名字裡找得到自己 */
+.rank-list li.me:not(.first) {
+  border-color: var(--color-accent);
+}
+
+.empty {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.empty[hidden] {
+  display: none;
+}
+
+/* ---------- 主持人：控制鈕 ---------- */
+
+.host-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+/* ---------- 玩家：搶答鍵 ---------- */
+
+.play-status p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+
+.question-box {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.question-box[hidden] {
+  display: none;
+}
+
+.question-box p {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: pre-wrap;
+}
+
+/* 搶答鍵：整個畫面最大的東西，單手拿手機也按得到。
+   立體感跟 .btn-solid 同一套語言，只是尺寸放大、按下去的位移更明顯。 */
+.buzz-button {
+  width: min(280px, 80vw);
+  aspect-ratio: 1;
+  align-self: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--btn-face);
+  color: var(--btn-text);
+  font: inherit;
+  font-size: clamp(1.5rem, 8vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 8px 0 var(--btn-edge);
+  transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.buzz-button:hover:not(:disabled) {
+  background: var(--btn-face-hover);
+  box-shadow: 0 6px 0 var(--btn-edge-hover);
+  transform: translateY(2px);
+}
+
+.buzz-button:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--btn-edge-hover);
+  transform: translateY(8px);
+}
+
+.buzz-button:disabled {
+  background: var(--btn-disabled-face);
+  color: var(--btn-disabled-text);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* 已經按過但還開著：維持可按（規格要求不鎖死畫面），但視覺上退一階，
+   免得使用者以為沒送出去而一直重按 */
+.buzz-button.buzzed {
+  opacity: 0.72;
+}
+
+/* 倒數中：數字直接長在按鈕上，比另外放一塊倒數更不用移動視線。
+   每一秒放大一次再縮回去，餘光也看得出來又過了一秒。 */
+.buzz-button.counting {
+  font-size: clamp(3rem, 22vw, 6rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.buzz-button.counting #buzz-label {
+  display: block;
+  animation: countdown-pulse 1s ease-out infinite;
+}
+
+@keyframes countdown-pulse {
+  0% {
+    transform: scale(1.25);
+    opacity: 0.55;
+  }
+  35% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 主持人端的倒數：小小一行就好，主角是玩家那顆鈕 */
+.host-countdown {
+  margin: var(--space-2) 0 0;
+  color: var(--color-accent-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.host-countdown[hidden] {
+  display: none;
+}
+
+/* ---------- 連線狀態 ---------- */
+
+.conn-banner {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-2);
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  font-size: 0.85rem;
+}
+
+.conn-banner[hidden] {
+  display: none;
+}
+
+/* ---------- 頁尾 ---------- */
+
+/* 分隔線要滿版，跟阿瓦隆與首頁一致：<footer> 本身不限寬、只負責上緣那條線，
+   內容再用一層 .footer-inner 收到跟主內容一樣的寬度並置中。
+   把寬度限制下在 <footer> 上的話，線會跟著縮成內容寬度，兩側留白。 */
+.site-footer {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-2);
+  border-top: 1px solid var(--color-accent);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.footer-inner {
+  width: min(720px, calc(100% - 2rem));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.site-footer a {
+  color: inherit;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.project-id {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- 頭像 ---------- */
+
+/* SVG 本身是方的，圓角在這裡切。名單與排名榜會出現幾十次，不另外包一層元素 */
+.avatar {
+  display: block;
+  flex: none;
+  border-radius: 50%;
+}
+
+.avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+
+.avatar-option {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform 0.12s ease;
+}
+
+.avatar-option:hover {
+  transform: scale(1.08);
+}
+
+.avatar-option[aria-checked='true'] {
+  border-color: var(--color-accent);
+}
+
+.avatar-option .avatar {
+  width: 100%;
+  height: auto;
+}
+
+/*
+ * hidden 屬性要蓋得過自己的 display：瀏覽器預設的 [hidden]{display:none} 是 UA 樣式，
+ * 任何作者寫的 display 都贏過它。這條是替所有元件補的保險。
+ */
+[hidden] {
+  display: none !important;
+}
