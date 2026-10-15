@@ -5,6 +5,18 @@
   </head>
 
   <body>
+    <!--
+      ◯ 與 ✕ 原本是文字字元（U+25EF / U+2715），但這兩個碼位在多數系統上落到不同字型，
+      同樣 48px 下 ◯ 的墨水框是 48×46、✕ 只有 37×35，筆畫粗細也不一樣，iOS 上尤其明顯。
+      改成自己畫：同一個 48 viewBox、同一個 stroke-width，兩個記號就一定成對。
+      幾何是配著 stroke-width 5 的圓端點算的：兩個記號的墨水都從 3 畫到 45，
+      也就是 42/48 em——答題按鈕的 .ox-mark 是 3rem，所以實際畫出來就是 42×42。
+      改 stroke-width 的話這幾個座標要一起重算，不然兩邊的外框會對不齊。
+    -->
+    <svg class="ox-sprite" aria-hidden="true">
+      <symbol id="mark-o" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18.5" /></symbol>
+      <symbol id="mark-x" viewBox="0 0 48 48"><path d="M5.5 5.5 42.5 42.5M42.5 5.5 5.5 42.5" /></symbol>
+    </svg>
     {{header}}
 
     <main id="main">
@@ -93,11 +105,11 @@
             <div class="setup-chosen">
               <div class="chosen-head">
                 <h3 class="chosen-heading">{{selectedHeading}}</h3>
-                <!-- 隨機重抽 10 題：主持人不想一題一題挑時的捷徑 -->
-                <button class="btn-outline btn-small" id="random-pick" type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M342.5-257.5Q360-275 360-300t-17.5-42.5Q325-360 300-360t-42.5 17.5Q240-325 240-300t17.5 42.5Q275-240 300-240t42.5-17.5Zm0-360Q360-635 360-660t-17.5-42.5Q325-720 300-720t-42.5 17.5Q240-685 240-660t17.5 42.5Q275-600 300-600t42.5-17.5Zm180 180Q540-455 540-480t-17.5-42.5Q505-540 480-540t-42.5 17.5Q420-505 420-480t17.5 42.5Q455-420 480-420t42.5-17.5Zm180 180Q720-275 720-300t-17.5-42.5Q685-360 660-360t-42.5 17.5Q600-325 600-300t17.5 42.5Q635-240 660-240t42.5-17.5Zm0-360Q720-635 720-660t-17.5-42.5Q685-720 660-720t-42.5 17.5Q600-685 600-660t17.5 42.5Q635-600 660-600t42.5-17.5ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
-                  <span>{{randomButton}}</span>
-                </button>
+                <!-- 隨機重抽 10 題 / 全部清掉：主持人不想一題一題挑時的捷徑 -->
+                <div class="row">
+                  <button class="btn-outline btn-mini" id="random-pick" type="button">{{randomButton}}</button>
+                  <button class="btn-outline btn-mini" id="clear-pick" type="button">{{clearButton}}</button>
+                </div>
               </div>
               <ul class="chosen-list" id="selected-list"></ul>
               <p class="empty" id="selected-empty">{{emptySelected}}</p>
@@ -214,11 +226,11 @@
 
           <div class="ox-buttons" id="ox-buttons">
             <button class="ox-button ox-o" id="answer-o" type="button">
-              <span class="ox-mark">◯</span>
+              <span class="ox-mark"><svg><use href="#mark-o" /></svg></span>
               <span class="ox-word">{{agreeLabel}}</span>
             </button>
             <button class="ox-button ox-x" id="answer-x" type="button">
-              <span class="ox-mark">✕</span>
+              <span class="ox-mark"><svg><use href="#mark-x" /></svg></span>
               <span class="ox-word">{{disagreeLabel}}</span>
             </button>
           </div>
@@ -227,11 +239,11 @@
           <!-- 時間到之後才出現的統計。沒有匿名模式，直接把人列出來 -->
           <div class="tally" id="tally" hidden>
             <div class="tally-side">
-              <div class="tally-head"><span class="ox-mark">◯</span><span id="tally-o-count"></span></div>
+              <div class="tally-head"><span class="ox-mark"><svg><use href="#mark-o" /></svg></span><span id="tally-o-count"></span></div>
               <ul class="chip-list" id="tally-o-list"></ul>
             </div>
             <div class="tally-side">
-              <div class="tally-head"><span class="ox-mark">✕</span><span id="tally-x-count"></span></div>
+              <div class="tally-head"><span class="ox-mark"><svg><use href="#mark-x" /></svg></span><span id="tally-x-count"></span></div>
               <ul class="chip-list" id="tally-x-list"></ul>
             </div>
           </div>

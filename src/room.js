@@ -102,8 +102,17 @@ export class MatchRoom {
 
       // 主持人預設也一起作答、一起被分組。純控場的場合在大廳裡關掉
       hostPlays: true,
-      // 預設組數跟著人數上限走，主持人可以在大廳自己改
+      /*
+       * 組數預設是自動的：跟著**實際到場的人數**走，每有人進出就重算一次
+       * （syncAutoGroupCount）。主持人在大廳親手點過那一排之後就鎖定，
+       * 之後不再自動動。
+       *
+       * 開房這一刻還沒有人加入，只好先拿人數上限估一個值墊著——那也正是舊版
+       * 唯一的依據，於是「上限預設 10」讓它永遠算出 2 組，五個人跟二十個人
+       * 開出來的房間一模一樣。
+       */
       groupCount: suggestedGroupCount(body.maxPlayers),
+      groupCountAuto: true,
       questionSeconds: DEFAULT_QUESTION_SECONDS,
 
       /*
@@ -237,6 +246,8 @@ export class MatchRoom {
       host: isHost,
     };
 
+    syncAutoGroupCount(room);
+
     const role = isHost ? 'host' : 'player';
     ws.serializeAttachment({ clientId, role });
     await this.saveRoom({ touch: true });
@@ -261,16 +272,24 @@ export class MatchRoom {
       // 空清單是合法的中間狀態（主持人正在重挑），擋在 startGame 那關就好
       room.questions = cleanQuestions(msg.questions) ?? [];
     }
+    /*
+     * 客戶端**只在主持人親手改過組數時**才帶這個欄位（見 app.js 的 sendSettings）。
+     * 無條件帶的話，「改個題目」也會被當成指定組數，自動調整就永久失效了。
+     */
     if (msg.groupCount !== undefined) {
       const count = Number(msg.groupCount);
       if (Number.isInteger(count) && count >= MIN_GROUP_COUNT && count <= MAX_GROUP_COUNT) {
         room.groupCount = count;
+        room.groupCountAuto = false;
       }
     }
     if (msg.questionSeconds !== undefined && QUESTION_SECONDS.includes(Number(msg.questionSeconds))) {
       room.questionSeconds = Number(msg.questionSeconds);
     }
     if (msg.hostPlays !== undefined) room.hostPlays = Boolean(msg.hostPlays);
+
+    // 主持人改「自己要不要作答」會讓要分組的人數差一個，自動組數要跟著重算
+    syncAutoGroupCount(room);
 
     await this.saveRoom({ touch: true });
     this.broadcast(room);
@@ -385,6 +404,7 @@ export class MatchRoom {
     }
 
     delete room.players[playerId];
+    syncAutoGroupCount(room);
     delete room.answers[playerId];
     await this.saveRoom({ touch: true });
 
@@ -407,6 +427,7 @@ export class MatchRoom {
     if (who.role !== 'player') return this.sendError(ws, 'player_only');
 
     delete room.players[who.clientId];
+    syncAutoGroupCount(room);
     delete room.answers[who.clientId];
 
     // 先把 attachment 清掉再廣播，這條連線才不會被算進「在線」
@@ -579,6 +600,23 @@ function questionTally(room, questionId) {
   return { O: votes.O.length, X: votes.X.length, voters: votes };
 }
 
+/*
+ * 依**實到人數**重算組數。主持人親手改過（groupCountAuto === false）就不動。
+ *
+ * 算的是「真的會被分組的人」：主持人只控場時不算他自己，跟 computeResult 那邊一致。
+ * suggestedGroupCount 只是建議值，最後 buildGroups 還會用 resolveGroupCount 夾一次
+ * （5 個人選 4 組會被夾回去），所以這裡不用擔心算出做不到的組合。
+ *
+ * ⚠️ 舊房間的紀錄裡沒有 groupCountAuto，讀出來是 undefined＝falsy，會被當成
+ * 「主持人指定過」而保持不動。那是安全的方向：寧可不自動，也不要去改人家設好的值。
+ */
+function syncAutoGroupCount(room) {
+  if (!room.groupCountAuto) return;
+
+  const ids = Object.keys(room.players).filter((id) => room.hostPlays || id !== room.hostId);
+  room.groupCount = suggestedGroupCount(ids.length);
+}
+
 function computeResult(room) {
   // 主持人只控場時不列入分組。他仍然在 players 裡（大廳要顯示他），只是不參與配對
   const candidates = Object.keys(room.players).filter(
@@ -592,6 +630,19 @@ function computeResult(room) {
   const { groups, grouped } = buildGroups(playerIds, room.answers, room.groupCount);
 
   return {
+    /*
+     * 結算畫面是**靜態的紀錄**，所以把當下每個人的暱稱與頭像一起存進來。
+     *
+     * 不存的話客戶端只能拿 id 去現在的名單裡查——有人在結算後離開房間，
+     * 他就會從別人的配對結果裡整個消失（剩一個頭像配空白）。
+     * 結果算完就不該再被任何人的進出影響。
+     */
+    players: Object.fromEntries(
+      Object.entries(room.players).map(([id, player]) => [
+        id,
+        { nickname: player.nickname, avatar: player.avatar ?? '' },
+      ]),
+    ),
     grouped,
     groups: groups.map((group) => ({
       members: group.members,

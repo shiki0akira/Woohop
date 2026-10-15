@@ -179,7 +179,37 @@ async function main() {
   check('玩家收到的分組跟主持人一致',
     JSON.stringify(anyPlayer.state.result.groups) === JSON.stringify(result.groups));
 
-  // 7. 收攤
+  /*
+   * 7. 結算畫面是靜態的：有人在結算後離開房間，他的暱稱與頭像不能從結果裡消失。
+   *
+   * 這是真的踩過的 bug——客戶端拿 id 去「現在的名單」查名字，人一走就查不到，
+   * 別人的配對結果會剩一個頭像配空白。修法是把身分快照存進 result（見 computeResult）。
+   */
+  const leaver = players[1];
+  const leaverId = leaver.clientId;
+  check('結算結果帶了身分快照', Boolean(result.players && result.players[leaverId]), Object.keys(result.players || {}).length);
+  const leaverName = result.players[leaverId].nickname;
+
+  leaver.ws.send(JSON.stringify({ t: 'leave' }));
+  await new Promise((r) => setTimeout(r, 400));
+
+  check(
+    '離開的人已經不在現役名單上',
+    !host.state.players.some((p) => p.id === leaverId),
+    host.state.players.map((p) => p.id),
+  );
+  check(
+    '但結果裡的身分還在（畫面不會變空白）',
+    host.state.result.players[leaverId] &&
+      host.state.result.players[leaverId].nickname === leaverName,
+    host.state.result.players[leaverId],
+  );
+  check(
+    '他仍然出現在分組結果裡',
+    host.state.result.groups.flatMap((g) => g.members).includes(leaverId),
+  );
+
+  // 8. 收攤
   host.ws.send(JSON.stringify({ t: 'close' }));
   await new Promise((r) => setTimeout(r, 300));
   const gone = await fetch(`${API}/rooms/${code}`);

@@ -57,10 +57,15 @@
     reconnectDelay: 500,
     closing: false,
     view: '',
+    // 目前在自己這疊 history 的第幾格（首頁是 0），返回鍵要靠它一次退到底
+    depth: 0,
+    entry: 'home',
     joinReported: false,
     resultsReported: false,
     // 主持人的選題只從伺服器同步一次，之後以本機為準（見 syncSettingsOnce）
     settingsSynced: false,
+    // 主持人親手改過組數了嗎。false 的話組數由伺服器依實到人數決定（見 sendSettings）
+    groupCountTouched: false,
     // 建房畫面的選題狀態
     selected: [],
     custom: [],
@@ -81,7 +86,10 @@
     renderAvatarPicker();
     bindEvents();
 
+    // 先把網址上的房號讀下來：initHistory 會把 ?room= 從網址上拿掉
     var code = new URLSearchParams(location.search).get('room');
+    initHistory();
+
     if (code) {
       state.code = code.toUpperCase();
       checkRoomThenJoin();
@@ -94,7 +102,7 @@
     var ids = [
       'view-home', 'view-setup', 'view-join', 'view-room', 'view-error',
       'category-list', 'selected-count', 'custom-input', 'custom-add',
-      'selected-list', 'selected-empty', 'random-pick',
+      'selected-list', 'selected-empty', 'random-pick', 'clear-pick',
       'max-players', 'group-count', 'question-seconds', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
@@ -219,25 +227,88 @@
         '<details class="cat" data-category="' + category + '">' +
         '<summary>' + CHEVRON +
         '<span class="cat-name">' + escapeHtml(t('category' + capitalize(category))) + '</span>' +
-        '<span class="cat-all"><input type="checkbox" data-all="' + category + '" />' +
-        '<span>' + escapeHtml(t('categorySelectAll')) + '</span></span>' +
+        // <label> 而不是 <span>：點「全選」兩個字也要能勾，而且是原生行為，
+        // 不用自己翻 checked（自己翻在 <summary> 裡會跟預設的展開行為打架）
+        '<label class="cat-all"><input type="checkbox" data-all="' + category + '" />' +
+        '<span>' + escapeHtml(t('categorySelectAll')) + '</span></label>' +
         '<span class="cat-count" data-count="' + category + '"></span></summary>' +
         '<ul class="q-list">';
 
       for (var j = 0; j < questions.length; j += 1) {
         var question = questions[j];
-        var checked = BANK.defaultQuestions.indexOf(question.id) >= 0;
-        if (checked) state.selected.push(question.id);
+        // 一律不勾。勾哪幾題由底下的 pickRandomDefaults() 決定，
+        // 這裡先寫死的話，隨機抽完還要再把它們一個個取消，等於做兩次
         html +=
           '<li><label class="check-row"><input type="checkbox" data-question="' +
-          escapeHtml(question.id) + '"' + (checked ? ' checked' : '') + ' />' +
+          escapeHtml(question.id) + '" />' +
           '<span>' + escapeHtml(question.text) + '</span></label></li>';
       }
       html += '</ul></details>';
     }
     el.categoryList.innerHTML = html;
+    pickRandomDefaults();
     updateSelectedCount();
     renderSelectedListOnly();
+  }
+
+  function shuffle(items) {
+    var out = items.slice();
+    for (var i = out.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = out[i];
+      out[i] = out[j];
+      out[j] = tmp;
+    }
+    return out;
+  }
+
+  /*
+   * 每一場都重抽一組題目，不再固定用 BANK.defaultQuestions 那份精選清單。
+   *
+   * 原本的預設是十個分類各挑一題、而且挑的是「最會讓全場分兩半」的那一題，分組品質最好。
+   * 但同一個小組每週玩，不去改題目的人**每次玩到的都是同一份**——那正是要解掉的問題。
+   *
+   * 抽法是分層的，不是整份題庫亂抽：先把分類洗牌，前八類各抽一題，剩下兩題從
+   * 沒被抽到的題目裡隨機補。純隨機的話很容易四題擠在同一類、而一半的分類完全沒出現；
+   * 分層之後每次都涵蓋 8～10 類，補的那兩題再決定最後有沒有 1～2 類落空。
+   *
+   * 代價是抽到的不一定是該類裡鑑別度最高的那題，分組品質偶爾會比舊的精選差一點。
+   * 這是拿品質換「每次都不一樣」，決定在 CONCEPT.md。
+   */
+  var STRATIFIED_CATEGORIES = 8;
+
+  function pickRandomQuestions() {
+    var categories = shuffle(BANK.categories);
+    var picked = [];
+    var used = {};
+
+    for (var i = 0; i < categories.length && picked.length < STRATIFIED_CATEGORIES; i += 1) {
+      var pool = questionsIn(categories[i]);
+      if (!pool.length) continue;
+      var one = pool[Math.floor(Math.random() * pool.length)];
+      picked.push(one.id);
+      used[one.id] = true;
+    }
+
+    var rest = shuffle(BANK.list).filter(function (question) {
+      return !used[question.id];
+    });
+    while (picked.length < RANDOM_COUNT && rest.length) picked.push(rest.shift().id);
+
+    return picked;
+  }
+
+  // 抽一組新的，並把畫面上的勾選同步過去。自訂題不動——那是主持人自己打的
+  function pickRandomDefaults() {
+    state.selected = pickRandomQuestions();
+    syncQuestionBoxes();
+  }
+
+  function syncQuestionBoxes() {
+    var boxes = el.categoryList.querySelectorAll('[data-question]');
+    for (var i = 0; i < boxes.length; i += 1) {
+      boxes[i].checked = state.selected.indexOf(boxes[i].dataset.question) >= 0;
+    }
   }
 
   function questionsIn(category) {
@@ -348,6 +419,25 @@
     el.categoryList.addEventListener('change', onQuestionToggle);
 
     /*
+     * 一次只展開一個分類。全部展開的話清單長到要一直捲，
+     * 收合狀態下標題列已經有數字和「全選」，不需要同時看到全部題目。
+     *
+     * toggle 事件不會冒泡，所以掛在容器上要用捕捉階段。
+     */
+    var catAllClicked = null;
+
+    el.categoryList.addEventListener('toggle', function (event) {
+      var opened = event.target;
+      if (!opened.open || !opened.classList.contains('cat')) return;
+      // 點「全選」順帶展開的那一下不算——下面會把它收回去，別牽連已經展開的那一類
+      if (opened === catAllClicked) return;
+      var all = el.categoryList.querySelectorAll('details.cat');
+      for (var i = 0; i < all.length; i += 1) {
+        if (all[i] !== opened) all[i].open = false;
+      }
+    }, true);
+
+    /*
      * 「全選」在 <summary> 裡，點它會順便把分類展開／收合，這不是我們要的。
      *
      * 不能用 preventDefault()：checkbox 的勾選在 click 派發**之前**就先做掉了，
@@ -359,12 +449,15 @@
       if (!event.target.closest('.cat-all')) return;
       var details = event.target.closest('details');
       var wasOpen = details.open;
+      catAllClicked = details;
       setTimeout(function () {
         details.open = wasOpen;
+        catAllClicked = null;
       }, 0);
     });
 
     el.randomPick.addEventListener('click', randomPick);
+    el.clearPick.addEventListener('click', clearPick);
     el.backToRoom.addEventListener('click', function () {
       send({ t: 'reset' });
     });
@@ -409,7 +502,11 @@
       if (event.key === 'Enter') enterRoom();
     });
 
-    el.groupCount.addEventListener('change', sendSettings);
+    // 主持人**親手**動過組數之後才鎖定，在那之前伺服器會依實到人數自己調
+    el.groupCount.addEventListener('change', function () {
+      state.groupCountTouched = true;
+      sendSettings();
+    });
     el.questionSeconds.addEventListener('change', sendSettings);
     el.hostPlays.addEventListener('change', sendSettings);
 
@@ -463,28 +560,23 @@
   }
 
   /*
-   * 隨機挑 10 題。整份題庫抽，不限分類——預設那 10 題是我挑的「最會讓全場分兩半」的組合，
-   * 主持人想換個口味時應該抽得到冷門分類的題目。
+   * 「隨機」按鈕：重抽一組，走的是跟開房時同一支分層抽題（pickRandomQuestions）。
    *
    * 只換內建題，不動自訂題：自訂題是主持人自己打的，被隨機洗掉會很惱人。
    */
-  function randomPick() {
-    var pool = BANK.list.slice();
-    for (var i = pool.length - 1; i > 0; i -= 1) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var swap = pool[i];
-      pool[i] = pool[j];
-      pool[j] = swap;
-    }
-
-    state.selected = pool.slice(0, RANDOM_COUNT).map(function (question) {
-      return question.id;
-    });
+  // 全部清掉，含主持人自己打的自訂題——按鈕寫「清空」就該是真的清空
+  function clearPick() {
+    state.selected = [];
+    state.custom = [];
 
     var boxes = el.categoryList.querySelectorAll('[data-question]');
-    for (var k = 0; k < boxes.length; k += 1) {
-      boxes[k].checked = state.selected.indexOf(boxes[k].dataset.question) >= 0;
-    }
+    for (var i = 0; i < boxes.length; i += 1) boxes[i].checked = false;
+    renderCustomList();
+    afterSelectionChanged();
+  }
+
+  function randomPick() {
+    pickRandomDefaults();
     afterSelectionChanged();
   }
 
@@ -518,8 +610,21 @@
       .then(function (data) {
         track('match_room_created');
         state.code = data.code;
-        // 先出題，挑頭像填暱稱排在後面（出題頁這時還沒連線，題目先留在前端）
-        showSetup();
+
+        /*
+         * 直接去挑頭像填暱稱，**不再先經過出題頁**。
+         *
+         * 出題頁原本是建房到入場之間的必經站，但它一打開是十個分類的手風琴、
+         * 每行掛著「全選 1/5」的計數器，看起來像有五十題要一題一題勾——第一次用的人
+         * 會停在那裡，即使那一頁的預設值本來就是合法的、直接按過去就好。
+         * 現在它降級成大廳裡的「改題目」，想調的人才進去（CONCEPT.md）。
+         *
+         * 每一場重抽一次題目：不去改題目的人，兩場也不會玩到同一份。
+         */
+        pickRandomDefaults();
+        updateSelectedCount();
+        renderSelectedListOnly();
+        showJoinForm();
       })
       .catch(function () {
         showError(el.createError, t('errCreateFailed'));
@@ -544,13 +649,23 @@
     }
     for (var j = 0; j < state.custom.length; j += 1) questions.push({ text: state.custom[j] });
 
-    send({
+    var payload = {
       t: 'settings',
       questions: questions,
-      groupCount: groupCountValue(),
       questionSeconds: secondsValue(),
       hostPlays: el.hostPlays.checked,
-    });
+    };
+
+    /*
+     * ⚠️ 組數只在主持人親手改過之後才送。
+     *
+     * 每次改動都送整份設定，如果無條件把 groupCount 也放進去，那麼「改個題目」
+     * 也會被伺服器當成「主持人指定了組數」，自動調整就永久失效了——而主持人
+     * 十之八九根本沒碰過那一排。
+     */
+    if (state.groupCountTouched) payload.groupCount = groupCountValue();
+
+    send(payload);
   }
 
   /*
@@ -565,7 +680,7 @@
   function showSetup() {
     el.setupDone.textContent = isOpen() ? t('saveQuestionsButton') : t('setupDoneButton');
     hideError(el.setupError);
-    showView('setup');
+    pushView('setup');
   }
 
   function finishSetup() {
@@ -577,7 +692,9 @@
     if (!isOpen()) return showJoinForm();
 
     sendSettings();
-    showView('room');
+    // 「完成」＝退回剛剛那一格房間，不要再往前推一格，
+    // 否則返回鍵會在出題頁與房間之間來回打轉
+    history.back();
   }
 
   // 秒數是一排單選，取選中的那顆；沒有選中（理論上不會）就退回預設
@@ -630,6 +747,14 @@
         return response.ok ? response.json() : Promise.reject(new Error('room_not_found'));
       })
       .then(function () {
+        /*
+         * 已經填過名字就直接連回去，不再擋一次頭像暱稱頁。
+         *
+         * 作答到一半按 F5 每次都要重填一遍很煩，而且開始之後本來就不該改暱稱——
+         * 統計與分組畫面上的名字會跟著變。真的沒名字（換裝置、清過快取）
+         * 伺服器會回 nickname_required，那時 handleServerError 再把這一頁叫出來。
+         */
+        if (el.nickname.value.trim()) return connect();
         showJoinForm();
       })
       .catch(function () {
@@ -640,7 +765,7 @@
 
   function showJoinForm() {
     el.joinTitle.textContent = t('joinTitle', { code: state.code });
-    showView('join');
+    pushView('join', roomUrl());
     el.nickname.focus();
   }
 
@@ -685,7 +810,7 @@
     });
 
     ws.addEventListener('close', function () {
-      if (state.closing) return;
+      if (ws !== state.ws || state.closing) return;
       showBanner(t('connLost'));
       scheduleReconnect();
     });
@@ -710,7 +835,8 @@
         track('match_player_joined');
         state.joinReported = true;
       }
-      showView('room');
+      // 重連也會再收到一次 welcome，pushView 認得目前這一格，不會愈疊愈多
+      pushView('room', roomUrl());
       return;
     }
 
@@ -786,6 +912,18 @@
   function renderLobby(room, isHost) {
     if (isHost) syncSettingsOnce(room);
 
+    /*
+     * 組數還是自動的話，每次房間狀態更新都把那一排跟著伺服器改。
+     *
+     * syncSettingsOnce 只同步一次，但自動組數是**隨著人進來才變的**——
+     * 五個人時 2 組、第十二個人進來變 3 組。少了這一段，主持人後來點開
+     * 「改題目」看到的會是開房當下那個過期的數字。
+     */
+    if (isHost && !state.groupCountTouched) {
+      var autoRadio = el.groupCount.querySelector('[value="' + room.groupCount + '"]');
+      if (autoRadio) autoRadio.checked = true;
+    }
+
     el.roomCode.textContent = room.code;
     el.shareUrl.textContent = shareLink();
     renderQr();
@@ -793,15 +931,37 @@
     el.playerCount.textContent = t('playerCount', { n: room.players.length, max: room.maxPlayers });
     el.playerEmpty.hidden = room.players.length > 0;
 
+    /*
+     * 名單排序：**主持人最上面、自己第二、其餘照加入順序**。
+     *
+     * 伺服器已經照 joinedAt 排好了，所以這裡只要把主持人和自己往前挪——
+     * Array.prototype.sort 是穩定的，回傳 0 的那些會維持原本的加入順序。
+     */
+    var ordered = room.players.slice().sort(function (a, b) {
+      if (a.host !== b.host) return a.host ? -1 : 1;
+      var mineA = a.id === state.clientId;
+      var mineB = b.id === state.clientId;
+      if (mineA !== mineB) return mineA ? -1 : 1;
+      return 0;
+    });
+
     var html = '';
-    for (var i = 0; i < room.players.length; i += 1) {
-      var player = room.players[i];
+    for (var i = 0; i < ordered.length; i += 1) {
+      var player = ordered[i];
       html +=
         '<li class="' + (player.online ? '' : 'is-offline') + '">' +
         avatarSvg(player.avatar, 32) +
         '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
-        (player.host ? '<span class="offline">' + escapeHtml(t('hostTag')) + '</span>' : '') +
-        (player.online ? '' : '<span class="offline">' + escapeHtml(t('offlineTag')) + '</span>') +
+        /* 標籤樣式跟 04_HappyBingo 一致（.role-badge 膠囊），三個專案要長一樣。
+           主持人打開「也一起作答」時會同時有「主持人」和「玩家」兩個標籤——
+           這比在別的地方寫一句說明清楚，別人也看得到誰真的參與分組 */
+        (player.host ? '<span class="role-badge">' + escapeHtml(t('hostTag')) + '</span>' : '') +
+        (!player.host || room.hostPlays
+          ? '<span class="role-badge">' + escapeHtml(t('playerTag')) + '</span>'
+          : '') +
+        (player.online
+          ? ''
+          : '<span class="role-badge is-muted">' + escapeHtml(t('offlineTag')) + '</span>') +
         (isHost && !player.host
           ? '<button class="btn-outline btn-danger" type="button" data-kick="' + player.id +
             '" aria-label="' + escapeHtml(t('kickLabel')) + '">✕</button>'
@@ -836,10 +996,7 @@
       else state.selected.push(question.id);
     }
 
-    var boxes = el.categoryList.querySelectorAll('[data-question]');
-    for (var j = 0; j < boxes.length; j += 1) {
-      boxes[j].checked = state.selected.indexOf(boxes[j].dataset.question) >= 0;
-    }
+    syncQuestionBoxes();
     var groupRadio = el.groupCount.querySelector('[value="' + room.groupCount + '"]');
     if (groupRadio) groupRadio.checked = true;
     var secondsRadio = el.questionSeconds.querySelector('[value="' + room.questionSeconds + '"]');
@@ -918,10 +1075,19 @@
     return html;
   }
 
+  /*
+   * 用 id 查人。先查現役名單，查不到就退回結算當下的快照——
+   * 結算後離開房間的人不該從結果畫面上消失（結果是靜態紀錄，見 computeResult）。
+   */
   function playerById(id) {
     var players = state.room ? state.room.players : [];
     for (var i = 0; i < players.length; i += 1) {
       if (players[i].id === id) return players[i];
+    }
+
+    var snapshot = state.room && state.room.result && state.room.result.players;
+    if (snapshot && snapshot[id]) {
+      return { id: id, nickname: snapshot[id].nickname, avatar: snapshot[id].avatar, online: false };
     }
     return null;
   }
@@ -1034,7 +1200,8 @@
       var topic = topics[i];
       var player = topic.dissenter ? playerById(topic.dissenter) : null;
       html +=
-        '<li class="topic"><span class="ox-mark">' + (topic.value === 'O' ? '◯' : '✕') + '</span>' +
+        '<li class="topic"><span class="ox-mark"><svg><use href="#mark-' +
+        (topic.value === 'O' ? 'o' : 'x') + '" /></svg></span>' +
         '<span class="text">' + escapeHtml(questionTextById(topic.questionId)) +
         '<span class="note">' +
         escapeHtml(player
@@ -1129,6 +1296,7 @@
   }
 
   function confirmExit() {
+    if (el.confirmDialog.open) el.confirmDialog.close();
     var isHost = state.role === 'host';
     el.confirmTitle.textContent = isHost ? t('confirmCloseTitle') : t('confirmLeaveTitle');
     el.confirmDesc.textContent = isHost ? t('confirmCloseDesc') : t('confirmLeaveDesc');
@@ -1144,8 +1312,128 @@
     el.confirmDialog.showModal();
   }
 
+  // 用 replace 不用 href：退出之後按返回鍵不該又被拉回剛剛離開的房間
   function backHome() {
-    location.href = CFG.base + '/' + CFG.lang + '/';
+    location.replace(CFG.base + '/' + CFG.lang + '/');
+  }
+
+  /* ---------- 瀏覽器返回鍵 ---------- */
+
+  /*
+   * 每往前一頁（出題、填暱稱、房間）就推一格 history，返回鍵才不會一步跳出整個網站。
+   * 從房間退回來的行為分兩種：
+   *
+   *  - 還在大廳：直接離開房間（主持人是關房），一次退回首頁畫面。
+   *  - 遊戲已經開始：先跳跟「離開房間 / 關閉房間」同一個確認框，確定了才回首頁，
+   *    免得手機上手滑一劃就把一場正在進行的遊戲滑掉。
+   */
+  var rewinding = false; // 自己呼叫 history.go() 造成的那一次 popstate
+
+  function initHistory() {
+    // 基準那一格固定是首頁：網址先把 ?room= 拿掉，退回來重整才不會又被拉進房間
+    var home = new URL(location.href);
+    home.searchParams.delete('room');
+    history.replaceState({ view: 'home', i: 0 }, '', home.toString());
+    state.depth = 0;
+    state.entry = 'home';
+    window.addEventListener('popstate', onPopState);
+  }
+
+  // url 不給就沿用目前的網址（出題頁、以及從房間按「改題目」進來的情況）
+  function pushView(name, url) {
+    if (state.entry !== name) {
+      state.depth += 1;
+      state.entry = name;
+      history.pushState({ view: name, i: state.depth }, '', url || location.href);
+    }
+    showView(name);
+  }
+
+  function roomUrl() {
+    var url = new URL(location.href);
+    url.searchParams.set('room', state.code);
+    return url.toString();
+  }
+
+  function onPopState(event) {
+    var target = (event.state && event.state.view) || 'home';
+    var index = (event.state && event.state.i) || 0;
+    state.depth = index;
+    state.entry = target;
+
+    // 自己退回首頁那一格造成的，畫面已經決定好了
+    if (rewinding) {
+      rewinding = false;
+      showView('home');
+      return;
+    }
+
+    // 房間已經沒了（被關、被移出、致命錯誤）：不用再問，把通知關掉回首頁畫面
+    if (state.closing) {
+      closeDialogs();
+      resetRoom();
+      return rewindHome(index);
+    }
+
+    if (state.view !== 'room' || !isOpen()) return showView(target);
+
+    if (state.room && state.room.status !== 'lobby') {
+      // 先把房間那一格補回去，按「取消」的人才留在原地
+      pushView('room', roomUrl());
+      confirmExit();
+      return;
+    }
+
+    quietLeave();
+    rewindHome(index);
+  }
+
+  // 房間可能疊在出題、填暱稱上面，一次退到首頁那一格，不要一格一格問
+  function rewindHome(index) {
+    if (index > 0) {
+      rewinding = true;
+      history.go(-index);
+      return;
+    }
+    showView('home');
+  }
+
+  // 離開房間但留在同一頁（返回鍵專用，backHome 是整頁換掉）
+  function quietLeave() {
+    var isHost = state.role === 'host';
+    if (isHost) track('match_room_closed');
+    send({ t: isHost ? 'close' : 'leave' });
+    resetRoom();
+  }
+
+  // 回到首頁畫面＝下一場從頭來過，這一場的旗標全部歸零（選好的題目留著，通常還想再玩一次）
+  function resetRoom() {
+    clearTimeout(state.reconnectTimer);
+    cancelAnimationFrame(state.frame);
+    var ws = state.ws;
+    state.ws = null; // 先斷開參照，舊連線的 close 事件就不會再觸發重連
+    if (ws) {
+      try {
+        ws.close();
+      } catch (e) {
+        /* 已經關了 */
+      }
+    }
+    state.closing = false;
+    state.role = '';
+    state.code = '';
+    state.room = null;
+    state.joinReported = false;
+    state.resultsReported = false;
+    state.settingsSynced = false;
+    state.deadlineAt = 0;
+    hideBanner();
+  }
+
+  function closeDialogs() {
+    [el.confirmDialog, el.closedDialog, el.kickedDialog].forEach(function (dialog) {
+      if (dialog.open) dialog.close();
+    });
   }
 
   /* ---------- 畫面切換與小工具 ---------- */

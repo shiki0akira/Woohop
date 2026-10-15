@@ -45,6 +45,9 @@ html.light {
      跟開啟時的 accent 太接近、白滑塊也壓不住，所以兩個主題各指定一個中深色 */
   --switch-off: var(--secondary-800);
 
+  /* 打勾框的底色。比 --color-accent 深一階，白色的勾才壓得過去（見下方 .check-row） */
+  --check-face: var(--secondary-800);
+
   /* 同意固定走 Primary（藍）、不同意固定走 Secondary（粉），兩個主題都一樣，
      不能直接用 --btn-face：它在淺色模式是 Secondary，同意會跟著變粉色 */
   /* 淺色模式：500 當底、600 當厚度、900 當文字，跟 --btn-face 那組同一套配法 */
@@ -72,6 +75,7 @@ html.light {
   --btn-disabled-face: var(--primary-800);
   --btn-disabled-text: var(--primary-400);
   --switch-off: var(--primary-800);
+  --check-face: var(--primary-700);
 
   --ox-o-face: var(--primary-700);
   /* 未選中的底色：夠濃才看得出兩顆的差別，但不能濃到跟「已選中」搞混 */
@@ -773,8 +777,6 @@ textarea.field {
 
 #start-game-block {
   margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
 }
 
 #start-game-block .btn-block {
@@ -938,15 +940,59 @@ textarea.field {
   cursor: pointer;
 }
 
-/* 原本是瀏覽器預設的 13px，手指點不到。放大到 18px 並染上強調色 */
+/*
+ * 打勾框自己畫，不用 accent-color。
+ *
+ * accent-color 只管填色，勾與橫槓的顏色是瀏覽器自己挑的。淺色的 accent
+ * 是 secondary-700 (#ba82c4)，白勾對比 2.97、黑勾 7.08，於是瀏覽器挑了黑勾——
+ * 看起來又髒又不像品牌色。而且各家挑法不同（iOS Safari 跟 Chrome 就不一樣），
+ * 同一份 CSS 兩個平台長得不一樣，光調 accent-color 是賭某一家的行為。
+ *
+ * 改成自己填底、自己畫白色的勾與橫槓，兩個主題、所有平台就都一致。
+ * 底色另給 --check-face 而不是直接用 --color-accent：那個色階白勾壓不到 3:1
+ * （非文字元件的門檻），深一階之後淺色 5.46、深色 4.34。
+ *
+ * 原本是瀏覽器預設的 13px，手指點不到，所以放大到 18px。
+ */
 .check-row input[type='checkbox'],
 .cat-all input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
   width: 18px;
   height: 18px;
   margin: 0;
   flex: none;
-  accent-color: var(--color-accent);
+  border: 2px solid var(--color-outline);
+  border-radius: 5px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 14px;
   cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+/* 全選那顆在「部分選取」時是 indeterminate，跟已勾選共用同一個底色 */
+.check-row input[type='checkbox']:checked,
+.cat-all input[type='checkbox']:checked,
+.cat-all input[type='checkbox']:indeterminate {
+  background-color: var(--check-face);
+  border-color: var(--check-face);
+}
+
+.check-row input[type='checkbox']:checked,
+.cat-all input[type='checkbox']:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5' fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.cat-all input[type='checkbox']:indeterminate {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8h8' fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.check-row input[type='checkbox']:focus-visible,
+.cat-all input[type='checkbox']:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* 分類之間的間距交給 #category-list 的 gap，不要用 margin-top——
@@ -1104,10 +1150,34 @@ textarea.field {
   box-shadow: 0 0 0 var(--ox-edge);
 }
 
+/* symbol 的定義本體不顯示，只給 <use> 引用 */
+.ox-sprite {
+  display: none;
+}
+
 .ox-mark {
   font-size: 3rem;
   line-height: 1;
   color: var(--ox-mark);
+}
+
+/*
+ * 記號改用 SVG 畫（理由見 template.html 的 .ox-sprite）。尺寸仍由 .ox-mark 的
+ * font-size 決定，1em 跟著走，所以答題按鈕、統計、結果清單三處不用各自調。
+ */
+.ox-mark svg {
+  /*
+   * inline-block（不是 block）：結果清單那一行的記號要跟文字在同一個行高框裡，
+   * block 會讓 span 的高度縮成圖示本身，記號就比第一行文字高出幾 px。
+   */
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 5;
+  stroke-linecap: round;
 }
 
 .ox-word {
@@ -1645,4 +1715,30 @@ textarea.field {
 .seg-item:has(input:focus-visible) {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/*
+ * 迷你按鈕。標題旁邊的次要動作用（出題頁的「隨機」「清空」），
+ * 不要用在主要動作上——28px 已經接近手指點得到的下限。
+ *
+ * **min-height 一定要一起壓。** .btn-solid / .btn-outline 的基底是 min-height: 40px，
+ * 只寫 height 的話 min-height 會贏、按鈕根本不會變矮——.btn-small 就是這樣，
+ * 它宣告 height: 32px 但實際渲染一直是 40px。
+ */
+.btn-mini {
+  min-height: 28px;
+  height: 28px;
+  padding: 0 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  gap: 0.3rem;
+}
+
+/* 離線標籤：跟其他標籤同一顆膠囊，只是淡化。與 04_HappyBingo 一致 */
+.role-badge.is-muted {
+  color: var(--color-text-muted);
+}
+/* 名單一列可能同時掛好幾個標籤（主持人＋玩家），要留得下間距 */
+.player-list li .role-badge + .role-badge {
+  margin-left: 0.35rem;
 }
