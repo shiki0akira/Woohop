@@ -1,0 +1,349 @@
+/*
+ * 把 app/ 的樣板組成 dist/，給 wrangler 的 assets binding 用。
+ *
+ * 每個語言 × 每個頁面各產生一份完整的靜態 HTML（title / description / canonical /
+ * hreflang 都填好，文案直接寫進 HTML）。沒有這道 build 的話，所有語言會共用同一份
+ * 中文 title、而且爬蟲看不到任何內容——系列前三個專案都踩過同樣的坑，做法保持一致。
+ *
+ * 導覽列與頁尾放在 app/partials/，兩個頁面共用同一份，不會改了一邊漏另一邊。
+ * 樣板裡對不到值的 {{token}} 會直接讓 build 失敗，不會靜靜產出半空的頁面。
+ */
+
+import { mkdir, readFile, writeFile, cp, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import {
+  LANGS,
+  DEFAULT_LANG,
+  LOCALE_LABELS,
+  STRINGS,
+  ORIGIN,
+  WORKER_ORIGIN,
+  BASE_PATH,
+  PROJECT_ID,
+} from '../app/strings.js';
+import {
+  QUESTIONS,
+  CATEGORIES,
+  ANCHORS,
+  DEFAULT_ANCHOR_ID,
+  DEFAULT_ORDER,
+  checkQuestions,
+} from '../app/questions.js';
+import { AVATARS } from '../app/avatars.js';
+import {
+  SIZES,
+  DEFAULT_SIZE,
+  MAX_TARGET_LINES,
+  DEFAULT_TARGET_LINES,
+  cellCount,
+  centerIndex,
+  totalLines,
+  minCellsForLines,
+} from '../src/bingo.js';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const dist = join(root, 'dist');
+const outBase = join(dist, BASE_PATH.replace(/^\//, ''));
+
+// 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
+const RAW_TOKENS = new Set([
+  'hreflang',
+  'stringsJson',
+  'questionsJson',
+  'avatarsJson',
+  'bingoJson',
+  'langOptions',
+  'rulesHostList',
+  'rulesPlayerList',
+  'rulesFaqList',
+]);
+
+// dir 是語言後面的路徑：遊戲頁在 /bingo/{lang}/、規則頁在 /bingo/{lang}/rules/
+const PAGES = [
+  { template: 'template.html', dir: '', titleKey: 'seoTitle', descKey: 'seoDesc' },
+  { template: 'rules.html', dir: 'rules', titleKey: 'rulesSeoTitle', descKey: 'rulesSeoDesc' },
+];
+
+await main();
+
+async function main() {
+  checkStrings();
+  checkQuestions(LANGS);
+
+  /*
+   * 靜態資源帶上版本號（app.js?v=xxxx）。
+   *
+   * Worker 給的是 max-age=0, must-revalidate，理論上每次都會回源確認，但實務上
+   * 瀏覽器（尤其是行動裝置與內嵌 WebView）常常還是拿舊的——部署完使用者看到舊版、
+   * 得手動強制重整才會更新。網址變了就一定是新的請求，這個問題就不存在。
+   */
+  const assetVersion = createHash('sha256')
+    .update(await readFile(join(root, 'app', 'app.js')))
+    .update(await readFile(join(root, 'app', 'app.css')))
+    .update(await readFile(join(root, 'app', 'header.js')))
+    .digest('hex')
+    .slice(0, 8);
+
+  await cleanDist();
+  await mkdir(outBase, { recursive: true });
+
+  const partials = {
+    head: await readPartial('head.html'),
+    header: await readPartial('header.html'),
+    footer: await readPartial('footer.html'),
+  };
+
+  for (const page of PAGES) {
+    const template = await readFile(join(root, 'app', page.template), 'utf8');
+    const withPartials = injectPartials(template, partials);
+
+    for (const lang of LANGS) {
+      const html = render(withPartials, tokensFor(lang, page, assetVersion));
+      const dir = join(outBase, lang, page.dir);
+      await mkdir(dir, { recursive: true });
+      await writeFile(join(dir, 'index.html'), html, 'utf8');
+      console.log(`  ${pagePath(lang, page)}`);
+    }
+  }
+
+  await cp(join(root, 'app', 'app.js'), join(outBase, 'app.js'));
+  await cp(join(root, 'app', 'header.js'), join(outBase, 'header.js'));
+  await cp(join(root, 'app', 'app.css'), join(outBase, 'app.css'));
+
+  // QR 產生器整包放進來，不走 CDN：多一個網路請求、多一個第三方故障點都不值得
+  await mkdir(join(outBase, 'vendor'), { recursive: true });
+  await cp(
+    join(root, 'node_modules', 'qrcode-generator', 'qrcode.js'),
+    join(outBase, 'vendor', 'qrcode.js'),
+  );
+
+  await cp(join(root, 'public'), outBase, { recursive: true });
+  await writeFile(join(outBase, 'sitemap.xml'), sitemap(), 'utf8');
+
+  console.log(`\nbuild ok → dist${BASE_PATH}/ （${LANGS.length} 種語言 × ${PAGES.length} 頁）`);
+}
+
+// 先清掉舊的產出，免得刪掉語言或資源之後還留著孤兒檔案。
+// npm run dev 會在 wrangler dev 還開著的時候重跑 build，這時 Windows 會鎖住 dist 而刪不掉——
+// 那種情況下所有檔案本來就會被逐一覆寫，警告一聲繼續就好，不需要讓整個 build 失敗。
+async function cleanDist() {
+  try {
+    await rm(dist, { recursive: true, force: true });
+  } catch (error) {
+    if (error.code !== 'EBUSY' && error.code !== 'EPERM') throw error;
+    console.warn('  (dist 正在被使用，改成直接覆寫，沒有清掉舊檔)');
+  }
+}
+
+function readPartial(name) {
+  return readFile(join(root, 'app', 'partials', name), 'utf8');
+}
+
+// partial 自己也含 {{token}}，所以要先貼進來、再一起做替換
+function injectPartials(template, partials) {
+  return template.replace(/\{\{(head|header|footer)\}\}/g, (whole, name) => partials[name].trimEnd());
+}
+
+// 漏翻的 key 在執行期會變成空字串，很難發現，所以在這裡先擋下來
+function checkStrings() {
+  const reference = Object.keys(STRINGS[DEFAULT_LANG]).sort();
+
+  for (const lang of LANGS) {
+    if (!STRINGS[lang]) throw new Error(`strings.js 少了 ${lang} 這份文案`);
+
+    const keys = Object.keys(STRINGS[lang]).sort();
+    const missing = reference.filter((key) => !keys.includes(key));
+    const extra = keys.filter((key) => !reference.includes(key));
+
+    if (missing.length) throw new Error(`${lang} 少了這些 key：${missing.join(', ')}`);
+    if (extra.length) throw new Error(`${lang} 多了 ${DEFAULT_LANG} 沒有的 key：${extra.join(', ')}`);
+  }
+
+  // 分類的顯示名稱是「category + 首字大寫」組出來的，漏一個分類會在主持人畫面開天窗
+  for (const category of CATEGORIES) {
+    const key = categoryKey(category);
+    for (const lang of LANGS) {
+      if (!STRINGS[lang][key]) throw new Error(`${lang} 少了分類名稱 ${key}`);
+    }
+  }
+
+  // 規則頁的三份清單長度要一致，否則某個語言會少一步驟而沒人發現
+  for (const key of ['rulesHostSteps', 'rulesPlayerSteps', 'rulesFaq']) {
+    const size = STRINGS[DEFAULT_LANG][key].length;
+    for (const lang of LANGS) {
+      if (STRINGS[lang][key].length !== size) {
+        throw new Error(`${lang} 的 ${key} 有 ${STRINGS[lang][key].length} 項，應該是 ${size} 項`);
+      }
+    }
+  }
+}
+
+function categoryKey(category) {
+  return `category${category[0].toUpperCase()}${category.slice(1)}`;
+}
+
+function pagePath(lang, page) {
+  return `${BASE_PATH}/${lang}/` + (page.dir ? `${page.dir}/` : '');
+}
+
+function tokensFor(lang, page, assetVersion) {
+  const strings = STRINGS[lang];
+
+  return {
+    ...strings,
+    lang,
+    langOptions: langOptions(lang),
+    base: BASE_PATH,
+    projectId: PROJECT_ID,
+    siteOrigin: ORIGIN,
+    workerOrigin: WORKER_ORIGIN,
+    assetVersion,
+    // head partial 用的是通用名稱，各頁面把自己的 title/description 餵進去
+    pageTitle: strings[page.titleKey],
+    pageDesc: strings[page.descKey],
+    canonical: ORIGIN + pagePath(lang, page),
+    hreflang: hreflangTags(page),
+    stringsJson: toScriptJson(strings),
+    // 題庫只內嵌「這個語言的文字」，不是每種語言全帶：
+    // 一份頁面只有一種語言，帶進全部會讓每頁多背用不到的題庫
+    questionsJson: toScriptJson(questionsFor(lang)),
+    // 頭像跟語言無關，每份頁面內嵌同一份。名單、選人視窗、排行榜會重複用上幾十次
+    avatarsJson: toScriptJson(AVATARS),
+    /*
+     * 尺寸與連線的常數表。
+     *
+     * 門檻表（連 N 條線最少要打勾幾格）在這裡用 src/bingo.js 算好再內嵌，
+     * **不讓前端自己重算一份**——那段邏輯有測試（test/bingo.test.js 拿獨立的窮舉法
+     * 交叉驗證過），複製一份到 app.js 遲早會跟伺服器端算出不一樣的數字。
+     */
+    bingoJson: toScriptJson(bingoConstants()),
+    rulesHostList: listHtml(strings.rulesHostSteps),
+    rulesPlayerList: listHtml(strings.rulesPlayerSteps),
+    rulesFaqList: faqHtml(strings.rulesFaq),
+  };
+}
+
+function bingoConstants() {
+  const minCells = {};
+  const geometry = {};
+
+  for (const size of SIZES) {
+    minCells[size] = {};
+    for (let lines = 1; lines <= MAX_TARGET_LINES[size]; lines += 1) {
+      minCells[size][lines] = minCellsForLines(size, lines);
+    }
+    geometry[size] = {
+      cells: cellCount(size),
+      lines: totalLines(size),
+      center: centerIndex(size),
+    };
+  }
+
+  return {
+    sizes: SIZES,
+    defaultSize: DEFAULT_SIZE,
+    maxTargetLines: MAX_TARGET_LINES,
+    defaultTargetLines: DEFAULT_TARGET_LINES,
+    geometry,
+    minCells,
+  };
+}
+
+function questionsFor(lang) {
+  return {
+    categories: CATEGORIES,
+    defaultOrder: DEFAULT_ORDER,
+    defaultAnchorId: DEFAULT_ANCHOR_ID,
+    anchors: ANCHORS.map((anchor) => ({ id: anchor.id, text: anchor.text[lang] })),
+    list: QUESTIONS.map((question) => ({
+      id: question.id,
+      category: question.category,
+      text: question.text[lang],
+    })),
+  };
+}
+
+function listHtml(items) {
+  return items.map((item) => `<li>${escapeHtml(item)}</li>`).join('\n            ');
+}
+
+function faqHtml(items) {
+  return items
+    .map(
+      (item) =>
+        `<div class="faq-item">\n              <h3>${escapeHtml(item.q)}</h3>\n              <p>${escapeHtml(item.a)}</p>\n            </div>`,
+    )
+    .join('\n            ');
+}
+
+// selected 直接寫進 HTML：JS 還沒跑的時候下拉就已經指著當前語言，不會先閃成第一個選項
+function langOptions(current) {
+  return LANGS.map(
+    (lang) =>
+      `<option value="${lang}"${lang === current ? ' selected' : ''}>${escapeHtml(LOCALE_LABELS[lang])}</option>`,
+  ).join('\n            ');
+}
+
+// hreflang 要指到「同一個頁面的其他語言」，不是一律指回遊戲頁
+function hreflangTags(page) {
+  const tags = LANGS.map(
+    (lang) => `<link rel="alternate" hreflang="${lang}" href="${ORIGIN}${pagePath(lang, page)}" />`,
+  );
+  tags.push(
+    `<link rel="alternate" hreflang="x-default" href="${ORIGIN}${pagePath(DEFAULT_LANG, page)}" />`,
+  );
+  return tags.join('\n    ');
+}
+
+function sitemap() {
+  const entries = [];
+
+  for (const page of PAGES) {
+    for (const lang of LANGS) {
+      const alternates = LANGS.map(
+        (other) =>
+          `    <xhtml:link rel="alternate" hreflang="${other}" href="${ORIGIN}${pagePath(other, page)}" />`,
+      ).join('\n');
+      entries.push(
+        ['  <url>', `    <loc>${ORIGIN}${pagePath(lang, page)}</loc>`, alternates, '  </url>'].join('\n'),
+      );
+    }
+  }
+
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    entries.join('\n'),
+    '</urlset>',
+    '',
+  ].join('\n');
+}
+
+function render(template, tokens) {
+  const html = template.replace(/\{\{(\w+)\}\}/g, (whole, name) => {
+    if (!(name in tokens)) throw new Error(`樣板用了 {{${name}}}，但 strings.js 沒有這個 key`);
+    return RAW_TOKENS.has(name) ? tokens[name] : escapeHtml(tokens[name]);
+  });
+
+  const leftover = html.match(/\{\{\w+\}\}/g);
+  if (leftover) throw new Error(`還有沒替換掉的 token：${[...new Set(leftover)].join(', ')}`);
+
+  return html;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// 內嵌進 <script> 的 JSON，把 < 跳掉才不會被文案裡的 </script> 提早關掉標籤
+function toScriptJson(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
