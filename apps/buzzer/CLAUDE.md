@@ -1,6 +1,6 @@
 # web100_02_BuzzerGame
 
-現場搶答工具，Web100 系列第二個專案。主持人建房、其他人掃 QR code 加入、按鈕搶答即時排名。
+現場搶答工具，Woohop 系列第二個專案。主持人建房、其他人掃 QR code 加入、按鈕搶答即時排名。
 
 系列整體架構（子路徑策略、網址結構規則、共用 design tokens、repo 命名）在 monorepo 的 `docs/ARCHITECTURE.md`。這裡只記跟這個專案直接相關的事。
 

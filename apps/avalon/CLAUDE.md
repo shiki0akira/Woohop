@@ -1,6 +1,6 @@
 # web100_01_Avalon-Voice
 
-阿瓦隆桌遊的語音主持工具，Web100 系列第一個專案。這個 repo **只負責阿瓦隆語音本身**，不含首頁（首頁在同一個 monorepo 的 `apps/homepage`）。
+阿瓦隆桌遊的語音主持工具，Woohop 系列第一個專案。這個 repo **只負責阿瓦隆語音本身**，不含首頁（首頁在同一個 monorepo 的 `apps/homepage`）。
 
 ## 整體架構
 

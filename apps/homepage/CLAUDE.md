@@ -1,6 +1,6 @@
 # web100_00_Homepage
 
-Web100 系列的作品集入口首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel，綁定正式網域 `www.vibeweb100.com`。
+Woohop 系列的作品集入口首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel，綁定正式網域 `www.vibeweb100.com`。
 
 原始碼只有一份 `index.html`，但**部署前會經過一道 build**：`scripts/prerender.js` 讀取 `index.html` 裡的 `STRINGS`，為 8 種語言各產生一份 `dist/{lang}/index.html`，補上該語言的 `lang`、`title`、`description`、`canonical`、`hreflang`，並把 hero 與卡片文字直接填進 HTML。沒有這道 build 的話，所有語言會共用同一份中文 title 且內文全空，爬蟲看不到任何內容。`dist/` 不進版控，由 Vercel 建置時產生。
 
@@ -27,7 +27,7 @@ Web100 系列的作品集入口首頁。純 HTML/CSS/JS、沒有框架，部署�
 
 - 網址帶語言（`/ja/`）→ 直接用
 - 網址沒帶語言（`/`）→ 依序看 `localStorage['web100-lang']`、`web100_lang` cookie，都沒有用預設語言 `zh-TW`
-- 使用者手動切換時，`persistLangPreference()` 會同時寫 `localStorage` 跟 `web100_lang` cookie（`path=/`，全站共用）——這個 cookie 名稱跟寫法要跟其他 Web100 專案保持一致，不要各專案各自發明一套
+- 使用者手動切換時，`persistLangPreference()` 會同時寫 `localStorage` 跟 `web100_lang` cookie（`path=/`，全站共用）——這個 cookie 名稱跟寫法要跟其他 Woohop 專案保持一致，不要各專案各自發明一套
 
 ## vercel.json 的規則順序很重要
 

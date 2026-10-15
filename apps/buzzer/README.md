@@ -1,6 +1,6 @@
 # web100_02_BuzzerGame
 
-Web100 系列第 2 個小遊戲：**現場搶答工具**。
+Woohop 系列第 2 個小遊戲：**現場搶答工具**。
 
 多人在同一場合（聚會、教學、公司活動）用手機搶答。不用下載 App、不用註冊帳號——主持人建立房間後分享 QR code，其他人掃碼輸入暱稱就能玩。
 
@@ -24,4 +24,4 @@ npm run dev
 ## 文件
 
 - 這個 repo 的架構決策與注意事項：`CLAUDE.md`
-- Web100 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`
+- Woohop 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`

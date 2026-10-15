@@ -1,6 +1,6 @@
 # web100_03_PreferenceMatch
 
-Web100 系列第 3 個小遊戲：**喜好二選一**，O/X 偏好配對破冰工具。
+Woohop 系列第 3 個小遊戲：**喜好二選一**，O/X 偏好配對破冰工具。
 
 大家用手機對一系列「同意／不同意」的題目限時作答，結束後自動把全場分成答案最像的小組，並列出每組可以聊的共同話題。不用下載 App、不用註冊帳號——主持人建立房間後分享 QR code，其他人掃碼挑個頭像、填暱稱就能玩。
 
@@ -41,4 +41,4 @@ npm run test:smoke
 ## 文件
 
 - 玩法、演算法與所有設計決策：`CONCEPT.md`
-- Web100 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`
+- Woohop 系列整體架構：monorepo 的 `docs/ARCHITECTURE.md`

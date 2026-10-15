@@ -1,9 +1,9 @@
 ---
 name: web100-launch-check
-description: Web100 系列專案上線後的驗收流程 —— 對「已上線的正式網址」跑端對端測試、檢查 SEO 中繼標籤與 sitemap、盤點並驗證 GA4 事件、產出 Google Search Console 的待辦清單，最後檢查系列文件是否同步。只要使用者提到某個 web100 專案剛部署／剛上線／推上正式網域，或問「上線後還要做什麼」「上線檢查」「驗收一下」「GA4 有沒有進來」「要不要提交 sitemap」「GSC 要處理什麼」，就用這個 skill。即使他們只說「003 上線了」而沒有明講要檢查，也主動用它跑一輪——上線後最容易漏掉的就是這些收尾動作。
+description: Woohop 系列專案上線後的驗收流程 —— 對「已上線的正式網址」跑端對端測試、檢查 SEO 中繼標籤與 sitemap、盤點並驗證 GA4 事件、產出 Google Search Console 的待辦清單，最後檢查系列文件是否同步。只要使用者提到某個 web100 專案剛部署／剛上線／推上正式網域，或問「上線後還要做什麼」「上線檢查」「驗收一下」「GA4 有沒有進來」「要不要提交 sitemap」「GSC 要處理什麼」，就用這個 skill。即使他們只說「003 上線了」而沒有明講要檢查，也主動用它跑一輪——上線後最容易漏掉的就是這些收尾動作。
 ---
 
-# Web100 上線後驗收
+# Woohop 上線後驗收
 
 新專案部署完不等於上線完成。這個 skill 走一輪固定的驗收，重點在**抓那些「部署成功但其實壞掉／漏掉」的狀況**——它們不會讓部署失敗，只會安靜地讓流量、追蹤或索引出問題，往往幾週後才發現。
 
@@ -17,7 +17,7 @@ description: Web100 系列專案上線後的驗收流程 —— 對「已上線�
 2. **Worker／部署來源**的網址（例：`https://web100-03-preference-match.shiki0akira.workers.dev`）
 3. 專案在本機的**路徑與路徑代號**（例：`web100_03_PreferenceMatch`、`/match/`）
 
-不確定就去 `web100_00_Homepage/ARCHITECTURE.md` 第 9 節的進度表，或該專案的 `CONCEPT.md` / `README.md` 查。
+不確定就去 `docs/ARCHITECTURE.md` 第 9 節的進度表，或該專案的 `CONCEPT.md` / `README.md` 查。
 
 還有一個每次都會咬人的陷阱：**部署完立刻用瀏覽器驗，很可能看到舊版**。判斷「線上到底是不是新版」一律用 `curl` 直接抓檔案內容比對，不要靠瀏覽器畫面。瀏覽器（尤其行動裝置與內嵌 WebView）即使收到 `must-revalidate` 也常常拿快取。
 
@@ -27,7 +27,7 @@ description: Web100 系列專案上線後的驗收流程 —— 對「已上線�
 
 ### 1. 線上煙霧測試
 
-先跑該專案自己的自動化測試——大多數 Web100 專案有 `npm run test:smoke` 之類的端對端測試，而且吃環境變數指定對象：
+先跑該專案自己的自動化測試——大多數 Woohop 專案有 `npm run test:smoke` 之類的端對端測試，而且吃環境變數指定對象：
 
 ```bash
 MATCH_URL=https://www.vibeweb100.com npm run test:smoke
@@ -104,8 +104,8 @@ bash scripts/ga4-events.sh
 
 新專案上線後有一批文件會過期，而且沒人會主動發現。逐項確認：
 
-- `web100_00_Homepage/ARCHITECTURE.md` 第 9 節的進度表有沒有這個專案
-- `web100_00_Homepage/README.md` 的「專案一覽」表格（順便看**既有列有沒有過期**——曾經出現過某專案早就上線、表格卻還寫「未部署」）
+- `docs/ARCHITECTURE.md` 第 9 節的進度表有沒有這個專案
+- `apps/homepage/README.md` 的「專案一覽」表格（順便看**既有列有沒有過期**——曾經出現過某專案早就上線、表格卻還寫「未部署」）
 - 首頁有沒有加上這個專案的卡片，而且**八種語言都有文案**、連結指到對應語言
 - `robots.txt` 有沒有列出這支 sitemap
 - 該專案自己的 `CONCEPT.md` / `README.md` 狀態是不是還停在「未部署」

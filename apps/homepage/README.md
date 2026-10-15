@@ -1,6 +1,6 @@
-# Web100 首頁
+# Woohop 首頁
 
-Web100 系列小遊戲/小工具的作品集入口首頁，純 HTML/CSS/JS，不用框架，部署在 Vercel，綁定正式網域 `www.vibeweb100.com`。
+Woohop 系列小遊戲/小工具的作品集入口首頁，純 HTML/CSS/JS，不用框架，部署在 Vercel，綁定正式網域 `www.vibeweb100.com`。
 
 ## 專案一覽
 
@@ -21,7 +21,7 @@ Web100 系列小遊戲/小工具的作品集入口首頁，純 HTML/CSS/JS，不
 - 這個專案負責網域根目錄 `/` 與各語言首頁 `/{lang}/`
 - `/avalon/*` 目前透過 `vercel.json` 的 rewrite **暫時代理**到阿瓦隆語音自己的 Vercel 部署（`web100_01_Avalon-Voice`）
   - 之後 Cloudflare Worker 路由總機做好後，這段代理規則會整段移除，改由 Worker 統一處理所有子專案的路由
-- 每加一個新的 Web100 子專案（例如 `web100_02_BuzzerGame`），要做的事：
+- 每加一個新的 Woohop 子專案（例如 `web100_02_BuzzerGame`），要做的事：
   1. 在 `index.html` 的 `STRINGS` 裡加上新專案的卡片文案（每個語言都要）
   2. 在 `scripts/prerender.js` 的替換規則加上對應的 `fill(...)`，新卡片的文字才會進到靜態 HTML
   3. 在 `vercel.json` 的 `rewrites` 裡加一條 `/{新專案代號}/*` 代理規則（放在語言萬用規則**之前**）
@@ -40,4 +40,4 @@ Web100 系列小遊戲/小工具的作品集入口首頁，純 HTML/CSS/JS，不
 
 ## 共用設計代幣
 
-視覺樣式沿用 Web100 架構規劃文件裡的 `design-tokens.css` 規則（深色系、紫藍色主色調），之後每個新專案都比照這份風格手動實作。
+視覺樣式沿用 Woohop 架構規劃文件裡的 `design-tokens.css` 規則（深色系、紫藍色主色調），之後每個新專案都比照這份風格手動實作。

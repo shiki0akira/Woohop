@@ -119,4 +119,4 @@ JSON.stringify({
 | GSC | 用**網域資源**，驗證 TXT 在 Cloudflare |
 | Cloudflare Worker 路由總機 | 還沒做，目前由首頁的 `vercel.json` rewrite 代打 |
 
-`web100_00_Homepage/ARCHITECTURE.md` 是這些決定的唯一來源，有疑問以它為準。
+`docs/ARCHITECTURE.md` 是這些決定的唯一來源，有疑問以它為準。
