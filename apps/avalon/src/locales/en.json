@@ -1,0 +1,69 @@
+{
+  "seo": {
+    "title": "Avalon Voice Narrator | Auto Host Script for The Resistance: Avalon",
+    "description": "Avalon Voice automatically reads the host script and narration out loud so no one has to memorize the lines. Pick your player count and roles, then start an online Avalon game instantly.",
+    "ogTitle": "Avalon Voice Narrator - Auto Host Script & Narration for Avalon",
+    "ogDescription": "Set your player count and roles, and Avalon Voice narrates the host script and narration for you from start to finish."
+  },
+  "nav": {
+    "title": "Avalon Voice",
+    "rules": "Rules",
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "home": {
+    "title": "Avalon Voice Narrator",
+    "description": "Automatically narrates the host script and narration for The Resistance: Avalon. Choose a player count, review the suggested roles, and adjust the setup before starting.",
+    "playerCount": "Players",
+    "recommendation": "Recommended setup",
+    "good": "Good",
+    "evil": "Evil",
+    "roleConfig": "Role configuration",
+    "mismatch": "Your role selection does not match the recommended count.",
+    "start": "Start game"
+  },
+  "game": {
+    "title": "Game guide",
+    "description": "Follow the spoken setup instructions and pass the device when needed.",
+    "speaking": "Speech guide is ready.",
+    "unsupported": "Speech synthesis is unavailable in this browser.",
+    "summary": "Narration script"
+  },
+  "rules": {
+    "title": "Rules",
+    "description": "Avalon is a hidden-role deduction game where good tries to complete quests and evil tries to stop them."
+  },
+  "voice": {
+    "script": [
+      "All players close your eyes.",
+      "Merlin, open your eyes. Evil players except Mordred, show a thumbs up.",
+      "Evil players except Oberon, open your eyes and identify one another.",
+      "Percival, open your eyes. Merlin and Morgana, show a thumbs up.",
+      "All players open your eyes."
+    ],
+    "speed": "Speed",
+    "pause": "Pause",
+    "resume": "Resume",
+    "restart": "Restart",
+    "narration": {
+      "closeEyes": "Everyone, please close your eyes and hold out a fist in front of you.",
+      "evilRecognize": "Evil players, please open your eyes and recognize each other.",
+      "evilRecognizeOberon": "Except Oberon, evil players, please open your eyes and recognize each other.",
+      "evilClose": "Evil players, please close your eyes.",
+      "merlinSee": "Merlin, please open your eyes. Evil players, please raise your thumb so Merlin can recognize you.",
+      "merlinSeeMordred": "Merlin, please open your eyes. Except Mordred, evil players, please raise your thumb so Merlin can recognize you.",
+      "merlinClose": "Merlin, please close your eyes. Evil players, please lower your thumb.",
+      "percivalSee": "Percival, please open your eyes. Merlin and Morgana, please raise your thumb so Percival can see you.",
+      "percivalClose": "Percival, please close your eyes. Merlin and Morgana, please lower your thumb.",
+      "openEyes": "Everyone, please open your eyes. The game begins."
+    }
+  },
+  "roles": {
+    "merlin": "Merlin",
+    "percival": "Percival",
+    "oberon": "Oberon",
+    "mordred": "Mordred",
+    "assassin": "Assassin",
+    "morgana": "Morgana"
+  }
+}

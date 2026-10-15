@@ -1,0 +1,65 @@
+{
+  "seo": {
+    "title": "Narrador de voz de Avalon | Guion de anfitrión y narración automáticos",
+    "description": "El narrador de voz de Avalon lee en voz alta el guion del anfitrión y la narración automáticamente, sin necesidad de memorizar nada. Elige el número de jugadores y los roles, y empieza la partida al instante.",
+    "ogTitle": "Narrador de voz de Avalon - Guion de anfitrión y narración automáticos",
+    "ogDescription": "Configura el número de jugadores y los roles, y el narrador de voz de Avalon te guía de principio a fin."
+  },
+  "nav": {
+    "title": "Narración Avalon",
+    "rules": "Reglas",
+    "dark": "Oscuro",
+    "light": "Claro"
+  },
+  "home": {
+    "title": "Narrador de voz de Avalon",
+    "description": "El narrador de voz de Avalon lee en voz alta el guion del anfitrión y la narración de forma automática. Elige el número de jugadores, revisa los roles sugeridos y ajusta la configuración antes de empezar.",
+    "playerCount": "Jugadores",
+    "recommendation": "Configuración recomendada",
+    "good": "Buenos",
+    "evil": "Malos",
+    "roleConfig": "Configuración de roles",
+    "mismatch": "La cantidad de roles no coincide con la recomendación.",
+    "start": "Iniciar partida"
+  },
+  "game": {
+    "title": "Guía de voz",
+    "description": "Sigue las instrucciones habladas.",
+    "speaking": "La guía de voz está lista.",
+    "unsupported": "La síntesis de voz no está disponible.",
+    "summary": "Guion de narración"
+  },
+  "rules": {
+    "title": "Reglas",
+    "description": "Avalon es un juego de roles ocultos."
+  },
+  "voice": {
+    "script": [
+      "Todos los jugadores, cierren los ojos.",
+      "Merlín, abre los ojos. Los jugadores malvados excepto Mordred, levanten el pulgar.",
+      "Los jugadores malvados excepto Oberón, abran los ojos e identifíquense.",
+      "Percival, abre los ojos. Merlín y Morgana, levanten el pulgar.",
+      "Todos los jugadores, abran los ojos."
+    ],
+    "narration": {
+      "closeEyes": "Todos, cierren los ojos y extiendan un puño frente a ustedes.",
+      "evilRecognize": "Bando del mal, abran los ojos y reconózcanse entre ustedes.",
+      "evilRecognizeOberon": "Excepto Oberón, el bando del mal, abran los ojos y reconózcanse entre ustedes.",
+      "evilClose": "Bando del mal, cierren los ojos.",
+      "merlinSee": "Merlín, abre los ojos. Bando del mal, levanten el pulgar para que Merlín los reconozca.",
+      "merlinSeeMordred": "Merlín, abre los ojos. Excepto Mordred, el bando del mal, levanten el pulgar para que Merlín los reconozca.",
+      "merlinClose": "Merlín, cierra los ojos. Bando del mal, bajen el pulgar.",
+      "percivalSee": "Percival, abre los ojos. Merlín y Morgana, levanten el pulgar para que Percival los vea.",
+      "percivalClose": "Percival, cierra los ojos. Merlín y Morgana, bajen el pulgar.",
+      "openEyes": "Todos, abran los ojos. Comienza el juego."
+    }
+  },
+  "roles": {
+    "merlin": "Merlín",
+    "percival": "Percival",
+    "oberon": "Oberón",
+    "mordred": "Mordred",
+    "assassin": "Asesino",
+    "morgana": "Morgana"
+  }
+}

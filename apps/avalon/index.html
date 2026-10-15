@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#252326" />
+    <!-- 根目錄絕對路徑：postbuild 把 index.html 搬進 dist/avalon/，但 public 的檔案留在 dist 根目錄；
+         掛到 www.vibeweb100.com/avalon/* 時也是抓首頁那份同一個檔案 -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>阿瓦隆語音主持 | 阿瓦隆台詞旁白自動產生器</title>
+    <meta name="description" content="阿瓦隆語音自動幫你生成主持人的阿瓦隆台詞與旁白，設定人數、角色後直接開局，不用自己背台詞。支援繁體中文，內建阿瓦隆規則說明。" />
+    <link rel="canonical" href="https://www.vibeweb100.com/avalon/zh-TW" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="阿瓦隆語音主持 - 阿瓦隆台詞旁白自動產生，開局免背稿" />
+    <meta property="og:description" content="設定人數與角色，阿瓦隆語音自動唸出主持人台詞和旁白，帶你完整跑完一場遊戲。" />
+    <meta property="og:url" content="https://www.vibeweb100.com/avalon/zh-TW" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7PE5687BG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      // send_page_view 關閉自動送出，改由 App.jsx 在每次路由/語言切換時手動送出，
+      // 這樣 SPA 內部切換頁面（首頁 -> 遊戲 -> 規則）才會各自被記錄成一次 page_view
+      gtag('config', 'G-S7PE5687BG', { send_page_view: false });
+    </script>
+  </head>
+  <body class="bg-neutral-200 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

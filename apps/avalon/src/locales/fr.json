@@ -1,0 +1,65 @@
+{
+  "seo": {
+    "title": "Narrateur vocal Avalon | Générateur automatique de texte d'animateur et narration",
+    "description": "Le narrateur vocal Avalon lit automatiquement à voix haute le texte de l'animateur et la narration, sans besoin d'apprendre son texte par cœur. Choisissez le nombre de joueurs et les rôles, puis lancez la partie immédiatement.",
+    "ogTitle": "Narrateur vocal Avalon - Texte d'animateur et narration automatiques",
+    "ogDescription": "Réglez le nombre de joueurs et les rôles, et le narrateur vocal Avalon lit le texte de l'animateur du début à la fin."
+  },
+  "nav": {
+    "title": "Narration Avalon",
+    "rules": "Règles",
+    "dark": "Sombre",
+    "light": "Clair"
+  },
+  "home": {
+    "title": "Narrateur vocal Avalon",
+    "description": "Le narrateur vocal Avalon lit automatiquement le texte de l'animateur et la narration à voix haute. Choisissez le nombre de joueurs, consultez les rôles suggérés et ajustez la configuration avant de commencer.",
+    "playerCount": "Joueurs",
+    "recommendation": "Configuration recommandée",
+    "good": "Bon",
+    "evil": "Mauvais",
+    "roleConfig": "Configuration des rôles",
+    "mismatch": "Le nombre de rôles ne correspond pas.",
+    "start": "Démarrer"
+  },
+  "game": {
+    "title": "Guide vocal",
+    "description": "Suivez les instructions vocales.",
+    "speaking": "Le guide vocal est prêt.",
+    "unsupported": "La synthèse vocale n'est pas disponible.",
+    "summary": "Texte de narration"
+  },
+  "rules": {
+    "title": "Règles",
+    "description": "Avalon est un jeu à rôles cachés."
+  },
+  "voice": {
+    "script": [
+      "Tous les joueurs, fermez les yeux.",
+      "Merlin, ouvrez les yeux. Les forces du mal sauf Mordred, montrez le pouce levé.",
+      "Les forces du mal sauf Oberon, ouvrez les yeux et identifiez-vous.",
+      "Percival, ouvrez les yeux. Merlin et Morgane, montrez le pouce levé.",
+      "Tout le monde, ouvrez les yeux."
+    ],
+    "narration": {
+      "closeEyes": "Tout le monde, fermez les yeux et tendez un poing devant vous.",
+      "evilRecognize": "Le camp du Mal, ouvrez les yeux et reconnaissez-vous.",
+      "evilRecognizeOberon": "Sauf Oberon, le camp du Mal, ouvrez les yeux et reconnaissez-vous.",
+      "evilClose": "Le camp du Mal, fermez les yeux.",
+      "merlinSee": "Merlin, ouvre les yeux. Le camp du Mal, levez le pouce pour que Merlin vous reconnaisse.",
+      "merlinSeeMordred": "Merlin, ouvre les yeux. Sauf Mordred, le camp du Mal, levez le pouce pour que Merlin vous reconnaisse.",
+      "merlinClose": "Merlin, ferme les yeux. Le camp du Mal, baissez le pouce.",
+      "percivalSee": "Percival, ouvre les yeux. Merlin et Morgane, levez le pouce pour que Percival vous voie.",
+      "percivalClose": "Percival, ferme les yeux. Merlin et Morgane, baissez le pouce.",
+      "openEyes": "Tout le monde, ouvrez les yeux. La partie commence."
+    }
+  },
+  "roles": {
+    "merlin": "Merlin",
+    "percival": "Percival",
+    "oberon": "Oberon",
+    "mordred": "Mordred",
+    "assassin": "Assassin",
+    "morgana": "Morgane"
+  }
+}

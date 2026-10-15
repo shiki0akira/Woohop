@@ -1,0 +1,69 @@
+{
+  "seo": {
+    "title": "Avalon Sprachassistent | Automatischer Spielleiter-Text & Erzähler für Avalon",
+    "description": "Avalon Sprachassistent liest den Spielleiter-Text und die Erzählung automatisch vor – niemand muss sich Zeilen merken. Spieleranzahl und Rollen einstellen und sofort loslegen.",
+    "ogTitle": "Avalon Sprachassistent - Automatischer Spielleiter-Text & Erzählung",
+    "ogDescription": "Spieleranzahl und Rollen festlegen, und der Avalon Sprachassistent liest Spielleiter-Text und Erzählung für dich vor."
+  },
+  "nav": {
+    "title": "Avalon Voice",
+    "rules": "Regeln",
+    "dark": "Dunkel",
+    "light": "Hell"
+  },
+  "home": {
+    "title": "Avalon Sprachassistent",
+    "description": "Der Avalon Sprachassistent liest den Spielleiter-Text und die Erzählung automatisch vor. Wählen Sie die Anzahl der Spieler, sehen Sie sich die vorgeschlagenen Rollen an und passen Sie die Aufstellung an, bevor Sie starten.",
+    "playerCount": "Spieler",
+    "recommendation": "Empfohlene Aufstellung",
+    "good": "Gut",
+    "evil": "Böse",
+    "roleConfig": "Rollen-Konfiguration",
+    "mismatch": "Ihre Rollenauswahl stimmt nicht mit der empfohlenen Anzahl überein.",
+    "start": "Spiel starten"
+  },
+  "game": {
+    "title": "Spielanleitung",
+    "description": "Folgen Sie den gesprochenen Anweisungen und geben Sie das Gerät weiter, wenn nötig.",
+    "speaking": "Sprachführung ist bereit.",
+    "unsupported": "Die Sprachsynthese ist in diesem Browser nicht verfügbar.",
+    "summary": "Erzählskript"
+  },
+  "rules": {
+    "title": "Regeln",
+    "description": "Avalon ist ein Deduktionsspiel mit versteckten Rollen, bei dem das Gute versucht, Quests zu erfüllen, und das Böse versucht, sie zu verhindern."
+  },
+  "voice": {
+    "script": [
+      "Alle Spieler, schließen Sie bitte die Augen.",
+      "Merlin, öffnen Sie die Augen. Böse Spieler außer Mordred: Bitte zeigen Sie einen Daumen nach oben.",
+      "Böse Spieler außer Oberon: Öffnen Sie die Augen und erkennen Sie sich gegenseitig.",
+      "Percival, öffnen Sie die Augen. Merlin und Morgana: Bitte zeigen Sie einen Daumen nach oben.",
+      "Alle Spieler, öffnen Sie die Augen."
+    ],
+    "speed": "Sprechgeschwindigkeit",
+    "pause": "Pause",
+    "resume": "Weiter",
+    "restart": "Neu starten",
+    "narration": {
+      "closeEyes": "Alle schließen bitte die Augen und strecken eine Faust nach vorne.",
+      "evilRecognize": "Die böse Seite öffnet bitte die Augen und erkennt einander.",
+      "evilRecognizeOberon": "Außer Oberon öffnet die böse Seite bitte die Augen und erkennt einander.",
+      "evilClose": "Die böse Seite schließt bitte die Augen.",
+      "merlinSee": "Merlin öffnet bitte die Augen. Die böse Seite hebt bitte den Daumen, damit Merlin euch erkennt.",
+      "merlinSeeMordred": "Merlin öffnet bitte die Augen. Außer Mordred hebt die böse Seite bitte den Daumen, damit Merlin euch erkennt.",
+      "merlinClose": "Merlin schließt bitte die Augen. Die böse Seite senkt bitte den Daumen.",
+      "percivalSee": "Percival öffnet bitte die Augen. Merlin und Morgana heben bitte den Daumen, damit Percival euch sieht.",
+      "percivalClose": "Percival schließt bitte die Augen. Merlin und Morgana senken bitte den Daumen.",
+      "openEyes": "Alle öffnen bitte die Augen. Das Spiel beginnt."
+    }
+  },
+  "roles": {
+    "merlin": "Merlin",
+    "percival": "Percival",
+    "oberon": "Oberon",
+    "mordred": "Mordred",
+    "assassin": "Assassin",
+    "morgana": "Morgana"
+  }
+}
