@@ -68,9 +68,12 @@
       if (!document.hidden && roomCode && !giveUp && !isOpen()) connect();
     });
 
+    // 先把網址上的房號讀下來：initHistory 會把 ?room= 從網址上拿掉
     var code = (new URLSearchParams(location.search).get('room') || '').toUpperCase();
+    initHistory();
+
     if (CODE_RE.test(code)) {
-      enterRoom(code, false);
+      enterRoom(code);
     } else {
       showView('home');
     }
@@ -313,7 +316,7 @@
       })
       .then(function (data) {
         track('buzzer_room_created', { max_players: maxPlayers });
-        enterRoom(data.code, true);
+        enterRoom(data.code);
       })
       .catch(function () {
         showFieldError(el['create-error'], T.createFailed);
@@ -330,19 +333,17 @@
       showFieldError(el['join-error'], T.joinCodeInvalid);
       return;
     }
-    enterRoom(code, true);
+    enterRoom(code);
   }
 
-  // pushUrl：從首頁進來要把 ?room= 寫進網址（重整、分享都靠它）；
-  // 本來就是掃 QR code 進來的話網址已經有了，不用再動。
-  function enterRoom(code, pushUrl) {
+  // 進房間就往 history 推一格（網址同時帶上 ?room=，重整、分享都靠它）。
+  // 掃 QR code 進來的人也一樣推：initHistory 已經把基準那格改成首頁，
+  // 推完之後返回鍵退的是首頁畫面，而不是整個網站的上一頁。
+  function enterRoom(code) {
     roomCode = code;
+    giveUp = false; // 上一場離開時立起來的旗標要放掉，不然這次斷線不會重連
     pendingNickname = readRoomNickname(code);
-    if (pushUrl) {
-      var url = new URL(location.href);
-      url.searchParams.set('room', code);
-      history.replaceState(null, '', url.toString());
-    }
+    pushRoomEntry(code);
     connect();
   }
 
@@ -613,7 +614,22 @@
     list.replaceChildren();
     if (empty) empty.hidden = players.length > 0;
 
-    players.forEach(function (player) {
+    /*
+     * 自己排最上面，其餘照加入順序。
+     *
+     * 伺服器已經照 joinedAt 排好了，這裡只要把自己往前挪——Array.prototype.sort
+     * 是穩定的，回傳 0 的那些會維持原本的順序。主持人不在這份名單裡（他是純控場，
+     * 見 src/room.js 的 handleHello），所以只有「自己」要特別處理。
+     */
+    var me = clientId();
+    var ordered = players.slice().sort(function (a, b) {
+      var mineA = a.id === me;
+      var mineB = b.id === me;
+      if (mineA !== mineB) return mineA ? -1 : 1;
+      return 0;
+    });
+
+    ordered.forEach(function (player) {
       var item = document.createElement('li');
       if (!player.online) item.classList.add('is-offline');
 
@@ -839,6 +855,8 @@
 
   // 傳入的是已經組好的字串（移出玩家的標題要帶暱稱），不是 strings 的 key
   function askConfirm(title, desc, confirmLabel, onConfirm) {
+    // 已經開著的話先關掉：對同一個 <dialog> 連按兩次 showModal() 會丟例外
+    if (el['confirm-dialog'].open) el['confirm-dialog'].close();
     el['confirm-title'].textContent = title;
     el['confirm-desc'].textContent = desc;
     el['confirm-ok'].textContent = confirmLabel;
@@ -856,10 +874,110 @@
     el['confirm-dialog'].showModal();
   }
 
-  // 回搶答首頁。giveUp 先立起來，離開途中連線斷掉不會又跳出重連橫幅
+  // 回搶答首頁。giveUp 先立起來，離開途中連線斷掉不會又跳出重連橫幅。
+  // 用 replace 不用 href：離開後按返回鍵不該又被拉回剛剛退出的房間
   function goHome() {
     giveUp = true;
-    location.href = BASE + '/' + LANG + '/';
+    location.replace(BASE + '/' + LANG + '/');
+  }
+
+  /* ---------- 瀏覽器返回鍵 ---------- */
+
+  /*
+   * 進房間時推一格 history，返回鍵才不會一步跳出整個網站。退回來的行為分兩種：
+   *
+   *  - 還在等待大廳：直接離開房間、回到首頁畫面（跟按鈕的行為一致，主持人是關房）。
+   *  - 已經開始搶答：先跳跟「離開房間 / 關閉房間」同一個確認框，確定了才回首頁，
+   *    免得手機上手滑一劃就把一場正在進行的遊戲滑掉。
+   */
+  function initHistory() {
+    // 基準那一格固定是首頁：網址先把 ?room= 拿掉，退回來重整才不會又被拉進房間
+    var home = new URL(location.href);
+    home.searchParams.delete('room');
+    history.replaceState({ view: 'home' }, '', home.toString());
+    window.addEventListener('popstate', onPopState);
+  }
+
+  function pushRoomEntry(code) {
+    var url = new URL(location.href);
+    url.searchParams.set('room', code);
+    history.pushState({ view: 'room', code: code }, '', url.toString());
+  }
+
+  function onPopState() {
+    if (!roomCode) return; // 已經在首頁那一格，讓瀏覽器照常退出這個網站
+
+    // 房間已經沒了（被關、被移出、致命錯誤）：不用再問，把通知關掉回首頁畫面
+    if (giveUp) {
+      closeDialogs();
+      leaveRoom(false);
+      return;
+    }
+
+    if (lastState && lastState.started) {
+      // 先把房間那一格補回去，按「取消」的人才留在原地
+      pushRoomEntry(roomCode);
+      var isHost = me && me.role === 'host';
+      askConfirm(
+        isHost ? T.closeConfirmTitle : T.leaveConfirmTitle,
+        isHost ? T.closeConfirmDesc : T.leaveConfirmDesc,
+        isHost ? T.closeRoomButton : T.leaveRoomButton,
+        function () {
+          if (isHost) track('buzzer_room_closed');
+          send({ t: isHost ? 'close' : 'leave' });
+          goHome();
+        },
+      );
+      return;
+    }
+
+    leaveRoom(true);
+  }
+
+  // 離開房間但留在同一頁（返回鍵專用，goHome 是整頁換掉）。
+  // notify=false 用在房間本來就沒了的情況，這時候再送訊息也沒人收
+  function leaveRoom(notify) {
+    if (notify) {
+      var isHost = me && me.role === 'host';
+      if (isHost) track('buzzer_room_closed');
+      send({ t: isHost ? 'close' : 'leave' });
+    }
+    giveUp = true; // 收線的過程中不要又跳出重連橫幅
+    closeSocket();
+    resetRoomState();
+    showView('home');
+  }
+
+  function closeSocket() {
+    clearTimeout(reconnectTimer);
+    if (!socket) return;
+    socket.onopen = socket.onmessage = socket.onclose = socket.onerror = null;
+    try {
+      socket.close();
+    } catch (e) {
+      /* 已經關了 */
+    }
+    socket = null;
+  }
+
+  // 回到首頁畫面＝下一場從頭來過，這一場的旗標全部歸零
+  function resetRoomState() {
+    stopCountdown();
+    hideBanner();
+    roomCode = null;
+    me = null;
+    lastState = null;
+    pendingNickname = '';
+    questionSynced = false;
+    renderedQrUrl = null;
+    joinReported = false;
+    buzzReported = false;
+  }
+
+  function closeDialogs() {
+    ['confirm-dialog', 'closed-dialog', 'kicked-dialog'].forEach(function (id) {
+      if (el[id].open) el[id].close();
+    });
   }
 
   /* ---------- 玩家搶答 ---------- */
