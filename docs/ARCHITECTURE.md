@@ -151,7 +151,7 @@ Woohop/
 
 | 專案 | 狀態 | 部署平台 | 備註 |
 |---|---|---|---|
-| web100_00_Homepage | 已上線 | Vercel | 暫時代理 /avalon/* 到阿瓦隆 |
+| web100_00_Homepage | 已上線 | Vercel | 原始碼在 `apps/homepage`；2026-10-16 改版成 Woohop 新設計（首頁＋找遊戲／破冰組合／帶領指南，8 種語言，指南頁 noindex）。暫時代理 /avalon/* 到阿瓦隆 |
 | web100_01_Avalon-Voice | 已上線 | Vercel | 已改為 /avalon/{lang}/ 網址結構，已裝 GA4 |
 | Cloudflare Worker 路由總機 | 待實作 | Cloudflare Workers | 下一步優先要做的基礎建設 |
 | web100_02_BuzzerGame | 已上線 | Cloudflare Workers | 單一 Worker 同時服務靜態檔與 Durable Object；8 種語言，已裝 GA4 |
