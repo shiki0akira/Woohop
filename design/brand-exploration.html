@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Woohop 設計系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<!--
+  品牌探索用的設計稿，只在本機看，不會部署（apps/* 之外的檔案都不進任何建置）。
+  v3（2026-10-16）：放回色票；按鈕色碼改成寫死的 token 並全部通過 WCAG AAA；
+  loading 按鈕改成彈跳的「…」；遊戲列表改用插圖；logo 陣列與翻牌改成 W 相連不留縫。
+-->
+<style>
+  :root {
+    /* logo 六色（使用者給定）。橘、黃在 2026-10-16 依使用者要求調亮、調鮮豔兩次：#DA862D→#FF9419、#E9C561→#FFC628（原本偏暗偏土） */
+    --indigo: #3D54B6;
+    --blue: #7489E6;
+    --periwinkle: #8799E9;
+    --orange: #FF9419;
+    --pink: #F3A4FB;
+    --yellow: #FFC628;
+    /* 擴充色 */
+    --coral: #EE7B6A;
+    --mint: #4FB59A;
+
+    /*
+     * 柔和粉彩按鈕的三個色階，用 oklab 混色算好後寫死（算法見下方「對比」表）：
+     *   face = 32% 原色 + 白，edge = 55% 原色 + 黑，text = 35% 原色 + 黑
+     * 寫死而不是在 CSS 裡用 color-mix()，是為了讓對比度可以被檢查、被測試。
+     */
+    --indigo-face: #bcc8eb; --indigo-edge: #16204f; --indigo-text: #070c27;
+    --blue-face: #d0daf9;   --blue-edge: #303a66;   --blue-text: #151b34;
+    --orange-face: #ffdec2; --orange-edge: #713f05; --orange-text: #3a1e01;
+    --pink-face: #fce3ff;   --pink-edge: #6c4670;   --pink-text: #372239;
+    --yellow-face: #ffeec8; --yellow-edge: #71560c; --yellow-text: #3a2b03;
+    --coral-face: #fed6ce;  --coral-edge: #69332b;  --coral-text: #361712;
+    --mint-face: #cbe7de;   --mint-edge: #1e4e42;   --mint-text: #0b261f;
+
+    /* 中性色（取自作品集淺色主題） */
+    --bg: #f4f4f6;
+    --surface: #ffffff;
+    --card: #ffffff80;
+    --card-strong: #ffffffb8;
+    --ink: #111113;
+    --muted: #1111139e;
+    --line: #0000001a;
+    --outline: #2a2a35; /* 插圖的描邊 */
+    /* 線條只有一種粗細：外框 2px，浮起來的元件再加 4px 底部厚度（跟按鈕一樣）。白底元件用這組灰 */
+    --edge-n: #d4d4dc;
+    --raise-n: 0 4px 0 var(--edge-n);
+    /* 圓角只有五種：極小 4（色點、標記）、小 8（勾選框、提示泡泡）、
+       中 14（按鈕、輸入框、列表列、分頁、導覽項目）、大 20（卡片、面板、對話框）、膠囊 999。
+       巢狀時內層 = 外層 − 間距（例如分段控制） */
+    --r-xs: 4px; --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+    --radius: var(--r-lg);
+    --shadow: 0 8px 32px #252c4b1a;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Nunito", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 96px; }
+  h1 { font-size: clamp(28px, 5vw, 44px); margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 24px; margin: 72px 0 6px; }
+  h3 { font-size: 16px; margin: 0 0 14px; }
+  .lead, .note { color: var(--muted); margin: 0 0 20px; }
+  .note { font-size: 14px; }
+  .eyebrow { font-size: 13px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+  code { font-size: 12px; color: var(--muted); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
+  .stack { display: grid; gap: 16px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .cell { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .cell > code { padding-left: 2px; }
+
+  .decided { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .decided span { font-size: 13px; padding: 4px 12px; border-radius: var(--r-pill); background: var(--surface); border: 1px solid var(--line); }
+
+  /* ---------- 色票 ---------- */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .sw { border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line); background: var(--card-strong); }
+  .sw .chip-color { height: 84px; display: flex; align-items: flex-end; padding: 10px 12px; font-weight: 800; }
+  .sw .scale { display: grid; grid-template-columns: repeat(5, 1fr); height: 22px; }
+  .sw .meta { padding: 8px 12px 12px; font-size: 13px; }
+  .sw .meta b { display: block; font-size: 14px; }
+  .tag-new { font-size: 11px; background: var(--ink); color: #fff; border-radius: var(--r-pill); padding: 1px 7px; margin-left: 4px; vertical-align: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 600; }
+  .table-scroll { overflow-x: auto; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: var(--r-xs); vertical-align: -1px; margin-right: 6px; border: 1px solid var(--line); }
+  .pass { color: #1e6b3a; font-weight: 700; }
+
+  /* ============================================================
+     按鈕：每顆只吃 --face / --edge / --text 三個變數
+     ============================================================ */
+  .btn {
+    --face: var(--blue-face); --edge: var(--blue-edge); --text: var(--blue-text);
+    --depth: 4px; --h: 48px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: var(--h); padding: 0 22px; border-radius: var(--r-md);
+    border: 2px solid var(--edge);
+    background: var(--face); color: var(--text);
+    font: inherit; font-weight: 800; font-size: 16px; white-space: nowrap;
+    box-shadow: 0 var(--depth) 0 var(--edge);
+    margin-bottom: var(--depth);
+    cursor: pointer; user-select: none;
+    transition: transform .08s, box-shadow .08s, filter .15s;
+  }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn:hover, .btn.is-hover { filter: brightness(1.03) saturate(1.15); }
+  .btn:active, .btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
+  .btn:focus-visible, .btn.is-focus { outline: 3px solid var(--indigo); outline-offset: 3px; }
+
+  .btn-solid { --face: var(--indigo); --edge: var(--indigo-edge); --text: #fff; }
+  .btn-secondary { --face: var(--surface); --edge: var(--blue-edge); --text: var(--blue-text); }
+  .btn-ghost { --face: transparent; --edge: transparent; --text: var(--blue-text); --depth: 0px; }
+  .btn-ghost:hover, .btn-ghost.is-hover { --face: #eef1fc; filter: none; }
+  .btn-danger { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); }
+
+  .btn-lg { --h: 56px; font-size: 18px; padding: 0 28px; border-radius: var(--r-md); --depth: 5px; }
+  .btn-sm { --h: 36px; font-size: 14px; padding: 0 14px; border-radius: var(--r-md); --depth: 3px; }
+  .btn-block { width: 100%; }
+  .btn-icon { width: var(--h); padding: 0; }
+  .btn-round { border-radius: var(--r-pill); }
+  .fab { --h: 64px; width: 64px; border-radius: var(--r-pill); padding: 0; --depth: 5px; }
+  .fab svg { width: 28px; height: 28px; }
+
+  /* 停用：照 ARCHITECTURE 第 7 節的「壓扁」語言——沒有厚度、灰掉，不疊 opacity */
+  .btn:disabled, .btn.is-disabled {
+    --face: #e6e6ea; --edge: #d2d2d8; --text: #6e6e76; --depth: 0px;
+    transform: translateY(4px); cursor: not-allowed; filter: none;
+  }
+
+  /* 載入中：文字後面三個點輪流跳 */
+  .btn.is-loading { pointer-events: none; }
+  .bounce-dots { display: inline-flex; gap: 3px; margin-left: 2px; }
+  .bounce-dots i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; animation: bounce-dot 1s ease-in-out infinite; }
+  .bounce-dots i:nth-child(2) { animation-delay: .15s; }
+  .bounce-dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce-dot { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+  .btn.g-indigo { --face: var(--indigo-face); --edge: var(--indigo-edge); --text: var(--indigo-text); }
+  .btn.g-orange { --face: var(--orange-face); --edge: var(--orange-edge); --text: var(--orange-text); }
+  .btn.g-pink   { --face: var(--pink-face);   --edge: var(--pink-edge);   --text: var(--pink-text); }
+  .btn.g-yellow { --face: var(--yellow-face); --edge: var(--yellow-edge); --text: var(--yellow-text); }
+  .btn.g-coral  { --face: var(--coral-face);  --edge: var(--coral-edge);  --text: var(--coral-text); }
+  .btn.g-mint   { --face: var(--mint-face);   --edge: var(--mint-edge);   --text: var(--mint-text); }
+
+  /* 篩選膠囊（推薦器用）：可複選 */
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 40px; padding: 0 16px; border-radius: var(--r-pill);
+    border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); color: var(--ink);
+    font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); box-shadow: 0 3px 0 var(--blue-edge); }
+  .chip svg { width: 16px; height: 16px; }
+
+  .segmented { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--r-md); background: #e8e8ee; }
+  .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: #55555c; cursor: pointer; }
+  .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 #c9c9d3; }
+
+  /* ============================================================
+     遊戲列表：白底大格子＋每個遊戲自己的插圖
+     ============================================================ */
+  /* 直式卡片：整張是白底大格子紙，插圖在上、文字在下，右下角一顆淡淡的大 W（遊戲代表色） */
+  .game-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .game {
+    position: relative; overflow: hidden;
+    border: 2px solid var(--edge-n); border-radius: var(--radius);
+    padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; min-height: 300px; isolation: isolate;
+    background-color: var(--surface);
+    background-image: linear-gradient(#0000000b 1px, transparent 1px), linear-gradient(90deg, #0000000b 1px, transparent 1px);
+    background-size: 32px 32px; background-position: -1px -1px;
+    box-shadow: var(--raise-n);
+    transition: transform .15s, box-shadow .15s; cursor: pointer;
+  }
+  .game:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--edge-n), var(--shadow); }
+  .game .art { position: relative; z-index: 1; height: 128px; display: grid; place-items: center start; }
+  .game .art svg { height: 120px; width: auto; }
+  /* 底部一整排相連的淡 W 當底圖：viewBox 剛好 3 顆寬，等比縮放，左右不會被切掉；文字直接疊在上面 */
+  .game .w-row { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: auto; display: block; opacity: .13; pointer-events: none; z-index: -1; }
+  .game h4 { margin: 0; font-size: 20px; position: relative; }
+  .game p { margin: 0; font-size: 14px; color: var(--muted); position: relative; }
+  .game .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; position: relative; }
+  .game .tags span { font-size: 12px; padding: 2px 10px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
+  .last-played { position: absolute; top: 14px; right: 14px; z-index: 2; font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: var(--r-pill); background: var(--ink); color: #fff; }
+
+  /* ============================================================
+     logo 陣列：W 彼此相連、淺色同色系、白底
+     ============================================================ */
+  .pattern-box { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); position: relative; min-height: 280px; display: grid; place-items: center; background: var(--surface); }
+  .pattern-box .label { position: relative; background: #ffffffe0; backdrop-filter: blur(6px); padding: 14px 24px; border-radius: var(--r-md); font-weight: 800; font-size: 22px; box-shadow: var(--shadow); }
+  .pattern-box svg.tiles { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* ============================================================
+     loading：翻牌
+     ============================================================ */
+  .flip { animation: flip 2.4s cubic-bezier(.6,0,.3,1) infinite; }
+  .flip use { animation: flip-color 9.6s steps(1) infinite; }
+  @keyframes flip { 0%, 25% { transform: rotateY(0); } 50%, 75% { transform: rotateY(180deg); } 100% { transform: rotateY(360deg); } }
+  /*
+   * 每翻半圈（1.2s）換一色，八色走完一輪 = 9.6s。
+   * 換色對在「側面」那一瞬間（W 薄到看不見）：翻轉在每個 1.2s 的後半段，側面約在 0.9s。
+   */
+  @keyframes flip-color {
+    0%       { fill: var(--blue); }
+    9.375%   { fill: var(--orange); }
+    21.875%  { fill: var(--pink); }
+    34.375%  { fill: var(--yellow); }
+    46.875%  { fill: var(--mint); }
+    59.375%  { fill: var(--coral); }
+    71.875%  { fill: var(--indigo); }
+    84.375%  { fill: var(--periwinkle); }
+    96.875%  { fill: var(--blue); }
+  }
+  .loader-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .loader-card { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .stage { height: 150px; width: 100%; display: grid; place-items: center; perspective: 500px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); }
+  .loader-card p { margin: 0; font-size: 13px; color: var(--muted); }
+  .flip-big { width: 72px; height: 58px; }
+  /* 一排相連：W 跟 W 之間不留縫，跟 logo 一樣是一整條 */
+  .flip-row { display: flex; gap: 0; perspective: 600px; }
+  .flip-row svg { width: 36px; height: 29.3px; display: block; }
+  .loading-text { font-weight: 700; font-size: 14px; color: var(--muted); margin-top: 10px; display: inline-flex; align-items: baseline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip, .flip use, .bounce-dots i { animation: none; }
+  }
+
+  /* ============================================================
+     目錄（設計系統頁的導覽）
+     ============================================================ */
+  .toc { position: sticky; top: 0; z-index: 20; margin: 24px -16px 0; padding: 10px 16px; background: #f4f4f6e6; backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .toc a { flex: none; font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: none; padding: 6px 12px; border-radius: var(--r-pill); background: var(--surface); border: 1px solid var(--line); }
+  .toc a:hover { background: var(--blue-face); }
+  h2[id] { scroll-margin-top: 70px; }
+  .sub { font-size: 13px; font-weight: 800; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; }
+
+  /* ============================================================
+     字體、間距、圓角、陰影
+     ============================================================ */
+  .type-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .type-row:last-child { border-bottom: 0; }
+  .t-display { font-size: clamp(32px, 6vw, 48px); font-weight: 900; line-height: 1.15; letter-spacing: -0.01em; }
+  .t-h1 { font-size: 32px; font-weight: 800; line-height: 1.25; }
+  .t-h2 { font-size: 24px; font-weight: 800; line-height: 1.3; }
+  .t-h3 { font-size: 19px; font-weight: 800; line-height: 1.4; }
+  .t-body { font-size: 16px; line-height: 1.7; }
+  .t-small { font-size: 14px; line-height: 1.6; color: var(--muted); }
+  .t-caption { font-size: 12px; letter-spacing: .04em; color: var(--muted); }
+  .t-num { font-size: 40px; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+  .space-bars { display: grid; gap: 8px; }
+  .space-bars div { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+  .space-bars span { height: 14px; border-radius: var(--r-xs); background: var(--blue-face); border: 1px solid var(--blue-edge); }
+  .token-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .token-tiles div { height: 80px; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; color: var(--muted); text-align: center; }
+
+  /* ============================================================
+     表單
+     ============================================================ */
+  .field { display: grid; gap: 6px; max-width: 360px; width: 100%; }
+  .field label { font-weight: 800; font-size: 14px; }
+  .field .help { font-size: 13px; color: var(--muted); }
+  .field .error-msg { font-size: 13px; color: #a3261a; font-weight: 700; display: flex; gap: 4px; align-items: center; }
+  .input, .select, .textarea {
+    width: 100%; height: 52px; padding: 0 16px; border-radius: var(--r-md);
+    border: 2px solid var(--edge-n); background: var(--surface); color: var(--ink);
+    font: inherit; font-size: 16px; /* 16px 以下 iOS 會自動放大畫面 */
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .textarea { height: auto; min-height: 104px; padding: 12px 16px; resize: vertical; line-height: 1.6; }
+  .select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23303a66' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 44px; }
+  .input::placeholder, .textarea::placeholder { color: #8a8a93; }
+  .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 4px #3d54b62e; }
+  .input.is-error { border-color: #c2412f; box-shadow: 0 0 0 4px #ee7b6a33; }
+  .input:disabled { background: #ececf0; color: #6e6e76; }
+
+  /* 房號：四格各一個字 */
+  .code-input { display: flex; gap: 10px; }
+  .code-input input {
+    width: 60px; height: 72px; text-align: center; border-radius: var(--r-md);
+    border: 2px solid var(--blue-edge); background: var(--surface); box-shadow: 0 4px 0 var(--blue-edge);
+    font: inherit; font-size: 32px; font-weight: 900; text-transform: uppercase; color: var(--blue-text);
+  }
+  .code-input input:focus { outline: none; background: var(--blue-face); }
+
+  /* 數量增減（人數、題數） */
+  .stepper { display: inline-flex; align-items: center; gap: 0; border: 2px solid var(--blue-edge); border-radius: var(--r-md); background: var(--surface); box-shadow: 0 4px 0 var(--blue-edge); overflow: hidden; }
+  .stepper button { width: 52px; height: 52px; border: 0; background: var(--blue-face); color: var(--blue-text); font-size: 24px; font-weight: 900; cursor: pointer; }
+  .stepper button:active { filter: brightness(.95); }
+  .stepper output { min-width: 64px; text-align: center; font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+  /* 開關 */
+  .switch { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 700; }
+  .switch input { position: absolute; opacity: 0; pointer-events: none; }
+  .switch .track { width: 56px; height: 32px; border-radius: var(--r-pill); background: #d4d4dc; border: 2px solid #b9b9c3; position: relative; transition: background .2s, border-color .2s; }
+  .switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 #0000002e; transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
+  .switch input:checked + .track { background: var(--indigo); border-color: var(--indigo-edge); }
+  .switch input:checked + .track::after { transform: translateX(24px); }
+  .switch input:focus-visible + .track { outline: 3px solid var(--indigo); outline-offset: 3px; }
+
+  /* 勾選與單選 */
+  .check { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; min-height: 44px; }
+  .check input { appearance: none; width: 26px; height: 26px; margin: 0; border: 2px solid #b9b9c3; background: var(--surface); border-radius: var(--r-sm); display: grid; place-items: center; cursor: pointer; transition: background .15s; }
+  .check input[type="radio"] { border-radius: 50%; }
+  .check input:checked { background: var(--indigo); border-color: var(--indigo-edge); }
+  .check input[type="checkbox"]:checked::after { content: ""; width: 12px; height: 7px; border: solid #fff; border-width: 0 0 3px 3px; transform: rotate(-45deg) translate(1px, -1px); }
+  .check input[type="radio"]:checked::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+  .check input:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+
+  /* 滑桿 */
+  .range { -webkit-appearance: none; appearance: none; width: 100%; max-width: 360px; height: 10px; border-radius: var(--r-pill); background: linear-gradient(var(--indigo), var(--indigo)) 0/var(--p, 50%) 100% no-repeat, #e1e1e7; }
+  .range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 3px solid var(--indigo); box-shadow: 0 3px 0 var(--indigo-edge); cursor: pointer; }
+  .range::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 3px solid var(--indigo); cursor: pointer; }
+
+  /* ============================================================
+     徽章、頭像
+     ============================================================ */
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: var(--r-pill); border: 1.5px solid currentColor; }
+  .badge.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .badge.b-new { background: var(--coral-face); color: var(--coral-text); border-color: var(--coral-edge); }
+  .badge.b-live { background: var(--mint-face); color: var(--mint-text); border-color: var(--mint-edge); }
+  .badge.b-host { background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
+  .badge.b-info { background: var(--blue-face); color: var(--blue-text); border-color: var(--blue-edge); }
+  .badge .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #1f8a5b; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .count-badge { min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--r-pill); background: var(--coral); color: #2a0f0a; font-size: 12px; font-weight: 900; display: inline-grid; place-items: center; border: 2px solid var(--surface); }
+
+  .avatar { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 18px; border: 2px solid var(--outline); position: relative; flex: none; }
+  .avatar.sm { width: 32px; height: 32px; font-size: 13px; }
+  .avatar.lg { width: 72px; height: 72px; font-size: 28px; }
+  .avatar .status { position: absolute; right: -2px; bottom: -2px; width: 14px; height: 14px; border-radius: 50%; background: #2fa36b; border: 2px solid var(--surface); }
+  .avatar .status.off { background: #a5a5ae; }
+  .avatar[data-food] { overflow: hidden; padding: 0; }
+  /* 沒選頭像就用名字第一個字：底色從頭像的底色裡依名字挑，字用深色（對比 > 12:1） */
+  .avatar.initial { color: #22222c; font-weight: 900; line-height: 1; }
+  .avatar-option.is-initial { display: grid; place-items: center; border: 2px solid var(--outline); font-weight: 900; font-size: 22px; color: #22222c; }
+  .avatar[data-food] > svg { width: 100%; height: 100%; display: block; border-radius: 50%; }
+  .avatar-picker { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; max-width: 360px; }
+  .avatar-option { padding: 0; aspect-ratio: 1; border-radius: 50%; border: 0; background: none; cursor: pointer; transition: transform .15s cubic-bezier(.34,1.56,.64,1); }
+  .avatar-option svg { width: 100%; height: 100%; display: block; border-radius: 50%; border: 2px solid var(--outline); box-sizing: border-box; }
+  .avatar-option:hover { transform: scale(1.08); }
+  /* 選中：跟按鈕同一套——深色外框＋往下的厚度 */
+  .avatar-option[aria-checked="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--blue-edge); transform: translateY(-2px); }
+  .avatar-option:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .avatar-stack { display: flex; }
+  .avatar-stack .avatar { margin-left: -10px; border-color: var(--surface); box-shadow: 0 0 0 2px var(--outline); }
+  .avatar-stack .avatar:first-child { margin-left: 0; }
+
+  /* ============================================================
+     導覽
+     ============================================================ */
+  /*
+   * 頂部導覽列：圓角跟卡片一樣（20），外框 2px＋4px 底部厚度，跟其他浮起來的元件同一套。
+   * 分頁會越加越多，所以連結由資料產生，放不下的自動收進「更多」（priority+ 導覽）；
+   * 手機寬度只留 logo、語言和選單鍵，選單用底部面板打開。
+   */
+  .navbar { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: var(--r-lg); background: #ffffffe6; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
+  /* 字標：圓體粗字（Fredoka 700）跟 W 的圓拱同一個份量；logo 跟字只隔 6px，高度對齊字的大寫高 */
+  .wordmark { flex: none; display: inline-flex; align-items: center; gap: 6px; font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -0.01em; color: var(--indigo-edge); text-decoration: none; }
+  .wordmark svg { width: 34px; height: 27.7px; flex: none; transform: translateY(-1px); }
+  .navbar .brand { margin-right: 8px; }
+  .nav-links { flex: 1; min-width: 0; display: flex; gap: 4px; align-items: center; }
+  .nav-links a, .nav-more > button {
+    flex: none; height: 44px; display: inline-flex; align-items: center; gap: 4px; padding: 0 14px;
+    border-radius: var(--r-md); border: 2px solid transparent; background: none;
+    color: var(--ink); font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
+  }
+  .nav-links a:hover, .nav-more > button:hover { background: #eef1fc; }
+  .nav-links a[aria-current="page"] { background: var(--blue-face); color: var(--blue-text); border-color: var(--blue-edge); box-shadow: 0 3px 0 var(--blue-edge); }
+  .nav-more { position: relative; flex: none; }
+  .nav-more > button svg { width: 16px; height: 16px; transition: transform .2s; }
+  .nav-more > button[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .nav-menu { position: absolute; top: calc(100% + 10px); right: 0; min-width: 200px; padding: 8px; display: grid; gap: 2px; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n), var(--shadow); border-radius: var(--r-lg); z-index: 5; }
+  .nav-menu[hidden] { display: none; }
+  .nav-menu a { padding: 10px 12px; border-radius: var(--r-md); color: var(--ink); font-weight: 700; text-decoration: none; }
+  .nav-menu a:hover { background: #eef1fc; }
+  .nav-actions { flex: none; display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .lang { height: 44px; border-radius: var(--r-md); border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); padding: 0 12px; font: inherit; font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 3px; }
+  .lang svg { width: 16px; height: 16px; }
+  .nav-burger { display: none; }
+  /* 看導覽列自己的寬度（container query），不看整個視窗 */
+  .nav-host { container-type: inline-size; }
+  @container (max-width: 520px) {
+    .nav-links, .nav-actions .btn-solid { display: none; }
+    .nav-burger { display: inline-flex; }
+  }
+
+
+  .appbar { display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); }
+  .appbar .title { flex: 1; text-align: center; font-weight: 800; font-size: 17px; }
+  .appbar .btn-icon { --h: 44px; }
+
+  /* 選中的分頁跟按鈕同一套語言：粉彩表面＋5px 深色底線 */
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); overflow-x: auto; overflow-y: hidden; }
+  .tabs button { flex: none; padding: 12px 16px; border: 0; border-radius: var(--r-md) var(--r-md) 0 0; background: none; font: inherit; font-weight: 800; font-size: 15px; color: #63636b; cursor: pointer; border-bottom: 5px solid transparent; margin-bottom: -2px; }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button[aria-selected="true"] { color: var(--blue-text); background: var(--blue-face); border-bottom-color: var(--blue-edge); }
+
+  .crumbs { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  /* 純文字連結：平常深藍、hover 換成靛藍＋2px 底線（跟其他線條同粗），按下再深一階 */
+  .link, .crumbs a, .footer-demo a { color: var(--blue-text); font-weight: 700; text-decoration: none; text-underline-offset: 4px; text-decoration-thickness: 2px; border-radius: var(--r-xs); transition: color .15s; }
+  .link:hover, .crumbs a:hover, .footer-demo a:hover { color: var(--indigo); text-decoration-line: underline; }
+  .link:active, .crumbs a:active, .footer-demo a:active { color: var(--indigo-edge); }
+  .link:focus-visible, .crumbs a:focus-visible, .footer-demo a:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+
+  .footer-demo { border-top: 2px solid var(--line); padding-top: 18px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--muted); }
+  .footer-demo .links { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* ============================================================
+     房間
+     ============================================================ */
+  .room-code-card { display: grid; gap: 16px; justify-items: center; text-align: center; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 24px; max-width: 340px; }
+  .room-code { display: flex; gap: 8px; }
+  .room-code span { width: 54px; height: 66px; display: grid; place-items: center; border-radius: var(--r-md); background: var(--blue-face); border: 2px solid var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); font-size: 34px; font-weight: 900; color: var(--blue-text); }
+  .qr { width: 156px; height: 156px; border-radius: var(--r-md); border: 2px solid var(--edge-n); padding: 10px; background: #fff; }
+  .player-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; max-width: 420px; }
+  .player { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); margin-bottom: 4px; }
+  .player .name { font-weight: 800; flex: 1; display: flex; align-items: center; gap: 8px; }
+  .player.is-me { border-color: var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); background: var(--blue-face); }
+  .player.is-offline { opacity: .6; }
+  .player .kick { --h: 36px; }
+
+  /* ============================================================
+     回饋
+     ============================================================ */
+  .alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--r-md); border: 2px solid; box-shadow: 0 4px 0 currentColor; font-size: 15px; margin-bottom: 4px; }
+  .alert svg { width: 22px; height: 22px; flex: none; margin-top: 1px; }
+  .alert b { display: block; }
+  .alert.info { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); }
+  .alert.success { background: var(--mint-face); border-color: var(--mint-edge); color: var(--mint-text); }
+  .alert.warning { background: var(--yellow-face); border-color: var(--yellow-edge); color: var(--yellow-text); }
+  .alert.error { background: var(--coral-face); border-color: var(--coral-edge); color: var(--coral-text); }
+
+  .toast-zone { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 50; display: grid; gap: 8px; width: min(420px, calc(100% - 32px)); }
+  .toast { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 18px; border-radius: var(--r-md); background: var(--ink); color: #fff; font-weight: 700; box-shadow: 0 10px 30px #0000003d; animation: toast-in .35s cubic-bezier(.34,1.56,.64,1); }
+  .toast span { flex: 1; }
+  .toast button { background: none; border: 0; color: #c9d3f7; font: inherit; font-weight: 800; cursor: pointer; padding: 6px 8px; }
+  @keyframes toast-in { from { transform: translateY(20px) scale(.96); opacity: 0; } }
+
+  .progress { height: 14px; border-radius: var(--r-pill); background: #e4e4ea; border: 2px solid var(--outline); overflow: hidden; max-width: 420px; }
+  .progress > div { height: 100%; width: var(--p); background: repeating-linear-gradient(-45deg, var(--blue), var(--blue) 10px, var(--periwinkle) 10px, var(--periwinkle) 20px); border-right: 2px solid var(--outline); transition: width .4s; }
+
+  .timer-ring { position: relative; width: 120px; height: 120px; }
+  .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .timer-ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .timer-ring.is-urgent .num { color: #a3261a; animation: urgent .5s ease-in-out infinite alternate; }
+  @keyframes urgent { to { transform: scale(1.12); } }
+
+  .skeleton { border-radius: var(--r-sm); background: linear-gradient(90deg, #e7e7ec 0%, #f2f2f5 40%, #e7e7ec 80%) 0 0/300% 100%; animation: shimmer 1.4s linear infinite; }
+  @keyframes shimmer { to { background-position: -150% 0; } }
+
+  .empty { text-align: center; display: grid; justify-items: center; gap: 10px; padding: 28px 16px; border: 2px dashed #cfcfd8; border-radius: var(--r-lg); background: var(--surface); }
+  .empty svg.illo { width: 120px; }
+  .empty h4 { margin: 0; font-size: 18px; }
+  .empty p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .tip { position: relative; display: inline-block; }
+  .tip .bubble { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: var(--r-sm); white-space: nowrap; pointer-events: none; }
+  .tip .bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--ink); }
+
+  /* ============================================================
+     對話框、底部面板
+     （收尾不要掛在 dialog 的 close 事件上：每條關閉路徑自己處理）
+     ============================================================ */
+  dialog.modal { border: 2px solid var(--outline); border-radius: var(--r-lg); padding: 0; width: min(400px, calc(100% - 32px)); box-shadow: 0 20px 60px #0000004d; background: var(--surface); color: var(--ink); }
+  dialog.modal::backdrop { background: #11111366; backdrop-filter: blur(3px); }
+  dialog.modal .m-body { padding: 28px 24px 8px; text-align: center; display: grid; gap: 8px; justify-items: center; }
+  dialog.modal .m-body svg.illo { width: 96px; }
+  dialog.modal h4 { margin: 0; font-size: 20px; }
+  dialog.modal p { margin: 0; color: var(--muted); }
+  dialog.modal .m-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px 24px 24px; }
+  dialog.sheet { margin: auto 0 0; width: 100%; max-width: 100%; border: 0; border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 12px 20px 28px; box-shadow: 0 -10px 40px #0000002e; background: var(--surface); color: var(--ink); }
+  dialog.sheet::backdrop { background: #11111355; }
+  dialog.sheet .grabber { width: 44px; height: 5px; border-radius: var(--r-pill); background: #d0d0d8; margin: 0 auto 14px; }
+  dialog.sheet h4 { margin: 0 0 12px; font-size: 18px; }
+  dialog.sheet .sheet-list { display: grid; gap: 8px; }
+  dialog.sheet .sheet-list button { text-align: left; justify-content: flex-start; }
+
+  /* ============================================================
+     帶領播放器
+     ============================================================ */
+  .player-frame { max-width: 380px; border-radius: var(--r-lg); border: 2px solid var(--outline); background: var(--bg); padding: 16px; display: grid; gap: 14px; box-shadow: 0 6px 0 var(--outline); }
+  .step-dots { display: flex; gap: 6px; justify-content: center; }
+  .step-dots i { width: 10px; height: 10px; border-radius: var(--r-pill); background: #cfcfd8; transition: width .25s, background .25s; }
+  .step-dots i.on { width: 28px; background: var(--indigo); }
+  .step-card { background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 18px; text-align: center; display: grid; gap: 8px; justify-items: center; }
+  .step-card .step-no { font-size: 12px; font-weight: 900; letter-spacing: .12em; color: var(--muted); }
+  .step-card svg.illo { width: 140px; }
+  .step-card h4 { margin: 0; font-size: 20px; }
+  .step-card p { margin: 0; color: var(--muted); }
+  .step-nav { display: flex; justify-content: space-between; align-items: center; }
+
+  .prompt-card { background: #fffdf4; border: 2px solid var(--yellow-edge); border-radius: var(--r-lg); padding: 20px 22px; box-shadow: 0 4px 0 var(--yellow-edge); max-width: 520px; font-size: 19px; line-height: 1.8; position: relative; }
+  .prompt-card .say { position: absolute; top: -13px; left: 18px; background: var(--yellow); color: var(--yellow-text); border: 2px solid var(--yellow-edge); font-size: 12px; font-weight: 900; padding: 1px 10px; border-radius: var(--r-pill); }
+  .prompt-card mark { background: var(--yellow-face); color: inherit; padding: 0 3px; border-radius: var(--r-xs); }
+
+  .wheel-wrap { position: relative; width: 220px; height: 220px; }
+  .wheel { width: 100%; height: 100%; transition: transform 3.2s cubic-bezier(.17,.67,.21,1); }
+  /* 指針要疊在轉盤上面：轉盤有 transform 會自成一層，指針得給 z-index */
+  .wheel-pointer { position: absolute; z-index: 2; top: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border: 14px solid transparent; border-top: 22px solid var(--outline); filter: drop-shadow(0 2px 0 #0003); }
+  .wheel-result { min-height: 28px; font-weight: 800; text-align: center; }
+
+  .metronome { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .beats { display: flex; gap: 8px; }
+  .beats i { width: 26px; height: 26px; border-radius: 50%; background: #e0e0e6; border: 2px solid var(--outline); }
+  .beats i.on { background: var(--orange); transform: scale(1.15); }
+  .beats i.on.accent { background: var(--coral); }
+
+  /* ============================================================
+     結果、問答
+     ============================================================ */
+  .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; max-width: 420px; }
+  .podium .col { flex: 1; display: grid; justify-items: center; gap: 6px; }
+  .podium .block { width: 100%; border: 2px solid var(--blue-edge); border-bottom-width: 6px; border-radius: var(--r-md) var(--r-md) var(--r-xs) var(--r-xs); display: grid; place-items: center; font-size: 28px; font-weight: 900; color: var(--ink); }
+  .podium .name { font-weight: 800; font-size: 14px; }
+  .rank-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-width: 420px; counter-reset: rank 3; }
+  .rank-list li { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-md); font-weight: 700; margin-bottom: 4px; }
+  .rank-list li::before { counter-increment: rank; content: counter(rank); width: 28px; font-weight: 900; color: var(--muted); }
+  .rank-list li .score { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 900; }
+
+  .faq { display: grid; gap: 8px; max-width: 640px; }
+  .faq details { background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-md); padding: 0 18px; margin-bottom: 4px; }
+  .faq details[open] { border-color: var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); }
+  .faq summary { list-style: none; cursor: pointer; padding: 16px 0; font-weight: 800; display: flex; justify-content: space-between; gap: 12px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--blue-text); transition: transform .2s; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { margin: 0 0 16px; color: var(--muted); }
+
+  .demo-grid { display: grid; gap: 16px; }
+  @media (min-width: 760px) { .demo-grid.two { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="w" viewBox="0 0 59 48">
+      <path d="M59 48H42C35.3726 48 30 42.6274 30 36V29H34V28H30V24H29V28H25V29H29V36C29 42.6274 23.6274 48 17 48H0V0H2C8.62742 0 14 5.37258 14 12V24H15V12C15 5.37258 20.3726 0 27 0H32C38.6274 0 44 5.37258 44 12V24H45V12C45 5.37258 50.3726 0 57 0H59V48Z"/>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 15V3m0 0L7 8m5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><circle cx="15" cy="15" r="1.6" fill="currentColor"/><circle cx="15" cy="9" r="1.6" fill="currentColor"/><circle cx="9" cy="15" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 11v6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="m7.5 12.5 3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5 2.8 19.5h18.4z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 10v4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1.4" fill="currentColor"/></symbol>
+    <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M16 5.5A2.5 2.5 0 0 0 13.5 3H6a3 3 0 0 0-3 3v7.5A2.5 2.5 0 0 0 5.5 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6 2 7H4c0-1 2-2 2-7z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <div class="eyebrow">Woohop · Design system</div>
+  <h1>Woohop 設計系統</h1>
+  <p class="lead">之後所有頁面的 UI 都從這一頁挑元件。顏色、字級、間距一律用這裡定義的值，不要另外發明。</p>
+  <div class="decided"><span>✓ 柔和粉彩</span><span>✓ 底色 #f4f4f6</span><span>✓ 淺色相連陣列</span><span>✓ 翻牌 loading</span></div>
+  <nav class="toc" aria-label="目錄"><a href="#colors">色票</a><a href="#buttons">按鈕</a><a href="#games-list">遊戲列表</a><a href="#pattern">陣列</a><a href="#loading">Loading</a><a href="#type">字體</a><a href="#forms">表單</a><a href="#badges">徽章</a><a href="#nav">導覽</a><a href="#room">房間</a><a href="#feedback">回饋</a><a href="#dialogs">對話框</a><a href="#leader">帶領播放器</a><a href="#results">結果</a></nav>
+
+  <!-- ================= 1. 色票 ================= -->
+  <h2 id="colors">1. 色票</h2>
+  <p class="note">前六個是 logo 原色，最後兩個是擴充色。色票下方那條是五階深淺：10%／30%／原色／深 20%／深 45%。</p>
+  <div class="swatches" id="swatches"></div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>對比度檢查</h3>
+    <p class="note" style="margin:0 0 12px">每個色組都算過 WCAG 對比度。標準是一般文字 4.5:1 為 AA、7:1 為 AAA；按鈕外框屬於非文字元素，標準是 3:1。</p>
+    <div class="table-scroll"><table id="contrast"></table></div>
+    <p class="note" style="margin:12px 0 0">「主要・實心」按鈕的白字配靛藍 #3D54B6 是 6.7:1，過 AA。停用按鈕的灰字是 4.1:1；WCAG 不要求停用元件達標，但還是盡量讓它讀得到。</p>
+  </div>
+
+  <!-- ================= 2. 按鈕 ================= -->
+  <h2 id="buttons">2. 按鈕元件</h2>
+  <p class="note">表面是淡淡的粉彩色，底線和文字用同色系的深色，按下去會沉下去。每個按鈕都可以點點看。</p>
+
+  <div class="stack">
+    <div class="card">
+      <h3>樣式</h3>
+      <div class="row">
+        <div class="cell"><button class="btn btn-solid">開始遊戲</button><code>主要・實心</code></div>
+        <div class="cell"><button class="btn">開始遊戲</button><code>主要・粉彩</code></div>
+        <div class="cell"><button class="btn btn-secondary">看玩法</button><code>次要・白底</code></div>
+        <div class="cell"><button class="btn btn-ghost">略過</button><code>幽靈</code></div>
+        <div class="cell"><button class="btn btn-danger">關閉房間</button><code>危險</code></div>
+      </div>
+      <p class="note" style="margin:16px 0 0">建議一個畫面只有一顆實心的（例如「開始遊戲」），其他都用粉彩或白底。</p>
+    </div>
+
+    <div class="card">
+      <h3>狀態</h3>
+      <div class="row">
+        <div class="cell"><button class="btn">預設</button><code>default</code></div>
+        <div class="cell"><button class="btn is-hover">滑過</button><code>hover</code></div>
+        <div class="cell"><button class="btn is-pressed">按下</button><code>pressed</code></div>
+        <div class="cell"><button class="btn is-focus">鍵盤聚焦</button><code>focus</code></div>
+        <div class="cell"><button class="btn" disabled>停用</button><code>disabled</code></div>
+        <div class="cell"><button class="btn is-loading" aria-busy="true">建立中<span class="bounce-dots" aria-hidden="true"><i></i><i></i><i></i></span></button><code>loading</code></div>
+      </div>
+      <div class="row" style="margin-top:16px">
+        <div class="cell"><button class="btn btn-solid">預設</button></div>
+        <div class="cell"><button class="btn btn-solid is-pressed">按下</button></div>
+        <div class="cell"><button class="btn btn-solid is-loading" aria-busy="true">建立中<span class="bounce-dots" aria-hidden="true"><i></i><i></i><i></i></span></button></div>
+        <div class="cell"><button class="btn btn-solid" disabled>停用</button></div>
+        <div class="cell"><button class="btn btn-secondary">預設</button></div>
+        <div class="cell"><button class="btn btn-secondary is-pressed">按下</button></div>
+        <div class="cell"><button class="btn btn-secondary" disabled>停用</button></div>
+      </div>
+      <p class="note" style="margin:16px 0 0">停用是「壓扁」：沒有厚度、換成灰色，跟現有系列的規則一致。</p>
+    </div>
+
+    <div class="card">
+      <h3>尺寸</h3>
+      <div class="row" style="align-items:flex-end">
+        <div class="cell"><button class="btn btn-lg btn-solid">大 56px</button><code>lg・主要行動</code></div>
+        <div class="cell"><button class="btn">中 48px</button><code>md・預設</code></div>
+        <div class="cell"><button class="btn btn-sm">小 36px</button><code>sm・卡片內</code></div>
+      </div>
+      <div style="max-width:380px;margin-top:18px" class="cell">
+        <button class="btn btn-lg btn-solid btn-block">開始遊戲</button><code>滿版・手機底部的主要按鈕</code>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>加圖示</h3>
+      <div class="row">
+        <div class="cell"><button class="btn btn-solid"><svg><use href="#i-play"/></svg>開始</button><code>圖示在前</code></div>
+        <div class="cell"><button class="btn btn-secondary">下一步<svg><use href="#i-arrow"/></svg></button><code>圖示在後</code></div>
+        <div class="cell"><button class="btn btn-icon" aria-label="新增"><svg><use href="#i-plus"/></svg></button><code>方形圖示</code></div>
+        <div class="cell"><button class="btn btn-icon btn-round btn-secondary" aria-label="分享"><svg><use href="#i-share"/></svg></button><code>圓形圖示</code></div>
+        <div class="cell"><button class="btn btn-icon btn-ghost" aria-label="關閉"><svg><use href="#i-close"/></svg></button><code>幽靈圖示</code></div>
+        <div class="cell"><button class="btn fab btn-solid" aria-label="下一步"><svg><use href="#i-arrow"/></svg></button><code>浮動・帶領播放器</code></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>遊戲代表色</h3>
+      <div class="row">
+        <div class="cell"><button class="btn g-indigo">阿瓦隆</button><code>靛藍</code></div>
+        <div class="cell"><button class="btn g-orange">搶答</button><code>橘</code></div>
+        <div class="cell"><button class="btn g-pink">喜好二選一</button><code>粉</code></div>
+        <div class="cell"><button class="btn g-yellow">幸福賓果</button><code>黃</code></div>
+        <div class="cell"><button class="btn g-coral">定時炸彈</button><code>珊瑚</code></div>
+        <div class="cell"><button class="btn g-mint">幸福模擬器</button><code>薄荷</code></div>
+      </div>
+      <p class="note" style="margin:16px 0 0">文字加深到 35% 原色＋黑，每一組的文字對表面都在 11.5:1 以上（AAA 是 7:1），而且還看得出是同一個色系。</p>
+    </div>
+
+    <div class="card">
+      <h3>推薦器的篩選</h3>
+      <div class="row">
+        <button class="chip" aria-pressed="true"><svg><use href="#i-check"/></svg>不用手機</button>
+        <button class="chip" aria-pressed="false">一支手機</button>
+        <button class="chip" aria-pressed="false">每人一支</button>
+        <button class="chip" aria-pressed="false">大螢幕</button>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <div class="segmented" role="group" aria-label="時間">
+          <button aria-pressed="false">5 分鐘內</button><button aria-pressed="true">5–15 分</button><button aria-pressed="false">15 分以上</button>
+        </div>
+        <button class="btn btn-secondary btn-sm"><svg><use href="#i-dice"/></svg>隨機一個</button>
+      </div>
+      <p class="note" style="margin:16px 0 0">膠囊可以複選，分段控制是單選。點點看。</p>
+    </div>
+  </div>
+
+  <!-- ================= 3. 遊戲列表 ================= -->
+  <h2 id="games-list">3. 遊戲列表</h2>
+  <p class="note">每個遊戲一張可愛插圖：粗黑描邊留小缺口；色塊往右下錯開、不把描邊填滿，左上露出的白邊就是亮面；每個主角表情都不一樣，底下一條虛線地板。卡片統一是 32px 大格子紙白底，底部一整排相連的淡淡 W 當底圖。</p>
+  <div class="game-grid" id="games"></div>
+
+  <!-- ================= 4. 陣列 ================= -->
+  <h2 id="pattern">4. Logo 陣列</h2>
+  <p class="note">W 跟 W 緊緊相連，跟 logo 本身的排法一樣；只用淺色的藍紫色系，白底。</p>
+  <div class="pattern-box"><svg class="tiles" id="tiles" aria-hidden="true"></svg><div class="label">明天就要帶破冰？</div></div>
+
+  <!-- ================= 5. loading ================= -->
+  <h2 id="loading">5. Loading 翻牌</h2>
+  <p class="note">W 像卡片一樣翻面，每翻一次換一個顏色，八色輪流。</p>
+  <div class="loader-grid">
+    <div class="card loader-card">
+      <div class="stage"><div style="display:flex;flex-direction:column;align-items:center">
+        <svg class="flip flip-big" viewBox="0 0 59 48"><use href="#w"/></svg>
+        <div class="loading-text">準備中<span class="bounce-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      </div></div>
+      <h3 style="margin:0">整頁載入</h3>
+      <p>進房間、連線中的時候</p>
+    </div>
+    <div class="card loader-card">
+      <div class="stage"><div class="flip-row" id="flip-row"></div></div>
+      <h3 style="margin:0">一排輪流翻</h3>
+      <p>六個 W 連成一條，依序翻面。適合抽題、配對結果出來前</p>
+    </div>
+  </div>
+  <!-- ================= 6. 字體與 tokens ================= -->
+  <h2 id="type">6. 字體、間距、圓角、陰影</h2>
+  <p class="note">字級一律從這張表挑，不要另外發明。數字（房號、倒數、分數）用等寬數字，跳動時才不會左右晃。</p>
+  <div class="demo-grid two">
+    <div class="card">
+      <p class="sub">字級</p>
+      <div class="type-row"><code>Display 48</code><div class="t-display">打開就能帶</div></div>
+      <div class="type-row"><code>H1 32</code><div class="t-h1">明天就要帶破冰？</div></div>
+      <div class="type-row"><code>H2 24</code><div class="t-h2">今晚選好遊戲</div></div>
+      <div class="type-row"><code>H3 19</code><div class="t-h3">喜好二選一</div></div>
+      <div class="type-row"><code>Body 16</code><div class="t-body">答完自動分組，還會列出你們的共同話題。</div></div>
+      <div class="type-row"><code>Small 14</code><div class="t-small">5–30 人・每人一支手機</div></div>
+      <div class="type-row"><code>Caption 12</code><div class="t-caption">STEP 2 / 4</div></div>
+      <div class="type-row"><code>Number 40</code><div class="t-num">ABCD 00:15</div></div>
+      <div class="type-row"><code>Link</code><div class="t-body">看完<a class="link" href="#type">完整玩法說明</a>再開始（滑過去看看）</div></div>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <p class="sub">間距（4 的倍數）</p>
+        <div class="space-bars" id="space-bars"></div>
+      </div>
+      <div class="card">
+        <p class="sub">圓角（只有這五種）</p>
+        <div class="token-tiles">
+          <div style="border-radius:var(--r-xs)">4<br>色點、標記</div>
+          <div style="border-radius:var(--r-sm)">8<br>勾選框、泡泡</div>
+          <div style="border-radius:var(--r-md)">14<br>按鈕、輸入、列表</div>
+          <div style="border-radius:var(--r-lg)">20<br>卡片、面板</div>
+          <div style="border-radius:var(--r-pill)">999<br>膠囊、徽章</div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="sub">陰影</p>
+        <div class="token-tiles">
+          <div style="border-radius:var(--r-md);box-shadow:0 4px 0 #e2e2e8">立體底線<br><code>0 4px 0</code></div>
+          <div style="border-radius:var(--r-md);box-shadow:var(--shadow)">浮起<br><code>0 8px 32px</code></div>
+          <div style="border-radius:var(--r-md);box-shadow:0 20px 60px #0000004d">對話框<br><code>0 20px 60px</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 7. 表單 ================= -->
+  <h2 id="forms">7. 表單</h2>
+  <p class="note">輸入框字級固定 16px：小於 16px 的話，iPhone 一點下去整個畫面會自動放大。所有可以按的東西至少 44px 高。</p>
+  <div class="demo-grid two">
+    <div class="card stack">
+      <div class="field"><label for="f-name">你的暱稱</label><input id="f-name" class="input" placeholder="例如：小明" maxlength="12"><span class="help">最多 12 個字，其他人會看到這個名字</span></div>
+      <div class="field"><label for="f-err">房號</label><input id="f-err" class="input is-error" value="AB1" aria-invalid="true" aria-describedby="f-err-msg"><span class="error-msg" id="f-err-msg"><svg width="16" height="16"><use href="#i-error"/></svg>房號是 4 個英文字母</span></div>
+      <div class="field"><label for="f-dis">主持人</label><input id="f-dis" class="input" value="由系統指定" disabled></div>
+      <div class="field"><label for="f-sel">場合</label><select id="f-sel" class="select"><option>小組團契</option><option>課堂</option><option>公司</option><option>朋友聚會</option></select></div>
+      <div class="field"><label for="f-ta">自訂題目</label><textarea id="f-ta" class="textarea" placeholder="一行一題"></textarea></div>
+    </div>
+    <div class="card stack">
+      <div>
+        <p class="sub">輸入房號</p>
+        <div class="code-input" id="code-input">
+          <input maxlength="1" aria-label="房號第 1 碼" value="W"><input maxlength="1" aria-label="房號第 2 碼" value="O"><input maxlength="1" aria-label="房號第 3 碼"><input maxlength="1" aria-label="房號第 4 碼">
+        </div>
+        <p class="note" style="margin:8px 0 0">打一個字會自動跳到下一格，按刪除會退回上一格。</p>
+      </div>
+      <div>
+        <p class="sub">數量增減</p>
+        <div class="stepper" id="stepper"><button type="button" aria-label="減少">−</button><output aria-live="polite">10</output><button type="button" aria-label="增加">+</button></div>
+      </div>
+      <div>
+        <p class="sub">開關</p>
+        <div class="stack" style="gap:10px">
+          <label class="switch"><input type="checkbox" checked><span class="track"></span>主持人也一起作答</label>
+          <label class="switch"><input type="checkbox"><span class="track"></span>音效</label>
+        </div>
+      </div>
+      <div>
+        <p class="sub">勾選與單選</p>
+        <div class="row" style="gap:4px 20px">
+          <label class="check"><input type="checkbox" checked>暖場</label>
+          <label class="check"><input type="checkbox">認識彼此</label>
+          <label class="check"><input type="checkbox">深入分享</label>
+        </div>
+        <div class="row" style="gap:4px 20px">
+          <label class="check"><input type="radio" name="fam" checked>完全陌生</label>
+          <label class="check"><input type="radio" name="fam">有點認識</label>
+          <label class="check"><input type="radio" name="fam">很熟</label>
+        </div>
+      </div>
+      <div>
+        <p class="sub">滑桿 <span id="range-val" style="color:var(--ink)">15 秒</span></p>
+        <input type="range" class="range" id="range" min="5" max="60" step="5" value="15" aria-label="每題秒數">
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 8. 徽章與頭像 ================= -->
+  <h2 id="badges">8. 徽章與頭像</h2>
+  <div class="demo-grid two">
+    <div class="card">
+      <p class="sub">徽章</p>
+      <div class="row">
+        <span class="badge solid">上次玩過</span>
+        <span class="badge b-new">NEW</span>
+        <span class="badge b-live"><i class="live-dot"></i>進行中</span>
+        <span class="badge b-host"><svg width="14" height="14"><use href="#i-crown"/></svg>主持人</span>
+        <span class="badge b-info">不用手機</span>
+        <span style="position:relative;display:inline-flex"><button class="btn btn-icon btn-secondary" aria-label="通知"><svg><use href="#i-bell"/></svg></button><span class="count-badge" style="position:absolute;top:-6px;right:-6px">3</span></span>
+      </div>
+    </div>
+    <div class="card">
+      <p class="sub">挑一個頭像</p>
+      <div class="avatar-picker" id="avatar-picker" role="radiogroup" aria-label="挑一個頭像"></div>
+      <p class="sub" style="margin-top:18px">尺寸與狀態</p>
+      <div class="row">
+        <span class="avatar sm" data-name="小明"></span>
+        <span class="avatar" data-name="Amy"><span class="status"></span></span>
+        <span class="avatar sm" data-food="pizza"></span>
+        <span class="avatar" data-food="boba"><span class="status"></span></span>
+        <span class="avatar" data-food="donut"><span class="status off"></span></span>
+        <span class="avatar lg" data-food="onigiri"></span>
+        <div class="avatar-stack">
+          <span class="avatar sm" data-food="strawberry"></span>
+          <span class="avatar sm" data-food="avocado"></span>
+          <span class="avatar sm" data-food="lemon"></span>
+          <span class="avatar sm" style="background:#e8e8ee;font-size:11px">+5</span>
+        </div>
+      </div>
+      <p class="note" style="margin:12px 0 0">沿用搶答遊戲的 10 種食物，重畫成同一套插圖風格；頭像會縮到 32px，所以只留主形狀＋表情，不畫小細節。每個表情都不一樣；不開放上傳。沒選頭像（第一格）就用名字的第一個字，底色依名字固定。綠點是在線、灰點是斷線。三十個人撞頭像沒關係，「你也是披薩！」本身就是破冰話題。</p>
+    </div>
+  </div>
+
+  <!-- ================= 9. 導覽 ================= -->
+  <h2 id="nav">9. 導覽</h2>
+  <div class="stack">
+    <div class="card" style="background:var(--bg)">
+      <p class="sub">頂部導覽列</p>
+        <div class="nav-host"><header class="navbar">
+          <a class="brand wordmark" href="#nav"><svg viewBox="0 0 59 48"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
+          <nav class="nav-links" aria-label="主要導覽"></nav>
+          <div class="nav-actions">
+            <button class="lang"><svg><use href="#i-globe"/></svg>繁中</button>
+            <button class="btn btn-solid btn-sm">開房間</button>
+            <button class="btn btn-icon btn-secondary nav-burger" aria-label="選單" style="--h:44px"><svg><use href="#i-menu"/></svg></button>
+          </div>
+        </header></div>
+      <p class="sub" style="margin-top:20px">寬度不夠時（例如平板）</p>
+      <div style="max-width:560px">
+        <div class="nav-host"><header class="navbar">
+          <a class="brand wordmark" href="#nav"><svg viewBox="0 0 59 48"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
+          <nav class="nav-links" aria-label="主要導覽"></nav>
+          <div class="nav-actions">
+            <button class="lang"><svg><use href="#i-globe"/></svg>繁中</button>
+            <button class="btn btn-solid btn-sm">開房間</button>
+            <button class="btn btn-icon btn-secondary nav-burger" aria-label="選單" style="--h:44px"><svg><use href="#i-menu"/></svg></button>
+          </div>
+        </header></div>
+      </div>
+      <p class="sub" style="margin-top:20px">手機寬度</p>
+      <div style="max-width:380px">
+        <div class="nav-host"><header class="navbar">
+          <a class="brand wordmark" href="#nav"><svg viewBox="0 0 59 48"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
+          <nav class="nav-links" aria-label="主要導覽"></nav>
+          <div class="nav-actions">
+            <button class="lang"><svg><use href="#i-globe"/></svg>繁中</button>
+            <button class="btn btn-solid btn-sm">開房間</button>
+            <button class="btn btn-icon btn-secondary nav-burger" aria-label="選單" style="--h:44px"><svg><use href="#i-menu"/></svg></button>
+          </div>
+        </header></div>
+      </div>
+      <p class="note" style="margin:12px 0 0">連結由清單產生，放不下的會一個個收進「更多」（點開看看）；手機寬度只剩 logo、語言和選單鍵，選單用底部面板打開。之後加分頁只要在清單裡多寫一筆。</p>
+    </div>
+    <div class="demo-grid two">
+      <div class="card">
+        <p class="sub">遊戲內頂欄（手機）</p>
+        <div class="appbar">
+          <button class="btn btn-icon btn-ghost" aria-label="返回"><svg><use href="#i-back"/></svg></button>
+          <div class="title">喜好二選一</div>
+          <button class="btn btn-icon btn-ghost" aria-label="選單"><svg><use href="#i-menu"/></svg></button>
+        </div>
+      </div>
+      <div class="card">
+        <p class="sub">分頁</p>
+        <div class="tabs" role="tablist" id="tabs">
+          <button role="tab" aria-selected="true">玩法</button><button role="tab" aria-selected="false">帶領技巧</button><button role="tab" aria-selected="false">變化玩法</button><button role="tab" aria-selected="false">常見問題</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-grid two">
+      <div class="card">
+        <p class="sub">麵包屑</p>
+        <div class="crumbs"><a href="#nav">首頁</a><span>›</span><a href="#nav">破冰帶領</a><span>›</span><span>果園菜園動物園</span></div>
+      </div>
+      <div class="card">
+        <p class="sub">頁尾</p>
+        <div class="footer-demo">
+          <span>© 2026 Woohop</span>
+          <div class="links"><a href="#nav">關於我們</a><a href="#nav">隱私權政策</a><a href="#nav">聯絡</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 10. 房間 ================= -->
+  <h2 id="room">10. 房間</h2>
+  <p class="note">房間型遊戲（搶答、二選一、賓果）共用的元件。之後整合房間系統時就照這組做。</p>
+  <div class="demo-grid two">
+    <div class="room-code-card">
+      <span class="t-caption">房號</span>
+      <div class="room-code"><span>W</span><span>O</span><span>O</span><span>H</span></div>
+      <svg class="qr" id="qr" viewBox="0 0 29 29" aria-label="QR code（示意）"></svg>
+      <div class="row" style="justify-content:center">
+        <button class="btn btn-secondary btn-sm"><svg><use href="#i-copy"/></svg>複製連結</button>
+        <button class="btn btn-secondary btn-sm"><svg><use href="#i-share"/></svg>分享</button>
+      </div>
+      <span class="t-small">掃 QR code 或輸入房號加入</span>
+    </div>
+    <div>
+      <div class="row" style="justify-content:space-between;margin-bottom:10px"><b>已加入 4 人</b><span class="badge b-live"><i class="live-dot"></i>等待開始</span></div>
+      <ul class="player-list">
+        <li class="player is-me"><span class="avatar sm" data-food="pizza"></span><span class="name">小明（你）</span></li>
+        <li class="player"><span class="avatar sm" data-food="boba"></span><span class="name">婷婷<span class="badge b-host"><svg width="12" height="12"><use href="#i-crown"/></svg>主持人</span></span></li>
+        <li class="player"><span class="avatar sm" data-food="donut"></span><span class="name">阿豪</span><button class="btn btn-sm btn-ghost kick">移出</button></li>
+        <li class="player is-offline"><span class="avatar sm" data-name="安安"><span class="status off"></span></span><span class="name">安安</span><span class="t-caption">斷線中</span></li>
+      </ul>
+      <button class="btn btn-lg btn-solid btn-block" style="margin-top:14px;max-width:420px">開始遊戲</button>
+    </div>
+  </div>
+
+  <!-- ================= 11. 回饋 ================= -->
+  <h2 id="feedback">11. 回饋</h2>
+  <div class="demo-grid two">
+    <div class="card stack">
+      <p class="sub" style="margin:0">提示橫幅</p>
+      <div class="alert info"><svg><use href="#i-info"/></svg><div><b>小提醒</b>這個遊戲需要每人一支手機。</div></div>
+      <div class="alert success"><svg><use href="#i-ok"/></svg><div><b>已加入房間</b>等主持人按開始。</div></div>
+      <div class="alert warning"><svg><use href="#i-warn"/></svg><div><b>連線不穩</b>正在重新連線⋯</div></div>
+      <div class="alert error"><svg><use href="#i-error"/></svg><div><b>找不到這個房間</b>確認一下房號，或請主持人重開一間。</div></div>
+    </div>
+    <div class="card stack">
+      <div>
+        <p class="sub">浮動通知</p>
+        <button class="btn btn-secondary" id="toast-btn">顯示通知</button>
+      </div>
+      <div>
+        <p class="sub">進度條 <span id="prog-val" style="color:var(--ink)">3 / 10 題</span></p>
+        <div class="progress"><div id="prog" style="--p:30%"></div></div>
+      </div>
+      <div class="row" style="gap:24px">
+        <div>
+          <p class="sub">倒數</p>
+          <div class="timer-ring" id="timer"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#e4e4ea" stroke-width="12"/><circle id="timer-arc" cx="60" cy="60" r="50" fill="none" stroke="var(--indigo)" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="0"/></svg><div class="num" id="timer-num">10</div></div>
+        </div>
+        <div>
+          <p class="sub">提示泡泡</p>
+          <div class="tip" style="margin-top:40px"><button class="btn btn-icon btn-secondary btn-round" aria-label="說明"><svg><use href="#i-info"/></svg></button><span class="bubble">主持人才看得到</span></div>
+        </div>
+      </div>
+      <div>
+        <p class="sub">載入骨架</p>
+        <div style="display:grid;gap:8px;max-width:320px"><div class="skeleton" style="height:90px;border-radius:var(--r-md)"></div><div class="skeleton" style="height:16px;width:60%"></div><div class="skeleton" style="height:12px;width:85%"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="empty" style="margin-top:16px">
+    <svg class="illo" viewBox="0 0 160 126" aria-hidden="true" data-art="empty"></svg>
+    <h4>找不到符合的遊戲</h4>
+    <p>放寬一兩個條件試試看，或讓我們隨機推薦一個。</p>
+    <div class="row" style="justify-content:center"><button class="btn btn-secondary btn-sm">清除篩選</button><button class="btn btn-sm"><svg><use href="#i-dice"/></svg>隨機一個</button></div>
+  </div>
+
+  <!-- ================= 12. 對話框 ================= -->
+  <h2 id="dialogs">12. 對話框與底部面板</h2>
+  <p class="note">確認框用在「會中斷遊戲」的動作（離開房間、關閉房間）；底部面板用在手機上的選單或設定。點按鈕打開看看。</p>
+  <div class="row">
+    <button class="btn btn-danger" id="open-modal">離開房間</button>
+    <button class="btn btn-secondary" id="open-sheet">開啟選單</button>
+  </div>
+  <dialog class="modal" id="modal" aria-labelledby="modal-title">
+    <div class="m-body">
+      <svg class="illo" viewBox="0 0 160 126" aria-hidden="true" data-art="leave"></svg>
+      <h4 id="modal-title">確定要離開房間嗎？</h4>
+      <p>遊戲還在進行中，離開後要重新輸入房號才能回來。</p>
+    </div>
+    <div class="m-actions">
+      <button class="btn btn-secondary" data-close>留下來</button>
+      <button class="btn btn-danger" data-close>離開</button>
+    </div>
+  </dialog>
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+    <div class="grabber"></div>
+    <h4 id="sheet-title">房間選單</h4>
+    <div class="sheet-list">
+      <button class="btn btn-secondary btn-block" data-close><svg><use href="#i-share"/></svg>分享房號</button>
+      <button class="btn btn-secondary btn-block" data-close><svg><use href="#i-info"/></svg>查看玩法</button>
+      <button class="btn btn-danger btn-block" data-close><svg><use href="#i-close"/></svg>關閉房間</button>
+      <button class="btn btn-ghost btn-block" data-close>取消</button>
+    </div>
+  </dialog>
+
+  <!-- ================= 13. 帶領播放器 ================= -->
+  <h2 id="leader">13. 帶領播放器</h2>
+  <p class="note">企劃書 §5.1 的核心元件：步驟教學、主持人提詞卡、轉盤、節拍器。</p>
+  <div class="demo-grid two">
+    <div class="player-frame" id="leader-player">
+      <div class="step-dots" id="step-dots"><i class="on"></i><i></i><i></i><i></i></div>
+      <div class="step-card">
+        <span class="step-no" id="step-no">STEP 1 / 4</span>
+        <svg class="illo" viewBox="0 0 160 126" aria-hidden="true" data-art="circle"></svg>
+        <h4 id="step-title">圍成一圈</h4>
+        <p id="step-text">大家圍成一圈，主持人先開始。</p>
+      </div>
+      <div class="step-nav">
+        <button class="btn btn-secondary" id="step-prev">上一步</button>
+        <button class="btn fab btn-solid" id="step-next" aria-label="下一步"><svg><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="prompt-card">
+        <span class="say">照著念</span>
+        我們等一下要玩「果園菜園動物園」。大家先跟我一起拍手——<mark>拍、拍</mark>，第三拍說出一個主題，下一個人就要說出那個主題裡的東西，卡住或重複的人就輸囉！
+      </div>
+      <div class="card">
+        <p class="sub">節拍器 <span id="bpm-val" style="color:var(--ink)">90 BPM</span></p>
+        <div class="metronome">
+          <div class="beats" id="beats"><i></i><i></i><i></i></div>
+          <button class="btn btn-sm btn-secondary" id="bpm-down" aria-label="變慢">−</button>
+          <button class="btn btn-sm btn-solid" id="metro-toggle">開始</button>
+          <button class="btn btn-sm btn-secondary" id="bpm-up" aria-label="變快">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:center">
+    <div class="wheel-wrap"><div class="wheel-pointer"></div><svg class="wheel" id="wheel" viewBox="0 0 200 200"></svg></div>
+    <div class="stack" style="justify-items:center;max-width:280px">
+      <p class="sub" style="margin:0">分享轉盤</p>
+      <div class="wheel-result" id="wheel-result">輸的人轉一下</div>
+      <button class="btn btn-lg btn-solid" id="spin">轉！</button>
+    </div>
+  </div>
+
+  <!-- ================= 14. 結果與問答 ================= -->
+  <h2 id="results">14. 結果與常見問題</h2>
+  <div class="demo-grid two">
+    <div class="card">
+      <p class="sub">排行榜</p>
+      <div class="podium">
+        <div class="col"><span class="avatar" data-food="icecream"></span><span class="name">小華</span><div class="block" style="height:70px;background:var(--blue-face);border-color:var(--blue-edge)">2</div></div>
+        <div class="col"><svg width="26" height="26" style="color:#c49a1e"><use href="#i-crown"/></svg><span class="avatar lg" data-food="pizza"></span><span class="name">小明</span><div class="block" style="height:100px;background:var(--yellow-face);border-color:var(--yellow-edge)">1</div></div>
+        <div class="col"><span class="avatar" data-food="boba"></span><span class="name">婷婷</span><div class="block" style="height:52px;background:var(--orange-face);border-color:var(--orange-edge)">3</div></div>
+      </div>
+      <ol class="rank-list" style="margin-top:14px">
+        <li>阿豪<span class="score">8 分</span></li>
+        <li>安安<span class="score">6 分</span></li>
+      </ol>
+    </div>
+    <div class="card">
+      <p class="sub">常見問題</p>
+      <div class="faq">
+        <details open><summary>需要下載 App 嗎？</summary><p>不用。用手機瀏覽器打開網址就能玩，也不用註冊。</p></details>
+        <details><summary>最少要幾個人？</summary><p>每個遊戲不一樣，卡片上都有標人數。大部分 5 人以上最好玩。</p></details>
+        <details><summary>沒有網路可以玩嗎？</summary><p>定時炸彈第一次打開後就能離線玩；房間型的遊戲需要網路。</p></details>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const W = (fill, attrs = '') => `<svg viewBox="0 0 59 48" ${attrs}><use href="#w" fill="${fill}"/></svg>`;
+
+  /* ---------- 1. 色票與對比表（數值由 oklab 混色算出，跟 :root 的 token 一致） ---------- */
+  const palette = [
+    { name: '靛藍 Indigo',    base: '#3D54B6', face: '#bcc8eb', edge: '#16204f', text: '#070c27', t10: '#eaeef9', t30: '#c0cbec', d20: '#2b3c86', d45: '#16204f', on: '#fff' },
+    { name: '藍紫 Blue',      base: '#7489E6', face: '#d0daf9', edge: '#303a66', text: '#151b34', t10: '#f0f3fd', t30: '#d3dcfa', d20: '#5464ab', d45: '#303a66' },
+    { name: '長春花 Periwinkle', base: '#8799E9', face: '#d7defa', edge: '#394167', text: '#1a1f34', t10: '#f2f5fe', t30: '#d9e0fa', d20: '#6370ad', d45: '#394167' },
+    { name: '橘 Orange',      base: '#FF9419', face: '#ffdec2', edge: '#713f05', text: '#3a1e01', t10: '#fff5ec', t30: '#ffe0c6', d20: '#be6d10', d45: '#713f05' },
+    { name: '粉 Pink',        base: '#F3A4FB', face: '#fce3ff', edge: '#6c4670', text: '#372239', t10: '#fef6ff', t30: '#fde4ff', d20: '#b479ba', d45: '#6c4670' },
+    { name: '黃 Yellow',      base: '#FFC628', face: '#ffeec8', edge: '#71560c', text: '#3a2b03', t10: '#fffaee', t30: '#ffefcb', d20: '#be921b', d45: '#71560c' },
+    { name: '珊瑚 Coral',     base: '#EE7B6A', face: '#fed6ce', edge: '#69332b', text: '#361712', t10: '#fff2f0', t30: '#fed8d1', d20: '#b15a4d', d45: '#69332b', isNew: true },
+    { name: '薄荷 Mint',      base: '#4FB59A', face: '#cbe7de', edge: '#1e4e42', text: '#0b261f', t10: '#eff8f5', t30: '#cee9e0', d20: '#388671', d45: '#1e4e42', isNew: true },
+  ];
+  document.getElementById('swatches').innerHTML = palette.map(p => `
+    <div class="sw">
+      <div class="chip-color" style="background:${p.base};color:${p.on || '#111113'}">Aa</div>
+      <div class="scale">${[p.t10, p.t30, p.base, p.d20, p.d45].map(c => `<span style="background:${c}" title="${c}"></span>`).join('')}</div>
+      <div class="meta"><b>${p.name}${p.isNew ? '<span class="tag-new">擴充</span>' : ''}</b><code>${p.base}</code></div>
+    </div>`).join('');
+
+  const lin = c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const lum = h => { const [r, g, b] = [1, 3, 5].map(i => lin(parseInt(h.slice(i, i + 2), 16) / 255)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const cr = (a, b) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
+  const grade = (v, need) => `<span class="${v >= need ? 'pass' : ''}">${v.toFixed(1)}${v >= 7 && need === 4.5 ? ' AAA' : v >= need ? ' ✓' : ' ✗'}</span>`;
+  document.getElementById('contrast').innerHTML = `
+    <tr><th>色組</th><th>表面</th><th>底線</th><th>文字</th><th>文字／表面</th><th>文字／白</th><th>底線／頁面底色</th></tr>` +
+    palette.filter(p => p.name !== '長春花 Periwinkle').map(p => `
+    <tr>
+      <td><span class="dot" style="background:${p.base}"></span>${p.name}</td>
+      <td><span class="dot" style="background:${p.face}"></span><code>${p.face}</code></td>
+      <td><span class="dot" style="background:${p.edge}"></span><code>${p.edge}</code></td>
+      <td><span class="dot" style="background:${p.text}"></span><code>${p.text}</code></td>
+      <td>${grade(cr(p.text, p.face), 4.5)}</td>
+      <td>${grade(cr(p.text, '#ffffff'), 4.5)}</td>
+      <td>${grade(cr(p.edge, '#f4f4f6'), 3)}</td>
+    </tr>`).join('');
+
+  /* ---------- 3. 遊戲插圖：粗描邊可愛風 ----------
+   * 統一語言（照使用者給的參考圖）：
+   *  - 5px 深色描邊，描邊上留幾個小缺口（stroke-dasharray），不是一筆畫到底
+   *  - 平塗色塊，右下補一塊同色系深色當陰影；左上一道白色高光線＋一個白點
+   *  - 主角都有表情：兩顆小眼睛＋微笑（有的帶舌頭、腮紅）
+   *  - 底下一條斷斷續續的虛線地板，旁邊散星星、小圓圈、十字
+   */
+  /*
+   * 表情庫：頭像（64 viewBox）和插圖（160 viewBox）共用。
+   * 規則：表情一律純黑——沒有眼白反光、沒有粉紅舌頭或腮紅，愛心眼也是黑色。
+   * makeFace(kind, x, y, s, ns)
+   *   s  = 縮放（1 = 頭像大小；插圖用 2 左右）
+   *   ns = true 時線條用 non-scaling-stroke（頭像：任何尺寸都 2px）
+   */
+  function makeFace(kind, x, y, s = 1, ns = false) {
+    const ink = '#22222c';
+    const sw = ns ? 2 : 1.6 * s;
+    const nsAttr = ns ? ' vector-effect="non-scaling-stroke"' : '';
+    const L = `stroke="${ink}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" fill="none"${nsAttr}`;
+    const P = (dx, dy) => `${x + dx * s} ${y + dy * s}`;
+    const eye = dx => `<circle cx="${x + dx * s}" cy="${y}" r="${1.9 * s}" fill="${ink}"/>`;
+    const dots = eye(-4.5) + eye(4.5);
+    const arcUp = dx => `<path d="M${P(dx - 2, .8)}Q${P(dx, -1.8)} ${P(dx + 2, .8)}" ${L}/>`;
+    const line = dx => `<path d="M${P(dx - 2, 0)}L${P(dx + 2, 0)}" ${L}/>`;
+    const smile = `<path d="M${P(-2.4, 3)}Q${P(0, 5.6)} ${P(2.4, 3)}" ${L}/>`;
+    const open = `<path d="M${P(-3, 2.6)}Q${P(0, 8)} ${P(3, 2.6)}Z" fill="${ink}" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"${nsAttr}/>`;
+    const heart = dx => `<path d="M${P(dx, 1.6)}C${P(dx - 3.2, -.6)} ${P(dx - 2.4, -3.2)} ${P(dx, -1.4)}C${P(dx + 2.4, -3.2)} ${P(dx + 3.2, -.6)} ${P(dx, 1.6)}Z" fill="${ink}"/>`;
+    switch (kind) {
+      case 'smile':  return dots + smile;
+      case 'grin':   return dots + open;
+      case 'happy':  return arcUp(-4.5) + arcUp(4.5) + open;
+      case 'wink':   return eye(-4.5) + arcUp(4.5) + smile;
+      case 'tongue': return dots + `<path d="M${P(-3, 3)}Q${P(0, 5)} ${P(3, 3)}" ${L}/><path d="M${P(-1.3, 4)}v${1.5 * s}a${1.3 * s} ${1.3 * s} 0 0 0 ${2.6 * s} 0v${-1.5 * s}z" fill="${ink}"/>`;
+      case 'wow':    return dots + `<ellipse cx="${x}" cy="${y + 4.4 * s}" rx="${1.7 * s}" ry="${2.1 * s}" fill="${ink}"/>`;
+      case 'cat':    return dots + `<path d="M${P(-3, 3)}Q${P(-1.5, 5)} ${P(0, 3)}Q${P(1.5, 5)} ${P(3, 3)}" ${L}/>`;
+      case 'sleepy': return line(-4.5) + line(4.5) + `<circle cx="${x}" cy="${y + 4 * s}" r="${1.2 * s}" fill="${ink}"/>` + `<path d="M${P(8, -6)}h${2.5 * s}l${-2.5 * s} ${2.5 * s}h${2.5 * s}" ${L}/>`;
+      case 'love':   return heart(-4.6) + heart(4.6) + smile;
+      case 'worry':  return dots + `<path d="M${P(-2.2, 4.8)}Q${P(0, 2.8)} ${P(2.2, 4.8)}" ${L}/><path d="M${P(-6.6, -2.6)}l${2.6 * s} ${-1.1 * s}M${P(6.6, -2.6)}l${-2.6 * s} ${-1.1 * s}" ${L}/>`;
+      case 'cool':   return `<path d="M${P(-7.5, -1.8)}h${6 * s}v${2 * s}a${2 * s} ${2 * s} 0 0 1 ${-6 * s} 0zM${P(1.5, -1.8)}h${6 * s}v${2 * s}a${2 * s} ${2 * s} 0 0 1 ${-6 * s} 0z" fill="${ink}"/><path d="M${P(-1.5, -1.6)}h${3 * s}" ${L}/><path d="M${P(-1, 3.4)}Q${P(1.5, 5.2)} ${P(3, 2.8)}" ${L}/>`;
+      default:       return dots + smile;
+    }
+  }
+  // 插圖描邊固定 4px（UI 線條 2px 的兩倍），不隨插圖縮放而變粗變細
+  const K = 'stroke="#22222c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"';
+  const gap = (len = 80, g = 7) => `stroke-dasharray="${len} ${g}"`;
+  const ground = `<path d="M22 118h46M78 118h10M98 118h34M142 118h4" ${K}/>`;
+  const hl = () => ''; // 亮面改由「色塊錯開露出的白邊」表現，不另外畫高光
+  const burst = (x, y, c) => `<g stroke="${c}" stroke-width="3" stroke-linecap="round"><path d="M${x} ${y - 9}v5M${x} ${y + 4}v5M${x - 9} ${y}h5M${x + 4} ${y}h5M${x - 6} ${y - 6}l3 3M${x + 3} ${y + 3}l3 3M${x + 6} ${y - 6}l-3 3M${x - 3} ${y + 3}l-3 3"/></g>`;
+  const plus = (x, y, c, s = 5) => `<path d="M${x} ${y - s}v${s * 2}M${x - s} ${y}h${s * 2}" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>`;
+  const ring = (x, y, c, r = 5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}" stroke-width="3"/>`;
+  const dot = (x, y, c, r = 3) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+
+  /*
+   * 插圖的核心畫法（照參考圖）：**色塊不把描邊填滿**。
+   * 顏色往右下錯開幾 px，再用原本的形狀裁切——描邊內側左上會露出一條白邊，
+   * 那條白邊就是「亮面」，不另外畫高光。描邊本身留幾個小缺口。
+   *   body(形狀, 顏色, 陰影)：形狀是一個自閉合元素字串（<path …/>、<circle …/>），不要帶 fill
+   */
+  let clipSeq = 0;
+  const OFF = 'translate(5 6)';
+  const withAttr = (shape, attrs) => shape.replace(/\/>\s*$/, ` ${attrs}/>`);
+  const body = (shape, fill, shade = '', dash = true) => {
+    const id = `clip${++clipSeq}`;
+    // 先墊一層白：錯開後沒被顏色蓋到的地方是白的，後面的線條、底圖才不會透出來
+    return withAttr(shape, 'fill="#fff"') + `<clipPath id="${id}">${shape}</clipPath>` +
+      `<g clip-path="url(#${id})"><g transform="${OFF}">${withAttr(shape, `fill="${fill}"`)}${shade}</g></g>` +
+      withAttr(shape, `fill="none" ${K}${dash ? ' ' + gap() : ''}`);
+  };
+
+  const art = {
+    // 阿瓦隆：藍紫塔樓＋黃旗＋聲波
+    avalon: () => `
+      ${ground}${burst(28, 30, '#FFC628')}${ring(140, 26, '#8799E9')}${plus(146, 70, '#FFC628')}${dot(22, 74, '#8799E9')}
+      <path d="M80 34V12" ${K}/>
+      ${body('<path d="M82 12h20l-5 6 5 6H82z"/>', '#FFC628', '', false)}
+      ${body('<path d="M54 44h12v-10h9v10h10v-10h9v10h12v70H54z"/>', '#aebcf3', '<path d="M92 30h20v90H92z" fill="#8799E9"/>')}
+      ${makeFace('wink', 80, 66, 2)}
+      ${body('<path d="M71 114V100a9 9 0 0 1 18 0v14z"/>', '#3D54B6', '', false)}
+      <path d="M122 62a14 14 0 0 1 0 22M130 54a26 26 0 0 1 0 38" fill="none" stroke="#8799E9" stroke-width="5" stroke-linecap="round"/>
+      <path d="M38 62a14 14 0 0 0 0 22M30 54a26 26 0 0 0 0 38" fill="none" stroke="#8799E9" stroke-width="5" stroke-linecap="round"/>`,
+    // 搶答：橘色圓頂按鈕＋奶油黃底座
+    buzzer: () => `
+      ${ground}${burst(132, 28, '#FFC628')}${ring(26, 34, '#FF9419')}${plus(150, 76, '#FFC628')}${dot(20, 80, '#FF9419')}
+      ${body('<path d="M30 96v8c0 7 22 12 50 12s50-5 50-12v-8z"/>', '#FFC628', '', false)}
+      ${body('<ellipse cx="80" cy="96" rx="50" ry="13"/>', '#ffeec8', '', false)}
+      ${body('<path d="M48 94c0-30 14-50 32-50s32 20 32 50c0 5-14 8-32 8s-32-3-32-8z"/>', '#ffb24f', '<path d="M90 40c16 8 26 30 26 60H90z" fill="#FF9419"/>')}
+      ${makeFace('grin', 80, 76, 2.1)}
+      <path d="M80 30v-10M58 36l-6-6M102 36l6-6" stroke="#FF9419" stroke-width="4.5" stroke-linecap="round"/>`,
+    // 喜好二選一：O、X 兩張卡＋開心的愛心
+    match: () => `
+      ${ground}${burst(140, 24, '#FFC628')}${ring(20, 30, '#7489E6')}${plus(24, 84, '#FF9419')}${dot(150, 92, '#4FB59A')}
+      <g transform="rotate(-9 52 76)">
+        ${body('<rect x="26" y="46" width="52" height="64" rx="12"/>', '#a8dccb', '<path d="M62 40h24v80H62z" fill="#7cc9b1"/>')}
+        <circle cx="52" cy="78" r="14" fill="none" stroke="#2d8c71" stroke-width="7"/>
+      </g>
+      <g transform="rotate(9 108 76)">
+        ${body('<rect x="82" y="46" width="52" height="64" rx="12"/>', '#fbbcb1', '<path d="M118 40h24v80h-24z" fill="#f29b8c"/>')}
+        <path d="M97 64l22 26M119 64L97 90" stroke="#c4483a" stroke-width="7" stroke-linecap="round"/>
+      </g>
+      ${body('<path d="M80 44c-7-14-27-10-25 4 1 11 25 22 25 22s24-11 25-22c2-14-18-18-25-4z"/>', '#F3A4FB', '', false)}
+      ${makeFace('happy', 80, 52, 1.35)}`,
+    // 幸福賓果：九宮格賓果卡，斜線三格連成一線，卡片頂端是一張笑臉
+    bingo: () => `
+      ${ground}${burst(26, 28, '#7489E6')}${ring(144, 26, '#FF9419')}${plus(146, 74, '#4FB59A')}${dot(18, 76, '#F3A4FB')}
+      ${body('<rect x="40" y="14" width="80" height="100" rx="12"/>', '#FFC628', '<path d="M104 8h24v112h-24z" fill="#eda90c"/>')}
+      ${makeFace('love', 80, 27, 1.5)}
+      ${[0, 1, 2].map(r => [0, 1, 2].map(c => {
+        const x = 50 + c * 21, y = 44 + r * 21, hit = r === c;
+        return body(`<rect x="${x}" y="${y}" width="18" height="18" rx="4"/>`, hit ? '#F3A4FB' : '#ffffff', '', false) +
+          (hit ? `<circle cx="${x + 9}" cy="${y + 9}" r="4.5" fill="#22222c"/>` : '');
+      }).join('')).join('')}`,
+    // 定時炸彈：擔心的炸彈＋汗滴＋引信火花
+    bomb: () => `
+      ${ground}${ring(26, 32, '#7489E6')}${plus(146, 92, '#4FB59A')}${dot(22, 84, '#FFC628')}
+      <path d="M94 34c8-12 18-14 26-8" fill="none" ${K}/>
+      ${burst(126, 20, '#FFC628')}${dot(126, 20, '#FF9419', 4)}
+      <g transform="rotate(32 91 40)">${body('<rect x="80" y="32" width="22" height="16" rx="4"/>', '#7489E6', '', false)}</g>
+      ${body('<circle cx="76" cy="80" r="34"/>', '#EE7B6A', '<path d="M98 50a38 38 0 0 1-32 70h40z" fill="#d4685a"/>')}
+      ${makeFace('worry', 76, 80, 2.2)}
+      ${body('<path d="M104 62q5 7 0 11q-5-4 0-11z"/>', '#ffffff', '', false)}`,
+    // 幸福模擬器：戴墨鏡的大螢幕＋愛心
+    happiness: () => `
+      ${ground}${burst(140, 20, '#F3A4FB')}${ring(22, 26, '#FFC628')}${plus(150, 70, '#FF9419')}${dot(16, 76, '#7489E6')}
+      ${body('<path d="M70 96h20l4 18H66z"/>', '#4FB59A', '', false)}
+      ${body('<rect x="28" y="28" width="104" height="72" rx="14"/>', '#4FB59A', '<path d="M114 20h24v90h-24z" fill="#388671"/>')}
+      ${body('<rect x="40" y="40" width="80" height="48" rx="8"/>', '#eaf7f2', '', false)}
+      ${makeFace('cool', 80, 60, 2.2)}
+      ${body('<path d="M80 16c-4-8-15-6-14 2 1 6 14 12 14 12s13-6 14-12c1-8-10-10-14-2z"/>', '#EE7B6A', '', false)}`,
+  };
+
+  const games = [
+    { key: 'avalon',    name: '阿瓦隆語音主持', desc: '一支手機幫你主持整場，不用有人當旁白。', tags: ['5–10 人', '30 分以上', '一支手機'], color: '#3D54B6' },
+    { key: 'buzzer',    name: '搶答遊戲',       desc: '每人一支手機當搶答鈴，主持人出題。',     tags: ['5–30 人', '5–15 分', '每人一支'], color: '#FF9419', last: true },
+    { key: 'match',     name: '喜好二選一',     desc: '答完自動分組，還會列出你們的共同話題。', tags: ['5–30 人', '5–15 分', '每人一支'], color: '#F3A4FB' },
+    { key: 'bingo',     name: '幸福賓果',       desc: '找到符合條件的人簽名，連線就賓果。',     tags: ['8–30 人', '15 分以上', '每人一支'], color: '#FFC628' },
+    { key: 'bomb',      name: '定時炸彈',       desc: '一支手機傳著玩，炸在誰手上誰回答。',     tags: ['4–15 人', '5–15 分', '一支手機'], color: '#EE7B6A' },
+    { key: 'happiness', name: '幸福模擬器',     desc: '主持人大螢幕，全場用手機一起互動。',     tags: ['10–50 人', '15 分以上', '大螢幕'], color: '#4FB59A' },
+  ];
+  document.getElementById('games').innerHTML = games.map(g => `
+    <article class="game">
+      ${g.last ? '<span class="last-played">上次玩過</span>' : ''}
+      <div class="art"><svg viewBox="0 0 160 126" role="img" aria-label="${g.name}插圖">${art[g.key]()}</svg></div>
+      <h4>${g.name}</h4>
+      <p>${g.desc}</p>
+      <div class="tags">${g.tags.map(t => `<span>${t}</span>`).join('')}</div>
+      <svg class="w-row" viewBox="0 0 177 48" aria-hidden="true">${[0, 1, 2].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${g.color}"/>`).join('')}</svg>
+    </article>`).join('');
+
+  /* ---------- 4. 相連陣列：直接在一張 SVG 裡用 59×48 的格子排，W 跟 W 之間完全沒有縫 ---------- */
+  const LIGHT = ['#e3e8fc', '#d6defa', '#c9d3f7', '#bcc8f5', '#b0bef3', '#a5b5f1']; // 淺色藍紫，2×3 一組
+  const tilesSvg = document.getElementById('tiles');
+  const drawTiles = () => {
+    const w = tilesSvg.clientWidth, h = tilesSvg.clientHeight;
+    const cols = Math.ceil(w / 59) + 1, rows = Math.ceil(h / 48) + 1;
+    const ox = (w - cols * 59) / 2, oy = (h - rows * 48) / 2;
+    let s = '';
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      s += `<use href="#w" x="${ox + c * 59}" y="${oy + r * 48}" width="59" height="48" fill="${LIGHT[(r % 2) * 3 + (c % 3)]}"/>`;
+    }
+    tilesSvg.innerHTML = s;
+  };
+  drawTiles();
+  addEventListener('resize', drawTiles);
+
+  /* ---------- 5. 一排輪流翻 ---------- */
+  document.getElementById('flip-row').innerHTML = Array.from({ length: 6 }, (_, i) =>
+    W('', `class="flip" style="animation-delay:${i * 0.15}s"`)).join('');
+  // 顏色比翻轉多錯開 i 個半圈，六張才會是六種顏色；錯開量是 1.2s 的整數倍，換色仍對在側面
+  document.querySelectorAll('#flip-row use').forEach((u, i) => u.style.animationDelay = `${i * 0.15 - i * 1.2}s`);
+
+  /* ---------- 可以點的元件 ---------- */
+  document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') === 'true';
+    b.setAttribute('aria-pressed', String(!on));
+    b.innerHTML = (!on ? '<svg><use href="#i-check"/></svg>' : '') + b.textContent;
+  }));
+  document.querySelectorAll('.segmented').forEach(g => g.addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    g.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === e.target)));
+  }));
+  /* ================= 6 之後：設計系統元件的互動 ================= */
+
+  // 間距 token
+  document.getElementById('space-bars').innerHTML = [4, 8, 12, 16, 24, 32, 48, 64]
+    .map(n => `<div><code style="width:40px">${n}</code><span style="width:${n * 2}px"></span></div>`).join('');
+
+  // 房號四格：自動跳格、刪除退回
+  const codeBoxes = [...document.querySelectorAll('#code-input input')];
+  codeBoxes.forEach((box, i) => {
+    box.addEventListener('input', () => {
+      box.value = box.value.replace(/[^a-z]/gi, '').toUpperCase().slice(-1);
+      if (box.value && codeBoxes[i + 1]) codeBoxes[i + 1].focus();
+    });
+    box.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !box.value && codeBoxes[i - 1]) codeBoxes[i - 1].focus();
+    });
+  });
+
+  // 數量增減
+  const stepper = document.getElementById('stepper');
+  const stepOut = stepper.querySelector('output');
+  stepper.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const v = Math.min(30, Math.max(2, +stepOut.textContent + (b.getAttribute('aria-label') === '增加' ? 1 : -1)));
+    stepOut.textContent = v;
+  });
+
+  // 滑桿：填色跟著值走
+  const range = document.getElementById('range');
+  const syncRange = () => {
+    range.style.setProperty('--p', `${(range.value - range.min) / (range.max - range.min) * 100}%`);
+    document.getElementById('range-val').textContent = `${range.value} 秒`;
+  };
+  range.addEventListener('input', syncRange); syncRange();
+
+  // 分頁
+  document.getElementById('tabs').addEventListener('click', e => {
+    if (e.target.getAttribute('role') !== 'tab') return;
+    e.currentTarget.querySelectorAll('[role=tab]').forEach(t => t.setAttribute('aria-selected', String(t === e.target)));
+  });
+
+  // QR code（示意，不是真的 QR）：三個定位方塊＋固定種子的雜點
+  (() => {
+    let seed = 42; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7" rx="1.5" fill="#111113"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" rx="1" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx=".6" fill="#3D54B6"/>`;
+    let cells = '';
+    for (let y = 0; y < 29; y++) for (let x = 0; x < 29; x++) {
+      const inFinder = (x < 8 && y < 8) || (x > 20 && y < 8) || (x < 8 && y > 20);
+      if (!inFinder && rnd() > 0.55) cells += `<rect x="${x}" y="${y}" width="1" height="1" rx=".3" fill="#111113"/>`;
+    }
+    document.getElementById('qr').innerHTML = cells + finder(0, 0) + finder(22, 0) + finder(0, 22);
+  })();
+
+  // 浮動通知
+  const toastZone = document.createElement('div'); toastZone.className = 'toast-zone'; document.body.append(toastZone);
+  document.getElementById('toast-btn').addEventListener('click', () => {
+    const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status');
+    t.innerHTML = '<span>已複製房間連結</span><button type="button">復原</button>';
+    t.querySelector('button').addEventListener('click', () => t.remove());
+    toastZone.append(t); setTimeout(() => t.remove(), 3000);
+  });
+
+  // 進度條：點一下前進一題
+  let prog = 3;
+  document.getElementById('prog').parentElement.addEventListener('click', () => {
+    prog = prog % 10 + 1;
+    document.getElementById('prog').style.setProperty('--p', `${prog * 10}%`);
+    document.getElementById('prog-val').textContent = `${prog} / 10 題`;
+  });
+
+  // 倒數圈：10 秒循環，最後 3 秒變紅、數字跳動
+  (() => {
+    const arc = document.getElementById('timer-arc'), num = document.getElementById('timer-num'), ring = document.getElementById('timer');
+    const C = 314.16; let left = 10;
+    const tick = () => {
+      num.textContent = left;
+      arc.style.strokeDashoffset = C * (1 - left / 10);
+      arc.style.stroke = left <= 3 ? '#d4685a' : 'var(--indigo)';
+      ring.classList.toggle('is-urgent', left <= 3);
+      left = left === 0 ? 10 : left - 1;
+    };
+    tick(); setInterval(tick, 1000);
+  })();
+
+  // 對話框：每條關閉路徑自己關，不靠 close 事件（內嵌瀏覽器不一定會發）
+  const modal = document.getElementById('modal'), sheet = document.getElementById('sheet');
+  document.getElementById('open-modal').addEventListener('click', () => modal.showModal());
+  document.getElementById('open-sheet').addEventListener('click', () => sheet.showModal());
+  [modal, sheet].forEach(d => {
+    d.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => d.close()));
+    d.addEventListener('click', e => { if (e.target === d) d.close(); }); // 點背景關閉
+  });
+
+  // 帶領播放器：步驟切換
+  const steps = [
+    ['圍成一圈', '大家圍成一圈，主持人先開始。'],
+    ['跟著拍子', '拍兩下手，第三拍說出主題，例如「果園」。'],
+    ['輪流接', '下一個人跟著拍子說出一種水果，不能重複。'],
+    ['誰輸了', '卡住、說錯類別或重複的人就輸，轉分享轉盤！'],
+  ];
+  let step = 0;
+  const showStep = () => {
+    document.getElementById('step-no').textContent = `STEP ${step + 1} / ${steps.length}`;
+    document.getElementById('step-title').textContent = steps[step][0];
+    document.getElementById('step-text').textContent = steps[step][1];
+    document.querySelectorAll('#step-dots i').forEach((d, i) => d.classList.toggle('on', i === step));
+    document.getElementById('step-prev').disabled = step === 0;
+  };
+  document.getElementById('step-next').addEventListener('click', () => { step = (step + 1) % steps.length; showStep(); });
+  document.getElementById('step-prev').addEventListener('click', () => { step = Math.max(0, step - 1); showStep(); });
+  showStep();
+
+  // 節拍器：三拍一組，第三拍是重拍
+  (() => {
+    let bpm = 90, beat = 0, timer = null;
+    const beats = [...document.querySelectorAll('#beats i')];
+    const label = document.getElementById('bpm-val'), toggle = document.getElementById('metro-toggle');
+    const tick = () => { beats.forEach((b, i) => { b.classList.toggle('on', i === beat); b.classList.toggle('accent', i === 2); }); beat = (beat + 1) % 3; };
+    const start = () => { clearInterval(timer); timer = setInterval(tick, 60000 / bpm); toggle.textContent = '停止'; };
+    const stop = () => { clearInterval(timer); timer = null; beats.forEach(b => b.classList.remove('on')); toggle.textContent = '開始'; };
+    toggle.addEventListener('click', () => (timer ? stop() : start()));
+    const setBpm = d => { bpm = Math.min(160, Math.max(60, bpm + d)); label.textContent = `${bpm} BPM`; if (timer) start(); };
+    document.getElementById('bpm-up').addEventListener('click', () => setBpm(10));
+    document.getElementById('bpm-down').addEventListener('click', () => setBpm(-10));
+  })();
+
+  // 分享轉盤
+  (() => {
+    const prompts = ['最喜歡的食物', '小時候的夢想', '最近開心的事', '一個怪習慣', '想去的地方', '最近在追的劇'];
+    const colors = ['#d0daf9', '#ffdec2', '#fce3ff', '#ffeec8', '#cbe7de', '#fed6ce'];
+    const wheel = document.getElementById('wheel');
+    const seg = 360 / prompts.length;
+    const pt = (deg, r) => [100 + r * Math.sin(deg * Math.PI / 180), 100 - r * Math.cos(deg * Math.PI / 180)];
+    wheel.innerHTML = `<circle cx="100" cy="100" r="98" fill="#2a2a35"/>` + prompts.map((p, i) => {
+      const [x1, y1] = pt(i * seg, 94), [x2, y2] = pt((i + 1) * seg, 94), [tx, ty] = pt((i + .5) * seg, 60);
+      return `<path d="M100 100L${x1} ${y1}A94 94 0 0 1 ${x2} ${y2}Z" fill="${colors[i]}" stroke="#2a2a35" stroke-width="2"/>
+        <text x="${tx}" y="${ty}" transform="rotate(${(i + .5) * seg} ${tx} ${ty})" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="800" fill="#2a2a35" font-family="Nunito, sans-serif">${p}</text>`;
+    }).join('') + `<circle cx="100" cy="100" r="14" fill="#fff" stroke="#2a2a35" stroke-width="3"/>`;
+    let angle = 0, spinning = false;
+    document.getElementById('spin').addEventListener('click', () => {
+      if (spinning) return; spinning = true;
+      const pick = Math.floor(Math.random() * prompts.length);
+      // 讓 pick 那一格的中線轉到正上方
+      angle += 360 * 5 + (360 - ((pick + .5) * seg) - (angle % 360) + 360) % 360;
+      wheel.style.transform = `rotate(${angle}deg)`;
+      document.getElementById('wheel-result').textContent = '轉轉轉⋯';
+      // 用計時器而不是 transitionend：內嵌瀏覽器可能把 transition 凍住
+      setTimeout(() => { document.getElementById('wheel-result').textContent = `分享：${prompts[pick]}！`; spinning = false; }, 3300);
+    });
+  })();
+
+  document.querySelector(".toc").addEventListener("click", e => {
+    const a = e.target.closest("a"); if (!a) return;
+    e.preventDefault();
+    document.getElementById(a.getAttribute("href").slice(1)).scrollIntoView({ behavior: "smooth" });
+  });
+  /* ---------- 食物頭像：沿用搶答的 10 種食物，重畫成粗描邊可愛風。描邊 non-scaling，任何尺寸都是 2px ---------- */
+  const AVATARS = [{"id":"pizza","bg":"#B8D9F7","svg":"<path d=\"M32 11L51 46Q32 54 13 46Z\" fill=\"#fff\"/><clipPath id=\"av-pizza-1\"><path d=\"M32 11L51 46Q32 54 13 46Z\"/></clipPath><g clip-path=\"url(#av-pizza-1)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M32 11L51 46Q32 54 13 46Z\" fill=\"#FCE38A\"/><path d=\"M8 41Q32 52 56 41V58H8z\" fill=\"#F2B860\"/></g></g><path d=\"M32 11L51 46Q32 54 13 46Z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"26.825\" cy=\"35\" r=\"2.1849999999999996\" fill=\"#22222c\"/><circle cx=\"37.175\" cy=\"35\" r=\"2.1849999999999996\" fill=\"#22222c\"/><path d=\"M28.55 37.99Q32 44.2 35.45 37.99Z\" fill=\"#22222c\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"boba","bg":"#F7D0E2","svg":"<path d=\"M18 18h28l-3 32a4 4 0 0 1-4 4H25a4 4 0 0 1-4-4z\" fill=\"#fff\"/><clipPath id=\"av-boba-2\"><path d=\"M18 18h28l-3 32a4 4 0 0 1-4 4H25a4 4 0 0 1-4-4z\"/></clipPath><g clip-path=\"url(#av-boba-2)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M18 18h28l-3 32a4 4 0 0 1-4 4H25a4 4 0 0 1-4-4z\" fill=\"#E7C29A\"/><path d=\"M40 14h12v44H40z\" fill=\"#cf9f6e\"/></g></g><path d=\"M18 18h28l-3 32a4 4 0 0 1-4 4H25a4 4 0 0 1-4-4z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M34 18l4-12\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"26.825\" cy=\"34\" r=\"2.1849999999999996\" fill=\"#22222c\"/><path d=\"M34.875 34.92Q37.175 31.93 39.475 34.92\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><path d=\"M29.240000000000002 37.45Q32 40.44 34.76 37.45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"donut","bg":"#CBEBC4","svg":"<circle cx=\"32\" cy=\"33\" r=\"20\" fill=\"#fff\"/><clipPath id=\"av-donut-3\"><circle cx=\"32\" cy=\"33\" r=\"20\"/></clipPath><g clip-path=\"url(#av-donut-3)\"><g transform=\"translate(2.6 3.2)\"><circle cx=\"32\" cy=\"33\" r=\"20\" fill=\"#F7A8C8\"/><path d=\"M40 10a24 24 0 0 1-8 46h22V10z\" fill=\"#ec8fb5\"/></g></g><circle cx=\"32\" cy=\"33\" r=\"20\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M24.525 31.92Q26.825 28.93 29.125 31.92\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><path d=\"M34.875 31.92Q37.175 28.93 39.475 31.92\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><path d=\"M28.55 33.99Q32 40.2 35.45 33.99Z\" fill=\"#22222c\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"strawberry","bg":"#FEE4BF","svg":"<path d=\"M32 55C19 49 13 38 14 29c1-6 6-8 18-8s17 2 18 8c1 9-5 20-18 26z\" fill=\"#fff\"/><clipPath id=\"av-straw-4\"><path d=\"M32 55C19 49 13 38 14 29c1-6 6-8 18-8s17 2 18 8c1 9-5 20-18 26z\"/></clipPath><g clip-path=\"url(#av-straw-4)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M32 55C19 49 13 38 14 29c1-6 6-8 18-8s17 2 18 8c1 9-5 20-18 26z\" fill=\"#F58A82\"/><path d=\"M42 18c12 10 10 30-6 42h22V18z\" fill=\"#de6b63\"/></g></g><path d=\"M32 55C19 49 13 38 14 29c1-6 6-8 18-8s17 2 18 8c1 9-5 20-18 26z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M22 22l-3-7 8 3 5-7 5 7 8-3-3 7z\" fill=\"#fff\"/><clipPath id=\"av-straw-l-5\"><path d=\"M22 22l-3-7 8 3 5-7 5 7 8-3-3 7z\"/></clipPath><g clip-path=\"url(#av-straw-l-5)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M22 22l-3-7 8 3 5-7 5 7 8-3-3 7z\" fill=\"#93C47D\"/></g></g><path d=\"M22 22l-3-7 8 3 5-7 5 7 8-3-3 7z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M23.375 32.93h6.8999999999999995v2.3a2.3 2.3 0 0 1 -6.8999999999999995 0zM33.725 32.93h6.8999999999999995v2.3a2.3 2.3 0 0 1 -6.8999999999999995 0z\" fill=\"#22222c\"/><path d=\"M30.275 33.16h3.4499999999999997\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><path d=\"M30.85 38.91Q33.725 40.98 35.45 38.22\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"avocado","bg":"#DCD6F5","svg":"<path d=\"M32 8c9 0 12 10 14 18 3 11 3 28-14 29C15 54 15 37 18 26c2-8 5-18 14-18z\" fill=\"#fff\"/><clipPath id=\"av-avo-6\"><path d=\"M32 8c9 0 12 10 14 18 3 11 3 28-14 29C15 54 15 37 18 26c2-8 5-18 14-18z\"/></clipPath><g clip-path=\"url(#av-avo-6)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M32 8c9 0 12 10 14 18 3 11 3 28-14 29C15 54 15 37 18 26c2-8 5-18 14-18z\" fill=\"#d9ea9a\"/><path d=\"M40 6c12 14 13 36-6 52h22V6z\" fill=\"#b5d36e\"/></g></g><path d=\"M32 8c9 0 12 10 14 18 3 11 3 28-14 29C15 54 15 37 18 26c2-8 5-18 14-18z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"26.825\" cy=\"33\" r=\"2.1849999999999996\" fill=\"#22222c\"/><circle cx=\"37.175\" cy=\"33\" r=\"2.1849999999999996\" fill=\"#22222c\"/><path d=\"M28.55 36.45Q30.275 38.75 32 36.45Q33.725 38.75 35.45 36.45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"egg","bg":"#FBD8D3","svg":"<path d=\"M12 36c-2-10 6-18 15-19 6-7 19-4 22 5 7 4 6 16-2 19-4 8-17 10-23 4-7 1-12-3-12-9z\" fill=\"#fff\"/><clipPath id=\"av-egg-7\"><path d=\"M12 36c-2-10 6-18 15-19 6-7 19-4 22 5 7 4 6 16-2 19-4 8-17 10-23 4-7 1-12-3-12-9z\"/></clipPath><g clip-path=\"url(#av-egg-7)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M12 36c-2-10 6-18 15-19 6-7 19-4 22 5 7 4 6 16-2 19-4 8-17 10-23 4-7 1-12-3-12-9z\" fill=\"#ffffff\"/></g></g><path d=\"M12 36c-2-10 6-18 15-19 6-7 19-4 22 5 7 4 6 16-2 19-4 8-17 10-23 4-7 1-12-3-12-9z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"32\" cy=\"34\" r=\"11\" fill=\"#fff\"/><clipPath id=\"av-egg-y-8\"><circle cx=\"32\" cy=\"34\" r=\"11\"/></clipPath><g clip-path=\"url(#av-egg-y-8)\"><g transform=\"translate(2.6 3.2)\"><circle cx=\"32\" cy=\"34\" r=\"11\" fill=\"#FCC95A\"/></g></g><circle cx=\"32\" cy=\"34\" r=\"11\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"26.825\" cy=\"33\" r=\"2.1849999999999996\" fill=\"#22222c\"/><circle cx=\"37.175\" cy=\"33\" r=\"2.1849999999999996\" fill=\"#22222c\"/><ellipse cx=\"32\" cy=\"38.06\" rx=\"1.9549999999999998\" ry=\"2.415\" fill=\"#22222c\"/>"},{"id":"icecream","bg":"#C4EDE4","svg":"<path d=\"M22 35h20L32 58z\" fill=\"#fff\"/><clipPath id=\"av-ice-c-9\"><path d=\"M22 35h20L32 58z\"/></clipPath><g clip-path=\"url(#av-ice-c-9)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M22 35h20L32 58z\" fill=\"#F2C98A\"/></g></g><path d=\"M22 35h20L32 58z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"32\" cy=\"24\" r=\"14\" fill=\"#fff\"/><clipPath id=\"av-ice-10\"><circle cx=\"32\" cy=\"24\" r=\"14\"/></clipPath><g clip-path=\"url(#av-ice-10)\"><g transform=\"translate(2.6 3.2)\"><circle cx=\"32\" cy=\"24\" r=\"14\" fill=\"#F7A8C8\"/><path d=\"M37 8a16 16 0 0 1-6 32h16V8z\" fill=\"#ec8fb5\"/></g></g><circle cx=\"32\" cy=\"24\" r=\"14\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"26.825\" cy=\"23\" r=\"2.1849999999999996\" fill=\"#22222c\"/><circle cx=\"37.175\" cy=\"23\" r=\"2.1849999999999996\" fill=\"#22222c\"/><path d=\"M28.55 26.45Q32 28.75 35.45 26.45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><path d=\"M30.505 27.6v1.7249999999999999a1.4949999999999999 1.4949999999999999 0 0 0 2.9899999999999998 0v-1.7249999999999999z\" fill=\"#22222c\"/>"},{"id":"onigiri","bg":"#FDD6BB","svg":"<path d=\"M32 10c4 0 19 27 19 34 0 7-7 10-19 10s-19-3-19-10c0-7 15-34 19-34z\" fill=\"#fff\"/><clipPath id=\"av-oni-11\"><path d=\"M32 10c4 0 19 27 19 34 0 7-7 10-19 10s-19-3-19-10c0-7 15-34 19-34z\"/></clipPath><g clip-path=\"url(#av-oni-11)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M32 10c4 0 19 27 19 34 0 7-7 10-19 10s-19-3-19-10c0-7 15-34 19-34z\" fill=\"#ffffff\"/></g></g><path d=\"M32 10c4 0 19 27 19 34 0 7-7 10-19 10s-19-3-19-10c0-7 15-34 19-34z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M24 43h16v11H24z\" fill=\"#fff\"/><clipPath id=\"av-oni-n-12\"><path d=\"M24 43h16v11H24z\"/></clipPath><g clip-path=\"url(#av-oni-n-12)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M24 43h16v11H24z\" fill=\"#2f5a3a\"/></g></g><path d=\"M24 43h16v11H24z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <circle cx=\"26.825\" cy=\"32\" r=\"2.1849999999999996\" fill=\"#22222c\"/><circle cx=\"37.175\" cy=\"32\" r=\"2.1849999999999996\" fill=\"#22222c\"/><path d=\"M29.240000000000002 35.45Q32 38.44 34.76 35.45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"mushroom","bg":"#D6E2F7","svg":"<path d=\"M23 36h18v13a5 5 0 0 1-5 5h-8a5 5 0 0 1-5-5z\" fill=\"#fff\"/><clipPath id=\"av-mush-s-13\"><path d=\"M23 36h18v13a5 5 0 0 1-5 5h-8a5 5 0 0 1-5-5z\"/></clipPath><g clip-path=\"url(#av-mush-s-13)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M23 36h18v13a5 5 0 0 1-5 5h-8a5 5 0 0 1-5-5z\" fill=\"#FDF0DC\"/></g></g><path d=\"M23 36h18v13a5 5 0 0 1-5 5h-8a5 5 0 0 1-5-5z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M10 34c0-12 10-23 22-23s22 11 22 23c0 2-2 3-4 3H14c-2 0-4-1-4-3z\" fill=\"#fff\"/><clipPath id=\"av-mush-14\"><path d=\"M10 34c0-12 10-23 22-23s22 11 22 23c0 2-2 3-4 3H14c-2 0-4-1-4-3z\"/></clipPath><g clip-path=\"url(#av-mush-14)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M10 34c0-12 10-23 22-23s22 11 22 23c0 2-2 3-4 3H14c-2 0-4-1-4-3z\" fill=\"#F58A82\"/><path d=\"M42 8c12 6 16 18 14 32H42z\" fill=\"#de6b63\"/></g></g><path d=\"M10 34c0-12 10-23 22-23s22 11 22 23c0 2-2 3-4 3H14c-2 0-4-1-4-3z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M24.525 45L29.125 45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><path d=\"M34.875 45L39.475 45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/><circle cx=\"32\" cy=\"49.6\" r=\"1.38\" fill=\"#22222c\"/><path d=\"M41.2 38.1h2.875l-2.875 2.875h2.875\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/>"},{"id":"lemon","bg":"#D3EFB2","svg":"<path d=\"M11 35c0-11 9-19 21-19s21 8 21 19-9 19-21 19-21-8-21-19z\" fill=\"#fff\"/><clipPath id=\"av-lemon-15\"><path d=\"M11 35c0-11 9-19 21-19s21 8 21 19-9 19-21 19-21-8-21-19z\"/></clipPath><g clip-path=\"url(#av-lemon-15)\"><g transform=\"translate(2.6 3.2)\"><path d=\"M11 35c0-11 9-19 21-19s21 8 21 19-9 19-21 19-21-8-21-19z\" fill=\"#FCE38A\"/><path d=\"M42 12c13 9 13 32-4 44h18V12z\" fill=\"#f0c94a\"/></g></g><path d=\"M11 35c0-11 9-19 21-19s21 8 21 19-9 19-21 19-21-8-21-19z\" fill=\"none\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" vector-effect=\"non-scaling-stroke\"/> <path d=\"M26.71 36.84C23.03 34.31 23.950000000000003 31.32 26.71 33.39C29.47 31.32 30.39 34.31 26.71 36.84Z\" fill=\"#22222c\"/><path d=\"M37.29 36.84C33.61 34.31 34.53 31.32 37.29 33.39C40.05 31.32 40.97 34.31 37.29 36.84Z\" fill=\"#22222c\"/><path d=\"M29.240000000000002 38.45Q32 41.44 34.76 38.45\" stroke=\"#22222c\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" vector-effect=\"non-scaling-stroke\"/>"}];
+  const foodSvg = id => { const a = AVATARS.find(x => x.id === id) || AVATARS[0]; return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="${a.bg}"/>${a.svg}</svg>`; };
+  document.querySelectorAll('.avatar[data-food]').forEach(el => el.insertAdjacentHTML('afterbegin', foodSvg(el.dataset.food)));
+  // 名字頭像：取第一個字，底色用名字算出固定的一個（同一個人每次都一樣）
+  const initialBg = name => { let h = 0; for (const ch of name) h = (h * 31 + ch.codePointAt(0)) >>> 0; return AVATARS[h % AVATARS.length].bg; };
+  document.querySelectorAll('.avatar[data-name]').forEach(el => {
+    const name = el.dataset.name;
+    el.classList.add('initial'); el.style.background = initialBg(name);
+    el.insertAdjacentText('afterbegin', [...name][0]);
+  });
+  const picker = document.getElementById('avatar-picker');
+  picker.innerHTML = `<button type="button" class="avatar-option is-initial" role="radio" aria-checked="true" aria-label="不選，用名字第一個字" style="background:${initialBg('小明')}">小</button>` +
+    AVATARS.map(a => `<button type="button" class="avatar-option" role="radio" aria-checked="false" aria-label="${a.id}">${foodSvg(a.id)}</button>`).join('');
+  picker.addEventListener('click', e => {
+    const b = e.target.closest('.avatar-option'); if (!b) return;
+    picker.querySelectorAll('.avatar-option').forEach(o => o.setAttribute('aria-checked', String(o === b)));
+  });
+  /* ---------- 其他插圖：跟遊戲插圖同一套粗描邊可愛風 ---------- */
+  const extraArt = {
+    // 找不到：一臉困惑的小圓球拿放大鏡
+    empty: () => `
+      ${ground}${burst(132, 26, '#FFC628')}${ring(26, 30, '#F3A4FB')}${plus(146, 76, '#4FB59A')}${dot(20, 80, '#FF9419')}
+      ${body('<circle cx="66" cy="70" r="34"/>', '#d0daf9', '<path d="M88 40a38 38 0 0 1-32 70h40z" fill="#b8c4f6"/>')}
+      ${makeFace('wow', 66, 68, 2)}
+      <path d="M104 92l18 18" ${K} stroke-width="8"/>
+      ${body('<circle cx="98" cy="84" r="14"/>', '#ffffff', '', false)}
+      <path d="M118 40q4-8 10-4t-2 10" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round"/><circle cx="125" cy="54" r="2.4" fill="#22222c"/>`,
+    // 離開房間：擔心的門
+    leave: () => `
+      ${ground}${burst(130, 26, '#F3A4FB')}${ring(30, 30, '#7489E6')}${plus(142, 82, '#FFC628')}
+      ${body('<rect x="48" y="24" width="64" height="92" rx="10"/>', '#fed6ce', '<path d="M96 16h24v108H96z" fill="#f29b8c"/>')}
+      ${body('<circle cx="98" cy="78" r="5"/>', '#FFC628', '', false)}
+      ${makeFace('worry', 79, 62, 2)}
+      <path d="M118 44c4 4 4 10 0 14" fill="none" stroke="#7489E6" stroke-width="3.5" stroke-linecap="round"/>`,
+    // 圍成一圈：五個表情各不相同的小圓球
+    circle: () => `
+      ${ground}${burst(140, 22, '#FFC628')}${plus(22, 26, '#F3A4FB')}
+      <circle cx="80" cy="70" r="40" fill="none" stroke="#22222c" stroke-width="2.5" stroke-dasharray="4 8" opacity=".35"/>
+      ${[[80, 32, '#F3A4FB', 'happy'], [38, 60, '#FFC628', 'wink'], [122, 60, '#4FB59A', 'tongue'], [54, 98, '#FF9419', 'grin'], [106, 98, '#8799E9', 'wow']]
+        .map(([x, y, c, k]) => body(`<circle cx="${x}" cy="${y}" r="15"/>`, c, '', false) + makeFace(k, x, y, 1.15)).join('')}`,
+  };
+  document.querySelectorAll('svg[data-art]').forEach(el => { el.innerHTML = extraArt[el.dataset.art](); });
+  /* ---------- 頂部導覽列：放不下的收進「更多」 ---------- */
+  (() => {
+    const pages = ['找遊戲', '破冰帶領', '房間遊戲', '桌遊助手', '帶領指南', '關於我們'];
+    const current = '找遊戲';
+    document.querySelectorAll('.nav-links').forEach(links => {
+    const render = n => {
+      const shown = pages.slice(0, n), more = pages.slice(n);
+      links.innerHTML = shown.map(p => `<a href="#nav"${p === current ? ' aria-current="page"' : ''}>${p}</a>`).join('') +
+        (more.length ? `<div class="nav-more"><button type="button" aria-expanded="false" aria-haspopup="true">更多<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="nav-menu" hidden>${more.map(p => `<a href="#nav">${p}</a>`).join('')}</div></div>` : '');
+    };
+    // 從全部顯示開始，一次少一個，直到不再溢出
+    const fit = () => {
+      for (let n = pages.length; n >= 0; n--) { render(n); if (links.scrollWidth <= links.clientWidth + 1) return; }
+    };
+    new ResizeObserver(fit).observe(links);
+    });
+    document.addEventListener('click', e => {
+      const b = e.target.closest('.nav-more > button'); if (!b) return;
+      const menu = b.nextElementSibling, open = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', String(!open)); menu.hidden = open;
+    });
+    document.addEventListener('click', e => {
+      if (e.target.closest('.nav-more')) return;
+      document.querySelectorAll('.nav-more > button').forEach(b => { b.setAttribute('aria-expanded', 'false'); b.nextElementSibling.hidden = true; });
+    });
+    document.querySelectorAll('.nav-burger').forEach(b => b.addEventListener('click', () => document.getElementById('sheet').showModal()));
+  })();
+</script>
+</body>
+</html>
