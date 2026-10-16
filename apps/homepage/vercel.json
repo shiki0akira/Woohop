@@ -303,6 +303,14 @@
       "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:file"
     },
     {
+      "source": "/bomb/woohop/:file(woohop.css|site.css|woohop-art.js|site.js)",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/woohop/:file"
+    },
+    {
+      "source": "/bomb/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/og/:file"
+    },
+    {
       "source": "/happiness-sitemap.xml",
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/sitemap.xml"
     },

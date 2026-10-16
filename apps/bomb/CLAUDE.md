@@ -51,7 +51,7 @@
 - **有兩題不能直譯**：`voice.dialectFruits`（台語）與 `quickfire.threeCities`（不能有重複的字），要換成當地等價的說法。`test/questions.test.js` 會擋下把它們改回直譯的修改
 - 漏翻、id 重複、分類不存在由 `checkQuestions()` 在 build 時擋；文字重複、分類題數、※ 題數由 `npm test` 擋
 
-自訂題目存在 `localStorage` 的 `web100-bomb-custom`（帶的是 `group`，不是 `category`），**只有輸入時的那一種語言**，不翻譯。設定存在 `web100-bomb-settings`。深淺色（`web100-theme`）與語言（`web100-lang` / `web100_lang` cookie）沿用系列共用的 key，不要自己發明。
+自訂題目存在 `localStorage` 的 `web100-bomb-custom`（帶的是 `group`，不是 `category`），**只有輸入時的那一種語言**，不翻譯。設定存在 `web100-bomb-settings`。語言（`web100-lang` / `web100_lang` cookie）沿用系列共用的 key，不要自己發明（切換語言時由 Woohop 的 `site.js` 寫入）。
 
 ## 引爆時間的選項在 `scripts/build.js`
 
@@ -72,21 +72,23 @@
 - 題庫只內嵌「這一頁那個語言」的文字，不是八種全帶
 - `/bomb/` 沒帶語言時由 `app/redirect.html` 在瀏覽器裡判斷（localStorage → cookie → 瀏覽器語言 → zh-TW）。前幾個專案是 Worker 回 302，這裡沒有後端，所以那一頁是 `noindex` + canonical 指向預設語言頁——它回的是 200，不 noindex 的話 Google 會當成重複內容
 
-## 配色 / UI
+## 配色 / UI（2026-10 改版成 Woohop 新設計）
 
-色票、圓角、間距全部來自 `https://www.vibeweb100.com/design-tokens.css`（外部引用，**不要把變數複製進這個 repo**）。`app.css` 裡不寫死 hex。
+視覺規則以 `design/brand-exploration.html`（設計系統頁）為準：淺灰底、白卡片 2px 外框＋4px 底部厚度、粉彩按鈕。**只有淺色，沒有深色模式**（舊的 `web100-theme` 與切換鈕已拿掉，跟首頁一致）。
 
-- `app.css` 從開頭到「定時炸彈專屬」那條分隔線之間，是跟 00～04 共用的元件（導覽列、按鈕、表單、彈窗、頁尾）。**不要在這個檔案裡覆寫它們**，要改就回去改共用的那份，六個專案一起動
-- 設定畫面那兩顆按鈕（`.pick-button`）的色組與立體語言，數值跟 03_PreferenceMatch 的 O／X 鍵完全相同。問答型固定 Primary、動作型固定 Secondary，兩個主題都一樣——不能改用 `--btn-face`，它在淺色模式是 Secondary，問答型會跟著變粉色
-- ⚠️ `.seg-3`（三顆引爆區間）**不能跟 `.seg-4` / `.seg-5` 共用 `.seg-item` 的尺寸**：它放的是「30 Sek.–2 Min.」這種兩段式文字，德文在 375px 下量出來剛好把 92px 的格子塞滿、貼死框線。所以那一排單獨降一階字級（0.8rem）、`white-space: normal`、`height: auto` + `min-height: 44px`，讓德文在破折號後折成兩行。修改預設區間或新增語言時，**這一條要在 375px 用德文實測**
-- 「開始遊戲」（`.btn-start`）是 `position: sticky; bottom`，捲動時黏在畫面底部（CONCEPT.md 2.14）。它靠的是祖先都沒有 `overflow: hidden`——`main` / `.view` 現在都沒有，之後要在那兩層加 overflow 前先想一下這顆鍵
-- 深淺色用 `<html class="light">` 表示淺色，深色是預設值。class 掛在 `<html>` 而不是 `<body>`：決定主題那段 script 在 `<head>` 就要跑完，那時 `<body>` 還不存在
-- 頁尾那條分隔線要**滿版**：寬度限制下在 `.footer-inner`，不是 `<footer>` 本身
-- 導覽列在 420px 以下才隱藏標題（量過的臨界點，別往上調）；語言下拉在 520px 以下縮到 124px，那條規則**一定要放在基礎 `select` 規則之後**
-- 按鈕的立體／壓扁語言、disabled 的配色都照 `ARCHITECTURE.md` 第 7 節，不要改成疊 `opacity`
-- 跳過鍵的滑入動畫用 flex + `max-width`，不是 `grid-template-columns` 的 `fr` 內插：`fr` 的下限是 min-content，收到 `0fr` 還是文字寬度，壓成 `minmax(0, 0fr)` 又會讓德文的「Überspringen」展開後被切掉
-- ⚠️ `.pass-row .pass-bar` 那條**一定要 `:not(.pass-skip)`**。「換一題」也帶著 `.pass-bar`，不排除的話它的特異性會蓋掉 `.pass-skip` 的 `flex: 0 0 auto`，兩顆就長成一樣寬
-- ⚠️ **`skipButton` 的文案要短**：那顆鍵是 `flex: 0 0 auto` + `nowrap`，寬度由文字決定，「完成」只能撿剩下的。德文一度是「Andere Aufgabe」，375px 下量出來 154px vs 主鍵 131px，主次直接顛倒（改成「Wechseln」後是 105 vs 180）。**新增或修改語言時，這一條要在 375px 實測**：單字或 3～4 個中日韓字為上限
+- **導覽列、頁尾、按鈕、彈窗、輸入框都不在這個 repo 寫**：`scripts/build.js` 從 `apps/homepage` 拿全站共用的東西——HTML 用 `src/chrome.mjs` 的 `navbar()` / `footer()`，樣式與程式把 `woohop.css`、`site.css`、`woohop-art.js`、`site.js` 複製到 `dist/bomb/woohop/`。**首頁改了這幾個檔，這裡要重新 build、部署才會跟上**
+- 線上 `/bomb/woohop/*` 與 `/bomb/og/*` 要靠首頁 `vercel.json` 的白名單才拿得到，改檔名要回去補
+- `app.css` 只排這個遊戲的版面。跟首頁 `site.css` 在同一頁，所以 class 避開首頁用過的名字（`.hero`、`.stage`、`.field`、`.card`、`.game`⋯）；`site.css` 會給每個 `<section>` 56px 留白，這裡用 `.bomb-app section { padding: 0 }` 拿掉
+- **頂欄跟著畫面換**：設定畫面是網站導覽列（有麵包屑「首頁 › 找遊戲 › 定時炸彈」）；進行中、爆炸畫面換成設計系統的「遊戲內頂欄」（返回＋遊戲名），網站導覽列與頁尾藏起來，免得玩到一半誤點出去。`showScreen()` 把畫面寫在 `<body data-screen>`，CSS 看它切換
+- 頂欄的返回鍵：進行中**直接開確認框**（不走 `history.back()`，開始時推的那一格要留給「結束這輪」去收，否則確認後會整個離開網頁）；爆炸畫面等於「改設定」
+- 主標題拆成「遊戲名」＋「一句話」兩行（`heroTitleHtml()`，在冒號那裡分開），中文才不會被平衡斷行切在詞中間
+- 進行中的炸彈插圖是 `woohop-art.js` 的 `art.bomb`，跟首頁、找遊戲的卡片同一張
+- 兩顆題型按鈕：沒選是白底灰框，選了換成粉彩色（問答＝藍、動作＝珊瑚，珊瑚是這個遊戲的代表色）
+- ⚠️ 三顆引爆區間（`.seg-3`）放的是「30 Sek.–2 Min.」這種兩段式文字：app.js 讓數字和單位不斷開、只在破折號後面換行，CSS 讓這一排允許兩行。**改預設區間或新增語言時，要在 375px 用德文實測**
+- 「開始遊戲」（`.btn-start`）是 `position: sticky; bottom`，靠的是祖先都沒有 `overflow: hidden`
+- 跳過鍵的滑入動畫用 flex + `max-width`，不是 grid 的 `fr` 內插（德文「Überspringen」會被切掉）；`.pass-row .pass-bar` 那條**一定要 `:not(.pass-skip)`**
+- ⚠️ **`skipButton` 的文案要短**：那顆鍵寬度由文字決定，「完成」只能撿剩下的。新增或修改語言時要在 375px 實測，單字或 3～4 個中日韓字為上限
+- 分享縮圖在 `public/og/{lang}.png`，用首頁的 `node scripts/og-image.mjs bomb` 產生；改了標題或插圖要重跑
 
 ## GA4
 

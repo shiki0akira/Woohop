@@ -19,8 +19,14 @@ import { fileURLToPath } from 'node:url';
 
 import { LANGS, DEFAULT_LANG, LOCALE_LABELS, STRINGS, ORIGIN, BASE_PATH, PROJECT_ID } from '../app/strings.js';
 import { QUESTIONS, CATEGORY_GROUPS, checkQuestions } from '../app/questions.js';
+// Woohop 全站共用的導覽列、頁尾與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
+// 改首頁那份就是全站一起改。樣式與程式複製進 dist/bomb/woohop/，跟這個遊戲一起部署（不跨網域引用）
+import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
+import { navbar, footer } from '../../homepage/src/chrome.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const siteAssets = join(root, '..', 'homepage', 'assets');
+const SITE_ASSET_FILES = ['woohop.css', 'site.css', 'woohop-art.js', 'site.js'];
 const dist = join(root, 'dist');
 const outBase = join(dist, BASE_PATH.replace(/^\//, ''));
 
@@ -58,6 +64,10 @@ const TIMER = {
 
 // 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
 const RAW_TOKENS = new Set([
+  'heroTitleHtml',
+  'woohopHeader',
+  'woohopFooter',
+  'woohopJson',
   'hreflang',
   'stringsJson',
   'questionsJson',
@@ -108,6 +118,7 @@ async function main() {
     .update(await readFile(join(root, 'app', 'app.js')))
     .update(await readFile(join(root, 'app', 'app.css')))
     .update(await readFile(join(root, 'app', 'header.js')))
+    .update((await Promise.all(SITE_ASSET_FILES.map((f) => readFile(join(siteAssets, f))))).join(''))
     .digest('hex')
     .slice(0, 8);
 
@@ -152,6 +163,8 @@ async function main() {
   await cp(join(root, 'app', 'app.js'), join(outBase, 'app.js'));
   await cp(join(root, 'app', 'header.js'), join(outBase, 'header.js'));
   await cp(join(root, 'app', 'app.css'), join(outBase, 'app.css'));
+  await mkdir(join(outBase, 'woohop'), { recursive: true });
+  for (const f of SITE_ASSET_FILES) await cp(join(siteAssets, f), join(outBase, 'woohop', f));
 
   await cp(join(root, 'public'), outBase, { recursive: true });
   await writeFile(join(outBase, 'sitemap.xml'), sitemap(), 'utf8');
@@ -276,6 +289,18 @@ function tokensFor(lang, page, assetVersion) {
     langOptions: langOptions(lang),
     base: BASE_PATH,
     projectId: PROJECT_ID,
+    // 全站導覽列與頁尾。'bomb' 不是首頁的分頁，所以導覽列不會標任何一項為目前頁面；
+    // 語言選單連到「這個遊戲同一頁」的其他語言
+    woohopHeader: navbar(SITE_STRINGS[lang], lang, 'bomb', (l) => pagePath(l, page)),
+    woohopFooter: footer(SITE_STRINGS[lang], lang, 'bomb', (l) => pagePath(l, page)),
+    // 給 site.js（導覽列互動）用的當頁文案；遊戲頁的 page_view 由 app.js 依畫面送
+    // 規則頁沒有畫面切換，交給 site.js 載入時送
+    woohopJson: toScriptJson({ lang, page: 'bomb', t: SITE_STRINGS[lang], langs: LANGS, ownPageView: !page.dir }),
+    // 主標題拆成「遊戲名」＋「一句話」兩行（冒號那裡分開），不然中文會被平衡斷行切在詞中間。
+    // 冒號留在 HTML 裡給爬蟲與螢幕閱讀器，畫面上藏起來
+    heroTitleHtml: heroTitleHtml(strings.heroTitle),
+    crumbHome: SITE_STRINGS[lang].home,
+    crumbGames: SITE_STRINGS[lang].navGames,
     siteOrigin: ORIGIN,
     assetVersion,
     // head partial 用的是通用名稱，各頁面把自己的 title/description 餵進去
@@ -342,7 +367,7 @@ function articleHtml(sections) {
   return sections
     .map((section) => {
       const paragraphs = section.p.map((text) => `          <p>${emphasise(text)}</p>`).join('\n');
-      return `<section class="surface prose">
+      return `<section class="panel prose">
           <h2>${escapeHtml(section.h)}</h2>
 ${paragraphs}
         </section>`;
@@ -397,7 +422,8 @@ function faqHtml(items) {
   return items
     .map(
       (item) =>
-        `<div class="faq-item">\n            <h3>${escapeHtml(item.q)}</h3>\n            <p>${escapeHtml(item.a)}</p>\n          </div>`,
+        // 跟首頁常見問題同一種：點開才看答案（Woohop 的 .faq）
+        `<details>\n            <summary>${escapeHtml(item.q)}</summary>\n            <p>${escapeHtml(item.a)}</p>\n          </details>`,
     )
     .join('\n          ');
 }
@@ -460,6 +486,12 @@ function render(template, tokens) {
   if (leftover) throw new Error(`還有沒替換掉的 token：${[...new Set(leftover)].join(', ')}`);
 
   return html;
+}
+
+function heroTitleHtml(title) {
+  const m = title.match(/^(.+?)(\s*[:：]\s*)(.+)$/);
+  if (!m) return escapeHtml(title);
+  return `<span class="h1-name">${escapeHtml(m[1])}<span class="sr-colon">${escapeHtml(m[2])}</span></span><span class="h1-line">${escapeHtml(m[3])}</span>`;
 }
 
 function escapeHtml(value) {

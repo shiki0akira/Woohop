@@ -272,9 +272,12 @@
       });
 
       var span = document.createElement('span');
+      // 「30 Sek.」「2 Min.」各自不能斷（數字跟單位黏在一起），格子太窄時只在兩段中間換行。
+      // 不這樣做的話德文在 375px 會折成「30 Sek.–2 / Min.」
+      var nb = function (s) { return s.replace(/ /g, ' '); };
       span.textContent = fill(T.timeRange, {
-        min: timeLabel(preset.min),
-        max: timeLabel(preset.max),
+        min: nb(timeLabel(preset.min)),
+        max: '​' + nb(timeLabel(preset.max)),
       });
 
       label.appendChild(input);
@@ -696,6 +699,9 @@
     Object.keys(views).forEach(function (key) {
       views[key].hidden = key !== next;
     });
+    // 頂欄跟著畫面換：設定畫面是網站導覽列，進行中／爆炸是遊戲內頂欄（app.css 看這個屬性）
+    document.body.setAttribute('data-screen', next);
+    window.scrollTo(0, 0);
     if (typeof window.trackPageView === 'function') {
       window.trackPageView(BASE + '/' + LANG + '/' + next);
     }
@@ -957,6 +963,13 @@
     backToSetup();
     // 開始遊戲時推的那一格還在，這裡把它收掉，返回鍵才不會又回到爆炸畫面
     history.back();
+  });
+
+  // 遊戲內頂欄的返回鍵：進行中先跳確認（確認後回設定畫面），爆炸畫面等於「改設定」。
+  // 直接開確認框，不經過 history.back()：開始遊戲時推的那一格要留給「結束這輪」去收
+  document.getElementById('game-back').addEventListener('click', function () {
+    if (screen === 'boom') el.backToSetup.click();
+    else if (screen === 'play') openLeaveModal();
   });
 
   el.leaveCancel.addEventListener('click', closeLeaveModal);

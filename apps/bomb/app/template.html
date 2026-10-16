@@ -5,7 +5,7 @@
     {{jsonLd}}
   </head>
 
-  <body>
+  <body class="bomb-app">
     <!--
       設定畫面那兩顆按鈕的圖示。Material Symbols Rounded（24px / wght 400 / GRAD 0 /
       opsz 24），依 ARCHITECTURE.md 第 7 節直接內嵌 SVG、fill 吃 currentColor，
@@ -26,18 +26,34 @@
     </svg>
     {{header}}
 
-    <main id="main">
+    <!--
+      遊戲內頂欄（設計系統「導覽」那一節的手機頂欄）：進行中、爆炸畫面用這條取代網站導覽列。
+      玩的時候不需要「找遊戲、破冰組合⋯」那排連結，誤點出去這一輪就沒了。
+      返回鍵等同瀏覽器的上一頁：進行中會先跳確認，爆炸畫面直接回設定（app.js 的 onPopState）。
+    -->
+    <div class="game-bar-host">
+      <div class="appbar game-bar">
+        <button class="btn btn-icon btn-ghost" id="game-back" type="button" aria-label="{{gameBack}}"><svg><use href="#i-back"/></svg></button>
+        <div class="title">{{navTitle}}</div>
+        <span class="game-bar-spacer" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <main id="main" class="bomb-main">
       <!--
         設定畫面。這個專案沒有房間、沒有加入流程（CONCEPT.md 2.1），
         所以首頁就是設定畫面——打開網頁看到的第一件事就是「要玩什麼、炸多久」。
       -->
-      <section class="view" id="view-setup">
-        <div class="hero">
-          <h1>{{heroTitle}}</h1>
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
           <p>{{heroDesc}}</p>
         </div>
 
-        <section class="surface">
+        <div class="panel">
           <h2>{{timerHeading}}</h2>
 
           <!--
@@ -70,69 +86,47 @@
                  多一行灰字只是把「開始遊戲」再往下推 -->
             <p class="hint">{{timerHint}}</p>
           </div>
-        </section>
+        </div>
 
-        <section class="surface">
-          <div class="section-head">
+        <div class="panel">
+          <div class="panel-head">
             <h2>{{questionsHeading}}</h2>
             <span class="counter" id="deck-count"></span>
           </div>
 
           <!--
             左右兩顆大按鈕（問答型 / 動作型），由 app.js 依 CATEGORY_GROUPS 產生。
-
-            做成按鈕而不是一排打勾框，是因為這一頁只有這一個真正要做的決定：
-            按鈕大、單手按得到，選了哪邊填滿、沒選的維持線框，低頭看一眼就知道
-            （跟 03_PreferenceMatch 的答題鍵同一套語言）。題目本文不列出來——
-            90 題全攤開會變成一面牆，而要決定的是「哪一邊」，不是「哪幾題」。
+            這一頁只有這一個真正要做的決定：按鈕大、單手按得到，選了哪邊填滿顏色。
+            題目本文不列出來——要決定的是「哪一邊」，不是「哪幾題」。
           -->
           <div class="pick-buttons" id="pick-buttons"></div>
 
-          <!--
-            自訂題目搬進 #custom-modal，這裡只留一顆按鈕。
-
-            原本那一整塊表單就長在「開始遊戲」正上方，第一次玩的人滑到這裡看到的
-            最後一樣東西是一個空的輸入框加一個下拉——讀起來像「這裡沒填完不能走」，
-            結果是停在這一頁不動。想加題目的是玩過幾次的人，讓他們多按一下就好。
-          -->
-          <button class="btn-outline btn-block custom-open" id="open-custom" type="button">
+          <!-- 自訂題目在彈窗裡（#custom-modal），這裡只留一顆按鈕：
+               想加題目的是玩過幾次的人，第一次玩的人不該在開始前看到一個空輸入框 -->
+          <button class="btn btn-secondary btn-block custom-open" id="open-custom" type="button">
             <span>{{customLabel}}</span>
             <span class="custom-open-count" id="custom-open-count"></span>
           </button>
-        </section>
+        </div>
 
         <p class="form-error" id="deck-warning" role="status" hidden></p>
-        <button class="btn-solid btn-block btn-start" id="start-game" type="button">{{startButton}}</button>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start-game" type="button">{{startButton}}</button>
 
-        <p class="rules-link"><a href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
-      </section>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
 
       <!--
         遊戲進行中。畫面上只有三件東西：這一題屬於哪一型、這一題，以及一條佔滿寬度的「完成」。
         刻意不放剩餘時間、不放已抽題數、不放任何進度——看得到倒數的話，
         最後十秒沒有人肯接手機（CONCEPT.md 2.2）。
       -->
-      <section class="view view-play" id="view-play" hidden>
-        <!-- 題目與傳遞鍵收在同一張卡片裡：那兩個是同一件事的兩半
-             （「做這個」→「做完了」），分開浮在背景上會像兩個不相干的東西 -->
-        <section class="surface play-card">
-          <div class="stage">
+      <div class="view view-play" id="view-play" hidden>
+        <!-- 題目與傳遞鍵收在同一張卡片裡：那兩個是同一件事的兩半（「做這個」→「做完了」） -->
+        <div class="panel play-card">
+          <div class="play-stage">
+            <!-- 插圖跟首頁、找遊戲的定時炸彈卡片同一張（woohop-art.js 的 art.bomb），由頁尾的 script 填進來 -->
             <div class="bomb" id="bomb" role="img" aria-label="{{bombAlt}}">
-              <svg viewBox="0 0 64 64" aria-hidden="true">
-                <path
-                  class="bomb-body"
-                  d="M27 20a19 19 0 1 0 19 19 19 19 0 0 0-19-19Zm0 6a13 13 0 0 1 13 13 3 3 0 0 1-6 0 7 7 0 0 0-7-7 3 3 0 0 1 0-6Z"
-                />
-                <path class="bomb-cap" d="M40.6 21.3 45 16.9l6.6 6.6-4.4 4.4-7.6-7.6Z" />
-                <path
-                  class="bomb-fuse"
-                  d="M48 18c3-4 8-4 9-8"
-                  fill="none"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                />
-                <circle class="bomb-spark" cx="58" cy="9" r="3.5" />
-              </svg>
+              <svg id="bomb-art" viewBox="0 0 160 128" aria-hidden="true"></svg>
             </div>
             <!-- 這一題是問答型還是動作型。拿到手機的人先掃到這個，就知道
                  接下來是要用講的還是要離開椅子，不用讀完整句才反應過來 -->
@@ -146,18 +140,18 @@
             一上來就擺兩顆，等於先告訴每個人「你可以不做」——那顆鍵會從救生圈變成捷徑。
           -->
           <div class="pass-row">
-            <button class="pass-bar" id="pass-button" type="button">{{passButton}}</button>
-            <button class="pass-bar pass-skip" id="skip-button" type="button" disabled>{{skipButton}}</button>
+            <button class="btn btn-lg btn-solid pass-bar" id="pass-button" type="button">{{passButton}}</button>
+            <button class="btn btn-lg btn-secondary pass-bar pass-skip" id="skip-button" type="button" disabled>{{skipButton}}</button>
           </div>
-        </section>
+        </div>
 
         <!-- 同一題停滿 5 秒，app.js 會把這行換成「按換一題」的提示（armStuckHint） -->
         <p class="hint play-hint" id="play-hint">{{playHint}}</p>
-      </section>
+      </div>
 
       <!-- 爆炸。輸家是誰現場都看得到，所以這裡不記名、不記分（CONCEPT.md 六） -->
-      <section class="view" id="view-boom" hidden>
-        <section class="surface center boom-card">
+      <div class="view" id="view-boom" hidden>
+        <div class="panel boom-card">
           <div class="boom-mark" aria-hidden="true">
             <svg viewBox="0 0 64 64">
               <path
@@ -168,10 +162,12 @@
           <h1>{{boomTitle}}</h1>
           <p class="boom-stats" id="boom-stats"></p>
 
-          <button class="btn-solid btn-block" id="play-again" type="button">{{againButton}}</button>
-          <button class="btn-outline btn-block" id="back-to-setup" type="button">{{backToSetupButton}}</button>
-        </section>
-      </section>
+          <div class="boom-actions">
+            <button class="btn btn-lg btn-solid btn-block" id="play-again" type="button">{{againButton}}</button>
+            <button class="btn btn-lg btn-secondary btn-block" id="back-to-setup" type="button">{{backToSetupButton}}</button>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!--
@@ -179,46 +175,49 @@
       而不是直接離開網站（見 app.js 的 openCustomModal / onPopState）。
     -->
     <dialog class="modal modal-custom" id="custom-modal">
-      <h2>{{customLabel}}</h2>
-      <p>{{customHint}}</p>
+      <div class="m-body">
+        <h2>{{customLabel}}</h2>
+        <p>{{customHint}}</p>
 
-      <div class="row custom-row">
-        <input
-          class="field"
-          id="custom-input"
-          type="text"
-          maxlength="80"
-          autocomplete="off"
-          placeholder="{{customPlaceholder}}"
-          aria-label="{{customLabel}}"
-        />
-        <button class="btn-outline" id="custom-add" type="button">{{customAddButton}}</button>
+        <div class="custom-row">
+          <input
+            class="input"
+            id="custom-input"
+            type="text"
+            maxlength="80"
+            autocomplete="off"
+            placeholder="{{customPlaceholder}}"
+            aria-label="{{customLabel}}"
+          />
+          <button class="btn btn-secondary" id="custom-add" type="button">{{customAddButton}}</button>
+        </div>
+
+        <label class="field-label" for="custom-group">{{customCategoryLabel}}</label>
+        <select class="select" id="custom-group"></select>
+
+        <ul class="custom-list" id="custom-list"></ul>
+        <p class="custom-empty" id="custom-empty">{{customEmpty}}</p>
       </div>
 
-      <label class="field-label field-label-gap" for="custom-group">{{customCategoryLabel}}</label>
-      <span class="select-wrap select-wrap-block">
-        <select id="custom-group"></select>
-      </span>
-
-      <ul class="chosen-list custom-list" id="custom-list"></ul>
-      <p class="empty" id="custom-empty">{{customEmpty}}</p>
-
-      <div class="modal-actions">
-        <button class="btn-solid" id="custom-done" type="button">{{customDoneButton}}</button>
+      <div class="m-actions m-actions-one">
+        <button class="btn btn-solid" id="custom-done" type="button">{{customDoneButton}}</button>
       </div>
     </dialog>
 
     <!-- 返回鍵與「改設定」共用這個確認：遊戲中離開等於這一輪作廢（CONCEPT.md 2.11） -->
     <dialog class="modal" id="leave-modal">
-      <h2>{{leaveTitle}}</h2>
-      <p>{{leaveDesc}}</p>
-      <div class="modal-actions">
-        <button class="btn-outline" id="leave-cancel" type="button">{{leaveCancel}}</button>
-        <button class="btn-solid" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
       </div>
     </dialog>
 
     {{footer}}
+    <script>document.getElementById('bomb-art').innerHTML = window.Woohop.art.bomb();</script>
 
     <script>
       window.BOMB = {

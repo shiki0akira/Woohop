@@ -15,20 +15,17 @@
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES } from '../src/locales.mjs';
+import { navbar, footer, PAGES, local, esc } from '../src/chrome.mjs';
 
 const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
-const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16l';
+const ASSET_VERSION = '2026-10-16m';
 
-const esc = (s) =>
-  String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
-const local = (lang, page) => `/${lang}/${PAGES[page]}`;
 const gameUrl = (lang, key) => (key === 'avalon' ? `/avalon/${lang}` : `/${key}/${lang}/`);
 // JSON 嵌進 <script>：把 < 跳成 <，文案裡萬一有 </script> 才不會提早關掉標籤
 const jsonForScript = (data) => JSON.stringify(data).replace(/</g, '\\u003c');
@@ -77,64 +74,6 @@ ${alternates}
     <link rel="stylesheet" href="${asset('woohop.css')}" />
     <link rel="stylesheet" href="${asset('site.css')}" />
   </head>`;
-}
-
-function navbar(s, lang, page) {
-  const nav = [
-    [s.navGames, local(lang, 'games'), 'games'],
-    [s.navCombo, local(lang, 'combo'), 'combo'],
-    [s.navBoardgame, `/avalon/${lang}`, 'boardgame'],
-    [s.navGuides, local(lang, 'guides'), 'guides'],
-  ];
-  const langMenu = LANGS.map(
-    (l) => `<a href="${local(l, page)}" hreflang="${l}" lang="${l}" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${esc(LANG_NAMES[l])}</a>`,
-  ).join('');
-  return `
-    <div class="page">
-      <div class="top nav-host" id="site-nav">
-        <header class="navbar">
-          <a class="brand wordmark" href="${local(lang, 'home')}" aria-label="Woohop"><svg viewBox="0 0 59 48" aria-hidden="true"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
-          <nav class="nav-links" aria-label="${esc(s.menu)}">${nav.map(([t, h, id]) => `<a href="${h}"${id === page ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}</nav>
-          <div class="nav-actions">
-            <div class="nav-more lang-wrap">
-              <button class="lang" type="button" aria-expanded="false" aria-haspopup="true" aria-label="${esc(s.langMenu)}"><svg><use href="#i-globe"/></svg>${esc(s.langShort)}</button>
-              <div class="nav-menu" hidden>${langMenu}</div>
-            </div>
-            <button class="btn btn-icon btn-secondary nav-burger" type="button" aria-label="${esc(s.menu)}" style="--h:44px"><svg><use href="#i-menu"/></svg></button>
-          </div>
-        </header>
-      </div>
-      <dialog class="sheet" id="sheet" aria-label="${esc(s.menu)}" tabindex="-1">
-        <div class="grabber"></div>
-        <div class="sheet-list">${nav.map(([t, h, id]) => `<a class="btn btn-secondary btn-block" href="${h}"${id === page ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}</div>
-        <div class="sheet-foot"><button class="btn btn-ghost" type="button" data-close>${esc(s.close)}</button></div>
-      </dialog>`;
-}
-
-function footer(s, lang, page) {
-  const langMenu = LANGS.map(
-    (l) => `<a href="${local(l, page)}" hreflang="${l}" lang="${l}" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${esc(LANG_NAMES[l])}</a>`,
-  ).join('');
-  return `
-      <footer class="site-footer" id="site-footer">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <a class="wordmark" href="${local(lang, 'home')}" style="font-size:22px"><svg viewBox="0 0 59 48" style="width:30px;height:24.4px" aria-hidden="true"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
-            <p>${esc(s.footerTag1)}<br>${esc(s.footerTag2)}</p>
-          </div>
-          <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
-          <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>
-          <div class="footer-col"><h4>${esc(s.footerAbout)}</h4><span class="link is-disabled" aria-disabled="true">${esc(s.aboutUs)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.privacy)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.contact)}</span></div>
-        </div>
-        <div class="footer-bottom">
-          <span>© 2026 Woohop</span>
-          <div class="nav-more lang-wrap up">
-            <button class="lang" type="button" aria-expanded="false" aria-haspopup="true" aria-label="${esc(s.langMenu)}"><svg><use href="#i-globe"/></svg>${esc(s.langShort)}</button>
-            <div class="nav-menu" hidden>${langMenu}</div>
-          </div>
-        </div>
-      </footer>
-    </div>`;
 }
 
 // 每頁都嵌一份當頁語言的文案，執行期 JS 直接讀，不用再發請求

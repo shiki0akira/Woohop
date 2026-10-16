@@ -31,7 +31,8 @@
 
   /* ================= GA4 ================= */
   const track = (name, params) => { if (typeof gtag === 'function') gtag('event', name, params); };
-  track('page_view', { page_title: document.title, page_location: location.origin + location.pathname, page_path: location.pathname });
+  // 遊戲頁（例如定時炸彈）會依畫面自己送 page_view，載入 site.js 時帶 ownPageView 就不重複送
+  if (!window.WOOHOP.ownPageView) track('page_view', { page_title: document.title, page_location: location.origin + location.pathname, page_path: location.pathname });
 
   /* ================= 遊戲資料 =================
    * players：最少～最多人；time：0=5 分內／1=5–15 分／2=15 分以上；minutes：排破冰組合用的大約長度

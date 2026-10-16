@@ -76,6 +76,8 @@ export default {
   backToSetupButton: '改設定',
 
   // ---------- 離開確認 ----------
+  // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）
+  gameBack: '返回',
   leaveTitle: '要結束這一輪嗎？',
   leaveDesc: '炸彈還在倒數，離開的話這一輪就沒了。',
   leaveConfirm: '結束這輪',

@@ -70,6 +70,8 @@ export default {
   backToSetupButton: '설정 바꾸기',
 
   // ---------- 도중에 나갈 때 ----------
+  // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）
+  gameBack: '뒤로',
   leaveTitle: '이 판을 끝낼까요?',
   leaveDesc: '폭탄이 아직 돌아가고 있습니다. 지금 나가면 이 판은 사라집니다.',
   leaveConfirm: '이 판 끝내기',

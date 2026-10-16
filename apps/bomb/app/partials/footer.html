@@ -1,9 +1,6 @@
-<footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-left">
-          <a href="/">← Web100</a>
-          <span class="project-id">{{projectId}}</span>
-        </div>
-        <span>© 2026 Web100 Series</span>
-      </div>
-    </footer>
+{{woohopFooter}}
+    <!-- 導覽列的互動（語言選單、「更多」、手機選單）用全站同一份 site.js -->
+    <script>window.WOOHOP = {{woohopJson}};</script>
+    <script src="{{base}}/woohop/woohop-art.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/woohop/site.js?v={{assetVersion}}"></script>
+    <script>window.Site.nav();</script>

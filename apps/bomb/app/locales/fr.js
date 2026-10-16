@@ -71,6 +71,8 @@ export default {
   backToSetupButton: 'Changer les réglages',
 
   // ---------- quitter en cours ----------
+  // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）
+  gameBack: 'Retour',
   leaveTitle: 'Terminer cette manche ?',
   leaveDesc: 'La bombe tourne encore. Si tu pars maintenant, cette manche est perdue.',
   leaveConfirm: 'Terminer la manche',
