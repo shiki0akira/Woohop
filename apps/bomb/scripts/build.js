@@ -66,6 +66,7 @@ const TIMER = {
 const RAW_TOKENS = new Set([
   'heroTitleHtml',
   'gameMenuLinks',
+  'gameSheetLinks',
   'woohopHeader',
   'woohopFooter',
   'woohopJson',
@@ -308,6 +309,14 @@ function tokensFor(lang, page, assetVersion) {
       [SITE_STRINGS[lang].navBoardgame, `/avalon/${lang}`],
       [SITE_STRINGS[lang].navGuides, `/${lang}/guides/`],
     ].map(([t, h]) => `<a href="${h}">${escapeHtml(t)}</a>`).join(''),
+    // 手機的底部面板用同一組連結，做成整排按鈕
+    gameSheetLinks: [
+      [SITE_STRINGS[lang].navGames, `/${lang}/games/`],
+      [SITE_STRINGS[lang].navCombo, `/${lang}/combo/`],
+      [SITE_STRINGS[lang].navBoardgame, `/avalon/${lang}`],
+      [SITE_STRINGS[lang].navGuides, `/${lang}/guides/`],
+    ].map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${escapeHtml(t)}</a>`).join(''),
+    closeLabel: SITE_STRINGS[lang].close,
     crumbHome: SITE_STRINGS[lang].home,
     crumbGames: SITE_STRINGS[lang].navGames,
     siteOrigin: ORIGIN,

@@ -29,12 +29,18 @@
     <!--
       遊戲內頂欄（設計系統「導覽」那一節的手機頂欄）：遊戲頁整頁都用這條取代網站導覽列。
       左邊返回：設定畫面回「找遊戲」，進行中先跳確認，爆炸畫面回設定（app.js）。
-      右邊選單鍵只在設定畫面出現，打開的是網站的選單面板；玩的時候不放，誤點出去這一輪就沒了。
+      右邊的「玩法」「設定」分頁與選單鍵只在設定畫面出現；玩的時候不放，誤點出去這一輪就沒了。
+      窄螢幕放不下分頁，改收進選單鍵打開的底部面板（#game-sheet）。
     -->
     <div class="game-bar-host">
       <div class="appbar game-bar">
         <button class="btn btn-icon btn-ghost" id="game-back" type="button" aria-label="{{gameBack}}"><svg><use href="#i-back"/></svg></button>
         <div class="title">{{navTitle}}</div>
+        <nav class="game-tabs" aria-label="{{navTitle}}">
+          <a href="{{base}}/{{lang}}/rules/">{{navRules}}</a>
+          <!-- 設定：裡面是自訂題目（#custom-modal）。加過幾題就把題數靠在字旁邊 -->
+          <button type="button" id="open-custom">{{settingsTab}}<span class="custom-open-count" id="custom-open-count"></span></button>
+        </nav>
         <!-- 選單：電腦上是往下開的下拉（跟網站導覽列的「更多」同一種，開關由 site.js 處理），
              手機上改開底部面板（app.js 攔下來） -->
         <div class="nav-more game-menu">
@@ -107,12 +113,8 @@
           -->
           <div class="pick-buttons" id="pick-buttons"></div>
 
-          <!-- 自訂題目在彈窗裡（#custom-modal），這裡只留一顆按鈕：
-               想加題目的是玩過幾次的人，第一次玩的人不該在開始前看到一個空輸入框 -->
-          <button class="btn btn-secondary btn-block custom-open" id="open-custom" type="button">
-            <span>{{customLabel}}</span>
-            <span class="custom-open-count" id="custom-open-count"></span>
-          </button>
+          <!-- 自訂題目在頂欄的「設定」裡（#custom-modal）：想加題目的是玩過幾次的人，
+               第一次玩的人不該在開始前看到一個空輸入框 -->
         </div>
 
         <p class="form-error" id="deck-warning" role="status" hidden></p>
@@ -182,7 +184,8 @@
     -->
     <dialog class="modal modal-custom" id="custom-modal">
       <div class="m-body">
-        <h2>{{customLabel}}</h2>
+        <h2>{{settingsTab}}</h2>
+        <h3>{{customLabel}}</h3>
         <p>{{customHint}}</p>
 
         <div class="custom-row">
@@ -220,6 +223,18 @@
         <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
         <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
       </div>
+    </dialog>
+
+    <!-- 手機上的遊戲選單（頂欄右上角的選單鍵）：這個遊戲的分頁在最上面，下面是網站的頁面 -->
+    <dialog class="sheet" id="game-sheet" aria-label="{{menuLabel}}" tabindex="-1">
+      <div class="grabber"></div>
+      <div class="sheet-list">
+        <a class="btn btn-secondary btn-block" href="{{base}}/{{lang}}/rules/">{{navRules}}</a>
+        <button class="btn btn-secondary btn-block" type="button" data-settings>{{settingsTab}}</button>
+        <div class="sheet-divider"></div>
+        {{gameSheetLinks}}
+      </div>
+      <div class="sheet-foot"><button class="btn btn-ghost" type="button" data-close>{{closeLabel}}</button></div>
     </dialog>
 
     {{footer}}

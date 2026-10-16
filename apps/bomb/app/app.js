@@ -974,14 +974,23 @@
   });
 
   // 設定畫面右上角的選單鍵。電腦上不攔，讓 site.js 當成一般下拉開關；
-  // 手機上攔下來改開網站的底部選單面板（跟首頁手機版同一個），下拉在窄螢幕上太擠
+  // 手機上攔下來改開遊戲選單面板（玩法、設定在最上面，下面是網站的頁面）
+  var gameSheet = document.getElementById('game-sheet');
   document.getElementById('game-menu').addEventListener('click', function (e) {
     if (!window.matchMedia('(max-width: 640px)').matches) return;
-    var sheet = document.getElementById('sheet');
-    if (sheet && typeof sheet.showModal === 'function') {
+    if (typeof gameSheet.showModal === 'function') {
       e.stopPropagation();
-      sheet.showModal();
-      sheet.focus();
+      gameSheet.showModal();
+      gameSheet.focus();
+    }
+  });
+  // 面板的每條關閉路徑自己關（不靠 dialog 的 close 事件，見「返回鍵」那節）
+  gameSheet.addEventListener('click', function (e) {
+    if (e.target.closest('[data-settings]')) {
+      gameSheet.close();
+      openCustomModal();
+    } else if (e.target === gameSheet || e.target.closest('[data-close]') || e.target.closest('a')) {
+      gameSheet.close();
     }
   });
 

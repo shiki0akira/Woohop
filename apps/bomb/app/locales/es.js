@@ -72,6 +72,8 @@ export default {
 
   // ---------- salir a medias ----------
   // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）
+  // 遊戲內頂欄的「設定」分頁（裡面是自訂題目）
+  settingsTab: 'Ajustes',
   gameBack: 'Volver',
   leaveTitle: '¿Terminamos esta ronda?',
   leaveDesc: 'La bomba sigue corriendo. Si sales ahora, esta ronda se pierde.',

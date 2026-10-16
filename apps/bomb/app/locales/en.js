@@ -71,6 +71,8 @@ export default {
 
   // ---------- leaving mid-round ----------
   // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）
+  // 遊戲內頂欄的「設定」分頁（裡面是自訂題目）
+  settingsTab: 'Settings',
   gameBack: 'Back',
   leaveTitle: 'End this round?',
   leaveDesc: 'The bomb is still ticking. Leave now and this round is gone.',
