@@ -65,6 +65,7 @@ const TIMER = {
 // 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
 const RAW_TOKENS = new Set([
   'heroTitleHtml',
+  'gameMenuLinks',
   'woohopHeader',
   'woohopFooter',
   'woohopJson',
@@ -300,6 +301,13 @@ function tokensFor(lang, page, assetVersion) {
     // 冒號留在 HTML 裡給爬蟲與螢幕閱讀器，畫面上藏起來
     heroTitleHtml: heroTitleHtml(strings.heroTitle),
     menuLabel: SITE_STRINGS[lang].menu,
+    // 遊戲內頂欄右上角的下拉選單，項目跟網站導覽列一樣
+    gameMenuLinks: [
+      [SITE_STRINGS[lang].navGames, `/${lang}/games/`],
+      [SITE_STRINGS[lang].navCombo, `/${lang}/combo/`],
+      [SITE_STRINGS[lang].navBoardgame, `/avalon/${lang}`],
+      [SITE_STRINGS[lang].navGuides, `/${lang}/guides/`],
+    ].map(([t, h]) => `<a href="${h}">${escapeHtml(t)}</a>`).join(''),
     crumbHome: SITE_STRINGS[lang].home,
     crumbGames: SITE_STRINGS[lang].navGames,
     siteOrigin: ORIGIN,

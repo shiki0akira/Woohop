@@ -973,10 +973,13 @@
     else location.href = '/' + LANG + '/games/';
   });
 
-  // 設定畫面右上角的選單鍵：打開網站的選單面板（找遊戲、破冰組合⋯），跟首頁手機版同一個
-  document.getElementById('game-menu').addEventListener('click', function () {
+  // 設定畫面右上角的選單鍵。電腦上不攔，讓 site.js 當成一般下拉開關；
+  // 手機上攔下來改開網站的底部選單面板（跟首頁手機版同一個），下拉在窄螢幕上太擠
+  document.getElementById('game-menu').addEventListener('click', function (e) {
+    if (!window.matchMedia('(max-width: 640px)').matches) return;
     var sheet = document.getElementById('sheet');
     if (sheet && typeof sheet.showModal === 'function') {
+      e.stopPropagation();
       sheet.showModal();
       sheet.focus();
     }

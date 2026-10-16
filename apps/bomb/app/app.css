@@ -230,20 +230,19 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 .bomb-game #site-nav { display: none; }
 .bomb-app:not(.bomb-game) .game-bar-host { display: none; }
 .game-menu { display: none; }
-body[data-screen="setup"] .game-menu { display: inline-flex; }
+body[data-screen="setup"] .game-menu { display: block; }
+/* 下拉的按鈕是圖示鍵，不要吃到網站「更多」那顆的文字按鈕樣式（箭頭旋轉、左右留白） */
+.game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
+.game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
 body[data-screen="setup"] .game-bar-spacer { display: none; }
 body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { display: none; }
 
-/* ---------- 電腦版版面 ---------- */
-@media (min-width: 880px) {
-  /* 設定：引爆時間、題目兩張卡並排，開始鍵橫跨兩欄 */
-  #view-setup:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 24px; align-items: start; }
-  #view-setup > .page-head, #view-setup > .form-error, #view-setup > .btn-start, #view-setup > .rules-link { grid-column: 1 / -1; }
-  #view-setup > .btn-start { justify-self: center; width: min(480px, 100%); }
-  .pick-button { min-height: 156px; }
-}
-/* 遊戲中、爆炸：只有一張卡，不用撐滿整個寬度 */
-.view-play, #view-boom { max-width: 720px; margin: 0 auto; width: 100%; }
+/* ---------- 電腦版版面 ----------
+ * 遊戲頁在電腦上也是一欄、收窄置中（720px），頂欄跟著同寬：
+ * 這是拿在手上玩的東西，撐滿寬螢幕只會讓按鈕和題目離得很遠。
+ */
+.bomb-game .bomb-main, .bomb-game .game-bar-host { max-width: 720px; margin-left: auto; margin-right: auto; }
+@media (min-width: 760px) { .pick-button { min-height: 156px; } }
 @media (min-width: 760px) { .play-card { padding: 32px 40px 36px; gap: 28px; } .bomb svg { width: 180px; } }
 
 /* 規則頁：文章類的內容，一行太長不好讀，收到 860px */

@@ -35,7 +35,12 @@
       <div class="appbar game-bar">
         <button class="btn btn-icon btn-ghost" id="game-back" type="button" aria-label="{{gameBack}}"><svg><use href="#i-back"/></svg></button>
         <div class="title">{{navTitle}}</div>
-        <button class="btn btn-icon btn-ghost game-menu" id="game-menu" type="button" aria-label="{{menuLabel}}"><svg><use href="#i-menu"/></svg></button>
+        <!-- 選單：電腦上是往下開的下拉（跟網站導覽列的「更多」同一種，開關由 site.js 處理），
+             手機上改開底部面板（app.js 攔下來） -->
+        <div class="nav-more game-menu">
+          <button class="btn btn-icon btn-ghost" id="game-menu" type="button" aria-label="{{menuLabel}}" aria-expanded="false" aria-haspopup="true"><svg><use href="#i-menu"/></svg></button>
+          <div class="nav-menu" hidden>{{gameMenuLinks}}</div>
+        </div>
         <span class="game-bar-spacer" aria-hidden="true"></span>
       </div>
     </div>
