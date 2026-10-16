@@ -701,6 +701,9 @@
     });
     // 頂欄跟著畫面換：設定畫面是網站導覽列，進行中／爆炸是遊戲內頂欄（app.css 看這個屬性）
     document.body.setAttribute('data-screen', next);
+    // 頂欄的遊戲名是回主頁的連結，玩的時候不能點（CSS），鍵盤也不要停在它上面
+    var gameTitle = document.querySelector('.game-bar .title');
+    if (gameTitle) gameTitle.tabIndex = next === 'setup' ? 0 : -1;
     window.scrollTo(0, 0);
     if (typeof window.trackPageView === 'function') {
       window.trackPageView(BASE + '/' + LANG + '/' + next);

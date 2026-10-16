@@ -313,3 +313,9 @@ dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight:
 .game-bar.is-compact #open-custom .tab-icon, .game-bar.is-tight .game-tabs a .tab-icon { display: block; }
 .game-bar.is-compact #open-custom .tab-text, .game-bar.is-tight .game-tabs a .tab-text { display: none; }
 .game-bar.is-compact #open-custom, .game-bar.is-tight .game-tabs a { padding: 0 10px; }
+
+/* 頂欄的遊戲名是回遊戲主頁的連結：平常看起來就是標題，滑過換靛藍；玩的時候不能點 */
+a.title { color: var(--ink); text-decoration: none; border-radius: var(--r-sm); }
+a.title:hover { color: var(--indigo); }
+a.title:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+body[data-screen="play"] a.title, body[data-screen="boom"] a.title { pointer-events: none; }

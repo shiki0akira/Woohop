@@ -9,7 +9,8 @@
     <div class="game-bar-host">
       <div class="appbar game-bar">
         <button class="btn btn-icon btn-ghost" id="game-back" type="button" aria-label="{{gameBack}}"><svg><use href="#i-back"/></svg></button>
-        <div class="title">{{navTitle}}</div>
+        <!-- 遊戲名也是連結：點了回這個遊戲的主頁（設定畫面）。進行中、爆炸畫面不能點，誤點這一輪就沒了 -->
+        <a class="title" href="{{base}}/{{lang}}/">{{navTitle}}</a>
         <nav class="game-tabs" aria-label="{{navTitle}}">
           <a href="{{base}}/{{lang}}/rules/"{{rulesCurrent}} aria-label="{{navRules}}"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M8 8h8M8 12h5"/></svg><span class="tab-text">{{navRules}}</span></a>
           <!-- 設定：裡面是自訂題目（#custom-modal）。加過幾題就把題數靠在字旁邊 -->
