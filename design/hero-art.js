@@ -13,8 +13,9 @@
   const shade = (x, top, w, h, c) => `<path d="M${x + w * 0.18} ${top - 10}h${w}v${h + 20}h${-w}z" fill="${c}"/>`;
   // 手：一條粗線，尾端一顆圓手掌
   const arm = (d, hx, hy, c) =>
-    `<path d="${d}" fill="none" stroke="#22222c" stroke-width="11" stroke-linecap="round"/>` +
-    `<path d="${d}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round"/>` +
+    // 外框跟身體一樣是固定 4px（不隨插圖縮放）：黑線 = 手臂粗細 + 兩側各 4px
+    `<path d="${d}" fill="none" stroke="#22222c" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:calc(var(--arm-w, 6px) + var(--ill-sw, 4px) * 2)"/>` +
+    `<path d="${d}" fill="none" stroke="${c}" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:var(--arm-w, 6px)"/>` +
     `<circle cx="${hx}" cy="${hy}" r="8" fill="${c}" ${K}/>`;
   // 對話泡泡
   const bubble = (x, y, w, h, tail, inner) =>
@@ -88,7 +89,7 @@
   const faqArt = () => `
     ${confetti(40, 40, '#FFC628', -14, 0.8)}${confetti(292, 70, '#F3A4FB', 12, 0.8)}${burst(276, 30, '#4FB59A')}${plus(30, 150, '#EE7B6A', 6)}${ring(300, 170, '#7489E6', 6)}${dot(150, 22, '#FF9419', 4)}
     <!-- 大問號泡泡 -->
-    <g class="h-pop">${bubble(50, 34, 128, 104, 92, '<text x="114" y="118" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-weight="700" font-size="92" fill="#7489E6" stroke="#22222c" stroke-width="3" paint-order="stroke">?</text>')}</g>
+    <g class="h-pop">${bubble(50, 34, 128, 104, 92, '<text x="114" y="118" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-weight="700" font-size="92" fill="#7489E6" stroke="#22222c" stroke-linejoin="round" paint-order="stroke" vector-effect="non-scaling-stroke" style="stroke-width:calc(var(--ill-sw, 4px) * 2)">?</text>')}</g>
     <!-- 燈泡：問題有答案了 -->
     <g class="h-wiggle" style="animation-duration:2.4s">
       ${body('<path d="M232 118a28 28 0 1 1 28 0v12h-28z"/>', '#FFC628', '', false)}
