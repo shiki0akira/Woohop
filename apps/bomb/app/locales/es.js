@@ -82,52 +82,22 @@ export default {
 
   // ---------- página de reglas ----------
   rulesTitle: 'Cómo se juega a la bomba de tiempo',
-  rulesIntro:
-    'Un móvil y todos en círculo. Aparece una prueba, quien tiene el móvil la hace y lo pasa. La bomba explota en un momento aleatorio y el tiempo restante no se muestra nunca. Quien lo tenga entonces pierde la ronda.',
-  rulesHostHeading: 'Antes de empezar (quien saca el móvil)',
-  rulesHostSteps: [
-    'Elige Preguntas, Acciones o las dos. ¿Mucha cara nueva? Empieza solo con Preguntas.',
-    '¿Queréis meter vuestras bromas internas? Añade unas cuantas en «Vuestras pruebas» y colócalas en un lado.',
-    'Ajusta la mecha. Para la primera ronda, el 1–3 minutos por defecto va perfecto; cuando el grupo se anime, prueba 30 segundos a 2 minutos.',
-    'Di tres frases para arrancar: haz lo que pone en pantalla, pulsa Hecho y pásalo, y quien lo tenga al explotar pierde la ronda.',
+  rulesIntro: "Un móvil pasa de mano en mano. Aparece una prueba, la haces y lo pasas. Nadie sabe cuándo explota la bomba: quien la tenga entonces, pierde.",
+  // 一眼看到的三件事：人數、時間、要準備什麼
+  rulesFacts: [["Jugadores","4–15"],["Tiempo","1–3 min por ronda, unos 10 min para varias rondas"],["Necesitas","Un móvil y un círculo de gente"]],
+  rulesHowHeading: "Cómo se juega",
+  rulesHowSteps: [
+    "Elige las pruebas: preguntas, acciones o ambas.",
+    "Pulsa «Empezar» y dale el móvil a la primera persona.",
+    "Lee la prueba, hazla, pulsa «Hecho» y pasa el móvil.",
+    "Cuando explota la bomba, quien tiene el móvil pierde la ronda.",
   ],
-  rulesPlayerHeading: 'Cuando el móvil llega a tus manos',
-  rulesPlayerSteps: [
-    'Lee la prueba y hazla ahí mismo: soltar una frase, imitar a un animal, chocar la mano con quien tienes enfrente.',
-    'Pulsa la barra de abajo: «Hecho — pásalo».',
-    'Pasa el móvil a la siguiente persona.',
-    '¿No te sale? Pulsa Hecho y pásalo. No hay puntos: esto no es un concurso.',
-  ],
-  rulesFaqHeading: 'Preguntas frecuentes',
-  rulesFaq: [
-    {
-      q: '¿Hace falta un móvil por persona?',
-      a: 'No. Todo el juego funciona con un único móvil: ese móvil es la bomba y va dando vueltas por el círculo. Es distinto de los demás juegos de la serie, donde cada uno entra en una sala escaneando un código QR.',
-    },
-    {
-      q: '¿Se ve cuánto tiempo queda?',
-      a: 'Ni un segundo, y es a propósito: con una cuenta atrás a la vista, en los últimos diez segundos nadie querría coger el móvil y el juego se quedaría parado. La velocidad del tictac tampoco indica si falta poco.',
-    },
-    {
-      q: '¿Puedo saltarme una prueba que no sé hacer?',
-      a: 'Sí, pulsa Hecho y ya está. No hay puntuación ni nadie lleva la cuenta de quién se salta qué.',
-    },
-    {
-      q: '¿Podemos añadir nuestras propias pruebas?',
-      a: 'Sí. Usa «Vuestras pruebas» en la pantalla de ajustes y colócala en una categoría: seguirá ahí la próxima vez. Se queda en este dispositivo y no se sube a ningún sitio.',
-    },
-    {
-      q: 'Ir pasando un móvil de mano en mano me da un poco de cosa.',
-      a: 'Métedlo en una bolsa con cierre, o usad un móvil viejo de repuesto como bomba.',
-    },
-    {
-      q: '¿Y si se bloquea la pantalla a media ronda?',
-      a: 'Mientras se juega, la pantalla se mantiene encendida. Si aun así la página pasa a segundo plano, al volver se recalcula al instante: si la mecha se agotó mientras tanto, caes directamente en la explosión.',
-    },
-    {
-      q: '¿Qué le toca hacer a quien pierde?',
-      a: 'Lo decidís vosotros; la aplicación no impone nada. Todos habéis visto quién la tenía en la mano.',
-    },
+  rulesLeadHeading: "Cómo dirigirlo",
+  rulesLeadSteps: [
+    "Para empezar basta una frase: «Haz lo que diga la pantalla y pásalo. Quien lo tenga cuando explote, pierde».",
+    "Deja el tiempo por defecto (1–3 min) en la primera ronda; acelera cuando haya ambiente.",
+    "Con gente nueva, empieza solo con preguntas y añade acciones después.",
+    "Si alguien se bloquea, grita «¡Siguiente!» para no perder el ritmo.",
   ],
   rulesBack: '← Volver al juego',
 };

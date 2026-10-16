@@ -275,3 +275,21 @@ body[data-screen="setup"] .game-tabs, body[data-screen="rules"] .game-tabs { dis
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }
 .sheet-divider { height: 2px; background: var(--line); margin: 6px 0; }
+
+/* ---------- 玩法頁：一眼看到的三件事 ---------- */
+.rules-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.rules-facts li { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); }
+.rules-facts span { font-size: 13px; font-weight: 800; color: var(--coral-edge); letter-spacing: .04em; }
+.rules-facts b { font-size: 16px; line-height: 1.45; }
+.rules-lead { background: #fffdf4; border-color: var(--yellow-edge); box-shadow: 0 4px 0 var(--yellow-edge); }
+
+/* ---------- 題型按鈕的勾勾：右上角，選了是實心打勾，沒選是空圈 ---------- */
+.pick-button { position: relative; }
+.pick-button::after {
+  content: ""; position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid #c9c9d3; background: var(--surface) no-repeat center / 16px;
+}
+.pick-button[aria-pressed="true"]::after {
+  border-color: var(--edge); background-color: var(--edge);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}

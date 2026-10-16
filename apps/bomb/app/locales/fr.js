@@ -82,52 +82,22 @@ export default {
 
   // ---------- page des règles ----------
   rulesTitle: 'Comment jouer à la bombe à retardement',
-  rulesIntro:
-    'Un téléphone, tout le monde en cercle. Un défi s’affiche, celui qui a le téléphone le réalise puis le passe. La bombe explose à un instant aléatoire et le temps restant n’est jamais affiché. Celui qui l’a alors en main perd la manche.',
-  rulesHostHeading: 'Avant de commencer (celui qui sort le téléphone)',
-  rulesHostSteps: [
-    'Choisis Questions, Actions, ou les deux. Beaucoup de nouveaux ? Commence avec Questions seulement.',
-    'Envie d’y glisser vos private jokes ? Ajoute-en quelques-uns via « Vos propres défis » et classe-les d’un côté.',
-    'Règle la mèche. Pour une première manche, les 1 à 3 minutes par défaut vont très bien ; une fois l’ambiance lancée, essaie 30 secondes à 2 minutes.',
-    'Dis trois phrases pour lancer : fais ce qui est affiché, appuie sur Terminé et passe, celui qui l’a quand ça explose perd la manche.',
+  rulesIntro: "Un téléphone fait le tour du cercle. Un défi s’affiche, tu le fais, tu passes. Personne ne sait quand la bombe explose : celui qui la tient perd.",
+  // 一眼看到的三件事：人數、時間、要準備什麼
+  rulesFacts: [["Joueurs","4 à 15"],["Durée","1 à 3 min par manche, environ 10 min pour quelques manches"],["Il faut","Un téléphone et un cercle de joueurs"]],
+  rulesHowHeading: "Comment jouer",
+  rulesHowSteps: [
+    "Choisis les défis : questions, actions, ou les deux.",
+    "Appuie sur « C’est parti » et donne le téléphone au premier joueur.",
+    "Lis le défi, fais-le, appuie sur « Terminé » et passe le téléphone.",
+    "Quand la bombe explose, celui qui tient le téléphone perd la manche.",
   ],
-  rulesPlayerHeading: 'Quand le téléphone arrive dans tes mains',
-  rulesPlayerSteps: [
-    'Lis le défi et fais-le sur-le-champ — dire une phrase, imiter un animal, taper dans la main de la personne en face.',
-    'Appuie sur la barre du bas : « Terminé — au suivant ».',
-    'Passe le téléphone à ton voisin.',
-    'Tu n’y arrives pas ? Appuie sur Terminé et passe. Il n’y a pas de points, ce n’est pas un quiz.',
-  ],
-  rulesFaqHeading: 'Questions fréquentes',
-  rulesFaq: [
-    {
-      q: 'Il faut un téléphone par personne ?',
-      a: 'Non. Tout le jeu tient sur un seul téléphone : c’est lui la bombe, et il tourne dans le cercle. C’est différent des autres jeux de la série, où chacun rejoint un salon en scannant un QR code.',
-    },
-    {
-      q: 'On voit le temps restant ?',
-      a: 'Pas une seconde, et c’est voulu : avec un compte à rebours visible, plus personne ne prendrait le téléphone dans les dix dernières secondes et le jeu s’arrêterait. La vitesse du tic-tac n’indique pas non plus si l’explosion approche.',
-    },
-    {
-      q: 'On peut passer un défi qu’on n’arrive pas à faire ?',
-      a: 'Oui, appuie simplement sur Terminé. Il n’y a pas de score et personne ne compte les défis sautés.',
-    },
-    {
-      q: 'On peut ajouter nos propres défis ?',
-      a: 'Oui. Passe par « Vos propres défis » sur l’écran des réglages et classe-le dans une catégorie : il sera encore là la prochaine fois. Tout reste sur cet appareil et n’est jamais envoyé ailleurs.',
-    },
-    {
-      q: 'Se passer un téléphone de main en main me gêne un peu.',
-      a: 'Glisse-le dans un sachet zip, ou utilise un vieux téléphone de secours comme bombe.',
-    },
-    {
-      q: 'Et si l’écran se verrouille en pleine manche ?',
-      a: 'Le jeu empêche la mise en veille pendant la partie. Si la page passe quand même en arrière-plan, tout est recalculé dès le retour : si la mèche s’est terminée entre-temps, tu tombes directement sur l’explosion.',
-    },
-    {
-      q: 'Le perdant doit faire quoi ?',
-      a: 'À vous de décider, l’appli n’impose rien. Tout le monde a vu qui l’avait en main.',
-    },
+  rulesLeadHeading: "Comment animer",
+  rulesLeadSteps: [
+    "Une seule phrase pour lancer : « Fais ce qui est écrit, puis passe. Celui qui l’a quand ça explose a perdu. »",
+    "Garde 1 à 3 minutes pour la première manche, accélère quand tout le monde est chaud.",
+    "Avec des nouveaux, commence par les questions ; ajoute les actions ensuite.",
+    "Si quelqu’un bloque, lance « Suivant ! » pour garder le rythme.",
   ],
   rulesBack: '← Retour au jeu',
 };

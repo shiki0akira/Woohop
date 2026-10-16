@@ -77,21 +77,19 @@ const RAW_TOKENS = new Set([
   'timerJson',
   'langsJson',
   'langOptions',
-  'rulesHostList',
-  'rulesPlayerList',
-  'rulesFaqList',
-  'rulesArticle',
+  'rulesFactsList',
+  'rulesHowList',
+  'rulesLeadList',
   'jsonLd',
 ]);
 
 /*
  * 不必每個語言都有的 key。
  *
- * rulesArticle 是規則頁那篇長文，**只寫給有讀者的語言**（目前只有 zh-TW）。
- * 沒有它的語言那一整塊就不出現。刻意不強制八語都要有：把中文丟翻譯 API 生一批
- * 薄長文出來湊字數，正是 2026/8 那次被演算法降權的成因（app/strings.js 開頭）。
+ * 目前沒有（規則頁的長文 rulesArticle 在 2026-10-17 拿掉了，玩法頁改成精簡版）。
+ * 之後若有「只寫給部分語言」的內容，放進這裡，不要把中文丟翻譯 API 湊字數。
  */
-const OPTIONAL_KEYS = new Set(['rulesArticle']);
+const OPTIONAL_KEYS = new Set([]);
 
 /*
  * sitemap 的 lastmod。**內容真的有變才手動改這個日期**——
@@ -269,7 +267,7 @@ function checkStrings() {
   }
 
   // 規則頁的三份清單長度要一致，否則某個語言會少一步驟而沒人發現
-  for (const key of ['rulesHostSteps', 'rulesPlayerSteps', 'rulesFaq']) {
+  for (const key of ['rulesFacts', 'rulesHowSteps', 'rulesLeadSteps']) {
     const size = STRINGS[DEFAULT_LANG][key].length;
     for (const lang of LANGS) {
       if (STRINGS[lang][key].length !== size) {
@@ -334,11 +332,14 @@ function tokensFor(lang, page, assetVersion) {
     // 一份頁面只有一種語言，帶進全部會讓每頁多背用不到的題庫
     questionsJson: toScriptJson(questionsFor(lang)),
     timerJson: toScriptJson(TIMER),
-    rulesArticle: articleHtml(strings.rulesArticle),
+
     jsonLd: jsonLdFor(lang, page, strings),
-    rulesHostList: listHtml(strings.rulesHostSteps),
-    rulesPlayerList: listHtml(strings.rulesPlayerSteps),
-    rulesFaqList: faqHtml(strings.rulesFaq),
+    // 玩法頁刻意精簡（2026-10-17）：人數／時間／準備、4 步流程、主持人怎麼帶。長文與常見問題拿掉了
+    rulesFactsList: strings.rulesFacts
+      .map(([k, v]) => `<li><span>${escapeHtml(k)}</span><b>${escapeHtml(v)}</b></li>`)
+      .join('\n        '),
+    rulesHowList: listHtml(strings.rulesHowSteps),
+    rulesLeadList: listHtml(strings.rulesLeadSteps),
   };
 }
 
@@ -368,36 +369,7 @@ function questionsFor(lang) {
 }
 
 /*
- * 規則頁的長文。每一節是 { h, p: [段落…] }，沒填就回空字串，
- * 樣板那一格就整個不見（rules.html 的 {{rulesArticle}}）。
- */
-/*
- * 長文段落裡的 **重點** 轉成 <strong>。整頁兩千多字，沒有任何層次的話讀者只會整段跳過。
- *
- * **一定要先跳脫再轉換**：跳脫過的文字裡不可能再出現 < 或 >，所以這裡加進去的
- * <strong> 是唯一的標籤，文案再怎麼寫都插不進別的東西。順序反過來就是一個注入點。
- * 也刻意只支援這一種語法——這是 build 腳本，不是要做一套 Markdown。
- */
-function emphasise(text) {
-  return escapeHtml(text).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-}
-
-function articleHtml(sections) {
-  if (!Array.isArray(sections) || !sections.length) return '';
-
-  return sections
-    .map((section) => {
-      const paragraphs = section.p.map((text) => `          <p>${emphasise(text)}</p>`).join('\n');
-      return `<section class="panel prose">
-          <h2>${escapeHtml(section.h)}</h2>
-${paragraphs}
-        </section>`;
-    })
-    .join('\n\n        ');
-}
-
-/*
- * 結構化資料。遊戲頁宣告自己是一個「免費、打開就能玩的網頁應用」，規則頁把 FAQ 標起來。
+ * 結構化資料。遊戲頁宣告自己是一個「免費、打開就能玩的網頁應用」，規則頁標成步驟（HowTo）。
  * 這是給機器讀「這一頁是什麼」用的——對這個站特別重要，因為搜尋「破冰遊戲」的人
  * 看到的幾乎都是文章，而這裡是一個可以直接玩的工具，那個差別要講得夠明白。
  *
@@ -410,13 +382,11 @@ function jsonLdFor(lang, page, strings) {
     page.dir === 'rules'
       ? {
           '@context': 'https://schema.org',
-          '@type': 'FAQPage',
+          '@type': 'HowTo',
+          name: strings.rulesTitle,
+          description: strings.rulesIntro,
           inLanguage: lang,
-          mainEntity: strings.rulesFaq.map((item) => ({
-            '@type': 'Question',
-            name: item.q,
-            acceptedAnswer: { '@type': 'Answer', text: item.a },
-          })),
+          step: strings.rulesHowSteps.map((text, i) => ({ '@type': 'HowToStep', position: i + 1, text })),
         }
       : {
           '@context': 'https://schema.org',
@@ -437,16 +407,6 @@ function jsonLdFor(lang, page, strings) {
 
 function listHtml(items) {
   return items.map((item) => `<li>${escapeHtml(item)}</li>`).join('\n            ');
-}
-
-function faqHtml(items) {
-  return items
-    .map(
-      (item) =>
-        // 跟首頁常見問題同一種：點開才看答案（Woohop 的 .faq）
-        `<details>\n            <summary>${escapeHtml(item.q)}</summary>\n            <p>${escapeHtml(item.a)}</p>\n          </details>`,
-    )
-    .join('\n          ');
 }
 
 // selected 直接寫進 HTML：JS 還沒跑的時候下拉就已經指著當前語言，不會先閃成第一個選項
