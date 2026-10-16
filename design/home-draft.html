@@ -37,10 +37,8 @@
           <span><svg><use href="#i-check"/></svg>8 種語言</span>
         </div>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="bubble b1" data-art="match"></div>
-        <div class="bubble b2" data-art="buzzer"></div>
-        <div class="bubble b3" data-art="bomb"></div>
+      <div class="hero-art">
+        <svg id="hero-illo" viewBox="0 0 480 380" role="img" aria-label="一群朋友圍著桌子聚會，主持人舉著手機帶大家玩"></svg>
       </div>
     </section>
 
@@ -135,6 +133,7 @@
 <script src="woohop-art.js"></script>
 <script src="site.js"></script>
 <script src="guides-data.js"></script>
+<script src="hero-art.js"></script>
 <script>
   Site.nav('home');
   Site.footer();
@@ -147,6 +146,7 @@
     location.href = pool[Math.floor(Math.random() * pool.length)].url;
   });
   Site.combo(document.getElementById('combo-root'));
+  document.getElementById('hero-illo').innerHTML = heroArt();
   document.getElementById('guides-root').innerHTML = GUIDES.slice(0, 3).map(guideCard).join('');
 
   // 主視覺、阿瓦隆：插圖與 W 底圖

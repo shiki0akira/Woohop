@@ -30,7 +30,8 @@
   .hero-bg { position: absolute; z-index: -1; top: -96px; bottom: -40px; left: 50%; width: 100vw; transform: translateX(-50%); overflow: hidden;
     -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
   .hero-bg svg { width: 100%; height: 100%; display: block; }
-  .hero-art { position: relative; min-height: 380px; }
+  .hero-art { position: relative; }
+  .hero-art svg { width: 100%; height: auto; display: block; max-width: 560px; margin: 0 auto; }
   .bubble { position: absolute; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 10px; animation: bob 4s ease-in-out infinite; }
   .bubble svg { width: 100%; height: auto; }
   .bubble small { font-weight: 800; font-size: 13px; margin-top: -2px; }
