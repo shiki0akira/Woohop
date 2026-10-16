@@ -8,6 +8,8 @@
   finder(document.getElementById('finder-root'), { filters: ['people', 'phones'], limit: 3, moreHref: pageUrl('games') });
   combo(document.getElementById('combo-root'));
   document.getElementById('hero-illo').innerHTML = window.heroArt();
+  const faqIllo = document.getElementById('faq-illo'); // 常見問題只有 zh-TW 有
+  if (faqIllo) faqIllo.innerHTML = window.faqArt();
 
   // 隨機來一個：直接打開一個已上線的破冰遊戲（不含即將推出的、不含桌遊助手）
   document.getElementById('hero-random').addEventListener('click', () => {

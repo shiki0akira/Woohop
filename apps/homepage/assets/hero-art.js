@@ -81,4 +81,33 @@
     <path d="M20 364h150M184 364h24M222 364h160M396 364h64M474 364h8" ${K}/>`;
 
   window.heroArt = art;
+
+  /*
+   * 常見問題的插圖：左邊的小人舉手發問，頭上一個大問號泡泡；右邊的小人頂著亮起的燈泡（問題有答案了）。
+   */
+  const faqArt = () => `
+    ${confetti(40, 40, '#FFC628', -14, 0.8)}${confetti(292, 70, '#F3A4FB', 12, 0.8)}${burst(276, 30, '#4FB59A')}${plus(30, 150, '#EE7B6A', 6)}${ring(300, 170, '#7489E6', 6)}${dot(150, 22, '#FF9419', 4)}
+    <!-- 大問號泡泡 -->
+    <g class="h-pop">${bubble(50, 34, 128, 104, 92, '<text x="114" y="118" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-weight="700" font-size="92" fill="#7489E6" stroke="#22222c" stroke-width="3" paint-order="stroke">?</text>')}</g>
+    <!-- 燈泡：問題有答案了 -->
+    <g class="h-wiggle" style="animation-duration:2.4s">
+      ${body('<path d="M232 118a28 28 0 1 1 28 0v12h-28z"/>', '#FFC628', '', false)}
+      ${body('<rect x="234" y="130" width="24" height="12" rx="4"/>', '#aebcf3', '', false)}
+      <path d="M246 70v-12M218 82l-9-7M274 82l9-7M210 108h-12M282 108h12" stroke="#FFC628" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <!-- 舉手發問的小人 -->
+    <g class="h-hop">
+      ${body(bean(110, 168, 90, 112), '#a8dccb', shade(110, 168, 90, 112, '#7cc9b1'))}
+      ${makeFace('wow', 110, 214, 2.7)}
+      ${arm('M68 214q-22 -30 -12 -66', 56, 148, '#a8dccb')}
+    </g>
+    <!-- 有答案的小人 -->
+    <g class="h-hop" style="animation-delay:1.4s">
+      ${body(bean(246, 178, 84, 102), '#ffe08a', shade(246, 178, 84, 102, '#FFC628'))}
+      ${makeFace('happy', 246, 222, 2.5)}
+    </g>
+    <path d="M14 282h120M148 282h20M182 282h110M306 282h6" ${K}/>`;
+
+  window.faqArt = faqArt;
+
 })();

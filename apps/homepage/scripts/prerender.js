@@ -22,7 +22,7 @@ const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16f';
+const ASSET_VERSION = '2026-10-16g';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -317,12 +317,15 @@ function homePage(lang) {
         </section>
         <section id="guides">
           <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div><a class="link" href="${local(lang, 'guides')}">${esc(s.seeAllGuides)}</a></div>
-          <div class="guides">${s.guides.map((g) => guideCard(s, g)).join('')}</div>
+          <div class="guides">${[...s.guides, ...s.moreGuides].slice(0, 4).map((g) => guideCard(s, g)).join('')}</div>
         </section>
 ${s.faq ? `
         <section id="faq">
           <div class="section-head"><div><h2>${esc(s.faqKicker)}</h2></div></div>
-          <div class="faq">${faqHtml(faqItems(s.faq))}</div>
+          <div class="faq-wrap">
+            <div class="faq">${faqHtml(faqItems(s.faq))}</div>
+            <div class="faq-art"><svg id="faq-illo" viewBox="0 0 320 300" role="img" aria-label="${esc(s.faqKicker)}"></svg></div>
+          </div>
         </section>` : ''}
       </main>
 ${footer(s, lang, 'home')}

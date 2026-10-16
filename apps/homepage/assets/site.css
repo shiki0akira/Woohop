@@ -216,5 +216,21 @@
   /* 頁尾的語言選單往上開（下面沒有空間） */
   .lang-wrap.up .nav-menu { top: auto; bottom: calc(100% + 10px); }
   /* 常見問題放在頁面最下面，寬度跟內文一樣 */
-  #faq .faq { max-width: 760px; }
+  #faq .faq { max-width: none; }
   #faq .faq p { color: #3b3b42; line-height: 1.85; }
+
+  /* 常見問題：左邊問答、右邊插圖（捲動時插圖停在畫面上）；手機上插圖放在問答上面、縮小 */
+  .faq-wrap { display: grid; gap: 20px; align-items: start; }
+  .faq-art { order: -1; max-width: 260px; justify-self: center; width: 100%; }
+  .faq-art svg { width: 100%; height: auto; display: block; overflow: visible; }
+  @media (min-width: 900px) {
+    .faq-wrap { grid-template-columns: 1fr 340px; gap: 40px; }
+    .faq-art { order: 0; max-width: none; position: sticky; top: 130px; }
+  }
+  /* 主視覺的動態 class 也用在常見問題插圖 */
+  .faq-art .h-hop, .faq-art .h-pop, .faq-art .h-wiggle, .faq-art .h-float { transform-box: fill-box; }
+  .faq-art .h-hop { transform-origin: 50% 100%; animation: h-hop 4.5s cubic-bezier(.3,.7,.4,1) infinite; }
+  .faq-art .h-pop { transform-origin: 30% 100%; animation: h-pop 3.2s ease-in-out infinite; }
+  .faq-art .h-wiggle { transform-origin: 50% 100%; animation: h-wiggle 1.6s ease-in-out infinite; }
+  .faq-art .h-float { transform-origin: 50% 50%; animation: h-float 3.6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .faq-art * { animation: none !important; } }
