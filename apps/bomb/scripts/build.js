@@ -67,6 +67,7 @@ const RAW_TOKENS = new Set([
   'heroTitleHtml',
   'gameMenuLinks',
   'gameSheetLinks',
+  'rulesCurrent',
   'woohopHeader',
   'woohopFooter',
   'woohopJson',
@@ -302,6 +303,8 @@ function tokensFor(lang, page, assetVersion) {
     // 冒號留在 HTML 裡給爬蟲與螢幕閱讀器，畫面上藏起來
     heroTitleHtml: heroTitleHtml(strings.heroTitle),
     menuLabel: SITE_STRINGS[lang].menu,
+    // 頂欄「玩法」分頁在玩法頁標成目前頁面
+    rulesCurrent: page.dir ? ' aria-current="page"' : '',
     // 遊戲內頂欄右上角的下拉選單，項目跟網站導覽列一樣
     gameMenuLinks: [
       [SITE_STRINGS[lang].navGames, `/${lang}/games/`],

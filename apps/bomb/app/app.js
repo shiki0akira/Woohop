@@ -973,26 +973,13 @@
     else location.href = '/' + LANG + '/games/';
   });
 
-  // 設定畫面右上角的選單鍵。電腦上不攔，讓 site.js 當成一般下拉開關；
-  // 手機上攔下來改開遊戲選單面板（玩法、設定在最上面，下面是網站的頁面）
-  var gameSheet = document.getElementById('game-sheet');
-  document.getElementById('game-menu').addEventListener('click', function (e) {
-    if (!window.matchMedia('(max-width: 640px)').matches) return;
-    if (typeof gameSheet.showModal === 'function') {
-      e.stopPropagation();
-      gameSheet.showModal();
-      gameSheet.focus();
-    }
-  });
-  // 面板的每條關閉路徑自己關（不靠 dialog 的 close 事件，見「返回鍵」那節）
-  gameSheet.addEventListener('click', function (e) {
-    if (e.target.closest('[data-settings]')) {
-      gameSheet.close();
-      openCustomModal();
-    } else if (e.target === gameSheet || e.target.closest('[data-close]') || e.target.closest('a')) {
-      gameSheet.close();
-    }
-  });
+  // 頂欄的「設定」與選單面板在 header.js（玩法頁也用）；它要開設定框時呼叫這個
+  window.openSettings = openCustomModal;
+  // 從玩法頁點「設定」會帶著 #settings 回來：直接打開設定框，網址上的 # 拿掉
+  if (location.hash === '#settings') {
+    history.replaceState(history.state, '', location.pathname + location.search);
+    openCustomModal();
+  }
 
   el.leaveCancel.addEventListener('click', closeLeaveModal);
 

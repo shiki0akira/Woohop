@@ -230,11 +230,11 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 .bomb-game #site-nav { display: none; }
 .bomb-app:not(.bomb-game) .game-bar-host { display: none; }
 .game-menu { display: none; }
-body[data-screen="setup"] .game-menu { display: block; }
+body[data-screen="setup"] .game-menu, body[data-screen="rules"] .game-menu { display: block; }
 /* 下拉的按鈕是圖示鍵，不要吃到網站「更多」那顆的文字按鈕樣式（箭頭旋轉、左右留白） */
 .game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
 .game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
-body[data-screen="setup"] .game-bar-spacer { display: none; }
+body[data-screen="setup"] .game-bar-spacer, body[data-screen="rules"] .game-bar-spacer { display: none; }
 body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { display: none; }
 
 /* ---------- 電腦版版面 ----------
@@ -246,7 +246,7 @@ body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { d
 @media (min-width: 760px) { .play-card { padding: 32px 40px 36px; gap: 28px; } .bomb svg { width: 180px; } }
 
 /* 規則頁：文章類的內容，一行太長不好讀，收到 860px */
-.bomb-rules { max-width: 860px; gap: 20px; }
+.bomb-rules { gap: 20px; }
 .prose li { line-height: 1.8; }
 
 /* ---------- 頂欄的「玩法」「設定」分頁 ----------
@@ -255,9 +255,11 @@ body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { d
  */
 .game-bar { container-type: inline-size; }
 .game-bar .title { flex: none; text-align: left; padding-left: 4px; }
-body:not([data-screen="setup"]) .game-bar .title { flex: 1; text-align: center; padding-left: 0; }
+body[data-screen="play"] .game-bar .title, body[data-screen="boom"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; }
 .game-tabs { display: none; flex: 1; justify-content: flex-end; gap: 4px; }
-body[data-screen="setup"] .game-tabs { display: flex; }
+body[data-screen="setup"] .game-tabs, body[data-screen="rules"] .game-tabs { display: flex; }
+/* 目前所在的分頁只換字色（跟網站導覽列一樣） */
+.game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--indigo); }
 .game-tabs a, .game-tabs button {
   height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px;
   border: 0; border-radius: var(--r-md); background: none; color: var(--ink);
@@ -267,8 +269,8 @@ body[data-screen="setup"] .game-tabs { display: flex; }
 .game-tabs .custom-open-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
 .game-tabs .custom-open-count:empty { display: none; }
 @container (max-width: 560px) {
-  body[data-screen="setup"] .game-tabs { display: none; }
-  body[data-screen="setup"] .game-bar .title { flex: 1; }
+  body[data-screen="setup"] .game-tabs, body[data-screen="rules"] .game-tabs { display: none; }
+  body[data-screen="setup"] .game-bar .title, body[data-screen="rules"] .game-bar .title { flex: 1; }
 }
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }

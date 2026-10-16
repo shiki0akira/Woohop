@@ -79,7 +79,7 @@
 - **導覽列、頁尾、按鈕、彈窗、輸入框都不在這個 repo 寫**：`scripts/build.js` 從 `apps/homepage` 拿全站共用的東西——HTML 用 `src/chrome.mjs` 的 `navbar()` / `footer()`，樣式與程式把 `woohop.css`、`site.css`、`woohop-art.js`、`site.js` 複製到 `dist/bomb/woohop/`。**首頁改了這幾個檔，這裡要重新 build、部署才會跟上**
 - 線上 `/bomb/woohop/*` 與 `/bomb/og/*` 要靠首頁 `vercel.json` 的白名單才拿得到，改檔名要回去補
 - `app.css` 只排這個遊戲的版面。跟首頁 `site.css` 在同一頁，所以 class 避開首頁用過的名字（`.hero`、`.stage`、`.field`、`.card`、`.game`⋯）；`site.css` 會給每個 `<section>` 56px 留白，這裡用 `.bomb-app section { padding: 0 }` 拿掉
-- **遊戲頁整頁用設計系統的「遊戲內頂欄」**（返回＋遊戲名＋選單），不用網站導覽列；規則頁是文章，維持網站導覽列。設定畫面有麵包屑「首頁 › 找遊戲 › 定時炸彈」；進行中、爆炸畫面藏起選單鍵與頁尾，免得玩到一半誤點出去。`showScreen()` 把畫面寫在 `<body data-screen>`，CSS 看它切換
+- **遊戲頁與玩法頁都用設計系統的「遊戲內頂欄」**（返回＋遊戲名＋「玩法」「設定」分頁＋選單），不用網站導覽列。頂欄與底部面板在 `app/partials/header.html`，選單、面板、「設定」的行為在 `header.js`（兩頁共用）；玩法頁點「設定」會帶 `#settings` 回遊戲頁再打開設定框。設定畫面有麵包屑「首頁 › 找遊戲 › 定時炸彈」；進行中、爆炸畫面藏起選單鍵與頁尾，免得玩到一半誤點出去。`showScreen()` 把畫面寫在 `<body data-screen>`，CSS 看它切換
 - 頂欄的返回鍵：設定畫面回「找遊戲」；進行中**直接開確認框**（不走 `history.back()`，開始時推的那一格要留給「結束這輪」去收，否則確認後會整個離開網頁）；爆炸畫面等於「改設定」。選單鍵在電腦上是下拉（`site.js` 的 `.nav-more` 開關），640px 以下改開網站的底部面板
 - 電腦版也是一欄、最寬 720px 置中（頂欄同寬）：拿在手上玩的東西，撐滿寬螢幕只會讓按鈕和題目離很遠
 - 主標題拆成「遊戲名」＋「一句話」兩行（`heroTitleHtml()`，在冒號那裡分開），中文才不會被平衡斷行切在詞中間
