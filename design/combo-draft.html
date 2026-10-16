@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>破冰組合：10 分鐘排好暖場和認識彼此｜Woohop</title>
+<!-- 「破冰組合」頁設計稿：選時間 → 排一組（暖場＋認識彼此）→ 照著流程帶。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="woohop.css">
+<link rel="stylesheet" href="site.css">
+<style>
+  /* 「怎麼帶」流程：左邊時間軸，右邊照著念的話 */
+  .flow { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+  .flow li { position: relative; display: grid; grid-template-columns: 64px 1fr; gap: 16px; padding-bottom: 22px; }
+  .flow li::before { content: ""; position: absolute; left: 31px; top: 40px; bottom: 0; width: 2px; background: var(--edge-n); }
+  .flow li:last-child::before { display: none; }
+  .flow .when { width: 64px; height: 40px; border-radius: var(--r-md); display: grid; place-items: center; font-size: 13px; font-weight: 900; border: 2px solid var(--edge-n); background: var(--surface); }
+  .flow .when.w1 { background: var(--orange-face); border-color: var(--orange-edge); color: var(--orange-text); }
+  .flow .when.w2 { background: var(--pink-face); border-color: var(--pink-edge); color: var(--pink-text); }
+  .flow h4 { margin: 6px 0 6px; font-size: 18px; }
+  .flow p { margin: 0 0 8px; color: var(--muted); }
+  .flow .prompt-card { font-size: 16px; padding: 16px 18px; margin-top: 14px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top nav-host" id="site-nav"></div>
+  <main>
+    <div class="page-head">
+      <nav class="crumbs" aria-label="麵包屑"><a href="home-draft.html">首頁</a><span>›</span><span>破冰組合</span></nav>
+      <h1>破冰組合</h1>
+      <p>破冰只是聚會的開頭。選好想花多久，幫你搭一組「先暖場、再認識彼此」，連每一段要說什麼都寫好了。</p>
+    </div>
+
+    <section style="padding-top:20px">
+      <div class="plan" id="combo-root"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <span class="kicker">照著帶就好</span>
+          <h2>這一組怎麼帶</h2>
+          <p>粗體的部分可以直接念出來。</p>
+        </div>
+      </div>
+      <div class="card" style="background:var(--surface)">
+        <ol class="flow" id="flow"></ol>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+<script src="woohop-art.js"></script>
+<script src="site.js"></script>
+<script>
+  Site.nav('combo');
+  Site.footer();
+
+  // 流程跟著排出來的那一組變：開場 → 暖場 → 轉場 → 認識彼此 → 收尾
+  const flow = document.getElementById('flow');
+  const say = text => `<div class="prompt-card"><span class="say">照著念</span>${text}</div>`;
+  Site.combo(document.getElementById('combo-root'), {
+    onPick(pick) {
+      if (!pick) { flow.innerHTML = ''; return; }
+      const [a, b] = pick;
+      flow.innerHTML = `
+        <li><span class="when">開場</span><div>
+          <h4>先讓大家放鬆</h4>
+          <p>不用自我介紹，直接說等一下要做什麼，大家會比較安心。</p>
+          ${say('我們先玩兩個小遊戲，大概十幾分鐘，<mark>不用準備、不會很尷尬</mark>，玩完就開始今天的聚會。')}
+        </div></li>
+        <li><span class="when w1">${a.minutes} 分</span><div>
+          <h4>暖場：${a.name}</h4>
+          <p>${a.desc} 這一段的目的是讓大家笑出來、動起來，輸贏不重要。</p>
+          <a class="link" href="${a.url}">打開${a.name}</a>
+        </div></li>
+        <li><span class="when">轉場</span><div>
+          <h4>從好玩轉到認識彼此</h4>
+          <p>趁大家還在笑的時候接下一個，不要停太久。</p>
+          ${say('剛剛暖身完了，接下來這個會讓我們<mark>多知道彼此一點點</mark>。')}
+        </div></li>
+        <li><span class="when w2">${b.minutes} 分</span><div>
+          <h4>認識彼此：${b.name}</h4>
+          <p>${b.desc} 玩完可以請每組分享一個剛剛發現的共同點。</p>
+          <a class="link" href="${b.url}">打開${b.name}</a>
+        </div></li>
+        <li><span class="when">收尾</span><div>
+          <h4>帶進今天的聚會</h4>
+          <p>用一句話把破冰和接下來的主題接起來。</p>
+          ${say('謝謝大家！我們已經比剛剛熟一點了，<mark>接下來就輕鬆地開始今天的主題</mark>。')}
+        </div></li>`;
+    },
+  });
+</script>
+</body>
+</html>

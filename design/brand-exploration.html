@@ -194,7 +194,6 @@
   .game p { margin: 0; font-size: 14px; color: var(--muted); position: relative; }
   .game .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; position: relative; }
   .game .tags span { font-size: 12px; padding: 2px 10px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
-  .last-played { position: absolute; top: 14px; right: 14px; z-index: 2; font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: var(--r-pill); background: var(--ink); color: #fff; }
 
   /* ============================================================
      logo 陣列：W 彼此相連、淺色同色系、白底
@@ -808,7 +807,6 @@
     <div class="card">
       <p class="sub">徽章</p>
       <div class="row">
-        <span class="badge solid">上次玩過</span>
         <span class="badge b-new">NEW</span>
         <span class="badge b-live"><i class="live-dot"></i>進行中</span>
         <span class="badge b-host"><svg width="14" height="14"><use href="#i-crown"/></svg>主持人</span>
@@ -1156,7 +1154,8 @@
     }
   }
   // 插圖描邊固定 4px（UI 線條 2px 的兩倍），不隨插圖縮放而變粗變細
-  const K = 'stroke="#22222c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"';
+  // 描邊粗細由 CSS 變數 --ill-sw 決定（預設 4px）；縮圖這種小尺寸設成 2px，不然線會比圖還搶眼
+  const K = 'stroke="#22222c" style="stroke-width:var(--ill-sw, 4px)" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"';
   const gap = (len = 80, g = 7) => `stroke-dasharray="${len} ${g}"`;
   const ground = `<path d="M22 118h46M78 118h10M98 118h34M142 118h4" ${K}/>`;
   const hl = () => ''; // 亮面改由「色塊錯開露出的白邊」表現，不另外畫高光
@@ -1245,7 +1244,7 @@
 
   const games = [
     { key: 'avalon',    name: '阿瓦隆語音主持', desc: '一支手機幫你主持整場，不用有人當旁白。', tags: ['5–10 人', '30 分以上', '一支手機'], color: '#3D54B6' },
-    { key: 'buzzer',    name: '搶答遊戲',       desc: '每人一支手機當搶答鈴，主持人出題。',     tags: ['5–30 人', '5–15 分', '每人一支'], color: '#FF9419', last: true },
+    { key: 'buzzer',    name: '搶答遊戲',       desc: '每人一支手機當搶答鈴，主持人出題。',     tags: ['5–30 人', '5–15 分', '每人一支'], color: '#FF9419' },
     { key: 'match',     name: '喜好二選一',     desc: '答完自動分組，還會列出你們的共同話題。', tags: ['5–30 人', '5–15 分', '每人一支'], color: '#F3A4FB' },
     { key: 'bingo',     name: '幸福賓果',       desc: '找到符合條件的人簽名，連線就賓果。',     tags: ['8–30 人', '15 分以上', '每人一支'], color: '#FFC628' },
     { key: 'bomb',      name: '定時炸彈',       desc: '一支手機傳著玩，炸在誰手上誰回答。',     tags: ['4–15 人', '5–15 分', '一支手機'], color: '#EE7B6A' },
@@ -1253,7 +1252,6 @@
   ];
   document.getElementById('games').innerHTML = games.map(g => `
     <article class="game">
-      ${g.last ? '<span class="last-played">上次玩過</span>' : ''}
       <div class="art"><svg viewBox="0 0 160 126" role="img" aria-label="${g.name}插圖">${art[g.key]()}</svg></div>
       <h4>${g.name}</h4>
       <p>${g.desc}</p>
@@ -1474,7 +1472,7 @@
       ${ground}${burst(132, 26, '#FFC628')}${ring(26, 30, '#F3A4FB')}${plus(146, 76, '#4FB59A')}${dot(20, 80, '#FF9419')}
       ${body('<circle cx="66" cy="70" r="34"/>', '#d0daf9', '<path d="M88 40a38 38 0 0 1-32 70h40z" fill="#b8c4f6"/>')}
       ${makeFace('wow', 66, 68, 2)}
-      <path d="M104 92l18 18" ${K} stroke-width="8"/>
+      <path d="M104 92l18 18" stroke="#22222c" stroke-width="8" stroke-linecap="round"/>
       ${body('<circle cx="98" cy="84" r="14"/>', '#ffffff', '', false)}
       <path d="M118 40q4-8 10-4t-2 10" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round"/><circle cx="125" cy="54" r="2.4" fill="#22222c"/>`,
     // 離開房間：擔心的門

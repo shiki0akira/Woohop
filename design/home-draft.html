@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Woohop｜明天就要帶破冰？打開就能帶</title>
+<!--
+  新首頁設計稿（企劃書 §4、§5.4）。只在本機看，不部署。
+  首頁只放精簡推薦器和各區預覽，完整內容在獨立頁：games-draft.html、guides-draft.html。
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="woohop.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="page">
+  <div class="top nav-host" id="site-nav"></div>
+
+  <main>
+    <!-- ================= 主視覺 ================= -->
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true"><svg id="hero-tiles"></svg></div>
+      <div>
+        <span class="kicker">給帶小組、帶活動的你</span>
+        <h1>明天就要帶破冰？<br>打開就能帶。</h1>
+        <p class="lead">不用準備道具、不用背規則。前一晚選好遊戲，現場跟著手機一步一步帶，大家玩完真的會聊起來。</p>
+        <div class="cta">
+          <a class="btn btn-lg btn-solid" href="games-draft.html">幫我挑遊戲</a>
+          <button class="btn btn-lg btn-secondary" type="button" id="hero-random"><svg><use href="#i-dice"/></svg>隨機來一個</button>
+        </div>
+        <div class="trust">
+          <span><svg><use href="#i-check"/></svg>免下載 App</span>
+          <span><svg><use href="#i-check"/></svg>免註冊</span>
+          <span><svg><use href="#i-check"/></svg>手機瀏覽器直接開</span>
+          <span><svg><use href="#i-check"/></svg>8 種語言</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="bubble b1" data-art="match"></div>
+        <div class="bubble b2" data-art="buzzer"></div>
+        <div class="bubble b3" data-art="bomb"></div>
+      </div>
+    </section>
+
+    <!-- ================= 精簡推薦器 ================= -->
+    <section id="finder">
+      <div class="section-head">
+        <div>
+          <span class="kicker">今晚幫你挑</span>
+          <h2>告訴我們聚會的樣子</h2>
+          <p>先選人數和手機，更多條件在「找遊戲」頁。</p>
+        </div>
+      </div>
+      <div id="finder-root"></div>
+    </section>
+
+    <!-- ================= 破冰組合 ================= -->
+    <section id="combo">
+      <div class="section-head">
+        <div>
+          <span class="kicker">破冰組合</span>
+          <h2>暖場 → 認識彼此</h2>
+          <p>破冰只是聚會的開頭。選好想花多久，幫你搭一組：先炒熱氣氛，再讓大家認識彼此。</p>
+        </div>
+        <a class="link" href="combo-draft.html">看怎麼帶這一組</a>
+      </div>
+      <div class="plan" id="combo-root"></div>
+    </section>
+
+    <!-- ================= 派對房間（預告） ================= -->
+    <section id="party">
+      <div class="section-head">
+        <div>
+          <span class="kicker">即將推出</span>
+          <h2>派對房間：開一次房，玩一整晚</h2>
+          <p>大家只要加入一次，主持人挑遊戲，所有人的手機就一起切過去，玩完再回到大廳。</p>
+        </div>
+      </div>
+      <div class="party">
+        <div class="party-steps">
+          <div class="party-step"><b>主持人開房</b><span>螢幕顯示房號和 QR code</span></div>
+          <div class="party-step"><b>大家加入一次</b><span>填名字、挑頭像，之後都不用再填</span></div>
+          <div class="party-step"><b>挑一個遊戲</b><span>主持人選、隨機，或讓大家投票</span></div>
+          <div class="party-step"><b>玩完回大廳</b><span>接著挑下一個，名單一直都在</span></div>
+        </div>
+        <div class="row"><button class="btn btn-secondary" type="button" disabled>開一個派對房間</button><span class="badge b-soon">即將推出</span></div>
+      </div>
+    </section>
+
+    <!-- ================= 桌遊助手 ================= -->
+    <section id="boardgame">
+      <div class="section-head"><div><span class="kicker">桌遊助手</span><h2>玩桌遊，手機當主持人</h2></div></div>
+      <div class="feature">
+        <div class="art-box" data-art="avalon"></div>
+        <div>
+          <h3>阿瓦隆語音主持</h3>
+          <p>不用有人背旁白、不用有人閉眼不能玩。手機用語音一步一步主持整場，所有人都能一起推理。</p>
+          <div class="row" style="margin-top:12px"><span class="badge b-info">5–10 人</span><span class="badge b-info">一支手機</span><span class="badge b-info">8 種語言</span></div>
+        </div>
+        <a class="btn btn-lg btn-solid" href="https://www.vibeweb100.com/avalon/zh-TW">開始主持</a>
+        <svg class="w-row" viewBox="0 0 354 48" aria-hidden="true" id="feature-row"></svg>
+      </div>
+    </section>
+
+    <!-- ================= 其他專案：幸福模擬器（不是遊戲，獨立專案，給幸福小組用） ================= -->
+    <section id="happiness">
+      <div class="section-head"><div><span class="kicker">給幸福小組</span><h2>七週的互動信息，也幫你準備好了</h2></div></div>
+      <div class="feature mint">
+        <div class="art-box" data-art="happiness"></div>
+        <div>
+          <h3>幸福模擬器</h3>
+          <p>幸福小組七週信息的互動版：主持人放大螢幕，全場用手機一起回應、一起看結果，分享時間不再冷場。</p>
+          <div class="row" style="margin-top:12px"><span class="badge b-live">主持人大螢幕</span><span class="badge b-live">每人一支手機</span><span class="badge b-live">七週</span></div>
+        </div>
+        <a class="btn btn-lg g-mint" href="https://www.vibeweb100.com/happiness/zh-TW/">打開幸福模擬器</a>
+        <svg class="w-row" viewBox="0 0 354 48" aria-hidden="true" id="happiness-row"></svg>
+      </div>
+    </section>
+
+    <!-- ================= 帶領指南 ================= -->
+    <section id="guides">
+      <div class="section-head">
+        <div><span class="kicker">帶領指南</span><h2>第一次帶也不怕</h2></div>
+        <a class="link" href="guides-draft.html">看全部指南</a>
+      </div>
+      <div class="guides" id="guides-root"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script src="woohop-art.js"></script>
+<script src="site.js"></script>
+<script src="guides-data.js"></script>
+<script>
+  Site.nav('home');
+  Site.footer();
+
+  // 首頁的推薦器只放兩個條件、列三張，下面接「看全部遊戲」（帶著條件到找遊戲頁）
+  Site.finder(document.getElementById('finder-root'), { filters: ['people', 'phones'], limit: 3, moreHref: 'games-draft.html' });
+  // 隨機來一個：直接打開一個已上線的破冰遊戲（不含即將推出的、不含桌遊助手）
+  document.getElementById('hero-random').addEventListener('click', () => {
+    const pool = Site.GAMES.filter(g => !g.soon && !g.boardgame);
+    location.href = pool[Math.floor(Math.random() * pool.length)].url;
+  });
+  Site.combo(document.getElementById('combo-root'));
+  document.getElementById('guides-root').innerHTML = GUIDES.slice(0, 3).map(guideCard).join('');
+
+  // 主視覺、阿瓦隆：插圖與 W 底圖
+  document.querySelectorAll('[data-art]').forEach(el => {
+    const g = Site.GAMES.find(x => x.key === el.dataset.art);
+    el.innerHTML = Site.artSvg(el.dataset.art) + (el.classList.contains('bubble') && g ? `<small>${g.name}</small>` : '');
+  });
+  document.getElementById('happiness-row').innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="#4FB59A"/>`).join('');
+  document.getElementById('feature-row').innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="#3D54B6"/>`).join('');
+  // 背景全部用同一個最淡的藍紫：深淺混著排會變成一條條直紋，太花
+  const LIGHT = Array(6).fill('#e6eafb');
+  const heroTiles = document.getElementById('hero-tiles');
+  // 背景的 W 放大到 1.8 倍（106×86），比例比較好看；仍維持 logo 的 2×3 色序。
+  // 每顆多畫 0.8px 跟鄰居重疊，蓋掉非整數座標造成的細縫
+  const TW = 59 * 1.8, TH = 48 * 1.8;
+  const drawHero = () => {
+    const w = heroTiles.clientWidth, h = heroTiles.clientHeight;
+    const cols = Math.ceil(w / TW) + 1, rows = Math.ceil(h / TH) + 1, ox = (w - cols * TW) / 2, oy = (h - rows * TH) / 2;
+    let s = '';
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) s += `<use href="#w" x="${ox + c * TW}" y="${oy + r * TH}" width="${TW + 0.8}" height="${TH + 0.8}" fill="${LIGHT[(r % 2) * 3 + (c % 3)]}"/>`;
+    heroTiles.innerHTML = s;
+  };
+  drawHero(); addEventListener('resize', drawHero);
+</script>
+</body>
+</html>

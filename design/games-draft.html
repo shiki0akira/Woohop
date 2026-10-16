@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>找破冰遊戲｜Woohop</title>
+<!-- 「找遊戲」頁設計稿：完整推薦器＋全部遊戲。首頁的「看全部遊戲」會帶著條件過來（?people=…&phones=…）。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="woohop.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="page">
+  <div class="top nav-host" id="site-nav"></div>
+  <main>
+    <div class="page-head">
+      <nav class="crumbs" aria-label="麵包屑"><a href="home-draft.html">首頁</a><span>›</span><span>找遊戲</span></nav>
+      <h1>找破冰遊戲</h1>
+      <p>勾幾個條件，馬上列出適合的遊戲。不勾也可以，全部都在下面。</p>
+    </div>
+    <section style="padding-top:20px">
+      <div id="finder-root"></div>
+    </section>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+<script src="woohop-art.js"></script>
+<script src="site.js"></script>
+<script>
+  Site.nav('games');
+  Site.footer();
+  Site.finder(document.getElementById('finder-root'));
+</script>
+</body>
+</html>

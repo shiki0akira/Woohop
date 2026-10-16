@@ -1,0 +1,172 @@
+/*
+ * Woohop 網站設計稿的頁面樣式（首頁、找遊戲、帶領指南共用）。元件本身在 woohop.css。
+ */
+  /* ---------- 首頁專用 ---------- */
+  body { line-height: 1.6; }
+  a.btn { text-decoration: none; }
+  .page { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+  section { padding: 56px 0; }
+  .section-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+  .section-head h2 { margin: 0; font-size: clamp(24px, 4vw, 32px); font-weight: 900; }
+  .section-head p { margin: 4px 0 0; color: var(--muted); }
+  .kicker { font-size: 13px; font-weight: 900; letter-spacing: .14em; color: var(--blue-text); text-transform: uppercase; }
+
+  /* 頂部導覽：黏在上方 */
+  .top { position: sticky; top: 10px; z-index: 30; margin-top: 10px; }
+
+  /* 主視覺 */
+  .hero { display: grid; gap: 28px; align-items: center; padding: 48px 0 24px; }
+  @media (min-width: 880px) { .hero { grid-template-columns: 1.05fr 1fr; } }
+  .hero h1 { margin: 10px 0 14px; font-size: clamp(36px, 6.4vw, 60px); line-height: 1.15; font-weight: 900; letter-spacing: -0.01em; }
+  .hero .lead { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); max-width: 30em; margin: 0 0 24px; }
+  .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: #55555c; }
+  .hero .trust span { display: inline-flex; align-items: center; gap: 6px; }
+  .hero .trust svg { width: 18px; height: 18px; color: var(--mint-edge); }
+
+  /* 主視覺的 logo 陣列是整個區塊的滿版背景，往下淡出；卡片直接浮在上面 */
+  html, body { overflow-x: clip; } /* 滿版背景用 100vw，桌機有捲軸時會多出一點點 */
+  .hero { position: relative; isolation: isolate; }
+  .hero-bg { position: absolute; z-index: -1; top: -96px; bottom: -40px; left: 50%; width: 100vw; transform: translateX(-50%); overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+  .hero-bg svg { width: 100%; height: 100%; display: block; }
+  .hero-art { position: relative; min-height: 380px; }
+  .bubble { position: absolute; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 10px; animation: bob 4s ease-in-out infinite; }
+  .bubble svg { width: 100%; height: auto; }
+  .bubble small { font-weight: 800; font-size: 13px; margin-top: -2px; }
+  .bubble.b1 { width: 38%; left: 7%; top: 7%; }
+  .bubble.b2 { width: 36%; right: 7%; top: 18%; animation-delay: -1.3s; }
+  .bubble.b3 { width: 36%; left: 32%; bottom: 6%; animation-delay: -2.6s; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+  @media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }
+
+  /* 推薦器 */
+  .finder { display: grid; gap: 18px; padding: 22px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
+  .finder-row { display: grid; gap: 8px; }
+  @media (min-width: 760px) { .finder-row { grid-template-columns: 150px 1fr; align-items: center; } }
+  .finder-row > b { font-size: 15px; }
+  .finder-row .row { gap: 8px; }
+  /* 手機上分段控制改成等寬格子，不會剩一顆掉到第二行 */
+  .finder .segmented, .plan .segmented { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); width: 100%; max-width: 560px; }
+  .finder .segmented button, .plan .segmented button { padding: 0 6px; } /* 窄螢幕時按鈕本身不能比格子寬，不然會把整頁撐寬 */
+  .finder-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; border-top: 2px solid var(--line); padding-top: 16px; }
+  .result-count { font-weight: 800; }
+  .result-count em { font-style: normal; color: var(--blue-text); font-size: 22px; font-variant-numeric: tabular-nums; }
+  .results { margin-top: 18px; }
+  .game { text-decoration: none; color: inherit; }
+  .game .purpose { position: absolute; top: 14px; left: 14px; z-index: 2; }
+  .game.soon { cursor: default; border-style: dashed; box-shadow: none; }
+  .game.soon:hover { transform: none; box-shadow: none; }
+  .game.soon .art { opacity: .85; }
+  .badge.b-soon { background: #ececf0; color: #55555c; border-color: #b9b9c3; }
+  .game .flash { animation: pop .35s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop { from { transform: scale(.94); opacity: .3; } }
+
+  /* 排一場聚會 */
+  .plan { display: grid; gap: 18px; padding: 22px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
+  .plan-steps { display: grid; gap: 12px; }
+  @media (min-width: 760px) { .plan-steps { grid-template-columns: repeat(3, 1fr); } }
+  .plan-step { position: relative; display: grid; grid-template-columns: 72px 1fr; gap: 12px; align-items: center; padding: 12px; border-radius: var(--r-md); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); background: var(--surface); margin-bottom: 4px; }
+  .plan-step .mini { width: 72px; height: 58px; border-radius: var(--r-md); background: var(--bg); display: grid; place-items: center; overflow: hidden; }
+  .plan-step .mini svg { width: 100%; height: auto; }
+  .plan-step .stage-label { font-size: 12px; font-weight: 900; letter-spacing: .08em; }
+  .plan-step h4 { margin: 0; font-size: 17px; }
+  .plan-step .min { font-size: 13px; color: var(--muted); font-weight: 700; }
+  .plan-step.s1 .stage-label { color: var(--orange-text); }
+  .plan-step.s2 .stage-label { color: var(--pink-text); }
+  .plan-step.s3 .stage-label { color: var(--mint-text); }
+  .plan-step.is-empty { border-style: dashed; box-shadow: none; }
+  .plan-total { font-weight: 800; }
+
+  /* 桌遊助手：阿瓦隆 */
+  .feature { display: grid; gap: 20px; align-items: center; padding: 24px; border-radius: var(--r-lg); border: 2px solid var(--indigo-edge); box-shadow: 0 4px 0 var(--indigo-edge); background: var(--indigo-face); position: relative; overflow: hidden; isolation: isolate; }
+  @media (min-width: 760px) { .feature { grid-template-columns: 220px 1fr auto; } }
+  .feature .art-box { background: var(--surface); border-radius: var(--r-lg); border: 2px solid var(--indigo-edge); padding: 8px; }
+  .feature h3 { margin: 0 0 6px; font-size: 24px; color: var(--indigo-text); }
+  .feature p { margin: 0; color: var(--indigo-text); opacity: .85; }
+  .feature .w-row { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; opacity: .1; z-index: -1; }
+
+  /* 帶領指南 */
+  .guides { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .guide { display: grid; gap: 8px; padding: 20px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); text-decoration: none; color: inherit; transition: transform .15s; }
+  .guide:hover { transform: translateY(-3px); }
+  .guide > .badge { justify-self: start; } /* grid 子元素預設會撐滿整列，徽章要維持文字寬度 */
+  .guide h4 { margin: 0; font-size: 18px; line-height: 1.45; }
+  .guide p { margin: 0; color: var(--muted); font-size: 14px; }
+  .guide .link { margin-top: 6px; }
+
+  .site-footer { margin-top: 40px; padding: 28px 0 48px; border-top: 2px solid var(--line); font-size: 14px; color: var(--muted); }
+  .site-footer .links { display: flex; flex-wrap: wrap; gap: 18px; }
+  .site-footer .link { font-size: 14px; }
+
+  /* ---------- 導覽列：分頁置中，找遊戲是右上角的實心按鈕 ---------- */
+  .nav-links { justify-content: center; }
+  /* 找遊戲跟語言切換同一個尺寸：44px 高、14px 字、3px 底線 */
+  .nav-cta { --h: 44px; --depth: 3px; padding: 0 14px; font-size: 14px; gap: 6px; border-radius: var(--r-md); margin-bottom: 3px; }
+  .nav-cta svg { width: 16px; height: 16px; }
+  /* 一般（粉彩）按鈕；不加任何外框，只有鍵盤操作時才出現 :focus-visible 的框 */
+  .nav-cta:focus:not(:focus-visible) { outline: none; }
+  @container (max-width: 520px) { .nav-cta { display: none; } }
+
+  /* ---------- 推薦器的「看全部」 ---------- */
+  .more-row { display: flex; justify-content: center; margin-top: 18px; }
+  .more-row svg { width: 18px; height: 18px; }
+
+  /* ---------- 破冰組合：兩段中間一個箭頭 ---------- */
+  .plan .plan-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .plan .plan-step { flex: 1 1 260px; text-decoration: none; color: inherit; } /* 卡片本身是連結，不要底線 */
+  .plan-arrow { font-size: 24px; font-weight: 900; color: var(--muted); }
+  @media (max-width: 640px) { .plan-arrow { width: 100%; text-align: center; transform: rotate(90deg); } }
+
+  /* ---------- 派對房間預告 ---------- */
+  .party { display: grid; gap: 20px; padding: 24px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
+  .party-steps { display: grid; gap: 12px; counter-reset: step; }
+  @media (min-width: 760px) { .party-steps { grid-template-columns: repeat(4, 1fr); } }
+  .party-step { padding: 14px; border-radius: var(--r-md); background: var(--bg); }
+  .party-step b { display: block; margin-bottom: 4px; }
+  .party-step b::before { counter-increment: step; content: counter(step) "．"; color: var(--blue-text); }
+  .party-step span { font-size: 14px; color: var(--muted); }
+
+  /* ---------- 頁尾 ---------- */
+  .site-footer { display: grid; gap: 28px; }
+  .footer-grid { display: grid; gap: 28px 24px; grid-template-columns: 1fr 1fr; }
+  @media (min-width: 760px) { .footer-grid { grid-template-columns: 1.6fr repeat(3, 1fr); } }
+  .footer-brand { grid-column: 1 / -1; display: grid; gap: 10px; align-content: start; }
+  @media (min-width: 760px) { .footer-brand { grid-column: auto; } }
+  .footer-brand p { margin: 0; color: var(--muted); }
+  .footer-col { display: grid; gap: 10px; align-content: start; justify-items: start; }
+  .footer-col h4 { margin: 0 0 2px; font-size: 13px; letter-spacing: .1em; color: var(--muted); }
+  .footer-col .link { font-size: 15px; }
+  .footer-bottom { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 2px solid var(--line); }
+
+  /* ---------- 子頁的標題區 ---------- */
+  .page-head { padding: 40px 0 8px; }
+  .page-head h1 { margin: 8px 0 8px; font-size: clamp(30px, 5vw, 44px); font-weight: 900; }
+  .page-head p { margin: 0; color: var(--muted); max-width: 36em; }
+
+  /* ---------- 帶領指南列表 ---------- */
+  .guide-filter { margin: 20px 0; }
+  .guide .meta { font-size: 13px; color: var(--muted); font-weight: 700; }
+
+  /* 目前所在的分頁不做成按鈕，只換顏色（靛藍）；滑過時一樣只有淡底 */
+  .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--indigo); }
+  .nav-links a[aria-current="page"]:hover { background: #eef1fc; }
+
+  /* 小縮圖（約 72px 寬）的插圖描邊改成 2px，跟 UI 線條一樣粗 */
+  .plan-step .mini svg { --ill-sw: 2px; }
+
+  /* 專區的薄荷綠版本（幸福模擬器：不是遊戲，用自己的顏色跟遊戲卡片區分） */
+  .feature.mint { background: var(--mint-face); border-color: var(--mint-edge); box-shadow: 0 4px 0 var(--mint-edge); }
+  .feature.mint .art-box { border-color: var(--mint-edge); }
+  .feature.mint h3, .feature.mint p { color: var(--mint-text); }
+
+  /* 專區的插圖在窄螢幕不要撐滿整列 */
+  .feature .art-box { max-width: 220px; width: 100%; justify-self: center; }
+
+  /* 還沒做的連結、文章：停用，不能點，顏色變淡 */
+  .is-disabled { cursor: not-allowed; }
+  .link.is-disabled { color: #8a8a93; font-weight: 700; }
+  .link.is-disabled:hover { text-decoration: none; color: #8a8a93; }
+  .guide.is-disabled { cursor: default; }
+  .guide.is-disabled:hover { transform: none; }
+  .guide.is-disabled .badge.b-soon { justify-self: start; }

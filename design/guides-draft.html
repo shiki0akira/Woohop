@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>帶領指南｜Woohop</title>
+<!-- 「帶領指南」列表頁設計稿。每篇指南正式上線時是獨立網址的文章頁（SEO 入口）。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="woohop.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="page">
+  <div class="top nav-host" id="site-nav"></div>
+  <main>
+    <div class="page-head">
+      <nav class="crumbs" aria-label="麵包屑"><a href="home-draft.html">首頁</a><span>›</span><span>帶領指南</span></nav>
+      <h1>帶領指南</h1>
+      <p>第一次帶破冰、遇到冷場、人太多或太少——每一篇都是可以直接照著做的流程和說法。</p>
+    </div>
+    <div class="row guide-filter" role="group" aria-label="指南分類" id="guide-filter">
+      <button class="chip" type="button" aria-pressed="true" data-type="all"><svg><use href="#i-check"/></svg>全部</button>
+      <button class="chip" type="button" aria-pressed="false" data-type="beginner">新手必看</button>
+      <button class="chip" type="button" aria-pressed="false" data-type="scene">情境</button>
+      <button class="chip" type="button" aria-pressed="false" data-type="tip">技巧</button>
+    </div>
+    <div class="guides" id="guides-root"></div>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+<script src="woohop-art.js"></script>
+<script src="site.js"></script>
+<script src="guides-data.js"></script>
+<script>
+  Site.nav('guides');
+  Site.footer();
+  const root = document.getElementById('guides-root');
+  const show = type => { root.innerHTML = GUIDES.filter(g => type === 'all' || g.type === type).map(guideCard).join(''); };
+  // 分類是單選：點哪一個就只看那一類
+  document.getElementById('guide-filter').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    e.currentTarget.querySelectorAll('.chip').forEach(c => {
+      const on = c === b;
+      c.setAttribute('aria-pressed', String(on));
+      c.innerHTML = (on ? '<svg><use href="#i-check"/></svg>' : '') + c.textContent;
+    });
+    show(b.dataset.type);
+  });
+  show('all');
+</script>
+</body>
+</html>
