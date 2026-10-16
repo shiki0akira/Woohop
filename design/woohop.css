@@ -357,7 +357,7 @@
    * 分頁會越加越多，所以連結由資料產生，放不下的自動收進「更多」（priority+ 導覽）；
    * 手機寬度只留 logo、語言和選單鍵，選單用底部面板打開。
    */
-  .navbar { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: var(--r-lg); background: #ffffffe6; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
+  .navbar { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: var(--r-lg); background: #ffffffcc; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
   /* 字標：圓體粗字（Fredoka 700）跟 W 的圓拱同一個份量；logo 跟字只隔 6px，高度對齊字的大寫高 */
   .wordmark { flex: none; display: inline-flex; align-items: center; gap: 6px; font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -0.01em; color: var(--indigo-edge); text-decoration: none; }
   .wordmark svg { width: 34px; height: 27.7px; flex: none; transform: translateY(-1px); }
