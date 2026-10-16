@@ -86,10 +86,19 @@
   /*
    * 常見問題的插圖：左邊的小人舉手發問，頭上一個大問號泡泡；右邊的小人頂著亮起的燈泡（問題有答案了）。
    */
+
+  // 問號：跟手臂同一種畫法（粗色線＋外側 4px 黑框），不用文字字形，線條粗細才會跟其他地方一致
+  const qmark = (x, y) => {
+    const d = `M${x - 15} ${y - 14}a15 15 0 1 1 22 13c-5 3-7 6-7 11`;
+    return `<path d="${d}" fill="none" stroke="#22222c" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="stroke-width:calc(var(--q-w, 14px) + var(--ill-sw, 4px) * 2)"/>` +
+      `<path d="${d}" fill="none" stroke="#7489E6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="stroke-width:var(--q-w, 14px)"/>` +
+      `<circle cx="${x}" cy="${y + 26}" r="8" fill="#7489E6" ${K}/>`;
+  };
+
   const faqArt = () => `
     ${confetti(40, 40, '#FFC628', -14, 0.8)}${confetti(292, 70, '#F3A4FB', 12, 0.8)}${burst(276, 30, '#4FB59A')}${plus(30, 150, '#EE7B6A', 6)}${ring(300, 170, '#7489E6', 6)}${dot(150, 22, '#FF9419', 4)}
     <!-- 大問號泡泡 -->
-    <g class="h-pop">${bubble(50, 34, 128, 104, 92, '<text x="114" y="118" text-anchor="middle" font-family="Fredoka, Nunito, sans-serif" font-weight="700" font-size="92" fill="#7489E6" stroke="#22222c" stroke-linejoin="round" paint-order="stroke" vector-effect="non-scaling-stroke" style="stroke-width:calc(var(--ill-sw, 4px) * 2)">?</text>')}</g>
+    <g class="h-pop">${bubble(50, 34, 128, 104, 92, qmark(114, 86))}</g>
     <!-- 燈泡：問題有答案了 -->
     <g class="h-wiggle" style="animation-duration:2.4s">
       ${body('<path d="M232 118a28 28 0 1 1 28 0v12h-28z"/>', '#FFC628', '', false)}
