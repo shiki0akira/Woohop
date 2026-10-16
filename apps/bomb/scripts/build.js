@@ -299,6 +299,7 @@ function tokensFor(lang, page, assetVersion) {
     // 主標題拆成「遊戲名」＋「一句話」兩行（冒號那裡分開），不然中文會被平衡斷行切在詞中間。
     // 冒號留在 HTML 裡給爬蟲與螢幕閱讀器，畫面上藏起來
     heroTitleHtml: heroTitleHtml(strings.heroTitle),
+    menuLabel: SITE_STRINGS[lang].menu,
     crumbHome: SITE_STRINGS[lang].home,
     crumbGames: SITE_STRINGS[lang].navGames,
     siteOrigin: ORIGIN,

@@ -226,8 +226,12 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 .game-bar { height: 64px; padding: 0 8px; background: #ffffffcc; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); border-radius: var(--r-lg); box-shadow: var(--raise-n); }
 .game-bar .title { font-size: 18px; font-weight: 900; }
 .game-bar-spacer { width: 44px; flex: none; }
-body:not([data-screen="play"]):not([data-screen="boom"]) .game-bar-host { display: none; }
-body[data-screen="play"] #site-nav, body[data-screen="boom"] #site-nav,
+/* 遊戲頁整頁用遊戲內頂欄（規則頁是文章，維持網站導覽列）；選單鍵只在設定畫面，頁尾玩的時候藏起來 */
+.bomb-game #site-nav { display: none; }
+.bomb-app:not(.bomb-game) .game-bar-host { display: none; }
+.game-menu { display: none; }
+body[data-screen="setup"] .game-menu { display: inline-flex; }
+body[data-screen="setup"] .game-bar-spacer { display: none; }
 body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { display: none; }
 
 /* ---------- 電腦版版面 ---------- */

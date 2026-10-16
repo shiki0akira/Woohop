@@ -5,7 +5,7 @@
     {{jsonLd}}
   </head>
 
-  <body class="bomb-app">
+  <body class="bomb-app bomb-game" data-screen="setup">
     <!--
       設定畫面那兩顆按鈕的圖示。Material Symbols Rounded（24px / wght 400 / GRAD 0 /
       opsz 24），依 ARCHITECTURE.md 第 7 節直接內嵌 SVG、fill 吃 currentColor，
@@ -27,14 +27,15 @@
     {{header}}
 
     <!--
-      遊戲內頂欄（設計系統「導覽」那一節的手機頂欄）：進行中、爆炸畫面用這條取代網站導覽列。
-      玩的時候不需要「找遊戲、破冰組合⋯」那排連結，誤點出去這一輪就沒了。
-      返回鍵等同瀏覽器的上一頁：進行中會先跳確認，爆炸畫面直接回設定（app.js 的 onPopState）。
+      遊戲內頂欄（設計系統「導覽」那一節的手機頂欄）：遊戲頁整頁都用這條取代網站導覽列。
+      左邊返回：設定畫面回「找遊戲」，進行中先跳確認，爆炸畫面回設定（app.js）。
+      右邊選單鍵只在設定畫面出現，打開的是網站的選單面板；玩的時候不放，誤點出去這一輪就沒了。
     -->
     <div class="game-bar-host">
       <div class="appbar game-bar">
         <button class="btn btn-icon btn-ghost" id="game-back" type="button" aria-label="{{gameBack}}"><svg><use href="#i-back"/></svg></button>
         <div class="title">{{navTitle}}</div>
+        <button class="btn btn-icon btn-ghost game-menu" id="game-menu" type="button" aria-label="{{menuLabel}}"><svg><use href="#i-menu"/></svg></button>
         <span class="game-bar-spacer" aria-hidden="true"></span>
       </div>
     </div>

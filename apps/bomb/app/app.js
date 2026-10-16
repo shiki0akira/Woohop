@@ -965,11 +965,21 @@
     history.back();
   });
 
-  // 遊戲內頂欄的返回鍵：進行中先跳確認（確認後回設定畫面），爆炸畫面等於「改設定」。
-  // 直接開確認框，不經過 history.back()：開始遊戲時推的那一格要留給「結束這輪」去收
+  // 遊戲內頂欄的返回鍵：設定畫面回「找遊戲」；進行中先跳確認（確認後回設定畫面）；爆炸畫面等於「改設定」。
+  // 進行中直接開確認框，不經過 history.back()：開始遊戲時推的那一格要留給「結束這輪」去收
   document.getElementById('game-back').addEventListener('click', function () {
     if (screen === 'boom') el.backToSetup.click();
     else if (screen === 'play') openLeaveModal();
+    else location.href = '/' + LANG + '/games/';
+  });
+
+  // 設定畫面右上角的選單鍵：打開網站的選單面板（找遊戲、破冰組合⋯），跟首頁手機版同一個
+  document.getElementById('game-menu').addEventListener('click', function () {
+    var sheet = document.getElementById('sheet');
+    if (sheet && typeof sheet.showModal === 'function') {
+      sheet.showModal();
+      sheet.focus();
+    }
   });
 
   el.leaveCancel.addEventListener('click', closeLeaveModal);
