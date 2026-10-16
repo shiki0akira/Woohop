@@ -17,6 +17,10 @@
     location.href = g.url;
   });
 
+  // 常見問題一次只開一題。<details name="faq"> 新瀏覽器會自己處理，這裡給舊瀏覽器補上同樣的行為
+  const faqs = [...document.querySelectorAll('#faq details')];
+  faqs.forEach(d => d.addEventListener('toggle', () => { if (d.open) faqs.forEach(o => { if (o !== d) o.open = false; }); }));
+
   // 專區的插圖與底部一整排淡 W
   document.querySelectorAll('[data-art]').forEach(el => { el.innerHTML = artSvg(el.dataset.art); });
   document.querySelectorAll('[data-w-row]').forEach(el => {

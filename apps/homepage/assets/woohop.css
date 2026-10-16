@@ -532,3 +532,7 @@
 
   .demo-grid { display: grid; gap: 16px; }
   @media (min-width: 760px) { .demo-grid.two { grid-template-columns: 1fr 1fr; } }
+  /* 問答框滑過時變色：外框與底線換藍紫、背景帶一點淡藍（跟按鈕 hover 同一個感覺） */
+  .faq details { transition: border-color .15s, box-shadow .15s, background-color .15s; }
+  .faq details:hover { border-color: var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); background: #f7f8fe; }
+  .faq summary:hover { color: var(--blue-text); }

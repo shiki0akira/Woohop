@@ -20,7 +20,7 @@ const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
 const PAGES = { home: '', games: 'games/', combo: 'combo/' };
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16c';
+const ASSET_VERSION = '2026-10-16e';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -193,7 +193,7 @@ function jsonLd(s, lang, page, title, desc) {
       })),
     });
   }
-  const faq = page === 'home' ? faqItems(s.homeArticle) : [];
+  const faq = page === 'home' ? faqItems(s.faq) : [];
   if (faq.length) {
     graph.push({
       '@type': 'FAQPage',
@@ -217,32 +217,16 @@ function jsonLd(s, lang, page, title, desc) {
   return { '@context': 'https://schema.org', '@graph': graph };
 }
 
-/* ---------- 常見問題（由 zh-TW 的長文轉成，只有 zh-TW） ----------
- * 長文的前幾段本來就是「問題＋說明」，直接當成一題；最後一段「常見問題」裡每一段是「**問？**答」，拆成一題一題。
- * 內容照樣寫在 HTML 裡（<details> 收合也看得到），SEO 不受影響；另外輸出 FAQPage 結構化資料。
+/* ---------- 常見問題（只有 zh-TW） ----------
+ * 內容寫在 HTML 裡（<details> 收合也看得到），SEO 不受影響；另外輸出 FAQPage 結構化資料。
  */
-function faqItems(sections) {
-  if (!Array.isArray(sections)) return [];
-  const items = [];
-  for (const sec of sections) {
-    const qa = sec.p.every((p) => /^\*\*[^*]+\*\*/.test(p)) && sec.p.length > 1;
-    if (qa) {
-      for (const p of sec.p) {
-        const m = p.match(/^\*\*([^*]+)\*\*\s*(.*)$/);
-        items.push({ q: m[1], a: [m[2]] });
-      }
-    } else {
-      items.push({ q: sec.h, a: sec.p });
-    }
-  }
-  return items;
-}
+const faqItems = (faq) => (Array.isArray(faq) ? faq.map(([q, a]) => ({ q, a: [a] })) : []);
 // **重點** 轉成 <strong>。先跳脫再轉換：跳脫過的文字不可能再有 < >，加進去的 <strong> 是唯一的標籤
 const rich = (p) => esc(p).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 const plain = (p) => p.replace(/\*\*/g, '');
 function faqHtml(items) {
   return items
-    .map((it, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(it.q)}</summary>${it.a.map((p) => `<p>${rich(p)}</p>`).join('')}</details>`)
+    .map((it, i) => `<details name="faq"${i === 0 ? ' open' : ''}><summary>${esc(it.q)}</summary>${it.a.map((p) => `<p>${rich(p)}</p>`).join('')}</details>`)
     .join('');
 }
 
@@ -325,10 +309,10 @@ function homePage(lang) {
           <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div></div>
           <div class="guides">${s.guides.map(([type, title, desc, min]) => `<div class="guide is-disabled" aria-disabled="true"><span class="badge ${{ beginner: 'b-new', scene: 'b-info', tip: 'b-live' }[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span><span class="badge b-soon">${esc(s.soon)}</span></div>`).join('')}</div>
         </section>
-${s.homeArticle ? `
+${s.faq ? `
         <section id="faq">
-          <div class="section-head"><div><span class="kicker">${esc(s.faqKicker)}</span><h2>${esc(s.faqKicker)}</h2></div></div>
-          <div class="faq">${faqHtml(faqItems(s.homeArticle))}</div>
+          <div class="section-head"><div><h2>${esc(s.faqKicker)}</h2></div></div>
+          <div class="faq">${faqHtml(faqItems(s.faq))}</div>
         </section>` : ''}
       </main>
 ${footer(s, lang, 'home')}
