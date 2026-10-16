@@ -6,8 +6,8 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 
 | 位置 | 內容 |
 |---|---|
-| `src/locales.mjs` | **8 種語言的全部文案**（唯一來源）。遊戲名稱與短介紹跟各遊戲頁的用語一致；`homeArticle` 長文只有 zh-TW |
-| `scripts/prerender.js` | 建置：為 8 語言 × 3 頁產生 `dist/{lang}/`、`dist/{lang}/games/`、`dist/{lang}/combo/`，含 title、description、canonical、hreflang、og、結構化資料、sitemap |
+| `src/locales.mjs` | **8 種語言的全部文案**（唯一來源）。遊戲名稱與短介紹跟各遊戲頁的用語一致；`faq` 常見問題只有 zh-TW |
+| `scripts/prerender.js` | 建置：為 8 語言 × 4 頁產生 `dist/{lang}/`、`games/`、`combo/`、`guides/`，含 title、description、canonical、hreflang、og、結構化資料、sitemap |
 | `assets/woohop.css`、`assets/woohop-art.js`、`assets/hero-art.js` | 從 `design/` 複製的設計系統樣式與插圖（**兩邊要同步改**） |
 | `assets/site.css`、`assets/site.js` | 三頁共用的頁面樣式與程式（導覽、語言選單、遊戲卡、推薦器、破冰組合、GA） |
 | `assets/home.js`、`games.js`、`combo.js` | 各頁專用 |
@@ -19,7 +19,9 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 
 ## SEO 要守的
 
-- 網址不變：`/{lang}/` 是舊網址；`/games/`、`/combo/` 是改版新增的
+- 網址不變：`/{lang}/` 是舊網址；`/games/`、`/combo/`、`/guides/` 是改版新增的
+- **`/guides/` 目前 noindex、不進 sitemap**：指南文章還沒寫，只有「即將推出」卡片會被當成內容太薄。文章寫好後拿掉 `prerender.js` 的 `NOINDEX`
+- 常見問題（`faq`）只有 zh-TW，另外輸出 FAQPage 結構化資料
 - 網站名稱 `Woohop`，結構化資料的 `alternateName` 保留 `Web100`
 - 幸福模擬器不是遊戲（獨立專案），只出現在首頁專區與頁尾，不進遊戲清單與結構化資料的 ItemList
 - 中文長文不硬翻成其他語言（2026/8 降權的成因）

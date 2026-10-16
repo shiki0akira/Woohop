@@ -25,7 +25,7 @@
   remember(lang);
 
   /* ================= 網址 ================= */
-  const PATHS = { home: '', games: 'games/', combo: 'combo/' };
+  const PATHS = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
   const pageUrl = (p, l = lang) => `/${l}/${PATHS[p]}`;
   const gameUrl = key => (key === 'avalon' ? `/avalon/${lang}` : key === 'happy' ? '/happiness/zh-TW/' : `/${key}/${lang}/`);
 
@@ -225,7 +225,7 @@
   };
 
   /* ================= 導覽列（分頁置中，放不下的收進「更多」）、語言選單、手機選單 ================= */
-  const NAV = [[t.navGames, pageUrl('games'), 'games'], [t.navCombo, pageUrl('combo'), 'combo'], [t.navBoardgame, `/avalon/${lang}`, 'boardgame']];
+  const NAV = [[t.navGames, pageUrl('games'), 'games'], [t.navCombo, pageUrl('combo'), 'combo'], [t.navBoardgame, `/avalon/${lang}`, 'boardgame'], [t.navGuides, pageUrl('guides'), 'guides']];
   const nav = () => {
     const host = document.getElementById('site-nav');
     const links = host.querySelector('.nav-links');

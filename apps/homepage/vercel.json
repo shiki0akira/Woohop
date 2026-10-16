@@ -95,12 +95,12 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|guides)",
       "destination": "/:lang/:page/",
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|guides)/index.html",
       "destination": "/:lang/:page/",
       "permanent": true
     },
@@ -363,7 +363,7 @@
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/api/new-room"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|guides)/",
       "destination": "/:lang/:page/index.html"
     },
     {

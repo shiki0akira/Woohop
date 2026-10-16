@@ -18,9 +18,11 @@ import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES } from '../src/locales.mjs';
 
 const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
-const PAGES = { home: '', games: 'games/', combo: 'combo/' };
+const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
+// 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
+const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16e';
+const ASSET_VERSION = '2026-10-16f';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -46,7 +48,7 @@ function head(s, lang, page, title, desc, jsonLd) {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(desc)}" />
-    <link rel="canonical" href="${url(lang, page)}" />
+${NOINDEX.has(page) ? '    <meta name="robots" content="noindex, follow" />\n' : ''}    <link rel="canonical" href="${url(lang, page)}" />
 ${alternates}
     <link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}" />
     <meta property="og:type" content="website" />
@@ -77,6 +79,7 @@ function navbar(s, lang, page) {
     [s.navGames, local(lang, 'games'), 'games'],
     [s.navCombo, local(lang, 'combo'), 'combo'],
     [s.navBoardgame, `/avalon/${lang}`, 'boardgame'],
+    [s.navGuides, local(lang, 'guides'), 'guides'],
   ];
   const langMenu = LANGS.map(
     (l) => `<a href="${local(l, page)}" hreflang="${l}" lang="${l}" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${esc(LANG_NAMES[l])}</a>`,
@@ -113,7 +116,7 @@ function footer(s, lang, page) {
             <a class="wordmark" href="${local(lang, 'home')}" style="font-size:22px"><svg viewBox="0 0 59 48" style="width:30px;height:24.4px" aria-hidden="true"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
             <p>${esc(s.footerTag1)}<br>${esc(s.footerTag2)}</p>
           </div>
-          <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a></div>
+          <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
           <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>
           <div class="footer-col"><h4>${esc(s.footerAbout)}</h4><span class="link is-disabled" aria-disabled="true">${esc(s.aboutUs)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.privacy)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.contact)}</span></div>
         </div>
@@ -170,7 +173,7 @@ function jsonLd(s, lang, page, title, desc) {
     isPartOf: { '@id': `${SITE}/#website` },
   };
   const graph = [website, pageNode];
-  if (page !== 'combo') {
+  if (page === 'home' || page === 'games') {
     // 首頁與找遊戲頁：宣告這是「可以直接開來玩的工具清單」，不是一篇推薦文
     graph.push({
       '@type': 'ItemList',
@@ -210,7 +213,7 @@ function jsonLd(s, lang, page, title, desc) {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
-        { '@type': 'ListItem', position: 2, name: page === 'games' ? s.gamesH1 : s.comboH1, item: url(lang, page) },
+        { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1 }[page], item: url(lang, page) },
       ],
     });
   }
@@ -230,7 +233,14 @@ function faqHtml(items) {
     .join('');
 }
 
-/* ---------- 三種頁面 ---------- */
+/* ---------- 指南卡片（文章還沒寫：不是連結，標即將推出） ---------- */
+
+const GUIDE_BADGE = { beginner: 'b-new', scene: 'b-info', tip: 'b-live' };
+function guideCard(s, [type, title, desc, min]) {
+  return `<div class="guide is-disabled" aria-disabled="true" data-type="${type}"><span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span><span class="badge b-soon">${esc(s.soon)}</span></div>`;
+}
+
+/* ---------- 頁面 ---------- */
 
 function homePage(lang) {
   const s = STRINGS[lang];
@@ -306,8 +316,8 @@ function homePage(lang) {
           </div>
         </section>
         <section id="guides">
-          <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div></div>
-          <div class="guides">${s.guides.map(([type, title, desc, min]) => `<div class="guide is-disabled" aria-disabled="true"><span class="badge ${{ beginner: 'b-new', scene: 'b-info', tip: 'b-live' }[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span><span class="badge b-soon">${esc(s.soon)}</span></div>`).join('')}</div>
+          <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div><a class="link" href="${local(lang, 'guides')}">${esc(s.seeAllGuides)}</a></div>
+          <div class="guides">${s.guides.map((g) => guideCard(s, g)).join('')}</div>
         </section>
 ${s.faq ? `
         <section id="faq">
@@ -376,11 +386,33 @@ ${scripts(s, lang, 'combo', ['combo.js'])}
 `;
 }
 
-/* ---------- sitemap：每一頁都帶 hreflang ---------- */
+function guidesPage(lang) {
+  const s = STRINGS[lang];
+  const title = s.guidesSeoTitle, desc = s.guidesSeoDesc;
+  const types = [['all', s.guidesAll], ...Object.entries(s.guideTypes)];
+  return `${head(s, lang, 'guides', title, desc, jsonLd(s, lang, 'guides', title, desc))}
+  <body>${navbar(s, lang, 'guides')}
+      <main id="main">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><span>${esc(s.navGuides)}</span></nav>
+          <h1>${esc(s.guidesH1)}</h1>
+          <p>${esc(s.guidesLead)}</p>
+        </div>
+        <div class="row guide-filter" role="group" aria-label="${esc(s.guidesH1)}" id="guide-filter">${types.map(([k, label], i) => `<button class="chip" type="button" aria-pressed="${i === 0}" data-type="${k}">${i === 0 ? '<svg><use href="#i-check"/></svg>' : ''}${esc(label)}</button>`).join('')}</div>
+        <div class="guides" id="guides-root">${[...s.guides, ...s.moreGuides].map((g) => guideCard(s, g)).join('')}</div>
+      </main>
+${footer(s, lang, 'guides')}
+${scripts(s, lang, 'guides', ['guides.js'])}
+  </body>
+</html>
+`;
+}
+
+/* ---------- sitemap：每一頁都帶 hreflang（noindex 的頁面不放） ---------- */
 
 function buildSitemap() {
   const entries = [];
-  for (const page of Object.keys(PAGES)) {
+  for (const page of Object.keys(PAGES).filter((p) => !NOINDEX.has(p))) {
     const alternates = LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${url(l, page)}"/>`).join('\n');
     const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}"/>`;
     for (const l of LANGS) entries.push(`  <url>\n    <loc>${url(l, page)}</loc>\n${alternates}\n${xDefault}\n  </url>`);
@@ -394,7 +426,7 @@ function buildSitemap() {
 if (existsSync(OUT)) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
-const render = { home: homePage, games: gamesPage, combo: comboPage };
+const render = { home: homePage, games: gamesPage, combo: comboPage, guides: guidesPage };
 let count = 0;
 for (const lang of LANGS) {
   for (const page of Object.keys(PAGES)) {
