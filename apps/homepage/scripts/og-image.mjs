@@ -95,7 +95,7 @@ ${T.scripts.map((f) => `<script src="${asset(f)}"></script>`).join('')}
   const TW = 59 * 1.8, TH = 48 * 1.8;
   let t = '';
   for (let r = -1; r < 630 / TH + 1; r++) for (let c = -1; c < 1200 / TW + 1; c++)
-    t += '<use href="#w" x="' + (c * TW - 20) + '" y="' + (r * TH - 30) + '" width="' + (TW + .8) + '" height="' + (TH + .8) + '" fill="#e6eafb"/>';
+    t += '<use href="#w" x="' + (c * TW - 20) + '" y="' + (r * TH - 30) + '" width="' + (TW + .8) + '" height="' + (TH + .8) + '" fill="#dde3fa"/>';
   document.getElementById('tiles').innerHTML = t;
   // 標語太長（德文、法文）就縮小字級，直到塞進左欄；日文不讓它在詞中間斷行（keep-all），寧可縮小
   const h1 = document.getElementById('title');

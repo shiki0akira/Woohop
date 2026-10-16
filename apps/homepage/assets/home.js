@@ -29,14 +29,14 @@
     el.innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${el.dataset.wRow}"/>`).join('');
   });
 
-  // 主視覺背景：滿版的 W 陣列，全部用同一個最淡的藍紫；放大 1.8 倍，每顆多畫 0.8px 蓋掉接縫
+  // 主視覺背景：滿版的 W 陣列，全部用同一個淡藍紫（#dde3fa，2026-10-17 從 #e6eafb 加深一階）；放大 1.8 倍，每顆多畫 0.8px 蓋掉接縫
   const tiles = document.getElementById('hero-tiles');
   const TW = 59 * 1.8, TH = 48 * 1.8;
   const draw = () => {
     const w = tiles.clientWidth, h = tiles.clientHeight;
     const cols = Math.ceil(w / TW) + 1, rows = Math.ceil(h / TH) + 1, ox = (w - cols * TW) / 2, oy = (h - rows * TH) / 2;
     let s = '';
-    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) s += `<use href="#w" x="${ox + c * TW}" y="${oy + r * TH}" width="${TW + 0.8}" height="${TH + 0.8}" fill="#e6eafb"/>`;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) s += `<use href="#w" x="${ox + c * TW}" y="${oy + r * TH}" width="${TW + 0.8}" height="${TH + 0.8}" fill="#dde3fa"/>`;
     tiles.innerHTML = s;
   };
   draw();

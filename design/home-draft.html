@@ -157,7 +157,7 @@
   document.getElementById('happiness-row').innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="#4FB59A"/>`).join('');
   document.getElementById('feature-row').innerHTML = [0, 1, 2, 3, 4, 5].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="#3D54B6"/>`).join('');
   // 背景全部用同一個最淡的藍紫：深淺混著排會變成一條條直紋，太花
-  const LIGHT = Array(6).fill('#e6eafb');
+  const LIGHT = Array(6).fill('#dde3fa');
   const heroTiles = document.getElementById('hero-tiles');
   // 背景的 W 放大到 1.8 倍（106×86），比例比較好看；仍維持 logo 的 2×3 色序。
   // 每顆多畫 0.8px 跟鄰居重疊，蓋掉非整數座標造成的細縫
