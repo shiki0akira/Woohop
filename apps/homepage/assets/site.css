@@ -207,3 +207,7 @@
   .flow h3 { margin: 6px 0 6px; font-size: 18px; }
   .flow p { margin: 0 0 8px; color: var(--muted); }
   .flow .prompt-card { font-size: 16px; padding: 16px 18px; margin-top: 14px; }
+  /* 語言按鈕放在下拉容器裡，會吃到「更多」按鈕的無框樣式；這裡把它的框和 3px 底線補回來 */
+  .nav-more.lang-wrap > button.lang { height: 44px; padding: 0 12px; border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); font-size: 14px; border-radius: var(--r-md); margin-bottom: 3px; }
+  .nav-more.lang-wrap > button.lang:hover { background: #eef1fc; }
+  .nav-more.lang-wrap > button.lang svg { transform: none; }

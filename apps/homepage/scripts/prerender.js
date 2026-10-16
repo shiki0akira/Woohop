@@ -20,7 +20,7 @@ const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
 const PAGES = { home: '', games: 'games/', combo: 'combo/' };
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16';
+const ASSET_VERSION = '2026-10-16b';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
