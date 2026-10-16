@@ -57,6 +57,11 @@ ${alternates}
     <meta property="og:description" content="${esc(desc)}" />
     <meta property="og:url" content="${url(lang, page)}" />
     <meta property="og:locale" content="${lang.replace('-', '_')}" />
+    <meta property="og:image" content="${SITE}/og/${lang}.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="${esc(s.heroAlt)}" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json">${jsonForScript(jsonLd)}</script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7PE5687BG"></script>
     <script>
@@ -452,6 +457,9 @@ writeFileSync(path.join(OUT, 'sitemap.xml'), buildSitemap());
 for (const file of ['robots.txt', 'design-tokens.css', 'favicon.svg', 'apple-touch-icon.png', '404.html']) {
   if (existsSync(file)) copyFileSync(file, path.join(OUT, file));
 }
+// 分享縮圖：og/{lang}.png 是用 scripts/og-image.mjs 在本機產生後 commit 進來的（建置環境沒有瀏覽器）
+mkdirSync(path.join(OUT, 'og'), { recursive: true });
+for (const file of readdirSync('og')) copyFileSync(path.join('og', file), path.join(OUT, 'og', file));
 mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 for (const file of readdirSync('assets')) copyFileSync(path.join('assets', file), path.join(OUT, 'assets', file));
 

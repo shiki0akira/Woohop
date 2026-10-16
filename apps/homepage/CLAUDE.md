@@ -11,6 +11,7 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 | `assets/woohop.css`、`assets/woohop-art.js`、`assets/hero-art.js` | 從 `design/` 複製的設計系統樣式與插圖（**兩邊要同步改**） |
 | `assets/site.css`、`assets/site.js` | 三頁共用的頁面樣式與程式（導覽、語言選單、遊戲卡、推薦器、破冰組合、GA） |
 | `assets/home.js`、`games.js`、`combo.js` | 各頁專用 |
+| `og/{lang}.png`、`scripts/og-image.mjs` | 分享縮圖（1200×630，每語言一張，用首頁標語＋主視覺）。**Vercel 建置時不會重產**（沒有瀏覽器）：改了 `heroTitle1/2` 或主視覺插圖後，本機跑 `node scripts/og-image.mjs`，把 PNG 一起 commit |
 | `design-tokens.css` | **舊的配色檔，四個小遊戲還直接連 `/design-tokens.css`，不能刪**；遊戲頁改版完才能拿掉 |
 
 文案在建置時寫進靜態 HTML（給爬蟲），當頁語言的那一份也嵌進 `window.WOOHOP.t` 給執行期 JS 用，兩邊同一個來源。改了 `assets/` 的檔案要換 `prerender.js` 的 `ASSET_VERSION`，瀏覽器才會抓新版。
