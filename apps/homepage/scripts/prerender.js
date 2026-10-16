@@ -22,7 +22,7 @@ const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16j';
+const ASSET_VERSION = '2026-10-16k';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -258,7 +258,7 @@ function homePage(lang) {
           <div class="hero-bg" aria-hidden="true"><svg id="hero-tiles"></svg></div>
           <div>
             <span class="kicker">${esc(s.heroKicker)}</span>
-            <h1>${esc(s.heroTitle1)}<br>${esc(s.heroTitle2)}</h1>
+            <h1><span>${esc(s.heroTitle1)}</span> <span>${esc(s.heroTitle2)}</span></h1>
             <p class="lead">${esc(s.heroLead)}</p>
             <div class="cta">
               <a class="btn btn-lg btn-solid" href="${local(lang, 'games')}">${esc(s.heroCta)}</a>

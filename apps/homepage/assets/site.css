@@ -18,7 +18,15 @@
   /* 主視覺 */
   .hero { display: grid; gap: 28px; align-items: center; padding: 48px 0 24px; }
   @media (min-width: 880px) { .hero { grid-template-columns: 1.05fr 1fr; } }
-  .hero h1 { margin: 10px 0 14px; font-size: clamp(36px, 6.4vw, 60px); line-height: 1.15; font-weight: 900; letter-spacing: -0.01em; }
+  .hero h1 { margin: 10px 0 14px; font-size: clamp(36px, 6.4vw, 60px); line-height: 1.15; font-weight: 900; letter-spacing: -0.01em; text-wrap: balance; }
+  /* 中文的標語很短，其他語言的長一倍以上：同樣字級會擠成 4～5 行，所以字小一號 */
+  .hero h1:not(:lang(zh)) { font-size: clamp(30px, 4.2vw, 46px); }
+  /* 日文沒有空格，balance 會把「アイスブレイク」切在中間；auto-phrase 讓它照詞組斷行；字再小一點，桌機上第一句才放得進一行 */
+  .hero h1:lang(ja) { word-break: auto-phrase; font-size: clamp(28px, 3.8vw, 42px); }
+  /* 兩句各自一塊，各自平衡斷行（不然第二句常剩一個字掉到下一行） */
+  .hero h1 > span { display: block; }
+  /* 韓文照詞斷行，不然會切在「아이스브레／이킹」中間 */
+  :lang(ko) { word-break: keep-all; }
   .hero .lead { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); max-width: 30em; margin: 0 0 24px; }
   .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; }
   .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: #55555c; }
