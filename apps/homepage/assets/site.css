@@ -172,6 +172,10 @@
   /* 目前所在的分頁不做成按鈕，只換顏色（靛藍）；滑過時一樣只有淡底 */
   .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--indigo); }
   .nav-links a[aria-current="page"]:hover { background: #eef1fc; }
+  /* 手機選單：目前這頁跟電腦版一樣只換字色；關閉放右下 */
+  dialog.sheet:focus { outline: none; }
+  .sheet-list a[aria-current="page"] { color: var(--indigo); }
+  .sheet-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
 
   /* 小縮圖（約 72px 寬）的插圖描邊改成 2px，跟 UI 線條一樣粗 */
   .plan-step .mini svg { --ill-sw: 2px; }

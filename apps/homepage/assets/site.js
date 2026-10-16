@@ -248,7 +248,8 @@
 
     // 手機選單：底部面板。每條關閉路徑自己關，不靠 dialog 的 close 事件
     const sheet = document.getElementById('sheet');
-    host.querySelector('.nav-burger').addEventListener('click', () => sheet.showModal());
+    // 打開後把焦點放在面板本身：不然瀏覽器會自動聚焦第一個連結，看起來像「找遊戲」被選取
+    host.querySelector('.nav-burger').addEventListener('click', () => { sheet.showModal(); sheet.focus(); });
     sheet.addEventListener('click', e => { if (e.target === sheet || e.target.closest('[data-close]') || e.target.closest('a')) sheet.close(); });
   };
 

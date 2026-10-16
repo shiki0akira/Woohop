@@ -22,7 +22,7 @@ const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16k';
+const ASSET_VERSION = '2026-10-16l';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -104,9 +104,10 @@ function navbar(s, lang, page) {
           </div>
         </header>
       </div>
-      <dialog class="sheet" id="sheet" aria-label="${esc(s.menu)}">
+      <dialog class="sheet" id="sheet" aria-label="${esc(s.menu)}" tabindex="-1">
         <div class="grabber"></div>
-        <div class="sheet-list">${nav.map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${esc(t)}</a>`).join('')}<button class="btn btn-ghost btn-block" type="button" data-close>${esc(s.close)}</button></div>
+        <div class="sheet-list">${nav.map(([t, h, id]) => `<a class="btn btn-secondary btn-block" href="${h}"${id === page ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}</div>
+        <div class="sheet-foot"><button class="btn btn-ghost" type="button" data-close>${esc(s.close)}</button></div>
       </dialog>`;
 }
 
