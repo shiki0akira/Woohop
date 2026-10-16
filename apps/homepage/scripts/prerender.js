@@ -20,7 +20,7 @@ const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
 const PAGES = { home: '', games: 'games/', combo: 'combo/' };
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-16b';
+const ASSET_VERSION = '2026-10-16c';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -102,7 +102,10 @@ function navbar(s, lang, page) {
       </dialog>`;
 }
 
-function footer(s, lang) {
+function footer(s, lang, page) {
+  const langMenu = LANGS.map(
+    (l) => `<a href="${local(l, page)}" hreflang="${l}" lang="${l}" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${esc(LANG_NAMES[l])}</a>`,
+  ).join('');
   return `
       <footer class="site-footer" id="site-footer">
         <div class="footer-grid">
@@ -112,8 +115,15 @@ function footer(s, lang) {
           </div>
           <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a></div>
           <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>
+          <div class="footer-col"><h4>${esc(s.footerAbout)}</h4><span class="link is-disabled" aria-disabled="true">${esc(s.aboutUs)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.privacy)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.contact)}</span></div>
         </div>
-        <div class="footer-bottom"><span>© 2026 Woohop</span></div>
+        <div class="footer-bottom">
+          <span>© 2026 Woohop</span>
+          <div class="nav-more lang-wrap up">
+            <button class="lang" type="button" aria-expanded="false" aria-haspopup="true" aria-label="${esc(s.langMenu)}"><svg><use href="#i-globe"/></svg>${esc(s.langShort)}</button>
+            <div class="nav-menu" hidden>${langMenu}</div>
+          </div>
+        </div>
       </footer>
     </div>`;
 }
@@ -183,6 +193,18 @@ function jsonLd(s, lang, page, title, desc) {
       })),
     });
   }
+  const faq = page === 'home' ? faqItems(s.homeArticle) : [];
+  if (faq.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${url(lang, page)}#faq`,
+      mainEntity: faq.map((it) => ({
+        '@type': 'Question',
+        name: it.q,
+        acceptedAnswer: { '@type': 'Answer', text: it.a.map(plain).join('\n') },
+      })),
+    });
+  }
   if (page !== 'home') {
     graph.push({
       '@type': 'BreadcrumbList',
@@ -195,13 +217,32 @@ function jsonLd(s, lang, page, title, desc) {
   return { '@context': 'https://schema.org', '@graph': graph };
 }
 
-/* ---------- 中文長文（只有 zh-TW） ---------- */
-
-function articleHtml(sections) {
-  if (!Array.isArray(sections) || !sections.length) return '';
-  // **重點** 轉成 <strong>。先跳脫再轉換：跳脫過的文字不可能再有 < >，加進去的 <strong> 是唯一的標籤
-  return sections
-    .map((sec) => `<section><h3>${esc(sec.h)}</h3>${sec.p.map((p) => `<p>${esc(p).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</p>`).join('')}</section>`)
+/* ---------- 常見問題（由 zh-TW 的長文轉成，只有 zh-TW） ----------
+ * 長文的前幾段本來就是「問題＋說明」，直接當成一題；最後一段「常見問題」裡每一段是「**問？**答」，拆成一題一題。
+ * 內容照樣寫在 HTML 裡（<details> 收合也看得到），SEO 不受影響；另外輸出 FAQPage 結構化資料。
+ */
+function faqItems(sections) {
+  if (!Array.isArray(sections)) return [];
+  const items = [];
+  for (const sec of sections) {
+    const qa = sec.p.every((p) => /^\*\*[^*]+\*\*/.test(p)) && sec.p.length > 1;
+    if (qa) {
+      for (const p of sec.p) {
+        const m = p.match(/^\*\*([^*]+)\*\*\s*(.*)$/);
+        items.push({ q: m[1], a: [m[2]] });
+      }
+    } else {
+      items.push({ q: sec.h, a: sec.p });
+    }
+  }
+  return items;
+}
+// **重點** 轉成 <strong>。先跳脫再轉換：跳脫過的文字不可能再有 < >，加進去的 <strong> 是唯一的標籤
+const rich = (p) => esc(p).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+const plain = (p) => p.replace(/\*\*/g, '');
+function faqHtml(items) {
+  return items
+    .map((it, i) => `<details${i === 0 ? ' open' : ''}><summary>${esc(it.q)}</summary>${it.a.map((p) => `<p>${rich(p)}</p>`).join('')}</details>`)
     .join('');
 }
 
@@ -280,13 +321,17 @@ function homePage(lang) {
             <svg class="w-row" viewBox="0 0 354 48" aria-hidden="true" data-w-row="#4FB59A"></svg>
           </div>
         </section>
+        <section id="guides">
+          <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div></div>
+          <div class="guides">${s.guides.map(([type, title, desc, min]) => `<div class="guide is-disabled" aria-disabled="true"><span class="badge ${{ beginner: 'b-new', scene: 'b-info', tip: 'b-live' }[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span><span class="badge b-soon">${esc(s.soon)}</span></div>`).join('')}</div>
+        </section>
 ${s.homeArticle ? `
-        <section id="guide">
-          <div class="section-head"><div><span class="kicker">${esc(s.articleKicker)}</span></div></div>
-          <div class="article">${articleHtml(s.homeArticle)}</div>
+        <section id="faq">
+          <div class="section-head"><div><span class="kicker">${esc(s.faqKicker)}</span><h2>${esc(s.faqKicker)}</h2></div></div>
+          <div class="faq">${faqHtml(faqItems(s.homeArticle))}</div>
         </section>` : ''}
       </main>
-${footer(s, lang)}
+${footer(s, lang, 'home')}
 ${scripts(s, lang, 'home', ['hero-art.js', 'home.js'])}
   </body>
 </html>
@@ -308,7 +353,7 @@ function gamesPage(lang) {
           <div id="finder-root"><div class="game-grid">${staticGames(s, lang)}</div></div>
         </section>
       </main>
-${footer(s, lang)}
+${footer(s, lang, 'games')}
 ${scripts(s, lang, 'games', ['games.js'])}
   </body>
 </html>
@@ -340,7 +385,7 @@ function comboPage(lang) {
           </div>
         </section>
       </main>
-${footer(s, lang)}
+${footer(s, lang, 'combo')}
 ${scripts(s, lang, 'combo', ['combo.js'])}
   </body>
 </html>

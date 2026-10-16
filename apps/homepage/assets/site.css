@@ -211,3 +211,10 @@
   .nav-more.lang-wrap > button.lang { height: 44px; padding: 0 12px; border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); font-size: 14px; border-radius: var(--r-md); margin-bottom: 3px; }
   .nav-more.lang-wrap > button.lang:hover { background: #eef1fc; }
   .nav-more.lang-wrap > button.lang svg { transform: none; }
+  /* 正式版的指南卡片標題用 h3 */
+  .guide h3 { margin: 0; font-size: 18px; line-height: 1.45; }
+  /* 頁尾的語言選單往上開（下面沒有空間） */
+  .lang-wrap.up .nav-menu { top: auto; bottom: calc(100% + 10px); }
+  /* 常見問題放在頁面最下面，寬度跟內文一樣 */
+  #faq .faq { max-width: 760px; }
+  #faq .faq p { color: #3b3b42; line-height: 1.85; }
