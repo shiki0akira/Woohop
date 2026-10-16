@@ -84,7 +84,11 @@ export default {
   rulesTitle: 'Comment jouer à la bombe à retardement',
   rulesIntro: "Un téléphone fait le tour du cercle. Un défi s’affiche, tu le fais, tu passes. Personne ne sait quand la bombe explose : celui qui la tient perd.",
   // 一眼看到的三件事：人數、時間、要準備什麼
-  rulesFacts: [["Joueurs","4 à 15"],["Durée","1 à 3 min par manche, environ 10 min pour quelques manches"],["Il faut","Un téléphone et un cercle de joueurs"]],
+  rulesFacts: [["Joueurs","4 à 15"],["Il faut","Un téléphone et un cercle de joueurs"]],
+  // 引爆時間依人數建議（對應設定畫面那三顆區間）
+  rulesTimeLabel: "Quelle durée choisir ?",
+  rulesTimeGuide: [["4 à 6 joueurs","30 s – 2 min"],["7 à 10 joueurs","1 à 3 min"],["11 à 15 joueurs","3 à 6 min"]],
+  rulesTimeNote: "Plus vous êtes nombreux, plus un tour de cercle est long. 3 à 5 manches prennent environ 10 minutes.",
   rulesHowHeading: "Comment jouer",
   rulesHowSteps: [
     "Choisis les défis : questions, actions, ou les deux.",
@@ -93,11 +97,12 @@ export default {
     "Quand la bombe explose, celui qui tient le téléphone perd la manche.",
   ],
   rulesLeadHeading: "Comment animer",
+  // 主持人開場照著念的一句（畫面上是「照著念」卡片），底下是小提醒
+  rulesLeadSay: "Faites ce qui est écrit à l’écran, puis passez le téléphone. Celui qui le tient quand ça explose a perdu !",
   rulesLeadSteps: [
-    "Une seule phrase pour lancer : « Fais ce qui est écrit, puis passe. Celui qui l’a quand ça explose a perdu. »",
-    "Garde 1 à 3 minutes pour la première manche, accélère quand tout le monde est chaud.",
     "Avec des nouveaux, commence par les questions ; ajoute les actions ensuite.",
     "Si quelqu’un bloque, lance « Suivant ! » pour garder le rythme.",
+    "Pas besoin de gage : appuie simplement sur « On rejoue ».",
   ],
   rulesBack: '← Retour au jeu',
 };

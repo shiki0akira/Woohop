@@ -28,6 +28,22 @@
   var tab = document.getElementById('open-custom');
   if (tab) tab.addEventListener('click', openSettings);
 
+  // 頂欄放不下時（德文這類長字）分兩段讓位，讓遊戲名不被截掉：
+  // 先把「設定」換成齒輪（is-compact），還是放不下再把「玩法」換成書本（is-tight）。
+  // 中文等短的語言放得下，就維持文字。看的是遊戲名有沒有被截，不是固定寬度
+  var bar = document.querySelector('.game-bar');
+  var title = bar && bar.querySelector('.title');
+  if (bar && title && window.ResizeObserver) {
+    var cut = function () { return title.scrollWidth > title.clientWidth + 1; };
+    var fit = function () {
+      bar.classList.remove('is-compact', 'is-tight');
+      if (cut()) bar.classList.add('is-compact');
+      if (cut()) bar.classList.add('is-tight');
+    };
+    new ResizeObserver(fit).observe(bar);
+    if (document.fonts) document.fonts.ready.then(fit);
+  }
+
   // 玩法頁的返回鍵回遊戲頁（遊戲頁的返回鍵依畫面而定，在 app.js）
   var back = document.getElementById('game-back');
   if (back && window.BOMB.page) {

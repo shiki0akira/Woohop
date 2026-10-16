@@ -17,9 +17,14 @@
         <p>{{rulesIntro}}</p>
       </div>
 
-      <!-- 一眼看到：幾個人、多久、要準備什麼 -->
+      <!-- 一眼看到：幾個人、要準備什麼，以及幾個人該選多長的引爆時間 -->
       <ul class="rules-facts">
         {{rulesFactsList}}
+        <li class="rules-time">
+          <span>{{rulesTimeLabel}}</span>
+          <table>{{rulesTimeRows}}</table>
+          <small>{{rulesTimeNote}}</small>
+        </li>
       </ul>
 
       <section class="panel prose">
@@ -31,6 +36,8 @@
 
       <section class="panel prose rules-lead">
         <h2>{{rulesLeadHeading}}</h2>
+        <!-- 開場那一句做成首頁破冰組合同款的「照著念」卡片，主持人直接念 -->
+        <div class="prompt-card"><span class="say">{{sayLabel}}</span>{{rulesLeadSay}}</div>
         <ul>
           {{rulesLeadList}}
         </ul>

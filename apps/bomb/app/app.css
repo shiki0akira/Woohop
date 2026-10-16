@@ -268,9 +268,14 @@ body[data-screen="setup"] .game-tabs, body[data-screen="rules"] .game-tabs { dis
 .game-tabs a:hover, .game-tabs button:hover { background: #eef1fc; }
 .game-tabs .custom-open-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
 .game-tabs .custom-open-count:empty { display: none; }
+/* 窄的頂欄：分頁照樣留著，字與左右留白縮小；放不下時讓遊戲名截成「⋯」，分頁不讓 */
+.game-bar .title { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.game-tabs { flex: none; margin-left: auto; }
 @container (max-width: 560px) {
-  body[data-screen="setup"] .game-tabs, body[data-screen="rules"] .game-tabs { display: none; }
-  body[data-screen="setup"] .game-bar .title, body[data-screen="rules"] .game-bar .title { flex: 1; }
+  .game-bar { gap: 2px; }
+  .game-tabs { gap: 0; }
+  .game-tabs a, .game-tabs button { padding: 0 9px; font-size: 14px; }
+  .game-bar .title { font-size: 16px; }
 }
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }
@@ -281,7 +286,16 @@ dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight:
 .rules-facts li { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); }
 .rules-facts span { font-size: 13px; font-weight: 800; color: var(--coral-edge); letter-spacing: .04em; }
 .rules-facts b { font-size: 16px; line-height: 1.45; }
-.rules-lead { background: #fffdf4; border-color: var(--yellow-edge); box-shadow: 0 4px 0 var(--yellow-edge); }
+/* 引爆時間建議：橫跨整列，左邊人數、右邊區間 */
+.rules-facts .rules-time { grid-column: 1 / -1; gap: 6px; }
+.rules-time table { border-collapse: collapse; width: 100%; max-width: 420px; }
+.rules-time th, .rules-time td { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 16px; text-align: left; white-space: normal; }
+.rules-time tr:last-child th, .rules-time tr:last-child td { border-bottom: 0; }
+.rules-time th { font-weight: 700; color: var(--muted); width: 45%; }
+.rules-time td { font-weight: 900; }
+.rules-time small { font-size: 14px; color: var(--muted); }
+/* 主持人怎麼帶：開場一句是「照著念」卡片（woohop.css 的 .prompt-card），底下是小提醒 */
+.rules-lead .prompt-card { margin: 18px 0 18px; max-width: none; font-size: 18px; }
 
 /* ---------- 題型按鈕的勾勾：右上角，選了是實心打勾，沒選是空圈 ---------- */
 .pick-button { position: relative; }
@@ -293,3 +307,9 @@ dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight:
   border-color: var(--edge); background-color: var(--edge);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
+
+/* 分頁的圖示只在頂欄放不下時出現（header.js：is-compact 先換「設定」、is-tight 再換「玩法」），平常是文字 */
+.game-tabs .tab-icon { display: none; width: 22px; height: 22px; }
+.game-bar.is-compact #open-custom .tab-icon, .game-bar.is-tight .game-tabs a .tab-icon { display: block; }
+.game-bar.is-compact #open-custom .tab-text, .game-bar.is-tight .game-tabs a .tab-text { display: none; }
+.game-bar.is-compact #open-custom, .game-bar.is-tight .game-tabs a { padding: 0 10px; }

@@ -80,6 +80,7 @@ const RAW_TOKENS = new Set([
   'rulesFactsList',
   'rulesHowList',
   'rulesLeadList',
+  'rulesTimeRows',
   'jsonLd',
 ]);
 
@@ -267,7 +268,7 @@ function checkStrings() {
   }
 
   // 規則頁的三份清單長度要一致，否則某個語言會少一步驟而沒人發現
-  for (const key of ['rulesFacts', 'rulesHowSteps', 'rulesLeadSteps']) {
+  for (const key of ['rulesFacts', 'rulesTimeGuide', 'rulesHowSteps', 'rulesLeadSteps']) {
     const size = STRINGS[DEFAULT_LANG][key].length;
     for (const lang of LANGS) {
       if (STRINGS[lang][key].length !== size) {
@@ -338,6 +339,10 @@ function tokensFor(lang, page, assetVersion) {
     rulesFactsList: strings.rulesFacts
       .map(([k, v]) => `<li><span>${escapeHtml(k)}</span><b>${escapeHtml(v)}</b></li>`)
       .join('\n        '),
+    rulesTimeRows: strings.rulesTimeGuide
+      .map(([who, time]) => `<tr><th>${escapeHtml(who)}</th><td>${escapeHtml(time)}</td></tr>`)
+      .join(''),
+    sayLabel: SITE_STRINGS[lang].sayLabel,
     rulesHowList: listHtml(strings.rulesHowSteps),
     rulesLeadList: listHtml(strings.rulesLeadSteps),
   };

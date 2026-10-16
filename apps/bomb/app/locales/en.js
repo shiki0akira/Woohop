@@ -83,7 +83,11 @@ export default {
   rulesTitle: 'How to play Time Bomb',
   rulesIntro: "One phone goes around the circle. A task appears, you do it, you pass it on. Nobody knows when the bomb goes off; whoever is holding it loses.",
   // 一眼看到的三件事：人數、時間、要準備什麼
-  rulesFacts: [["Players","4–15"],["Time","1–3 min per round, about 10 min for a few rounds"],["You need","One phone and a circle of people"]],
+  rulesFacts: [["Players","4–15"],["You need","One phone and a circle of people"]],
+  // 引爆時間依人數建議（對應設定畫面那三顆區間）
+  rulesTimeLabel: "Which fuse length?",
+  rulesTimeGuide: [["4–6 players","30 s – 2 min"],["7–10 players","1–3 min"],["11–15 players","3–6 min"]],
+  rulesTimeNote: "More people means a longer trip around the circle. 3–5 rounds take about 10 minutes.",
   rulesHowHeading: "How to play",
   rulesHowSteps: [
     "Pick the tasks: questions, actions, or both.",
@@ -92,11 +96,12 @@ export default {
     "When the bomb goes off, whoever is holding the phone loses the round.",
   ],
   rulesLeadHeading: "How to lead it",
+  // 主持人開場照著念的一句（畫面上是「照著念」卡片），底下是小提醒
+  rulesLeadSay: "Do what the screen says, then pass the phone on. Whoever is holding it when it blows up loses!",
   rulesLeadSteps: [
-    "Open with one line: “Do what the screen says, then pass it on. Whoever holds it when it blows up loses.”",
-    "Keep the default 1–3 minutes for the first round; speed it up once people warm up.",
     "With new people, start with questions only; add actions later.",
     "If someone freezes, call out “Next!” and keep the pace going.",
+    "No penalty needed for the loser: just tap “Play again”.",
   ],
   rulesBack: '← Back to the game',
 };

@@ -84,7 +84,11 @@ export default {
   rulesTitle: 'Zeitbombe: so wird gespielt',
   rulesIntro: "Ein Handy wandert im Kreis. Eine Aufgabe erscheint, du erledigst sie und gibst weiter. Niemand weiß, wann die Bombe hochgeht – wer sie dann hält, verliert.",
   // 一眼看到的三件事：人數、時間、要準備什麼
-  rulesFacts: [["Spieler","4–15"],["Dauer","1–3 Min. pro Runde, ca. 10 Min. für ein paar Runden"],["Du brauchst","Ein Handy und einen Stuhlkreis"]],
+  rulesFacts: [["Spieler","4–15"],["Du brauchst","Ein Handy und einen Stuhlkreis"]],
+  // 引爆時間依人數建議（對應設定畫面那三顆區間）
+  rulesTimeLabel: "Welche Zündschnur?",
+  rulesTimeGuide: [["4–6 Personen","30 Sek. – 2 Min."],["7–10 Personen","1–3 Min."],["11–15 Personen","3–6 Min."]],
+  rulesTimeNote: "Je mehr Leute, desto länger dauert eine Runde im Kreis. 3–5 Runden dauern etwa 10 Minuten.",
   rulesHowHeading: "So geht’s",
   rulesHowSteps: [
     "Aufgaben wählen: Fragen, Aktionen oder beides.",
@@ -93,11 +97,12 @@ export default {
     "Wenn die Bombe hochgeht, verliert, wer das Handy hält.",
   ],
   rulesLeadHeading: "So leitest du an",
+  // 主持人開場照著念的一句（畫面上是「照著念」卡片），底下是小提醒
+  rulesLeadSay: "Macht, was auf dem Bildschirm steht, und gebt das Handy weiter. Wer es beim Knall hält, verliert!",
   rulesLeadSteps: [
-    "Zum Start reicht ein Satz: „Macht, was auf dem Bildschirm steht, dann weitergeben. Wer es beim Knall hält, verliert.“",
-    "In der ersten Runde die voreingestellten 1–3 Minuten lassen, später schneller stellen.",
     "Bei neuen Leuten erst nur Fragen, Aktionen später dazunehmen.",
     "Hängt jemand fest, ruf „Weiter!“ – das Tempo darf nicht abreißen.",
+    "Keine Strafe nötig: einfach „Noch eine Runde“ tippen.",
   ],
   rulesBack: '← Zurück zum Spiel',
 };

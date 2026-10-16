@@ -84,7 +84,11 @@ export default {
   rulesTitle: 'Cómo se juega a la bomba de tiempo',
   rulesIntro: "Un móvil pasa de mano en mano. Aparece una prueba, la haces y lo pasas. Nadie sabe cuándo explota la bomba: quien la tenga entonces, pierde.",
   // 一眼看到的三件事：人數、時間、要準備什麼
-  rulesFacts: [["Jugadores","4–15"],["Tiempo","1–3 min por ronda, unos 10 min para varias rondas"],["Necesitas","Un móvil y un círculo de gente"]],
+  rulesFacts: [["Jugadores","4–15"],["Necesitas","Un móvil y un círculo de gente"]],
+  // 引爆時間依人數建議（對應設定畫面那三顆區間）
+  rulesTimeLabel: "¿Qué mecha elegir?",
+  rulesTimeGuide: [["4–6 personas","30 s – 2 min"],["7–10 personas","1–3 min"],["11–15 personas","3–6 min"]],
+  rulesTimeNote: "Cuanta más gente, más tarda una vuelta al círculo. 3–5 rondas duran unos 10 minutos.",
   rulesHowHeading: "Cómo se juega",
   rulesHowSteps: [
     "Elige las pruebas: preguntas, acciones o ambas.",
@@ -93,11 +97,12 @@ export default {
     "Cuando explota la bomba, quien tiene el móvil pierde la ronda.",
   ],
   rulesLeadHeading: "Cómo dirigirlo",
+  // 主持人開場照著念的一句（畫面上是「照著念」卡片），底下是小提醒
+  rulesLeadSay: "Haced lo que diga la pantalla y pasad el móvil. ¡Quien lo tenga cuando explote, pierde!",
   rulesLeadSteps: [
-    "Para empezar basta una frase: «Haz lo que diga la pantalla y pásalo. Quien lo tenga cuando explote, pierde».",
-    "Deja el tiempo por defecto (1–3 min) en la primera ronda; acelera cuando haya ambiente.",
     "Con gente nueva, empieza solo con preguntas y añade acciones después.",
     "Si alguien se bloquea, grita «¡Siguiente!» para no perder el ritmo.",
+    "No hace falta castigo: pulsa «Otra ronda» y ya.",
   ],
   rulesBack: '← Volver al juego',
 };
