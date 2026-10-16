@@ -224,14 +224,6 @@ function homePage(lang) {
           <div class="plan" id="combo-root"></div>
         </section>
 
-        <section id="party">
-          <div class="section-head"><div><span class="kicker">${esc(s.partyKicker)}</span><h2>${esc(s.partyTitle)}</h2><p>${esc(s.partyLead)}</p></div></div>
-          <div class="party">
-            <div class="party-steps">${s.partySteps.map(([b, d]) => `<div class="party-step"><b>${esc(b)}</b><span>${esc(d)}</span></div>`).join('')}</div>
-            <div class="row"><button class="btn btn-secondary" type="button" disabled>${esc(s.partyCta)}</button><span class="badge b-soon">${esc(s.soon)}</span></div>
-          </div>
-        </section>
-
         <section id="boardgame">
           <div class="section-head"><div><span class="kicker">${esc(s.boardKicker)}</span><h2>${esc(s.boardTitle)}</h2></div></div>
           <div class="feature">
@@ -260,6 +252,14 @@ function homePage(lang) {
             <svg class="w-row" viewBox="0 0 354 48" aria-hidden="true" data-w-row="#4FB59A"></svg>
           </div>
         </section>
+        <section id="party">
+          <div class="section-head"><div><span class="kicker">${esc(s.partyKicker)}</span><h2>${esc(s.partyTitle)}</h2><p>${esc(s.partyLead)}</p></div></div>
+          <div class="party">
+            <div class="party-steps">${s.partySteps.map(([b, d]) => `<div class="party-step"><b>${esc(b)}</b><span>${esc(d)}</span></div>`).join('')}</div>
+            <div class="row"><button class="btn btn-secondary" type="button" disabled>${esc(s.partyCta)}</button><span class="badge b-soon">${esc(s.soon)}</span></div>
+          </div>
+        </section>
+
         <section id="guides">
           <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div><a class="link" href="${local(lang, 'guides')}">${esc(s.seeAllGuides)}</a></div>
           <div class="guides">${[...s.guides, ...s.moreGuides].slice(0, 4).map((g) => guideCard(s, g)).join('')}</div>
