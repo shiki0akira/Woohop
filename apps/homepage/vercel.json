@@ -95,6 +95,16 @@
       "permanent": true
     },
     {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo)",
+      "destination": "/:lang/:page/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo)/index.html",
+      "destination": "/:lang/:page/",
+      "permanent": true
+    },
+    {
       "source": "/avalon/",
       "destination": "/avalon/zh-TW",
       "permanent": false
@@ -351,6 +361,10 @@
     {
       "source": "/happiness/api/new-room",
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/api/new-room"
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo)/",
+      "destination": "/:lang/:page/index.html"
     },
     {
       "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",

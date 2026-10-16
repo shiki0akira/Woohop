@@ -1,221 +1,394 @@
-// 為 8 種語言各產生一份靜態 HTML，輸出到 dist/。
+// 為 8 種語言 × 3 種頁面（首頁、找遊戲、破冰組合）各產生一份靜態 HTML，輸出到 dist/。
 //
-// 為什麼需要這支：原本 /zh-TW/、/ja/、/en/ 等所有語言都 rewrite 到同一份 index.html，
-// 那份 HTML 的 <title> 與 lang 屬性寫死中文，body 裡 hero 與卡片文字則是空標籤、
-// 等 JS 用 textContent 填。結果是爬蟲不論抓哪個語言，看到的都是「中文標題 + 空內文」，
-// 而且整站一條 hreflang 都沒有，各語言版本等於在互相競爭同一組關鍵字。
+// 為什麼要這支：每個語言、每個頁面都要有自己的 lang、title、description、canonical、hreflang，
+// 而且內文要直接寫在 HTML 裡——只靠 JS 填字的話，爬蟲看到的是空頁面，各語言也會互相搶同一組關鍵字。
 //
-// 這支從 index.html 裡的 STRINGS 直接取文案（跟執行期 JS 用的是同一份來源，不會對不上），
-// 為每個語言產生帶正確 lang/title/description/canonical/hreflang 且內文已填好的 HTML。
-// JS 照常載入並用同樣的字串覆寫，所以畫面行為完全不變。
+// 文案的唯一來源是 src/locales.mjs；當頁語言的那一份也會嵌進 HTML（window.WOOHOP.t），
+// 執行期的 JS（assets/site.js）讀同一份，畫面跟爬蟲看到的內容不會對不上。
 //
-// ⚠️ index.html 的 STRINGS 或 body 結構改了，這裡的 replace 規則要跟著確認。
-// 下面每條 replace 都對應 index.html 裡一個具體的元素，對不到會在 build 時報錯。
+// 網址：
+//   /{lang}/          首頁
+//   /{lang}/games/    找遊戲
+//   /{lang}/combo/    破冰組合
+// 舊網址只有 /{lang}/，維持不變；新的兩頁是新增的。
 
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
+import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES } from '../src/locales.mjs';
 
 const SITE = 'https://www.vibeweb100.com';
-const DEFAULT_LANG = 'zh-TW';
 const OUT = path.resolve('dist');
-
-const src = readFileSync(path.resolve('index.html'), 'utf8');
-
-const match = src.match(/var STRINGS = (\{[\s\S]*?\n {6}\});/);
-if (!match) throw new Error('在 index.html 找不到 STRINGS 物件，prerender 無法取得文案');
-const STRINGS = new Function(`return ${match[1]}`)();
-const LANGS = Object.keys(STRINGS);
+const PAGES = { home: '', games: 'games/', combo: 'combo/' };
+// 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
+const ASSET_VERSION = '2026-10-16';
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
+const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
+const local = (lang, page) => `/${lang}/${PAGES[page]}`;
+const gameUrl = (lang, key) => (key === 'avalon' ? `/avalon/${lang}` : `/${key}/${lang}/`);
+// JSON 嵌進 <script>：把 < 跳成 <，文案裡萬一有 </script> 才不會提早關掉標籤
+const jsonForScript = (data) => JSON.stringify(data).replace(/</g, '\\u003c');
 
-const langUrl = (lang) => `${SITE}/${lang}/`;
+/* ---------- 共用的頁首、頁尾 ---------- */
 
-// 逐條套用替換規則，對不到就直接失敗——沉默略過會產出看起來正常但內容是空的頁面。
-function applyAll(html, rules, lang) {
-  return rules.reduce((acc, [pattern, replacement]) => {
-    if (!pattern.test(acc)) {
-      throw new Error(`[${lang}] 找不到要替換的位置: ${pattern}`);
-    }
-    return acc.replace(pattern, replacement);
-  }, html);
+function head(s, lang, page, title, desc, jsonLd) {
+  const alternates = LANGS.map((l) => `    <link rel="alternate" hreflang="${l}" href="${url(l, page)}" />`).join('\n');
+  const asset = (f) => `/assets/${f}?v=${ASSET_VERSION}`;
+  return `<!doctype html>
+<html lang="${lang}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f4f6" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>${esc(title)}</title>
+    <meta name="description" content="${esc(desc)}" />
+    <link rel="canonical" href="${url(lang, page)}" />
+${alternates}
+    <link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Woohop" />
+    <meta property="og:title" content="${esc(title)}" />
+    <meta property="og:description" content="${esc(desc)}" />
+    <meta property="og:url" content="${url(lang, page)}" />
+    <meta property="og:locale" content="${lang.replace('-', '_')}" />
+    <script type="application/ld+json">${jsonForScript(jsonLd)}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7PE5687BG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      // 自動 page_view 關掉，由 assets/site.js 在載入時手動送（帶正確的 page_path）
+      gtag('config', 'G-S7PE5687BG', { send_page_view: false });
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="${asset('woohop.css')}" />
+    <link rel="stylesheet" href="${asset('site.css')}" />
+  </head>`;
 }
 
-/*
- * 長文的段落。**重點** 轉成 <strong>，跟執行期 renderArticle() 畫出來的結構一致，
- * 不然爬蟲看到的跟使用者看到的會是兩種東西。
- *
- * **先跳脫再轉換**：跳脫過的文字裡不可能再出現 < 或 >，所以加進去的 <strong>
- * 是唯一的標籤。順序反過來就是一個注入點。
- */
+function navbar(s, lang, page) {
+  const nav = [
+    [s.navGames, local(lang, 'games'), 'games'],
+    [s.navCombo, local(lang, 'combo'), 'combo'],
+    [s.navBoardgame, `/avalon/${lang}`, 'boardgame'],
+  ];
+  const langMenu = LANGS.map(
+    (l) => `<a href="${local(l, page)}" hreflang="${l}" lang="${l}" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${esc(LANG_NAMES[l])}</a>`,
+  ).join('');
+  return `
+    <div class="page">
+      <div class="top nav-host" id="site-nav">
+        <header class="navbar">
+          <a class="brand wordmark" href="${local(lang, 'home')}" aria-label="Woohop"><svg viewBox="0 0 59 48" aria-hidden="true"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
+          <nav class="nav-links" aria-label="${esc(s.menu)}">${nav.map(([t, h, id]) => `<a href="${h}"${id === page ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}</nav>
+          <div class="nav-actions">
+            <div class="nav-more lang-wrap">
+              <button class="lang" type="button" aria-expanded="false" aria-haspopup="true" aria-label="${esc(s.langMenu)}"><svg><use href="#i-globe"/></svg>${esc(s.langShort)}</button>
+              <div class="nav-menu" hidden>${langMenu}</div>
+            </div>
+            <button class="btn btn-icon btn-secondary nav-burger" type="button" aria-label="${esc(s.menu)}" style="--h:44px"><svg><use href="#i-menu"/></svg></button>
+          </div>
+        </header>
+      </div>
+      <dialog class="sheet" id="sheet" aria-label="${esc(s.menu)}">
+        <div class="grabber"></div>
+        <div class="sheet-list">${nav.map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${esc(t)}</a>`).join('')}<button class="btn btn-ghost btn-block" type="button" data-close>${esc(s.close)}</button></div>
+      </dialog>`;
+}
+
+function footer(s, lang) {
+  return `
+      <footer class="site-footer" id="site-footer">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="wordmark" href="${local(lang, 'home')}" style="font-size:22px"><svg viewBox="0 0 59 48" style="width:30px;height:24.4px" aria-hidden="true"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
+            <p>${esc(s.footerTag1)}<br>${esc(s.footerTag2)}</p>
+          </div>
+          <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a></div>
+          <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 Woohop</span></div>
+      </footer>
+    </div>`;
+}
+
+// 每頁都嵌一份當頁語言的文案，執行期 JS 直接讀，不用再發請求
+function scripts(s, lang, page, extra = []) {
+  const v = `?v=${ASSET_VERSION}`;
+  const data = { lang, page, t: s, langs: LANGS, langNames: LANG_NAMES };
+  return `
+    <script>window.WOOHOP = ${jsonForScript(data)};</script>
+    <script src="/assets/woohop-art.js${v}"></script>
+    <script src="/assets/site.js${v}"></script>
+${extra.map((f) => `    <script src="/assets/${f}${v}"></script>`).join('\n')}`;
+}
+
+/* ---------- 遊戲清單（靜態版，給爬蟲與沒開 JS 的人；JS 會換成有插圖、能篩選的版本） ---------- */
+
+const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'avalon'];
+function staticGames(s, lang, keys = GAME_KEYS) {
+  return keys
+    .map((k) => `<a class="game" href="${gameUrl(lang, k)}"><h3>${esc(s.games[k][0])}</h3><p>${esc(s.games[k][1])}</p></a>`)
+    .join('');
+}
+
+/* ---------- 結構化資料 ---------- */
+
+function jsonLd(s, lang, page, title, desc) {
+  const website = {
+    '@type': 'WebSite',
+    '@id': `${SITE}/#website`,
+    url: `${SITE}/`,
+    name: 'Woohop',
+    // 改名前叫 Web100，留著舊名字，搜尋舊名字的人也找得到
+    alternateName: ['Web100', 'vibeweb100'],
+    inLanguage: LANGS,
+  };
+  const pageNode = {
+    '@type': 'WebPage',
+    '@id': `${url(lang, page)}#webpage`,
+    url: url(lang, page),
+    name: title,
+    description: desc,
+    inLanguage: lang,
+    isPartOf: { '@id': `${SITE}/#website` },
+  };
+  const graph = [website, pageNode];
+  if (page !== 'combo') {
+    // 首頁與找遊戲頁：宣告這是「可以直接開來玩的工具清單」，不是一篇推薦文
+    graph.push({
+      '@type': 'ItemList',
+      name: page === 'home' ? s.heroTitle1 + s.heroTitle2 : s.gamesH1,
+      itemListOrder: 'https://schema.org/ItemListUnordered',
+      numberOfItems: GAME_KEYS.length,
+      itemListElement: GAME_KEYS.map((k, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'WebApplication',
+          name: s.games[k][0],
+          description: s.games[k][1],
+          url: SITE + gameUrl(lang, k),
+          applicationCategory: 'GameApplication',
+          operatingSystem: 'Any',
+          isAccessibleForFree: true,
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
+        },
+      })),
+    });
+  }
+  if (page !== 'home') {
+    graph.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
+        { '@type': 'ListItem', position: 2, name: page === 'games' ? s.gamesH1 : s.comboH1, item: url(lang, page) },
+      ],
+    });
+  }
+  return { '@context': 'https://schema.org', '@graph': graph };
+}
+
+/* ---------- 中文長文（只有 zh-TW） ---------- */
+
 function articleHtml(sections) {
   if (!Array.isArray(sections) || !sections.length) return '';
-
+  // **重點** 轉成 <strong>。先跳脫再轉換：跳脫過的文字不可能再有 < >，加進去的 <strong> 是唯一的標籤
   return sections
-    .map((section) => {
-      const paragraphs = section.p
-        .map((text) => `          <p>${esc(text).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</p>`)
-        .join('\n');
-      return `\n        <section>\n          <h2>${esc(section.h)}</h2>\n${paragraphs}\n        </section>`;
-    })
-    .join('') + '\n      ';
+    .map((sec) => `<section><h3>${esc(sec.h)}</h3>${sec.p.map((p) => `<p>${esc(p).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</p>`).join('')}</section>`)
+    .join('');
 }
 
-/*
- * 結構化資料。
- *
- * 重點是 ItemList：搜尋「破冰遊戲」的人看到的整頁都是文章，這裡要讓機器讀懂
- * 這一頁是**一份可以直接開來玩的工具清單**，而不是第十六篇推薦文。
- * 每一項都指到實際的遊戲頁，順序跟畫面上的卡片一致。
- */
-function jsonLd(s, lang, url) {
-  const games = [
-    { name: s.avalonTitle, desc: s.avalonDesc, path: `/avalon/${lang}` },
-    { name: s.buzzerTitle, desc: s.buzzerDesc, path: `/buzzer/${lang}/` },
-    { name: s.matchTitle, desc: s.matchDesc, path: `/match/${lang}/` },
-    { name: s.bingoTitle, desc: s.bingoDesc, path: `/bingo/${lang}/` },
-    { name: s.bombTitle, desc: s.bombDesc, path: `/bomb/${lang}/` },
-    // 只有繁體中文，每個語言都指到同一頁
-    { name: s.happyTitle.replace(/­/g, ''), desc: s.happyDesc, path: '/happiness/zh-TW/' },
-  ];
+/* ---------- 三種頁面 ---------- */
 
-  const data = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebSite',
-        '@id': `${SITE}/#website`,
-        url: SITE,
-        name: 'Web100',
-        description: s.seoDesc,
-        inLanguage: lang,
-      },
-      {
-        '@type': 'ItemList',
-        name: s.heroTitle,
-        itemListOrder: 'https://schema.org/ItemListUnordered',
-        numberOfItems: games.length,
-        itemListElement: games.map((game, index) => ({
-          '@type': 'ListItem',
-          position: index + 1,
-          item: {
-            '@type': 'WebApplication',
-            name: game.name,
-            description: game.desc,
-            url: SITE + game.path,
-            applicationCategory: 'GameApplication',
-            operatingSystem: 'Any',
-            isAccessibleForFree: true,
-            offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
-          },
-        })),
-      },
-    ],
-  };
-
-  // 把 < 跳成 \u003c：文案裡萬一出現 </script> 才不會提早關掉標籤
-  return `    <script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
-}
-
-function render(lang) {
+function homePage(lang) {
   const s = STRINGS[lang];
-  const url = langUrl(lang);
+  const title = s.seoTitle, desc = s.seoDesc;
+  const badges = (list, cls) => list.map((b) => `<span class="badge ${cls}">${esc(b)}</span>`).join('');
+  return `${head(s, lang, 'home', title, desc, jsonLd(s, lang, 'home', title, desc))}
+  <body>${navbar(s, lang, 'home')}
+      <main id="main">
+        <section class="hero">
+          <div class="hero-bg" aria-hidden="true"><svg id="hero-tiles"></svg></div>
+          <div>
+            <span class="kicker">${esc(s.heroKicker)}</span>
+            <h1>${esc(s.heroTitle1)}<br>${esc(s.heroTitle2)}</h1>
+            <p class="lead">${esc(s.heroLead)}</p>
+            <div class="cta">
+              <a class="btn btn-lg btn-solid" href="${local(lang, 'games')}">${esc(s.heroCta)}</a>
+              <button class="btn btn-lg btn-secondary" type="button" id="hero-random"><svg><use href="#i-dice"/></svg>${esc(s.heroRandom)}</button>
+            </div>
+            <div class="trust">${s.trust.map((x) => `<span><svg><use href="#i-check"/></svg>${esc(x)}</span>`).join('')}</div>
+          </div>
+          <div class="hero-art">
+            <svg id="hero-illo" viewBox="0 0 530 380" role="img" aria-label="${esc(s.heroAlt)}"></svg>
+          </div>
+        </section>
 
-  const alternates = LANGS.map(
-    (l) => `    <link rel="alternate" hreflang="${l}" href="${langUrl(l)}" />`,
-  ).join('\n');
-  const xDefault = `    <link rel="alternate" hreflang="x-default" href="${langUrl(DEFAULT_LANG)}" />`;
+        <section id="finder">
+          <div class="section-head"><div><span class="kicker">${esc(s.finderKicker)}</span><h2>${esc(s.finderTitle)}</h2><p>${esc(s.finderLead)}</p></div></div>
+          <div id="finder-root"><div class="game-grid">${staticGames(s, lang)}</div></div>
+        </section>
 
-  // 填入首屏文字。這些元素在原始 index.html 裡是空的，執行期由 JS 以同一份 STRINGS 填入，
-  // 所以靜態內容跟使用者實際看到的畫面一致。
-  const fill = (tag, id, value) => [
-    new RegExp(`(<${tag} id="${id}">)(</${tag}>)`),
-    `$1${esc(value)}$2`,
-  ];
+        <section id="combo">
+          <div class="section-head">
+            <div><span class="kicker">${esc(s.comboKicker)}</span><h2>${esc(s.comboTitle)}</h2><p>${esc(s.comboLead)}</p></div>
+            <a class="link" href="${local(lang, 'combo')}">${esc(s.comboMore)}</a>
+          </div>
+          <div class="plan" id="combo-root"></div>
+        </section>
 
-  return applyAll(
-    src,
-    [
-      [/<html lang="[^"]*"/, `<html lang="${lang}"`],
-      [/<title>[\s\S]*?<\/title>/, `<title>${esc(s.seoTitle)}</title>`],
-      [/(<meta name="description" content=")[^"]*(")/, `$1${esc(s.seoDesc)}$2`],
-      [/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(s.seoTitle)}$2`],
-      [/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(s.seoDesc)}$2`],
-      [/(<meta property="og:url" content=")[^"]*(")/, `$1${url}$2`],
-      [/(<link rel="canonical" href=")[^"]*(")/, `$1${url}$2`],
-      // hreflang 接在 canonical 之後，讓網址相關的標籤集中在一起
-      [/(<link rel="canonical"[^>]*>)/, `$1\n${alternates}\n${xDefault}`],
-      fill('h1', 'hero-title', s.heroTitle),
-      fill('p', 'hero-tagline', s.heroTagline),
-      fill('h3', 'avalon-title', s.avalonTitle),
-      fill('p', 'avalon-desc', s.avalonDesc),
-      fill('h3', 'buzzer-title', s.buzzerTitle),
-      fill('p', 'buzzer-desc', s.buzzerDesc),
-      fill('h3', 'match-title', s.matchTitle),
-      fill('p', 'match-desc', s.matchDesc),
-      fill('h3', 'bingo-title', s.bingoTitle),
-      fill('p', 'bingo-desc', s.bingoDesc),
-      fill('h3', 'bomb-title', s.bombTitle),
-      fill('p', 'bomb-desc', s.bombDesc),
-      [/(<span class="tag" id="avalon-tag">)(<\/span>)/, `$1${esc(s.avalonTag)}$2`],
-      [/(<span class="tag" id="buzzer-tag">)(<\/span>)/, `$1${esc(s.buzzerTag)}$2`],
-      [/(<span class="tag" id="match-tag">)(<\/span>)/, `$1${esc(s.matchTag)}$2`],
-      [/(<span class="tag" id="bingo-tag">)(<\/span>)/, `$1${esc(s.bingoTag)}$2`],
-      [/(<span class="tag" id="bomb-tag">)(<\/span>)/, `$1${esc(s.bombTag)}$2`],
-      // 卡片連結先給對的語言網址，爬蟲不必等 JS 執行就能順著爬到阿瓦隆。
-      // 不帶尾斜線，與阿瓦隆站的 canonical 一致。
-      [/(<a class="card" id="avalon-card" href=")[^"]*(")/, `$1/avalon/${lang}$2`],
-      // 搶答帶尾斜線，跟它自己的 canonical 一致
-      [/(<a class="card" id="buzzer-card" href=")[^"]*(")/, `$1/buzzer/${lang}/$2`],
-      // 喜好二選一同樣帶尾斜線，跟它自己的 canonical 一致
-      [/(<a class="card" id="match-card" href=")[^"]*(")/, `$1/match/${lang}/$2`],
-      // 幸福賓果也是 8 種語言了，帶尾斜線跟它自己的 canonical 一致
-      [/(<a class="card" id="bingo-card" href=")[^"]*(")/, `$1/bingo/${lang}/$2`],
-      // 定時炸彈同樣帶尾斜線
-      [/(<a class="card" id="bomb-card" href=")[^"]*(")/, `$1/bomb/${lang}/$2`],
-      // 幸福模擬器只有繁體中文，連結固定是 /happiness/zh-TW/，index.html 裡已經寫死，不用換
-      fill('h3', 'happy-title', s.happyTitle),
-      fill('p', 'happy-desc', s.happyDesc),
-      [/(<span class="tag" id="happy-tag">)(<\/span>)/, `$1${esc(s.happyTag)}$2`],
-      // 說明長文。只有部分語言有（目前 zh-TW），沒有的語言這個容器維持空的
-      [/(<div class="article" id="home-article">)(<\/div>)/, `$1${articleHtml(s.homeArticle)}$2`],
-      // 結構化資料：宣告這是一個「工具集合」而不是一篇文章
-      [/(<link rel="canonical"[^>]*>)/, `$1
-${jsonLd(s, lang, url)}`],
-    ],
-    lang,
-  );
+        <section id="party">
+          <div class="section-head"><div><span class="kicker">${esc(s.partyKicker)}</span><h2>${esc(s.partyTitle)}</h2><p>${esc(s.partyLead)}</p></div></div>
+          <div class="party">
+            <div class="party-steps">${s.partySteps.map(([b, d]) => `<div class="party-step"><b>${esc(b)}</b><span>${esc(d)}</span></div>`).join('')}</div>
+            <div class="row"><button class="btn btn-secondary" type="button" disabled>${esc(s.partyCta)}</button><span class="badge b-soon">${esc(s.soon)}</span></div>
+          </div>
+        </section>
+
+        <section id="boardgame">
+          <div class="section-head"><div><span class="kicker">${esc(s.boardKicker)}</span><h2>${esc(s.boardTitle)}</h2></div></div>
+          <div class="feature">
+            <div class="art-box" data-art="avalon"></div>
+            <div>
+              <h3>${esc(s.games.avalon[0])}</h3>
+              <p>${esc(s.avalonLong)}</p>
+              <div class="row" style="margin-top:12px">${badges(s.avalonBadges, 'b-info')}</div>
+            </div>
+            <a class="btn btn-lg btn-solid" href="/avalon/${lang}">${esc(s.avalonCta)}</a>
+            <svg class="w-row" viewBox="0 0 354 48" aria-hidden="true" data-w-row="#3D54B6"></svg>
+          </div>
+        </section>
+
+        <section id="happiness">
+          <div class="section-head"><div><span class="kicker">${esc(s.happyKicker)}</span><h2>${esc(s.happyTitle)}</h2></div></div>
+          <div class="feature mint">
+            <div class="art-box" data-art="happiness"></div>
+            <div>
+              <h3>${esc(s.games.happy[0])}</h3>
+              <p>${esc(s.happyLong)}</p>
+              <div class="row" style="margin-top:12px">${badges(s.happyBadges, 'b-live')}</div>
+              ${s.happyNote ? `<p class="note">${esc(s.happyNote)}</p>` : ''}
+            </div>
+            <a class="btn btn-lg g-mint" href="/happiness/zh-TW/">${esc(s.happyCta)}</a>
+            <svg class="w-row" viewBox="0 0 354 48" aria-hidden="true" data-w-row="#4FB59A"></svg>
+          </div>
+        </section>
+${s.homeArticle ? `
+        <section id="guide">
+          <div class="section-head"><div><span class="kicker">${esc(s.articleKicker)}</span></div></div>
+          <div class="article">${articleHtml(s.homeArticle)}</div>
+        </section>` : ''}
+      </main>
+${footer(s, lang)}
+${scripts(s, lang, 'home', ['hero-art.js', 'home.js'])}
+  </body>
+</html>
+`;
 }
 
-// sitemap 也一併帶上 hreflang，讓 Google 不必逐頁抓完才知道語言對應關係。
+function gamesPage(lang) {
+  const s = STRINGS[lang];
+  const title = s.gamesSeoTitle, desc = s.gamesSeoDesc;
+  return `${head(s, lang, 'games', title, desc, jsonLd(s, lang, 'games', title, desc))}
+  <body>${navbar(s, lang, 'games')}
+      <main id="main">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><span>${esc(s.navGames)}</span></nav>
+          <h1>${esc(s.gamesH1)}</h1>
+          <p>${esc(s.gamesLead)}</p>
+        </div>
+        <section style="padding-top:20px">
+          <div id="finder-root"><div class="game-grid">${staticGames(s, lang)}</div></div>
+        </section>
+      </main>
+${footer(s, lang)}
+${scripts(s, lang, 'games', ['games.js'])}
+  </body>
+</html>
+`;
+}
+
+function comboPage(lang) {
+  const s = STRINGS[lang];
+  const title = s.comboSeoTitle, desc = s.comboSeoDesc;
+  return `${head(s, lang, 'combo', title, desc, jsonLd(s, lang, 'combo', title, desc))}
+  <body>${navbar(s, lang, 'combo')}
+      <main id="main">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><span>${esc(s.navCombo)}</span></nav>
+          <h1>${esc(s.comboH1)}</h1>
+          <p>${esc(s.comboPageLead)}</p>
+        </div>
+        <section style="padding-top:20px">
+          <div class="plan" id="combo-root"></div>
+        </section>
+        <section>
+          <div class="section-head"><div><span class="kicker">${esc(s.flowKicker)}</span><h2>${esc(s.flowTitle)}</h2><p>${esc(s.flowLead)}</p></div></div>
+          <div class="card" style="background:var(--surface)">
+            <ol class="flow" id="flow">
+              <li><span class="when">${esc(s.flowOpen)}</span><div><h3>${esc(s.flowOpenTitle)}</h3><p>${esc(s.flowOpenDesc)}</p></div></li>
+              <li><span class="when">${esc(s.flowTrans)}</span><div><h3>${esc(s.flowTransTitle)}</h3><p>${esc(s.flowTransDesc)}</p></div></li>
+              <li><span class="when">${esc(s.flowClose)}</span><div><h3>${esc(s.flowCloseTitle)}</h3><p>${esc(s.flowCloseDesc)}</p></div></li>
+            </ol>
+          </div>
+        </section>
+      </main>
+${footer(s, lang)}
+${scripts(s, lang, 'combo', ['combo.js'])}
+  </body>
+</html>
+`;
+}
+
+/* ---------- sitemap：每一頁都帶 hreflang ---------- */
+
 function buildSitemap() {
-  const alternates = LANGS.map(
-    (l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${langUrl(l)}"/>`,
-  ).join('\n');
-  const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${langUrl(DEFAULT_LANG)}"/>`;
-  const urls = LANGS.map(
-    (l) => `  <url>\n    <loc>${langUrl(l)}</loc>\n${alternates}\n${xDefault}\n  </url>`,
-  ).join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
+  const entries = [];
+  for (const page of Object.keys(PAGES)) {
+    const alternates = LANGS.map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${url(l, page)}"/>`).join('\n');
+    const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}"/>`;
+    for (const l of LANGS) entries.push(`  <url>\n    <loc>${url(l, page)}</loc>\n${alternates}\n${xDefault}\n  </url>`);
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entries.join('\n')}\n</urlset>\n`;
 }
 
+/* ---------- 輸出 ---------- */
+
+// 每次從乾淨的 dist 開始，舊版留下的檔案不會混進來
+if (existsSync(OUT)) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
+const render = { home: homePage, games: gamesPage, combo: comboPage };
+let count = 0;
 for (const lang of LANGS) {
-  const dir = path.join(OUT, lang);
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(path.join(dir, 'index.html'), render(lang));
+  for (const page of Object.keys(PAGES)) {
+    const html = render[page](lang);
+    if (/\{\{|undefined|\[object Object\]/.test(html.replace(/<script>window\.WOOHOP[\s\S]*?<\/script>/, ''))) {
+      throw new Error(`[${lang}/${page}] 產出的 HTML 有沒填到的值（undefined 或 [object Object]）`);
+    }
+    const dir = path.join(OUT, lang, PAGES[page]);
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(path.join(dir, 'index.html'), html);
+    count++;
+  }
 }
 
-// 根目錄留一份（vercel.json 的 / -> /zh-TW/ 轉址之外的保險），內容用預設語言。
-writeFileSync(path.join(OUT, 'index.html'), render(DEFAULT_LANG));
-
+// 根目錄留一份預設語言的首頁（vercel.json 會先把 / 轉到 /zh-TW/，這是保險）
+writeFileSync(path.join(OUT, 'index.html'), homePage(DEFAULT_LANG));
 writeFileSync(path.join(OUT, 'sitemap.xml'), buildSitemap());
 
-// 404.html 不進多語言產生流程：找不到的網址沒有語言可以判斷（/it/ 和 /xyz 都會落到這裡），
-// 語言在執行期挑，所以原樣複製就好。Vercel 對靜態輸出會自動拿 dist/404.html 當找不到頁面的回應。
+// 靜態檔。design-tokens.css 給還沒改版的遊戲頁引用（它們直接連 /design-tokens.css），不能拿掉
 for (const file of ['robots.txt', 'design-tokens.css', 'favicon.svg', 'apple-touch-icon.png', '404.html']) {
   if (existsSync(file)) copyFileSync(file, path.join(OUT, file));
 }
+mkdirSync(path.join(OUT, 'assets'), { recursive: true });
+for (const file of readdirSync('assets')) copyFileSync(path.join('assets', file), path.join(OUT, 'assets', file));
 
-console.log(`Prerendered ${LANGS.length} language pages + sitemap into dist/.`);
+console.log(`Prerendered ${count} pages (${LANGS.length} languages × ${Object.keys(PAGES).length}) + sitemap into dist/.`);
