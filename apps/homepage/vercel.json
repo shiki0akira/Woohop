@@ -231,6 +231,14 @@
       "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/:file"
     },
     {
+      "source": "/match/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/woohop/:file"
+    },
+    {
+      "source": "/match/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/og/:file"
+    },
+    {
       "source": "/bingo-sitemap.xml",
       "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/sitemap.xml"
     },

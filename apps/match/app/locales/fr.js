@@ -149,15 +149,22 @@ export default {
   kickedDesc: 'L’animation vous a retiré de ce salon.',
   // 規則頁
   rulesHeading: 'Comment jouer',
-  rulesStepsHeading: 'Dérouler une partie',
-  rulesStep1: "L'animation choisit les questions sur la page d'accueil : dépliez une catégorie pour cocher au cas par cas, ou écrivez les vôtres sur le moment. Huit à dix, c'est l'idéal, et elles sont figées une fois la partie lancée.",
-  rulesStep2: 'Dès que le code et le QR code apparaissent, chacun rejoint depuis son téléphone, choisit un avatar et saisit un nom. Sans installation ni inscription.',
-  rulesStep3: "Dix secondes par question : d'accord (◯) ou pas d'accord (✕). Vous pouvez changer d'avis jusqu'à la fin du temps, ensuite c'est figé. Une question manquée ne compte tout simplement pas pour vos correspondances : ce n'est pas une erreur.",
-  rulesStep4: "Le temps écoulé, la salle s'arrête sur le décompte et montre qui a choisi quoi ; l'animation appuie ensuite sur Suivant. Après la dernière question, les groupes s'affichent automatiquement.",
-  rulesGroupingHeading: 'Comment les groupes sont calculés',
-  rulesGrouping1: "L'affinité entre deux personnes, c'est la part de questions auxquelles elles ont répondu pareil, parmi celles auxquelles elles ont toutes deux répondu. Il n'y a pas de bonne réponse ici, donc ni score ni erreur.",
-  rulesGrouping2: 'Pour le classement, les réponses sont pondérées selon leur rareté : une question où neuf personnes sur dix répondent pareil n’apprend presque rien, alors que deux personnes qui choisissent toutes deux le côté rare, si.',
-  rulesGrouping3:
-    'L’animateur choisit seulement le nombre de groupes ; leur taille se calcule selon le nombre de participants présents. On part du binôme le plus proche, puis on ajoute à chaque fois la personne qui colle le mieux au groupe, jusqu’à ce qu’il soit complet. Tout le monde se retrouve dans un groupe, personne n’est laissé de côté. En dessous de 5 participants, pas de groupes : seulement ceux qui vous ressemblent le plus.',
+  // 玩法頁精簡版（2026-10-17，照定時炸彈）：三格一眼資訊、4 步怎麼玩、主持人怎麼帶
+  rulesIntro: "Chacun utilise son téléphone et répond d’accord ou pas d’accord à chaque question avant la fin du temps. Ensuite, ceux qui pensent le plus pareil sont regroupés, avec des sujets de discussion.",
+  rulesFacts: [["Joueurs","5 à 30, groupes dès 6"],["Durée","8 à 10 questions, environ 8 min"],["Il faut","Un téléphone par personne ; l’animateur ouvre une salle"]],
+  rulesHowHeading: "Comment jouer",
+  rulesHowSteps: [
+    "L’animateur ouvre une salle et choisit les questions. Un code et un QR code s’affichent.",
+    "Chacun scanne avec son téléphone, choisit un avatar et un pseudo.",
+    "À chaque question, répondez d’accord ou pas d’accord avant la fin du temps.",
+    "Les groupes apparaissent automatiquement. Retrouvez votre groupe et lancez-vous avec les sujets communs.",
+  ],
+  rulesLeadHeading: "Comment animer",
+  rulesLeadSay: "À chaque question, répondez simplement d’accord ou pas d’accord, il n’y a pas de mauvaise réponse. À la fin, vous serez avec les personnes qui pensent le plus comme vous !",
+  rulesLeadSteps: [
+    "8 à 10 questions suffisent ; au-delà, on se lasse.",
+    "Quand le temps est écoulé, lisez qui a choisi chaque camp : souvent quelqu’un commence à s’expliquer.",
+    "Laissez 5 à 10 minutes aux groupes pour parler des sujets affichés.",
+  ],
   rulesBack: '← Retour au jeu',
 };

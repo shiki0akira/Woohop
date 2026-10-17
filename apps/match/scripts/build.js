@@ -26,13 +26,27 @@ import {
 } from '../app/strings.js';
 import { QUESTIONS, CATEGORIES, DEFAULT_QUESTION_IDS, checkQuestions } from '../app/questions.js';
 import { AVATARS } from '../app/avatars.js';
+// Woohop 全站共用的導覽列、頁尾、遊戲內頂欄與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
+// 改首頁那份就是全站一起改。樣式與程式複製進 dist/match/woohop/，跟這個遊戲一起部署（不跨網域引用）
+import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
+import { navbar, footer, gameBar } from '../../homepage/src/chrome.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const outBase = join(dist, BASE_PATH.replace(/^\//, ''));
+const siteAssets = join(root, '..', 'homepage', 'assets');
+const SITE_ASSET_FILES = ['woohop.css', 'site.css', 'game.css', 'woohop-art.js', 'site.js', 'game.js'];
 
 // 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
 const RAW_TOKENS = new Set([
+  'woohopHeader',
+  'woohopFooter',
+  'woohopJson',
+  'gameBarHtml',
+  'heroTitleHtml',
+  'rulesFactsList',
+  'rulesHowList',
+  'rulesLeadList',
   'hreflang',
   'stringsJson',
   'questionsJson',
@@ -65,6 +79,7 @@ async function main() {
     .update(await readFile(join(root, 'app', 'app.js')))
     .update(await readFile(join(root, 'app', 'app.css')))
     .update(await readFile(join(root, 'app', 'header.js')))
+    .update((await Promise.all(SITE_ASSET_FILES.map((f) => readFile(join(siteAssets, f))))).join(''))
     .digest('hex')
     .slice(0, 8);
 
@@ -93,6 +108,8 @@ async function main() {
   await cp(join(root, 'app', 'app.js'), join(outBase, 'app.js'));
   await cp(join(root, 'app', 'header.js'), join(outBase, 'header.js'));
   await cp(join(root, 'app', 'app.css'), join(outBase, 'app.css'));
+  await mkdir(join(outBase, 'woohop'), { recursive: true });
+  for (const f of SITE_ASSET_FILES) await cp(join(siteAssets, f), join(outBase, 'woohop', f));
 
   // QR 產生器整包放進來，不走 CDN：多一個網路請求、多一個第三方故障點都不值得
   await mkdir(join(outBase, 'vendor'), { recursive: true });
@@ -169,6 +186,32 @@ function tokensFor(lang, page, assetVersion) {
     langOptions: langOptions(lang),
     base: BASE_PATH,
     projectId: PROJECT_ID,
+    // 全站導覽列（遊戲頁藏起來，只留給語言選單等互動用）與頁尾。'match' 不是首頁的分頁，所以不標目前頁面；
+    // 語言選單連到「這個遊戲同一頁」的其他語言
+    woohopHeader: navbar(SITE_STRINGS[lang], lang, 'match', (l) => pagePath(l, page)),
+    woohopFooter: footer(SITE_STRINGS[lang], lang, 'match', (l) => pagePath(l, page)),
+    // 給 site.js（導覽互動）用的當頁文案；遊戲頁的 page_view 由 app.js 依畫面送，玩法頁交給 site.js
+    woohopJson: toScriptJson({ lang, page: 'match', t: SITE_STRINGS[lang], langs: LANGS, ownPageView: !page.dir }),
+    // 遊戲內頂欄（全站共用，見 apps/homepage/src/chrome.mjs 的 gameBar）。沒有「設定」分頁：出題是開房流程的一部分
+    gameBarHtml: gameBar(SITE_STRINGS[lang], lang, {
+      title: strings.navTitle,
+      gameHref: pagePath(lang, PAGES[0]),
+      rulesHref: pagePath(lang, PAGES[1]),
+      rulesLabel: strings.navRules,
+      isRules: page.dir === 'rules',
+      backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
+    }),
+    // 玩法頁（精簡版）的三塊
+    rulesFactsList: strings.rulesFacts
+      .map(([k, v]) => `<li><span>${escapeHtml(k)}</span><b>${escapeHtml(v)}</b></li>`)
+      .join('\n        '),
+    rulesHowList: strings.rulesHowSteps.map((x) => `<li>${escapeHtml(x)}</li>`).join('\n          '),
+    rulesLeadList: strings.rulesLeadSteps.map((x) => `<li>${escapeHtml(x)}</li>`).join('\n          '),
+    sayLabel: SITE_STRINGS[lang].sayLabel,
+    crumbHome: SITE_STRINGS[lang].home,
+    crumbGames: SITE_STRINGS[lang].navGames,
+    // 主標題拆成「遊戲名」＋「一句話」兩行（冒號那裡分開），冒號留在 HTML 給爬蟲，畫面上藏起來
+    heroTitleHtml: heroTitleHtml(strings.heroTitle),
     siteOrigin: ORIGIN,
     workerOrigin: WORKER_ORIGIN,
     assetVersion,
@@ -253,6 +296,12 @@ function render(template, tokens) {
   if (leftover) throw new Error(`還有沒替換掉的 token：${[...new Set(leftover)].join(', ')}`);
 
   return html;
+}
+
+function heroTitleHtml(title) {
+  const m = title.match(/^(.+?)(\s*[:：]\s*)(.+)$/);
+  if (!m) return escapeHtml(title);
+  return `<span class="h1-name">${escapeHtml(m[1])}<span class="sr-colon">${escapeHtml(m[2])}</span></span><span class="h1-line">${escapeHtml(m[3])}</span>`;
 }
 
 function escapeHtml(value) {

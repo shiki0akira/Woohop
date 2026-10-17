@@ -149,15 +149,22 @@ export default {
   kickedDesc: 'The host removed you from this room.',
   // 規則頁
   rulesHeading: 'How to play',
-  rulesStepsHeading: 'Running a round',
-  rulesStep1: 'The host picks the questions on the home page — open a category to tick individual ones, or write your own on the spot. Eight to ten works best, and they are locked once the game starts.',
-  rulesStep2: 'Once the code and QR code appear, everyone joins from their own phone, picks an avatar and types a name. No download, no sign-up.',
-  rulesStep3: 'Ten seconds per question: agree (◯) or disagree (✕). You can change your answer until time runs out, then it locks. A question you miss simply does not count towards your matches — it is not marked wrong.',
-  rulesStep4: 'When time is up the room stops on the tally, showing who picked which side, and the host presses Next. After the last question the groups appear automatically.',
-  rulesGroupingHeading: 'How the grouping works',
-  rulesGrouping1: 'Two people match on the share of questions they both answered the same way. There are no right answers here, so there is no score and nothing to get wrong.',
-  rulesGrouping2: 'For ranking, answers are weighted by how uncommon they are: a question where nine in ten picked the same side tells you almost nothing, while two people both picking the rare side really does mean something.',
-  rulesGrouping3:
-    'The host only picks how many groups; the size of each one is worked out from who actually shows up. Grouping starts from the closest pair, then adds whoever fits the group best until it is full. Everyone lands in a group — nobody is left over. Under 5 players there are no groups, just your closest matches.',
+  // 玩法頁精簡版（2026-10-17，照定時炸彈）：三格一眼資訊、4 步怎麼玩、主持人怎麼帶
+  rulesIntro: "Everyone uses their own phone and picks agree or disagree on each question before time runs out. Afterwards the people who think most alike are grouped together, with topics to talk about.",
+  rulesFacts: [["Players","5–30, groups from 6"],["Time","8–10 questions, about 8 min"],["You need","A phone each; the host opens a room"]],
+  rulesHowHeading: "How to play",
+  rulesHowSteps: [
+    "The host opens a room and picks questions. A room code and QR code appear.",
+    "Everyone scans with their phone, picks an avatar and a name.",
+    "For each question, choose agree or disagree before time runs out.",
+    "Groups appear automatically. Find your group and start with the shared topics.",
+  ],
+  rulesLeadHeading: "How to lead it",
+  rulesLeadSay: "For each question just pick agree or disagree. There are no wrong answers. At the end you will be grouped with the people who think most like you!",
+  rulesLeadSteps: [
+    "Eight to ten questions is plenty; more and people tire out.",
+    "When time is up, read out who picked each side. Someone usually starts explaining.",
+    "Give groups 5–10 minutes to talk through the topics on their screen.",
+  ],
   rulesBack: '← Back to the game',
 };

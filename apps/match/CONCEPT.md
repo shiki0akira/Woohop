@@ -153,7 +153,7 @@ O/X 偏好配對破冰遊戲：大家用手機各自對一系列「同意／不�
 - WebSocket 用 Hibernation API，每次改動都要寫回 storage
 - 沒有 bundler，多畫面在同一份 HTML 裡切換，房號放查詢字串 `?room=XXXX`
 - 文案唯一來源是 `app/strings.js`，build 時每語言產生一份靜態頁
-- 配色引用 `https://www.vibeweb100.com/design-tokens.css`，不複製變數進 repo
+- 配色：2026-10 起改用 Woohop 新設計（全站共用樣式由 build 從 apps/homepage 複製進來，見 README「介面」）
 
 跟搶答不同的地方：
 

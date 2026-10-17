@@ -149,15 +149,22 @@ export default {
   kickedDesc: 'Quien dirige te ha sacado de esta sala.',
   // 規則頁
   rulesHeading: 'Cómo se juega',
-  rulesStepsHeading: 'Llevar una ronda',
-  rulesStep1: 'Quien dirige elige las preguntas en la página de inicio: despliega una categoría para marcarlas una a una, o escribe las tuyas sobre la marcha. Entre ocho y diez va mejor, y quedan fijadas al empezar.',
-  rulesStep2: 'En cuanto salen el código y el QR, cada cual entra desde su móvil, elige un avatar y escribe un nombre. Sin descargas ni registro.',
-  rulesStep3: 'Diez segundos por pregunta: de acuerdo (◯) o en desacuerdo (✕). Puedes cambiar tu respuesta hasta que se acabe el tiempo, luego queda fijada. Una pregunta que se te pase simplemente no cuenta para tus coincidencias: no se considera un fallo.',
-  rulesStep4: 'Al acabarse el tiempo la sala se detiene en el recuento y muestra quién eligió cada lado; entonces quien dirige pulsa Siguiente. Tras la última pregunta aparecen los grupos automáticamente.',
-  rulesGroupingHeading: 'Cómo se calculan los grupos',
-  rulesGrouping1: 'La afinidad entre dos personas es la proporción de preguntas que ambas respondieron igual, de entre las que respondieron las dos. Aquí no hay respuestas correctas, así que no hay puntuación ni nada que fallar.',
-  rulesGrouping2: 'Para el ranking, las respuestas se ponderan según lo poco comunes que sean: una pregunta en la que nueve de cada diez eligen lo mismo casi no dice nada, mientras que dos personas que eligen el lado minoritario sí.',
-  rulesGrouping3:
-    'Quien presenta solo elige en cuántos grupos se divide; el tamaño de cada uno sale del número de personas que participen. Se empieza por la pareja más afín y se va añadiendo a quien mejor encaje hasta completar el grupo. Todo el mundo acaba en algún grupo, nadie se queda fuera. Con menos de 5 personas no hay grupos: solo sale con quién encajas más.',
+  // 玩法頁精簡版（2026-10-17，照定時炸彈）：三格一眼資訊、4 步怎麼玩、主持人怎麼帶
+  rulesIntro: "Cada persona usa su móvil y elige de acuerdo o en desacuerdo en cada pregunta antes de que acabe el tiempo. Al final se agrupa a quienes piensan más parecido, con temas para hablar.",
+  rulesFacts: [["Jugadores","5–30, grupos desde 6"],["Tiempo","8–10 preguntas, unos 8 min"],["Necesitas","Un móvil por persona; quien dirige abre una sala"]],
+  rulesHowHeading: "Cómo se juega",
+  rulesHowSteps: [
+    "Quien dirige abre una sala y elige las preguntas. Aparecen un código y un QR.",
+    "Todos escanean con el móvil, eligen un avatar y un nombre.",
+    "En cada pregunta, elige de acuerdo o en desacuerdo antes de que acabe el tiempo.",
+    "Los grupos salen solos. Busca a tu grupo y empezad por los temas en común.",
+  ],
+  rulesLeadHeading: "Cómo dirigirlo",
+  rulesLeadSay: "En cada pregunta solo hay que elegir de acuerdo o en desacuerdo, no hay respuestas malas. ¡Al final os juntaréis con quien piensa más parecido!",
+  rulesLeadSteps: [
+    "Con 8–10 preguntas basta; más cansa.",
+    "Cuando acabe el tiempo, lee quién eligió cada lado: suele haber alguien que empieza a explicarse.",
+    "Dad 5–10 minutos a los grupos para hablar de los temas de la pantalla.",
+  ],
   rulesBack: '← Volver al juego',
 };

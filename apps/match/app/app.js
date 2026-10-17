@@ -924,7 +924,11 @@
       if (autoRadio) autoRadio.checked = true;
     }
 
-    el.roomCode.textContent = room.code;
+    // 房號一格一個字（Woohop 的 .room-code），念給大家聽、對著抄都比較不會錯
+    el.roomCode.innerHTML = String(room.code).split('').map(function (ch) {
+      return '<span>' + escapeHtml(ch) + '</span>';
+    }).join('');
+    el.roomCode.setAttribute('aria-label', room.code);
     el.shareUrl.textContent = shareLink();
     renderQr();
 
@@ -949,7 +953,7 @@
     for (var i = 0; i < ordered.length; i += 1) {
       var player = ordered[i];
       html +=
-        '<li class="' + (player.online ? '' : 'is-offline') + '">' +
+        '<li class="player' + (player.online ? '' : ' is-offline') + (player.id === state.clientId ? ' is-me' : '') + '">' +
         avatarSvg(player.avatar, 32) +
         '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
         /* 標籤樣式跟 04_HappyBingo 一致（.role-badge 膠囊），三個專案要長一樣。
@@ -963,7 +967,7 @@
           ? ''
           : '<span class="role-badge is-muted">' + escapeHtml(t('offlineTag')) + '</span>') +
         (isHost && !player.host
-          ? '<button class="btn-outline btn-danger" type="button" data-kick="' + player.id +
+          ? '<button class="btn btn-sm btn-ghost kick" type="button" data-kick="' + player.id +
             '" aria-label="' + escapeHtml(t('kickLabel')) + '">✕</button>'
           : '') +
         '</li>';
@@ -1317,6 +1321,20 @@
     location.replace(CFG.base + '/' + CFG.lang + '/');
   }
 
+  /*
+   * 遊戲內頂欄的返回鍵（game.js 會呼叫這個）：
+   *  - 首頁畫面：回網站的「找遊戲」
+   *  - 出題、填暱稱：跟瀏覽器返回鍵一樣退一格（onPopState 會處理）
+   *  - 房間裡：跟「離開／關閉房間」同一個確認框
+   *  - 錯誤畫面：回這個遊戲的首頁
+   */
+  window.gameBack = function () {
+    if (state.view === 'home') location.href = '/' + CFG.lang + '/games/';
+    else if (state.view === 'room') confirmExit();
+    else if (state.view === 'error') backHome();
+    else history.back();
+  };
+
   /* ---------- 瀏覽器返回鍵 ---------- */
 
   /*
@@ -1448,6 +1466,10 @@
 
     // 四個畫面共用同一個網址，page_view 靠自動送只會記到一筆，
     // 分不出多少人真的開了房間，所以在這裡手動送
+    // 遊戲內頂欄（Woohop 的 game.css）：進了房間就是 play（藏起玩法分頁、選單、頁尾，遊戲名不能點），其他畫面是 browse
+    document.body.setAttribute('data-game-mode', name === 'room' ? 'play' : 'browse');
+    var gameTitle = document.querySelector('.game-bar .title');
+    if (gameTitle) gameTitle.tabIndex = name === 'room' ? -1 : 0;
     if (window.trackPageView) window.trackPageView(CFG.base + '/' + CFG.lang + '/' + name);
   }
 

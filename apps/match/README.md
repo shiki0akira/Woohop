@@ -38,6 +38,18 @@ npm run test:smoke
 
 `test/smoke.mjs` 需要先跑起 `npm run dev`，它會開一間真的房間、接 10 個 WebSocket 當玩家，走完「建房 → 加入 → 逐題限時作答 → 分組結果」。分組要 10 個人才看得出來，用瀏覽器手動開十個分頁測不現實。
 
+## 介面（2026-10 改版成 Woohop 新設計）
+
+照定時炸彈的做法（細節見 `apps/bomb/CLAUDE.md` 的「配色 / UI」），只有淺色：
+
+- 導覽列、頁尾、遊戲內頂欄、按鈕、彈窗、輸入框、頭像、房號都用 Woohop 全站共用的東西：`scripts/build.js` 從 `apps/homepage` 拿 `src/chrome.mjs`（navbar／footer／gameBar）和 assets（woohop.css、site.css、game.css、woohop-art.js、site.js、game.js），複製進 `dist/match/woohop/`。**首頁改了這些檔，這裡要重新 build、部署**
+- 線上 `/match/woohop/*`、`/match/og/*` 靠首頁 `vercel.json` 的白名單
+- `app.css` 只排這個遊戲自己的版面；跟 woohop.css 撞名的（`.chip`、`.avatar`、`.note`、`.room-code`）都有加限定
+- 頂欄模式：進了房間是 `play`（藏玩法分頁、選單、頁尾，遊戲名不能點），其他畫面是 `browse`。返回鍵 `window.gameBack`：首頁回「找遊戲」、出題／填暱稱退一格、房間裡跳離開／關閉確認
+- 配色：代表色粉紫；同意＝薄荷、不同意＝珊瑚（跟插圖 O、X 兩張卡同色）
+- 玩法頁刻意精簡：三格一眼資訊、4 步怎麼玩、主持人怎麼帶（照著念＋提醒），不放長文
+- 分享縮圖 `public/og/{lang}.png` 用首頁的 `node scripts/og-image.mjs match` 產生
+
 ## 文件
 
 - 玩法、演算法與所有設計決策：`CONCEPT.md`

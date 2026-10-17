@@ -59,3 +59,79 @@
 [data-game-mode="play"] .game-tabs, [data-game-mode="play"] .game-menu { display: none; }
 [data-game-mode="play"] .game-bar-spacer { display: block; }
 [data-game-mode="play"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; pointer-events: none; }
+
+/* ============================================================
+   遊戲頁共用元件（定時炸彈、喜好二選一⋯）。每個遊戲在 body 上設自己的代表色：
+     --game-edge  計數、玩法頁小標的字色（定時炸彈是珊瑚、二選一是粉紫）
+   ============================================================ */
+.woohop-game { --game-edge: var(--blue-edge); }
+.woohop-game .view { display: flex; flex-direction: column; gap: 16px; }
+.woohop-game .view[hidden] { display: none; }
+
+/* 頁首：麵包屑＋標題＋一句說明 */
+.game-main .page-head { padding: 28px 0 4px; }
+.game-main .page-head h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.25; text-wrap: balance; margin: 8px 0; }
+.game-main .page-head p { max-width: 40em; }
+.game-main .page-head .crumbs { margin-bottom: 4px; }
+/* 主標題拆成「遊戲名」＋「一句話」兩行（build 的 heroTitleHtml），冒號留在 HTML 給爬蟲、畫面上藏起來 */
+.game-main .page-head h1 > span { display: block; }
+.h1-name { font-size: 1.15em; }
+.h1-line { color: var(--indigo); font-size: .78em; margin-top: 2px; }
+.sr-colon { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.game-main h1:lang(ja) { word-break: auto-phrase; }
+
+/* 白色卡片：Woohop 的浮起元件（2px 灰框＋4px 底部厚度） */
+.panel { background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 22px 24px 24px; margin-bottom: 4px; }
+@media (min-width: 760px) { .panel { padding: 28px 32px 32px; } }
+.panel h2 { margin: 0; font-size: 19px; font-weight: 900; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.counter { font-size: 14px; font-weight: 800; color: var(--game-edge); font-variant-numeric: tabular-nums; }
+
+.woohop-game .hint { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+.form-error { margin: 0; padding: 12px 14px; border-radius: var(--r-md); border: 2px solid var(--coral-edge); background: var(--coral-face); color: var(--coral-text); font-weight: 700; }
+.field-label { display: block; margin: 14px 0 8px; font-size: 14px; font-weight: 800; }
+.field-label-gap { margin-top: 18px; }
+.rules-link { margin: 4px 0 0; text-align: center; }
+dialog.modal h2 { margin: 0 0 4px; font-size: 20px; }
+dialog.modal .m-one { grid-template-columns: 1fr; }
+
+/* 一排單選：長得跟 Woohop 的分段控制一樣（灰底軌道，選中的那格白色浮起來）。
+   底層還是 <input type="radio">，鍵盤方向鍵與螢幕閱讀器都照舊，只是把圓點藏起來 */
+.seg { display: grid; gap: 4px; padding: 4px; border-radius: var(--r-md); background: #e8e8ee; }
+.seg-3 { grid-template-columns: repeat(3, 1fr); }
+.seg-4 { grid-template-columns: repeat(4, 1fr); }
+.seg-5 { grid-template-columns: repeat(5, 1fr); }
+.seg-item {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  height: 44px; padding: 0 4px; border-radius: calc(var(--r-md) - 4px);
+  font-size: 14px; font-weight: 700; color: #55555c; font-variant-numeric: tabular-nums; white-space: nowrap;
+  cursor: pointer; transition: background .12s, color .12s;
+}
+.seg-item input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.seg-item:hover { color: var(--ink); }
+.seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 #c9c9d3; }
+.seg-item:has(input:focus-visible) { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.seg-item:has(input:disabled) { color: #b4b4bc; cursor: not-allowed; }
+
+/* ---------- 玩法頁（刻意精簡：一眼資訊、幾步怎麼玩、主持人怎麼帶） ---------- */
+.game-rules { display: flex; flex-direction: column; gap: 20px; }
+.prose h2 { margin-bottom: 10px; }
+.prose ol, .prose ul { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; }
+.prose li { line-height: 1.8; }
+.prose p { margin: 0 0 12px; color: #3b3b42; line-height: 1.85; }
+.prose p:last-child { margin-bottom: 0; }
+.rules-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.rules-facts li { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); }
+.rules-facts span { font-size: 13px; font-weight: 800; color: var(--game-edge); letter-spacing: .04em; }
+.rules-facts b { font-size: 16px; line-height: 1.45; }
+/* 依人數的建議表（定時炸彈的引爆時間）：橫跨整列 */
+.rules-facts .rules-time { grid-column: 1 / -1; gap: 6px; }
+.rules-time table { border-collapse: collapse; width: 100%; max-width: 420px; }
+.rules-time th, .rules-time td { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 16px; text-align: left; white-space: normal; }
+.rules-time tr:last-child th, .rules-time tr:last-child td { border-bottom: 0; }
+.rules-time th { font-weight: 700; color: var(--muted); width: 45%; }
+.rules-time td { font-weight: 900; }
+.rules-time small { font-size: 14px; color: var(--muted); }
+/* 主持人怎麼帶：開場一句是「照著念」卡片（woohop.css 的 .prompt-card），底下是小提醒 */
+.rules-lead .prompt-card { margin: 18px 0; max-width: none; font-size: 18px; }
+.rules-back { margin: 8px 0 0; text-align: center; }

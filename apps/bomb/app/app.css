@@ -10,65 +10,15 @@
  * （.hero、.stage、.field、.card、.game⋯），會撞到的一律加限定或改名。
  */
 
-/* ---------- 版面 ---------- */
-
-/* site.css 把每個 <section> 都加了 56px 上下留白（首頁的大區塊），這個遊戲的區塊是卡片，不要 */
-.bomb-app section:not(.panel) { padding: 0; }
-/* 寬度跟首頁的子頁一樣用整個內容區（.page 最寬 1120）；設定畫面在電腦上兩張卡並排，
-   遊戲中與爆炸畫面只有一張卡，收窄置中 */
-.bomb-main { padding-bottom: 40px; }
-.view { display: flex; flex-direction: column; gap: 16px; }
-.view[hidden] { display: none; }
-
-.bomb-main .page-head { padding: 28px 0 4px; }
-.bomb-main .page-head h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.25; text-wrap: balance; }
-.bomb-main .page-head p { max-width: 40em; }
-.bomb-main .page-head .crumbs { margin-bottom: 4px; }
-
-/* 白色卡片：Woohop 的浮起元件（2px 灰框＋4px 底部厚度） */
-.panel {
-  background: var(--surface);
-  border: 2px solid var(--edge-n);
-  box-shadow: var(--raise-n);
-  border-radius: var(--r-lg);
-  padding: 22px 24px 24px;
-  margin-bottom: 4px;
-}
-@media (min-width: 760px) { .panel { padding: 28px 32px 32px; } }
-.panel h2 { margin: 0; font-size: 19px; font-weight: 900; }
-.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.counter { font-size: 14px; font-weight: 800; color: var(--coral-edge); font-variant-numeric: tabular-nums; }
-
-.hint { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
-.form-error { margin: 0; padding: 12px 14px; border-radius: var(--r-md); border: 2px solid var(--coral-edge); background: var(--coral-face); color: var(--coral-text); font-weight: 700; }
-.field-label { display: block; margin: 14px 0 8px; font-size: 14px; font-weight: 800; }
-.field-label-gap { margin-top: 18px; }
-.rules-link { margin: 4px 0 0; text-align: center; }
+/* ---------- 版面（共用的卡片、頁首、單選、玩法頁在 Woohop 的 game.css） ---------- */
+/* 這個遊戲的代表色：珊瑚（計數、玩法頁小標） */
+.bomb-app { --game-edge: var(--coral-edge); }
 
 /* 圖示 symbol 的定義本體不顯示，只給 <use> 引用 */
 .icon-sprite { display: none; }
 
-/* ---------- 一排單選（引爆時間） ----------
- * 長得跟 Woohop 的分段控制（.segmented）一樣：灰底軌道，選中的那格是白色浮起來。
- * 底層還是 <input type="radio">，鍵盤方向鍵與螢幕閱讀器都照舊，只是把圓點藏起來。
- */
-.seg { display: grid; gap: 4px; padding: 4px; border-radius: var(--r-md); background: #e8e8ee; }
-.seg-3 { grid-template-columns: repeat(3, 1fr); margin-top: 12px; }
-.seg-4 { grid-template-columns: repeat(4, 1fr); }
-.seg-5 { grid-template-columns: repeat(5, 1fr); }
-.seg-item {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  height: 44px; padding: 0 4px; border-radius: calc(var(--r-md) - 4px);
-  font-size: 14px; font-weight: 700; color: #55555c; font-variant-numeric: tabular-nums; white-space: nowrap;
-  cursor: pointer; transition: background .12s, color .12s;
-}
-/* 圓點藏起來但保留在無障礙樹裡（不能用 display:none，那樣鍵盤就選不到） */
-.seg-item input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
-.seg-item:hover { color: var(--ink); }
-.seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 #c9c9d3; }
-.seg-item:has(input:focus-visible) { outline: 3px solid var(--indigo); outline-offset: 2px; }
-/* 「最長」比「最短」小的組合不存在，那些選項直接停用（app.js 的 clampRange） */
-.seg-item:has(input:disabled) { color: #b4b4bc; cursor: not-allowed; }
+/* ---------- 引爆時間：三顆區間（一排單選本體在 game.css） ---------- */
+.bomb-app .seg-3 { margin-top: 12px; }
 /*
  * ⚠️ 三顆區間放的是「30 Sek.–2 Min.」這種兩段式文字，比下面兩排長得多。
  * 德文在 375px 下會塞滿格子，所以**只有這一排**允許在破折號後折行、高度改成 min-height。
@@ -201,50 +151,21 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 .boom-actions { display: grid; gap: 10px; margin-top: 22px; }
 
 /* ---------- 規則頁 ---------- */
-.bomb-rules { display: flex; flex-direction: column; gap: 16px; }
-.rules-play { margin-top: 16px; }
-.prose h2 { margin-bottom: 10px; }
-.prose ol, .prose ul { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; }
-.prose p { margin: 0 0 12px; color: #3b3b42; line-height: 1.85; }
-.prose p:last-child { margin-bottom: 0; }
 .rules-faq h2 { margin: 12px 0 12px; font-size: 22px; font-weight: 900; }
 .rules-faq .faq { max-width: none; }
 .rules-faq .faq p { color: #3b3b42; line-height: 1.85; }
-.rules-back { margin: 8px 0 0; text-align: center; }
 
 /* ---------- 主標題：遊戲名一行、一句話一行 ---------- */
-.bomb-main .page-head h1 > span { display: block; }
-.h1-name { font-size: 1.15em; }
-.h1-line { color: var(--indigo); font-size: .78em; margin-top: 2px; }
-.sr-colon { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* 日文照詞組斷行（不然會切在「お題」中間） */
-.bomb-main h1:lang(ja), .task-text:lang(ja) { word-break: auto-phrase; }
+.task-text:lang(ja) { word-break: auto-phrase; }
 
 @media (min-width: 760px) { .pick-button { min-height: 156px; } }
 @media (min-width: 760px) { .play-card { padding: 32px 40px 36px; gap: 28px; } .bomb svg { width: 180px; } }
 
 /* 規則頁：文章類的內容，一行太長不好讀，收到 860px */
-.bomb-rules { gap: 20px; }
-.prose li { line-height: 1.8; }
 
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }
-
-/* ---------- 玩法頁：一眼看到的三件事 ---------- */
-.rules-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-.rules-facts li { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); }
-.rules-facts span { font-size: 13px; font-weight: 800; color: var(--coral-edge); letter-spacing: .04em; }
-.rules-facts b { font-size: 16px; line-height: 1.45; }
-/* 引爆時間建議：橫跨整列，左邊人數、右邊區間 */
-.rules-facts .rules-time { grid-column: 1 / -1; gap: 6px; }
-.rules-time table { border-collapse: collapse; width: 100%; max-width: 420px; }
-.rules-time th, .rules-time td { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 16px; text-align: left; white-space: normal; }
-.rules-time tr:last-child th, .rules-time tr:last-child td { border-bottom: 0; }
-.rules-time th { font-weight: 700; color: var(--muted); width: 45%; }
-.rules-time td { font-weight: 900; }
-.rules-time small { font-size: 14px; color: var(--muted); }
-/* 主持人怎麼帶：開場一句是「照著念」卡片（woohop.css 的 .prompt-card），底下是小提醒 */
-.rules-lead .prompt-card { margin: 18px 0 18px; max-width: none; font-size: 18px; }
 
 /* ---------- 題型按鈕的勾勾：右上角，選了是實心打勾，沒選是空圈 ---------- */
 .pick-button { position: relative; }

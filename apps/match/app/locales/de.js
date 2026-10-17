@@ -150,15 +150,22 @@ export default {
   kickedDesc: 'Die Moderation hat dich aus diesem Raum entfernt.',
   // 規則頁
   rulesHeading: 'Spielanleitung',
-  rulesStepsHeading: 'Eine Runde spielen',
-  rulesStep1: 'Die Moderation wählt die Fragen auf der Startseite aus — Kategorie aufklappen und einzeln ankreuzen oder spontan eigene schreiben. Acht bis zehn passen am besten, nach dem Start sind sie fest.',
-  rulesStep2: 'Sobald Code und QR-Code da sind, treten alle vom eigenen Handy bei, wählen ein Bild und tippen einen Namen ein. Kein Download, keine Anmeldung.',
-  rulesStep3: 'Zehn Sekunden pro Frage: zustimmen (◯) oder ablehnen (✕). Bis zum Ablauf kannst du deine Antwort ändern, danach ist sie fest. Eine verpasste Frage zählt einfach nicht fürs Matching — sie gilt nicht als falsch.',
-  rulesStep4: 'Nach Ablauf bleibt der Raum bei der Auswertung stehen und zeigt, wer welche Seite gewählt hat; die Moderation drückt dann auf Weiter. Nach der letzten Frage erscheinen die Gruppen automatisch.',
-  rulesGroupingHeading: 'Wie die Gruppen entstehen',
-  rulesGrouping1: 'Zwei Personen passen umso besser zusammen, je größer der Anteil gemeinsam beantworteter Fragen mit gleicher Antwort ist. Es gibt keine richtigen Antworten, also auch keine Punkte und nichts falsch zu machen.',
-  rulesGrouping2: 'Fürs Ranking zählt, wie ungewöhnlich eine Antwort ist: Eine Frage, bei der neun von zehn dasselbe wählen, sagt kaum etwas aus — zwei Leute, die beide die seltene Seite wählen, dagegen schon.',
-  rulesGrouping3:
-    'Die Moderation legt nur fest, wie viele Gruppen es gibt; die Gruppengröße ergibt sich aus der tatsächlichen Teilnehmerzahl. Los geht es mit dem Paar mit der höchsten Übereinstimmung, dann kommt jeweils die Person dazu, die am besten passt, bis die Gruppe voll ist. Alle landen in einer Gruppe — niemand bleibt übrig. Unter 5 Personen gibt es keine Gruppen, sondern nur die Menschen, die am besten zu dir passen.',
+  // 玩法頁精簡版（2026-10-17，照定時炸彈）：三格一眼資訊、4 步怎麼玩、主持人怎麼帶
+  rulesIntro: "Jede Person nutzt ihr Handy und wählt bei jeder Frage „stimme zu“ oder „stimme nicht zu“, bevor die Zeit abläuft. Danach werden die Ähnlichsten zu Gruppen zusammengestellt – mit Gesprächsthemen.",
+  rulesFacts: [["Spieler","5–30, Gruppen ab 6"],["Dauer","8–10 Fragen, ca. 8 Min."],["Du brauchst","Ein Handy pro Person; die Leitung eröffnet einen Raum"]],
+  rulesHowHeading: "So geht’s",
+  rulesHowSteps: [
+    "Die Leitung eröffnet einen Raum und wählt Fragen. Raumcode und QR-Code erscheinen.",
+    "Alle scannen mit dem Handy, wählen einen Avatar und einen Namen.",
+    "Bei jeder Frage vor Ablauf der Zeit zustimmen oder ablehnen.",
+    "Die Gruppen erscheinen automatisch. Findet eure Gruppe und startet mit den gemeinsamen Themen.",
+  ],
+  rulesLeadHeading: "So leitest du an",
+  rulesLeadSay: "Bei jeder Frage einfach zustimmen oder ablehnen – es gibt kein Richtig oder Falsch. Am Ende landet ihr bei den Leuten, die am ähnlichsten denken!",
+  rulesLeadSteps: [
+    "8–10 Fragen reichen, mehr ermüdet.",
+    "Wenn die Zeit um ist, kurz vorlesen, wer welche Seite gewählt hat – oft fängt dann jemand an zu erklären.",
+    "Gebt den Gruppen 5–10 Minuten für die Themen auf dem Bildschirm.",
+  ],
   rulesBack: '← Zurück zum Spiel',
 };

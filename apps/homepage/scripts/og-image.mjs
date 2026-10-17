@@ -38,6 +38,14 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.bomb()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  match: async () => {
+    const { STRINGS: M } = await import(pathToFileURL(path.join(ROOT, '..', 'match', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'match', 'public', 'og'),
+      title: (lang) => splitTitle(M[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.match()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
 };
 const which = process.argv[2] || 'home';
 if (!TARGETS[which]) throw new Error('不認得的對象：' + which + '（可用：' + Object.keys(TARGETS).join('、') + '）');
