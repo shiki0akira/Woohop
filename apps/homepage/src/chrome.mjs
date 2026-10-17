@@ -54,6 +54,9 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
           <div class="footer-brand">
             <a class="wordmark" href="${local(lang, 'home')}" style="font-size:22px"><svg viewBox="0 0 59 48" style="width:30px;height:24.4px" aria-hidden="true"><use href="#w" fill="#7489E6"/></svg>Woohop</a>
             <p>${esc(s.footerTag1)}<br>${esc(s.footerTag2)}</p>
+            <!-- 聯絡信箱（Cloudflare Email Routing 轉寄）。地址拆成兩半放在 data 屬性，由 site.js 組回來，
+                 HTML 裡不出現完整地址，少被爬蟲抓去寄垃圾信 -->
+            <a class="link footer-mail" data-u="woohop" data-d="vibeweb100.com" hidden><svg aria-hidden="true"><use href="#i-mail"/></svg><span></span></a>
           </div>
           <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
           <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>

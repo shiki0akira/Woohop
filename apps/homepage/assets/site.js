@@ -260,5 +260,13 @@
     if (a) track('select_game', { game: a.dataset.key, source: page });
   });
 
+  /* ================= 頁尾的聯絡信箱：HTML 裡只放拆開的兩半，這裡組回 mailto 連結 ================= */
+  document.querySelectorAll('.footer-mail[data-u]').forEach(a => {
+    const addr = a.dataset.u + '@' + a.dataset.d;
+    a.href = 'mailto:' + addr;
+    a.querySelector('span').textContent = addr;
+    a.hidden = false;
+  });
+
   window.Site = { GAMES, card, artSvg, finder, combo, nav, track, fmt, esc, pageUrl };
 })();

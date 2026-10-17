@@ -247,3 +247,6 @@
   .faq-art .h-wiggle { transform-origin: 50% 100%; animation: h-wiggle 1.6s ease-in-out infinite; }
   .faq-art .h-float { transform-origin: 50% 50%; animation: h-float 3.6s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .faq-art * { animation: none !important; } }
+  /* 頁尾品牌欄底下的聯絡信箱 */
+  .footer-mail { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
+  .footer-mail svg { width: 18px; height: 18px; flex: none; }
