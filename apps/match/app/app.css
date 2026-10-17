@@ -16,6 +16,9 @@
 .ox-sprite { display: none; }
 .ox-mark svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 5; stroke-linecap: round; }
 
+/* 出題、加入、錯誤畫面沒有頁首，第一張卡片跟頂欄之間要留空（跟房間畫面的 .room-bar 一樣 20px） */
+#view-setup, #view-join, #view-error { padding-top: 20px; }
+
 .match-app .empty-note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
 .match-app .center { text-align: center; display: grid; justify-items: center; gap: 12px; }
 .match-app .center h1 { margin: 0; font-size: 26px; }
