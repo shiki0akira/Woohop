@@ -339,19 +339,20 @@
       var button = document.createElement('button');
       button.type = 'button';
       // 兩顆各有自己的色組（問答型走 Primary、動作型走 Secondary），見 app.css
-      button.className = 'pick-button pick-' + id;
+      // Woohop 的大選項卡（woohop.css 的 .choice）：問答型選了變藍、動作型選了變珊瑚
+      button.className = 'choice pick-' + id + (id === 'ask' ? ' c-blue' : ' c-coral');
 
       var icon = document.createElement('span');
-      icon.className = 'pick-icon';
+      icon.className = 'choice-icon';
       // <use> 指到 template.html 開頭那組 symbol，圖示不用重複貼在每顆按鈕裡
       icon.innerHTML = '<svg aria-hidden="true"><use href="#icon-' + id + '"></use></svg>';
 
       var name = document.createElement('span');
-      name.className = 'pick-name';
+      name.className = 'choice-name';
       name.textContent = groupLabel(id);
 
       var count = document.createElement('span');
-      count.className = 'pick-count';
+      count.className = 'choice-sub';
 
       button.appendChild(icon);
       button.appendChild(name);

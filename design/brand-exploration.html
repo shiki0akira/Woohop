@@ -170,6 +170,44 @@
   .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: #55555c; cursor: pointer; }
   .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 #c9c9d3; }
 
+  /* 大選項卡：一次要做的決定只有一兩個時用的大按鈕（題型、同意／不同意⋯），可以複選也可以單選。
+     沒選：白底灰框、右上角空圈；選了：換成自己的粉彩色（.c-blue／.c-coral／.c-mint⋯），右上角實心打勾。按下去會沉下去。
+     狀態看 aria-pressed="true"（或 .is-selected）；停用（例如時間到鎖定）時沒選的那顆淡掉 */
+  .choice {
+    --sel-face: var(--blue-face); --sel-edge: var(--blue-edge); --sel-text: var(--blue-text);
+    --face: var(--surface); --edge: var(--edge-n); --text: var(--ink); --mark: #8a8a93;
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    min-height: 136px; padding: 16px 8px; margin-bottom: 4px;
+    border: 2px solid var(--edge); border-radius: var(--r-lg); background: var(--face); color: var(--text);
+    box-shadow: 0 4px 0 var(--edge); font: inherit; cursor: pointer;
+    transition: transform .08s, box-shadow .08s, background .15s, border-color .15s;
+  }
+  .choice:hover:not(:disabled) { border-color: var(--sel-edge); }
+  .choice:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--edge); }
+  .choice:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .choice[aria-pressed="true"], .choice.is-selected { --face: var(--sel-face); --edge: var(--sel-edge); --text: var(--sel-text); --mark: var(--sel-edge); }
+  .choice::after {
+    content: ""; position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid #c9c9d3; background: var(--surface) no-repeat center / 16px;
+  }
+  .choice[aria-pressed="true"]::after, .choice.is-selected::after {
+    border-color: var(--edge); background-color: var(--edge);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .choice:disabled { cursor: default; }
+  .choice:disabled:not([aria-pressed="true"]):not(.is-selected) { opacity: .45; }
+  .choice .choice-icon { display: block; color: var(--mark); }
+  .choice .choice-icon svg { display: block; width: 44px; height: 44px; }
+  .choice .choice-name { font-size: 18px; font-weight: 900; text-align: center; }
+  .choice .choice-sub { font-size: 13px; font-weight: 700; opacity: .75; font-variant-numeric: tabular-nums; }
+  .choice.c-blue   { --sel-face: var(--blue-face);   --sel-edge: var(--blue-edge);   --sel-text: var(--blue-text); }
+  .choice.c-coral  { --sel-face: var(--coral-face);  --sel-edge: var(--coral-edge);  --sel-text: var(--coral-text); }
+  .choice.c-mint   { --sel-face: var(--mint-face);   --sel-edge: var(--mint-edge);   --sel-text: var(--mint-text); }
+  .choice.c-pink   { --sel-face: var(--pink-face);   --sel-edge: var(--pink-edge);   --sel-text: var(--pink-text); }
+  .choice.c-orange { --sel-face: var(--orange-face); --sel-edge: var(--orange-edge); --sel-text: var(--orange-text); }
+  .choice.c-yellow { --sel-face: var(--yellow-face); --sel-edge: var(--yellow-edge); --sel-text: var(--yellow-text); }
+  .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
   /* ============================================================
      遊戲列表：白底大格子＋每個遊戲自己的插圖
      ============================================================ */
@@ -682,6 +720,21 @@
         <button class="btn btn-secondary btn-sm"><svg><use href="#i-dice"/></svg>隨機一個</button>
       </div>
       <p class="note" style="margin:16px 0 0">膠囊可以複選，分段控制是單選。點點看。</p>
+    </div>
+
+    <div class="card" id="choice-demo">
+      <h3>大選項卡</h3>
+      <p class="sub">複選（定時炸彈的題型）</p>
+      <div class="choice-row" data-choice="multi">
+        <button type="button" class="choice c-blue" aria-pressed="true"><span class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M17 9h3a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-4-3h-4"/></svg></span><span class="choice-name">問答型</span><span class="choice-sub">45 題</span></button>
+        <button type="button" class="choice c-coral" aria-pressed="false"><span class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="2"/><path d="M12 7v7M7 10l5-2 5 2M9 21l3-7 3 7"/></svg></span><span class="choice-name">動作型</span><span class="choice-sub">45 題</span></button>
+      </div>
+      <p class="sub" style="margin-top:16px">單選（喜好二選一的同意／不同意）</p>
+      <div class="choice-row" data-choice="single">
+        <button type="button" class="choice c-mint" aria-pressed="true"><span class="choice-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><circle cx="24" cy="24" r="18.5"/></svg></span><span class="choice-name">同意</span></button>
+        <button type="button" class="choice c-coral" aria-pressed="false"><span class="choice-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M5.5 5.5 42.5 42.5M42.5 5.5 5.5 42.5"/></svg></span><span class="choice-name">不同意</span></button>
+      </div>
+      <p class="note" style="margin:16px 0 0">一次只有一兩個決定時用。沒選是白底灰框＋右上角空圈，選了換成自己的粉彩色＋實心打勾；顏色用 <code>.c-blue</code>、<code>.c-coral</code>、<code>.c-mint</code>⋯ 指定。時間到鎖定（<code>disabled</code>）時，沒選的那顆會淡掉。</p>
     </div>
   </div>
 
@@ -1290,6 +1343,12 @@
     const on = b.getAttribute('aria-pressed') === 'true';
     b.setAttribute('aria-pressed', String(!on));
     b.innerHTML = (!on ? '<svg><use href="#i-check"/></svg>' : '') + b.textContent;
+  }));
+  // 大選項卡：複選各自切換，單選一次只亮一顆
+  document.querySelectorAll('[data-choice]').forEach(g => g.addEventListener('click', e => {
+    const b = e.target.closest('.choice'); if (!b) return;
+    if (g.dataset.choice === 'single') g.querySelectorAll('.choice').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+    else b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
   }));
   document.querySelectorAll('.segmented').forEach(g => g.addEventListener('click', e => {
     if (e.target.tagName !== 'BUTTON') return;

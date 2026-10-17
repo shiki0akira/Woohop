@@ -41,26 +41,8 @@
  * 外框與底部厚度跟著換成同色系的深色。按下去會沉下去。
  */
 .pick-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 16px; }
-.pick-button {
-  --face: var(--surface); --edge: var(--edge-n); --text: var(--ink); --mark: #8a8a93;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  min-height: 136px; padding: 16px 8px; margin-bottom: 4px;
-  border: 2px solid var(--edge); border-radius: var(--r-lg); background: var(--face); color: var(--text);
-  box-shadow: 0 4px 0 var(--edge);
-  font: inherit; cursor: pointer;
-  transition: transform .08s, box-shadow .08s, background .15s, border-color .15s;
-}
-.pick-button:hover { filter: brightness(1.02); border-color: var(--hover-edge); }
-.pick-button:active { transform: translateY(4px); box-shadow: 0 0 0 var(--edge); }
-.pick-button:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
-.pick-ask { --hover-edge: var(--blue-edge); }
-.pick-dare { --hover-edge: var(--coral-edge); }
-.pick-ask[aria-pressed="true"] { --face: var(--blue-face); --edge: var(--blue-edge); --text: var(--blue-text); --mark: var(--blue-edge); }
-.pick-dare[aria-pressed="true"] { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); --mark: var(--coral-edge); }
-.pick-icon { color: var(--mark); }
-.pick-icon svg { display: block; width: 44px; height: 44px; fill: currentColor; }
-.pick-name { font-size: 18px; font-weight: 900; text-align: center; }
-.pick-count { font-size: 13px; font-weight: 700; opacity: .75; font-variant-numeric: tabular-nums; }
+/* 兩顆題型按鈕是 Woohop 的大選項卡（woohop.css 的 .choice），這裡只補：圖示是實心的 Material 圖形 */
+.pick-buttons .choice-icon svg { fill: currentColor; }
 
 /* 自訂題目的入口：已經加了幾題就靠在字旁邊 */
 .custom-open-count { color: var(--muted); font-size: 14px; font-weight: 700; }
@@ -159,7 +141,7 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 /* 日文照詞組斷行（不然會切在「お題」中間） */
 .task-text:lang(ja) { word-break: auto-phrase; }
 
-@media (min-width: 760px) { .pick-button { min-height: 156px; } }
+@media (min-width: 760px) { .pick-buttons .choice { min-height: 156px; } }
 @media (min-width: 760px) { .play-card { padding: 32px 40px 36px; gap: 28px; } .bomb svg { width: 180px; } }
 
 /* 規則頁：文章類的內容，一行太長不好讀，收到 860px */
@@ -167,13 +149,3 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }
 
-/* ---------- 題型按鈕的勾勾：右上角，選了是實心打勾，沒選是空圈 ---------- */
-.pick-button { position: relative; }
-.pick-button::after {
-  content: ""; position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
-  border: 2px solid #c9c9d3; background: var(--surface) no-repeat center / 16px;
-}
-.pick-button[aria-pressed="true"]::after {
-  border-color: var(--edge); background-color: var(--edge);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}

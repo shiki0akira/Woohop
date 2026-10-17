@@ -189,13 +189,14 @@
           <p class="question-text" id="question-text"></p>
 
           <div class="ox-buttons" id="ox-buttons">
-            <button class="ox-button ox-o" id="answer-o" type="button">
-              <span class="ox-mark"><svg><use href="#mark-o" /></svg></span>
-              <span class="ox-word">{{agreeLabel}}</span>
+            <!-- Woohop 的大選項卡（woohop.css 的 .choice）：同意選了變薄荷、不同意選了變珊瑚，右上角打勾 -->
+            <button class="choice ox-o c-mint" id="answer-o" type="button" aria-pressed="false">
+              <span class="choice-icon ox-mark"><svg><use href="#mark-o" /></svg></span>
+              <span class="choice-name">{{agreeLabel}}</span>
             </button>
-            <button class="ox-button ox-x" id="answer-x" type="button">
-              <span class="ox-mark"><svg><use href="#mark-x" /></svg></span>
-              <span class="ox-word">{{disagreeLabel}}</span>
+            <button class="choice ox-x c-coral" id="answer-x" type="button" aria-pressed="false">
+              <span class="choice-icon ox-mark"><svg><use href="#mark-x" /></svg></span>
+              <span class="choice-name">{{disagreeLabel}}</span>
             </button>
           </div>
           <p class="hint answer-hint" id="answer-hint"></p>

@@ -143,30 +143,14 @@
 .question-text { margin: 6px 0 2px; font-size: clamp(22px, 6vw, 30px); font-weight: 900; line-height: 1.4; text-align: center; text-wrap: balance; }
 .question-text:lang(ja) { word-break: auto-phrase; }
 
-/* 同意／不同意：兩顆大按鈕。沒選是白底灰框、選了填滿自己的色（同意薄荷、不同意珊瑚），按下會沉下去 */
+/* 同意／不同意：Woohop 的大選項卡（woohop.css 的 .choice，同意 c-mint、不同意 c-coral）。
+   沒選時圖示也帶自己的顏色，一眼分得出哪邊是哪邊 */
 .ox-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ox-button {
-  --face: var(--surface); --edge: var(--edge-n); --text: var(--ink); --mark: var(--muted);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  min-height: 150px; padding: 16px 8px; margin-bottom: 5px;
-  border: 2px solid var(--edge); border-radius: var(--r-lg); background: var(--face); color: var(--text);
-  box-shadow: 0 5px 0 var(--edge); font: inherit; cursor: pointer;
-  transition: transform .08s, box-shadow .08s, background .15s, border-color .15s;
-}
-.ox-o { --mark: var(--mint); }
-.ox-x { --mark: var(--coral); }
-.ox-button:hover:not(:disabled) { border-color: var(--hover-edge); }
-.ox-o { --hover-edge: var(--mint-edge); }
-.ox-x { --hover-edge: var(--coral-edge); }
-.ox-button:active:not(:disabled) { transform: translateY(5px); box-shadow: 0 0 0 var(--edge); }
-.ox-button:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
-.ox-o.chosen { --face: var(--mint-face); --edge: var(--mint-edge); --text: var(--mint-text); --mark: var(--mint-edge); }
-.ox-x.chosen { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); --mark: var(--coral-edge); }
-/* 時間到鎖定：沒選的那顆淡掉，選了的維持顏色 */
-.ox-button:disabled { cursor: default; }
-.ox-button:disabled:not(.chosen) { opacity: .45; }
-.ox-button .ox-mark { width: 56px; height: 56px; color: var(--mark); }
-.ox-word { font-size: 18px; font-weight: 900; }
+.ox-buttons .choice { min-height: 150px; }
+.ox-buttons .choice:not([aria-pressed="true"]).ox-o { --mark: var(--mint); }
+.ox-buttons .choice:not([aria-pressed="true"]).ox-x { --mark: var(--coral); }
+.ox-buttons .ox-mark { width: 56px; height: 56px; }
+.ox-buttons .ox-mark svg { width: 100%; height: 100%; }
 .answer-hint { text-align: center; margin: 0 !important; }
 
 /* 統計：兩欄，各列出選這邊的人 */

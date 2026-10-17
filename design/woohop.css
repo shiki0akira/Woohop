@@ -162,6 +162,44 @@
   .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: #55555c; cursor: pointer; }
   .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 #c9c9d3; }
 
+  /* 大選項卡：一次要做的決定只有一兩個時用的大按鈕（題型、同意／不同意⋯），可以複選也可以單選。
+     沒選：白底灰框、右上角空圈；選了：換成自己的粉彩色（.c-blue／.c-coral／.c-mint⋯），右上角實心打勾。按下去會沉下去。
+     狀態看 aria-pressed="true"（或 .is-selected）；停用（例如時間到鎖定）時沒選的那顆淡掉 */
+  .choice {
+    --sel-face: var(--blue-face); --sel-edge: var(--blue-edge); --sel-text: var(--blue-text);
+    --face: var(--surface); --edge: var(--edge-n); --text: var(--ink); --mark: #8a8a93;
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    min-height: 136px; padding: 16px 8px; margin-bottom: 4px;
+    border: 2px solid var(--edge); border-radius: var(--r-lg); background: var(--face); color: var(--text);
+    box-shadow: 0 4px 0 var(--edge); font: inherit; cursor: pointer;
+    transition: transform .08s, box-shadow .08s, background .15s, border-color .15s;
+  }
+  .choice:hover:not(:disabled) { border-color: var(--sel-edge); }
+  .choice:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--edge); }
+  .choice:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .choice[aria-pressed="true"], .choice.is-selected { --face: var(--sel-face); --edge: var(--sel-edge); --text: var(--sel-text); --mark: var(--sel-edge); }
+  .choice::after {
+    content: ""; position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid #c9c9d3; background: var(--surface) no-repeat center / 16px;
+  }
+  .choice[aria-pressed="true"]::after, .choice.is-selected::after {
+    border-color: var(--edge); background-color: var(--edge);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .choice:disabled { cursor: default; }
+  .choice:disabled:not([aria-pressed="true"]):not(.is-selected) { opacity: .45; }
+  .choice .choice-icon { display: block; color: var(--mark); }
+  .choice .choice-icon svg { display: block; width: 44px; height: 44px; }
+  .choice .choice-name { font-size: 18px; font-weight: 900; text-align: center; }
+  .choice .choice-sub { font-size: 13px; font-weight: 700; opacity: .75; font-variant-numeric: tabular-nums; }
+  .choice.c-blue   { --sel-face: var(--blue-face);   --sel-edge: var(--blue-edge);   --sel-text: var(--blue-text); }
+  .choice.c-coral  { --sel-face: var(--coral-face);  --sel-edge: var(--coral-edge);  --sel-text: var(--coral-text); }
+  .choice.c-mint   { --sel-face: var(--mint-face);   --sel-edge: var(--mint-edge);   --sel-text: var(--mint-text); }
+  .choice.c-pink   { --sel-face: var(--pink-face);   --sel-edge: var(--pink-edge);   --sel-text: var(--pink-text); }
+  .choice.c-orange { --sel-face: var(--orange-face); --sel-edge: var(--orange-edge); --sel-text: var(--orange-text); }
+  .choice.c-yellow { --sel-face: var(--yellow-face); --sel-edge: var(--yellow-edge); --sel-text: var(--yellow-text); }
+  .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
   /* ============================================================
      遊戲列表：白底大格子＋每個遊戲自己的插圖
      ============================================================ */

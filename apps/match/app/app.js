@@ -1055,8 +1055,8 @@
     el.oxButtons.hidden = state.role === 'host' && !room.hostPlays;
     el.answerO.disabled = !canAnswer;
     el.answerX.disabled = !canAnswer;
-    el.answerO.classList.toggle('chosen', mine === 'O');
-    el.answerX.classList.toggle('chosen', mine === 'X');
+    el.answerO.setAttribute('aria-pressed', String(mine === 'O'));
+    el.answerX.setAttribute('aria-pressed', String(mine === 'X'));
 
     if (locked) el.answerHint.textContent = mine ? t('answerHintLocked') : t('answerHintMissed');
     else el.answerHint.textContent = t('answerHintOpen');
