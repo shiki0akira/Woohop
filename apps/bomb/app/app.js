@@ -76,8 +76,7 @@
     pickButtons: document.getElementById('pick-buttons'),
     deckCount: document.getElementById('deck-count'),
     deckWarning: document.getElementById('deck-warning'),
-    openCustom: document.getElementById('open-custom'),
-    customOpenCount: document.getElementById('custom-open-count'),
+    customOpenCount: document.getElementById('game-settings-count'),
     customModal: document.getElementById('custom-modal'),
     customInput: document.getElementById('custom-input'),
     customGroup: document.getElementById('custom-group'),
@@ -701,6 +700,8 @@
     });
     // 頂欄跟著畫面換：設定畫面是網站導覽列，進行中／爆炸是遊戲內頂欄（app.css 看這個屬性）
     document.body.setAttribute('data-screen', next);
+    // 遊戲內頂欄（game.css）：設定畫面是 browse（有玩法、設定分頁與選單），進行中、爆炸是 play（只剩返回＋遊戲名，不能點出去）
+    document.body.setAttribute('data-game-mode', next === 'setup' ? 'browse' : 'play');
     // 頂欄的遊戲名是回主頁的連結，玩的時候不能點（CSS），鍵盤也不要停在它上面
     var gameTitle = document.querySelector('.game-bar .title');
     if (gameTitle) gameTitle.tabIndex = next === 'setup' ? 0 : -1;
@@ -925,7 +926,6 @@
     syncTimerCustom();
   });
 
-  el.openCustom.addEventListener('click', openCustomModal);
 
   el.customDone.addEventListener('click', function () {
     closeCustomModal(false);
@@ -968,13 +968,13 @@
     history.back();
   });
 
-  // 遊戲內頂欄的返回鍵：設定畫面回「找遊戲」；進行中先跳確認（確認後回設定畫面）；爆炸畫面等於「改設定」。
+  // 遊戲內頂欄的返回鍵（game.js 會呼叫這個）：設定畫面回「找遊戲」；進行中先跳確認（確認後回設定畫面）；爆炸畫面等於「改設定」。
   // 進行中直接開確認框，不經過 history.back()：開始遊戲時推的那一格要留給「結束這輪」去收
-  document.getElementById('game-back').addEventListener('click', function () {
+  window.gameBack = function () {
     if (screen === 'boom') el.backToSetup.click();
     else if (screen === 'play') openLeaveModal();
     else location.href = '/' + LANG + '/games/';
-  });
+  };
 
   // 頂欄的「設定」與選單面板在 header.js（玩法頁也用）；它要開設定框時呼叫這個
   window.openSettings = openCustomModal;

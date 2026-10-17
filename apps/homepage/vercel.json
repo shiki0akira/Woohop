@@ -303,7 +303,7 @@
       "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/:file"
     },
     {
-      "source": "/bomb/woohop/:file(woohop.css|site.css|woohop-art.js|site.js)",
+      "source": "/bomb/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
       "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/woohop/:file"
     },
     {

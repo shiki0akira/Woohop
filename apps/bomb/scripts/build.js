@@ -22,11 +22,11 @@ import { QUESTIONS, CATEGORY_GROUPS, checkQuestions } from '../app/questions.js'
 // Woohop 全站共用的導覽列、頁尾與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
 // 改首頁那份就是全站一起改。樣式與程式複製進 dist/bomb/woohop/，跟這個遊戲一起部署（不跨網域引用）
 import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
-import { navbar, footer } from '../../homepage/src/chrome.mjs';
+import { navbar, footer, gameBar } from '../../homepage/src/chrome.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const siteAssets = join(root, '..', 'homepage', 'assets');
-const SITE_ASSET_FILES = ['woohop.css', 'site.css', 'woohop-art.js', 'site.js'];
+const SITE_ASSET_FILES = ['woohop.css', 'site.css', 'game.css', 'woohop-art.js', 'site.js', 'game.js'];
 const dist = join(root, 'dist');
 const outBase = join(dist, BASE_PATH.replace(/^\//, ''));
 
@@ -65,9 +65,7 @@ const TIMER = {
 // 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
 const RAW_TOKENS = new Set([
   'heroTitleHtml',
-  'gameMenuLinks',
-  'gameSheetLinks',
-  'rulesCurrent',
+  'gameBarHtml',
   'woohopHeader',
   'woohopFooter',
   'woohopJson',
@@ -301,24 +299,17 @@ function tokensFor(lang, page, assetVersion) {
     // 主標題拆成「遊戲名」＋「一句話」兩行（冒號那裡分開），不然中文會被平衡斷行切在詞中間。
     // 冒號留在 HTML 裡給爬蟲與螢幕閱讀器，畫面上藏起來
     heroTitleHtml: heroTitleHtml(strings.heroTitle),
-    menuLabel: SITE_STRINGS[lang].menu,
-    // 頂欄「玩法」分頁在玩法頁標成目前頁面
-    rulesCurrent: page.dir ? ' aria-current="page"' : '',
-    // 遊戲內頂欄右上角的下拉選單，項目跟網站導覽列一樣
-    gameMenuLinks: [
-      [SITE_STRINGS[lang].navGames, `/${lang}/games/`],
-      [SITE_STRINGS[lang].navCombo, `/${lang}/combo/`],
-      [SITE_STRINGS[lang].navBoardgame, `/avalon/${lang}`],
-      [SITE_STRINGS[lang].navGuides, `/${lang}/guides/`],
-    ].map(([t, h]) => `<a href="${h}">${escapeHtml(t)}</a>`).join(''),
-    // 手機的底部面板用同一組連結，做成整排按鈕
-    gameSheetLinks: [
-      [SITE_STRINGS[lang].navGames, `/${lang}/games/`],
-      [SITE_STRINGS[lang].navCombo, `/${lang}/combo/`],
-      [SITE_STRINGS[lang].navBoardgame, `/avalon/${lang}`],
-      [SITE_STRINGS[lang].navGuides, `/${lang}/guides/`],
-    ].map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${escapeHtml(t)}</a>`).join(''),
-    closeLabel: SITE_STRINGS[lang].close,
+    // 遊戲內頂欄（全站共用，見 apps/homepage/src/chrome.mjs 的 gameBar）
+    gameBarHtml: gameBar(SITE_STRINGS[lang], lang, {
+      title: strings.navTitle,
+      gameHref: pagePath(lang, PAGES[0]),
+      rulesHref: pagePath(lang, PAGES[1]),
+      rulesLabel: strings.navRules,
+      isRules: page.dir === 'rules',
+      settingsLabel: strings.settingsTab,
+      // 設定畫面的返回鍵回「找遊戲」；玩法頁回遊戲頁（遊戲頁的返回鍵依畫面而定，見 app.js 的 window.gameBack）
+      backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
+    }),
     crumbHome: SITE_STRINGS[lang].home,
     crumbGames: SITE_STRINGS[lang].navGames,
     siteOrigin: ORIGIN,

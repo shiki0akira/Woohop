@@ -17,7 +17,7 @@ export const LANG_NAMES = {
 export const STRINGS = {
   'zh-TW': {
     langShort: '繁中',
-    navGames: '找遊戲', navCombo: '破冰組合', navBoardgame: '桌遊助手', more: '更多', menu: '選單', close: '關閉', langMenu: '切換語言', home: '首頁',
+    navGames: '找遊戲', navCombo: '破冰組合', navBoardgame: '桌遊助手', more: '更多', menu: '選單', close: '關閉', back: '返回', langMenu: '切換語言', home: '首頁',
     seoTitle: 'Woohop｜破冰遊戲工具箱：明天就要帶，打開就能帶',
     seoDesc: '給帶小組、帶活動的人：手機打開就能帶的破冰遊戲。喜好二選一、幸福賓果、定時炸彈、現場搶答，免下載、免註冊，前一晚選好，現場跟著手機帶。',
     heroKicker: '給帶小組、帶活動的你',
@@ -139,7 +139,7 @@ export const STRINGS = {
 
   en: {
     langShort: 'EN',
-    navGames: 'Find games', navCombo: 'Icebreaker combo', navBoardgame: 'Board games', more: 'More', menu: 'Menu', close: 'Close', langMenu: 'Change language', home: 'Home',
+    navGames: 'Find games', navCombo: 'Icebreaker combo', navBoardgame: 'Board games', more: 'More', menu: 'Menu', close: 'Close', back: 'Back', langMenu: 'Change language', home: 'Home',
     seoTitle: 'Woohop | Icebreaker games you can lead straight from your phone',
     seoDesc: 'For people who lead small groups and events: icebreaker games you can run from your phone. This or That, Happy Bingo, Time Bomb and a live buzzer — no app, no sign-up. Pick one tonight, lead it tomorrow.',
     heroKicker: 'For anyone leading a group',
@@ -225,7 +225,7 @@ export const STRINGS = {
 
   de: {
     langShort: 'DE',
-    navGames: 'Spiele finden', navCombo: 'Eisbrecher-Kombi', navBoardgame: 'Brettspiele', more: 'Mehr', menu: 'Menü', close: 'Schließen', langMenu: 'Sprache wechseln', home: 'Start',
+    navGames: 'Spiele finden', navCombo: 'Eisbrecher-Kombi', navBoardgame: 'Brettspiele', more: 'Mehr', menu: 'Menü', close: 'Schließen', back: 'Zurück', langMenu: 'Sprache wechseln', home: 'Start',
     seoTitle: 'Woohop | Eisbrecher-Spiele, die du direkt vom Handy anleitest',
     seoDesc: 'Für alle, die Gruppen und Treffen leiten: Eisbrecher-Spiele zum Anleiten vom Handy. Dies oder das, Happy Bingo, Zeitbombe und ein Live-Buzzer – ohne App, ohne Anmeldung.',
     heroKicker: 'Für alle, die Gruppen leiten',
@@ -311,7 +311,7 @@ export const STRINGS = {
 
   fr: {
     langShort: 'FR',
-    navGames: 'Trouver un jeu', navCombo: 'Combo brise-glace', navBoardgame: 'Jeux de société', more: 'Plus', menu: 'Menu', close: 'Fermer', langMenu: 'Changer de langue', home: 'Accueil',
+    navGames: 'Trouver un jeu', navCombo: 'Combo brise-glace', navBoardgame: 'Jeux de société', more: 'Plus', menu: 'Menu', close: 'Fermer', back: 'Retour', langMenu: 'Changer de langue', home: 'Accueil',
     seoTitle: 'Woohop | Des jeux brise-glace à animer depuis votre téléphone',
     seoDesc: 'Pour celles et ceux qui animent des groupes : des jeux brise-glace à lancer depuis le téléphone. Ceci ou cela, Happy Bingo, Bombe à retardement et un buzzer en direct – sans appli, sans inscription.',
     heroKicker: 'Pour celles et ceux qui animent',
@@ -397,7 +397,7 @@ export const STRINGS = {
 
   ja: {
     langShort: '日本語',
-    navGames: 'ゲームを探す', navCombo: 'アイスブレイクセット', navBoardgame: 'ボードゲーム', more: 'もっと', menu: 'メニュー', close: '閉じる', langMenu: '言語を切り替える', home: 'ホーム',
+    navGames: 'ゲームを探す', navCombo: 'アイスブレイクセット', navBoardgame: 'ボードゲーム', more: 'もっと', menu: 'メニュー', close: '閉じる', back: '戻る', langMenu: '言語を切り替える', home: 'ホーム',
     seoTitle: 'Woohop｜スマホを開くだけで進行できるアイスブレイクゲーム',
     seoDesc: 'グループや集まりを進行する人のための、スマホで開くだけのアイスブレイクゲーム。どっち派？、ハッピービンゴ、時限爆弾、早押しゲーム。インストール不要・登録不要。',
     heroKicker: '集まりを進行するあなたへ',
@@ -483,7 +483,7 @@ export const STRINGS = {
 
   ko: {
     langShort: '한국어',
-    navGames: '게임 찾기', navCombo: '아이스브레이킹 세트', navBoardgame: '보드게임', more: '더보기', menu: '메뉴', close: '닫기', langMenu: '언어 변경', home: '홈',
+    navGames: '게임 찾기', navCombo: '아이스브레이킹 세트', navBoardgame: '보드게임', more: '더보기', menu: '메뉴', close: '닫기', back: '뒤로', langMenu: '언어 변경', home: '홈',
     seoTitle: 'Woohop | 휴대폰만 열면 바로 진행하는 아이스브레이킹 게임',
     seoDesc: '모임과 행사를 이끄는 사람을 위한, 휴대폰으로 바로 진행하는 아이스브레이킹 게임. 이거 아니면 저거, 해피 빙고, 시한폭탄, 버저 게임 — 앱 설치도 가입도 필요 없습니다.',
     heroKicker: '모임을 이끄는 당신을 위해',
@@ -569,7 +569,7 @@ export const STRINGS = {
 
   es: {
     langShort: 'ES',
-    navGames: 'Buscar juegos', navCombo: 'Combo rompehielos', navBoardgame: 'Juegos de mesa', more: 'Más', menu: 'Menú', close: 'Cerrar', langMenu: 'Cambiar idioma', home: 'Inicio',
+    navGames: 'Buscar juegos', navCombo: 'Combo rompehielos', navBoardgame: 'Juegos de mesa', more: 'Más', menu: 'Menú', close: 'Cerrar', back: 'Volver', langMenu: 'Cambiar idioma', home: 'Inicio',
     seoTitle: 'Woohop | Juegos rompehielos para dirigir desde el móvil',
     seoDesc: 'Para quienes dirigen grupos y encuentros: juegos rompehielos que se dirigen desde el móvil. Esto o aquello, Happy Bingo, Bomba de tiempo y un pulsador en vivo, sin app y sin registro.',
     heroKicker: 'Para quienes dirigen grupos',
@@ -655,7 +655,7 @@ export const STRINGS = {
 
   'zh-CN': {
     langShort: '简中',
-    navGames: '找游戏', navCombo: '破冰组合', navBoardgame: '桌游助手', more: '更多', menu: '菜单', close: '关闭', langMenu: '切换语言', home: '首页',
+    navGames: '找游戏', navCombo: '破冰组合', navBoardgame: '桌游助手', more: '更多', menu: '菜单', close: '关闭', back: '返回', langMenu: '切换语言', home: '首页',
     seoTitle: 'Woohop｜破冰游戏工具箱：明天就要带，打开就能带',
     seoDesc: '给带小组、带活动的人：手机打开就能带的破冰游戏。喜好二选一、幸福宾果、定时炸弹、现场抢答，免下载、免注册，前一晚选好，现场跟着手机带。',
     heroKicker: '给带小组、带活动的你',

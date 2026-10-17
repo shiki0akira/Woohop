@@ -1,0 +1,61 @@
+/*
+ * 各遊戲共用的版面：遊戲內頂欄（chrome.mjs 的 gameBar()）、單欄 720px、隱藏網站導覽列。
+ * 遊戲頁在 <body> 掛 class="woohop-game"，並用 data-game-mode 切換：
+ *   browse  設定畫面、玩法頁：頂欄有「玩法」「設定」分頁與選單鍵，遊戲名靠左、可以點
+ *   play    遊戲進行中、結算：只剩返回＋置中的遊戲名，不能點出去（誤點這一輪就沒了），頁尾也藏起來
+ */
+
+/* 遊戲頁不用網站導覽列，頂欄換成遊戲內頂欄 */
+.woohop-game #site-nav { display: none; }
+/* site.css 給每個 <section> 上下留白（首頁的大區塊），遊戲裡的區塊是卡片，不要。用 :where 壓低特異性，卡片自己的 padding 才蓋得過 */
+:where(.woohop-game main) section { padding: 0; }
+/* 拿在手上玩的東西：電腦上也是一欄、最寬 720px 置中，頂欄跟著同寬 */
+.woohop-game .game-main, .woohop-game .game-bar-host { max-width: 720px; margin-left: auto; margin-right: auto; }
+.woohop-game .game-main { padding-bottom: 40px; }
+.woohop-game[data-game-mode="play"] .site-footer { display: none; }
+
+/* ---------- 遊戲內頂欄：跟網站導覽列同一個位置、同一套外框（2px＋4px 底） ---------- */
+.game-bar-host { position: sticky; top: 10px; z-index: 30; margin-top: 10px; }
+.game-bar { container-type: inline-size; height: 64px; padding: 0 8px; background: #ffffffcc; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); border-radius: var(--r-lg); box-shadow: var(--raise-n); }
+.game-bar .btn-icon { --h: 44px; flex: none; }
+
+/* 遊戲名：回遊戲主頁的連結，平常看起來就是標題；放不下時截成「⋯」，分頁不讓 */
+.game-bar .title { flex: 0 1 auto; min-width: 0; padding-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; font-weight: 900; text-align: left; color: var(--ink); text-decoration: none; border-radius: var(--r-sm); }
+.game-bar .title:hover { color: var(--indigo); }
+.game-bar .title:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+
+/* 分頁（玩法、設定）：跟網站導覽列的連結同一種樣子；目前所在的分頁只換字色 */
+.game-tabs { flex: none; margin-left: auto; display: flex; gap: 4px; }
+.game-tabs a, .game-tabs button {
+  height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px;
+  border: 0; border-radius: var(--r-md); background: none; color: var(--ink);
+  font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.game-tabs a:hover, .game-tabs button:hover { background: #eef1fc; }
+.game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--indigo); }
+.game-tabs .tab-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
+.game-tabs .tab-count:empty { display: none; }
+
+/* 選單鍵 */
+.game-menu { flex: none; }
+.game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
+.game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
+.game-bar-spacer { width: 44px; flex: none; display: none; }
+
+/* 窄的頂欄：字與左右留白縮小 */
+@container (max-width: 560px) {
+  .game-bar { gap: 2px; }
+  .game-tabs { gap: 0; }
+  .game-tabs a, .game-tabs button { padding: 0 9px; font-size: 14px; }
+  .game-bar .title { font-size: 16px; }
+}
+/* 還是放不下（德文這類長字）時，game.js 分兩段換成圖示：is-compact 先換「設定」→齒輪、is-tight 再換「玩法」→書本 */
+.game-tabs .tab-icon { display: none; width: 22px; height: 22px; }
+.game-bar.is-compact #game-settings .tab-icon, .game-bar.is-tight .tab-rules .tab-icon { display: block; }
+.game-bar.is-compact #game-settings .tab-text, .game-bar.is-tight .tab-rules .tab-text { display: none; }
+.game-bar.is-compact #game-settings, .game-bar.is-tight .tab-rules { padding: 0 10px; }
+
+/* 玩的時候：只剩返回＋置中的遊戲名（右邊補一個等寬的空位讓名字真的置中），不能點出去 */
+[data-game-mode="play"] .game-tabs, [data-game-mode="play"] .game-menu { display: none; }
+[data-game-mode="play"] .game-bar-spacer { display: block; }
+[data-game-mode="play"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; pointer-events: none; }

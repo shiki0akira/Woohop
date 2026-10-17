@@ -5,7 +5,7 @@
     {{jsonLd}}
   </head>
 
-  <body class="bomb-app bomb-game" data-screen="setup">
+  <body class="bomb-app woohop-game" data-screen="setup" data-game-mode="browse">
     <!--
       設定畫面那兩顆按鈕的圖示。Material Symbols Rounded（24px / wght 400 / GRAD 0 /
       opsz 24），依 ARCHITECTURE.md 第 7 節直接內嵌 SVG、fill 吃 currentColor，
@@ -26,7 +26,7 @@
     </svg>
     {{header}}
 
-    <main id="main" class="bomb-main">
+    <main id="main" class="bomb-main game-main">
       <!--
         設定畫面。這個專案沒有房間、沒有加入流程（CONCEPT.md 2.1），
         所以首頁就是設定畫面——打開網頁看到的第一件事就是「要玩什麼、炸多久」。

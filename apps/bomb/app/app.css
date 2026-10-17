@@ -220,28 +220,6 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 /* 日文照詞組斷行（不然會切在「お題」中間） */
 .bomb-main h1:lang(ja), .task-text:lang(ja) { word-break: auto-phrase; }
 
-/* ---------- 頂欄：設定畫面用網站導覽列，進行中／爆炸用遊戲內頂欄 ---------- */
-/* 遊戲內頂欄跟網站導覽列同一個位置、同一套外框（2px＋4px 底），只是內容換成「返回＋遊戲名」 */
-.game-bar-host { position: sticky; top: 10px; z-index: 30; margin-top: 10px; }
-.game-bar { height: 64px; padding: 0 8px; background: #ffffffcc; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); border-radius: var(--r-lg); box-shadow: var(--raise-n); }
-.game-bar .title { font-size: 18px; font-weight: 900; }
-.game-bar-spacer { width: 44px; flex: none; }
-/* 遊戲頁整頁用遊戲內頂欄（規則頁是文章，維持網站導覽列）；選單鍵只在設定畫面，頁尾玩的時候藏起來 */
-.bomb-game #site-nav { display: none; }
-.bomb-app:not(.bomb-game) .game-bar-host { display: none; }
-.game-menu { display: none; }
-body[data-screen="setup"] .game-menu, body[data-screen="rules"] .game-menu { display: block; }
-/* 下拉的按鈕是圖示鍵，不要吃到網站「更多」那顆的文字按鈕樣式（箭頭旋轉、左右留白） */
-.game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
-.game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
-body[data-screen="setup"] .game-bar-spacer, body[data-screen="rules"] .game-bar-spacer { display: none; }
-body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { display: none; }
-
-/* ---------- 電腦版版面 ----------
- * 遊戲頁在電腦上也是一欄、收窄置中（720px），頂欄跟著同寬：
- * 這是拿在手上玩的東西，撐滿寬螢幕只會讓按鈕和題目離得很遠。
- */
-.bomb-game .bomb-main, .bomb-game .game-bar-host { max-width: 720px; margin-left: auto; margin-right: auto; }
 @media (min-width: 760px) { .pick-button { min-height: 156px; } }
 @media (min-width: 760px) { .play-card { padding: 32px 40px 36px; gap: 28px; } .bomb svg { width: 180px; } }
 
@@ -249,37 +227,8 @@ body[data-screen="play"] .site-footer, body[data-screen="boom"] .site-footer { d
 .bomb-rules { gap: 20px; }
 .prose li { line-height: 1.8; }
 
-/* ---------- 頂欄的「玩法」「設定」分頁 ----------
- * 跟網站導覽列的連結同一種樣子（文字、44px 高、滑過淡藍底），只在設定畫面出現。
- * 頂欄寬度放不下（< 560px）時藏起來，改由選單鍵的底部面板提供。
- */
-.game-bar { container-type: inline-size; }
-.game-bar .title { flex: none; text-align: left; padding-left: 4px; }
-body[data-screen="play"] .game-bar .title, body[data-screen="boom"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; }
-.game-tabs { display: none; flex: 1; justify-content: flex-end; gap: 4px; }
-body[data-screen="setup"] .game-tabs, body[data-screen="rules"] .game-tabs { display: flex; }
-/* 目前所在的分頁只換字色（跟網站導覽列一樣） */
-.game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--indigo); }
-.game-tabs a, .game-tabs button {
-  height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px;
-  border: 0; border-radius: var(--r-md); background: none; color: var(--ink);
-  font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
-}
-.game-tabs a:hover, .game-tabs button:hover { background: #eef1fc; }
-.game-tabs .custom-open-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
-.game-tabs .custom-open-count:empty { display: none; }
-/* 窄的頂欄：分頁照樣留著，字與左右留白縮小；放不下時讓遊戲名截成「⋯」，分頁不讓 */
-.game-bar .title { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.game-tabs { flex: none; margin-left: auto; }
-@container (max-width: 560px) {
-  .game-bar { gap: 2px; }
-  .game-tabs { gap: 0; }
-  .game-tabs a, .game-tabs button { padding: 0 9px; font-size: 14px; }
-  .game-bar .title { font-size: 16px; }
-}
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }
-.sheet-divider { height: 2px; background: var(--line); margin: 6px 0; }
 
 /* ---------- 玩法頁：一眼看到的三件事 ---------- */
 .rules-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
@@ -307,15 +256,3 @@ dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight:
   border-color: var(--edge); background-color: var(--edge);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-
-/* 分頁的圖示只在頂欄放不下時出現（header.js：is-compact 先換「設定」、is-tight 再換「玩法」），平常是文字 */
-.game-tabs .tab-icon { display: none; width: 22px; height: 22px; }
-.game-bar.is-compact #open-custom .tab-icon, .game-bar.is-tight .game-tabs a .tab-icon { display: block; }
-.game-bar.is-compact #open-custom .tab-text, .game-bar.is-tight .game-tabs a .tab-text { display: none; }
-.game-bar.is-compact #open-custom, .game-bar.is-tight .game-tabs a { padding: 0 10px; }
-
-/* 頂欄的遊戲名是回遊戲主頁的連結：平常看起來就是標題，滑過換靛藍；玩的時候不能點 */
-a.title { color: var(--ink); text-decoration: none; border-radius: var(--r-sm); }
-a.title:hover { color: var(--indigo); }
-a.title:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
-body[data-screen="play"] a.title, body[data-screen="boom"] a.title { pointer-events: none; }
