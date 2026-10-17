@@ -70,6 +70,7 @@ export default {
   joinTitle: 'Rejoindre {code}',
   nicknameLabel: 'Votre nom',
   avatarLabel: 'Choisissez un avatar',
+  avatarInitialLabel: "Pas d’image, mon initiale",
   nicknamePlaceholder: 'Ce à quoi les autres vous reconnaîtront',
   enterButton: 'Entrer',
 
@@ -81,6 +82,7 @@ export default {
   roomCodeLabel: 'Code du salon',
   shareHint: 'Faites scanner le QR code, ou saisir ce code depuis la page d’accueil.',
   copyLink: 'Copier le lien',
+  shareButton: "Partager",
   copiedLabel: 'Copié',
   qrAlt: 'QR code pour rejoindre le salon',
 

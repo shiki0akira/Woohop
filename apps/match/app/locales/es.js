@@ -70,6 +70,7 @@ export default {
   joinTitle: 'Entrar en {code}',
   nicknameLabel: 'Tu nombre',
   avatarLabel: 'Elige un avatar',
+  avatarInitialLabel: "Sin imagen, mi inicial",
   nicknamePlaceholder: 'Con el que te reconozcan los demás',
   enterButton: 'Entrar en la sala',
 
@@ -81,6 +82,7 @@ export default {
   roomCodeLabel: 'Código de sala',
   shareHint: 'Que escaneen el QR o introduzcan este código desde la página de inicio.',
   copyLink: 'Copiar enlace',
+  shareButton: "Compartir",
   copiedLabel: 'Copiado',
   qrAlt: 'Código QR para entrar en la sala',
 

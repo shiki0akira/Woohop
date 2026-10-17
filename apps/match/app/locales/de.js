@@ -71,6 +71,7 @@ export default {
   joinTitle: '{code} beitreten',
   nicknameLabel: 'Dein Name',
   avatarLabel: 'Wähle ein Bild',
+  avatarInitialLabel: "Kein Bild, meinen Anfangsbuchstaben",
   nicknamePlaceholder: 'Woran dich die anderen erkennen',
   enterButton: 'Raum betreten',
 
@@ -82,6 +83,7 @@ export default {
   roomCodeLabel: 'Raumcode',
   shareHint: 'Lass alle den QR-Code scannen oder diesen Code auf der Startseite eingeben.',
   copyLink: 'Link kopieren',
+  shareButton: "Teilen",
   copiedLabel: 'Kopiert',
   qrAlt: 'QR-Code zum Beitreten',
 

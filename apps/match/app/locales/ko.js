@@ -70,6 +70,7 @@ export default {
   joinTitle: '{code} 참가',
   nicknameLabel: '당신의 이름',
   avatarLabel: '아바타 고르기',
+  avatarInitialLabel: "선택 안 함, 이름 첫 글자",
   nicknamePlaceholder: '다들 알아볼 수 있는 이름',
   enterButton: '방 들어가기',
 
@@ -81,6 +82,7 @@ export default {
   roomCodeLabel: '방 코드',
   shareHint: 'QR 코드를 찍게 하거나, 첫 화면에서 이 코드를 입력하게 하세요.',
   copyLink: '링크 복사',
+  shareButton: "공유",
   copiedLabel: '복사됨',
   qrAlt: '방에 참가하는 QR 코드',
 

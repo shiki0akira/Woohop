@@ -70,6 +70,7 @@ export default {
   joinTitle: '{code} に参加',
   nicknameLabel: 'あなたの名前',
   avatarLabel: 'アイコンを選ぶ',
+  avatarInitialLabel: "選ばずに名前の最初の文字",
   nicknamePlaceholder: 'みんながわかる名前',
   enterButton: 'ルームに入る',
 
@@ -81,6 +82,7 @@ export default {
   roomCodeLabel: 'ルームコード',
   shareHint: 'QRコードを読み取るか、トップページでこのコードを入力してもらってください。',
   copyLink: 'リンクをコピー',
+  shareButton: "共有",
   copiedLabel: 'コピーしました',
   qrAlt: 'ルームに参加するQRコード',
 

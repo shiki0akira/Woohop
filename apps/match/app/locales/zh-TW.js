@@ -76,6 +76,7 @@ export default {
   joinTitle: '加入 {code}',
   nicknameLabel: '你的暱稱',
   avatarLabel: '挑一個頭像',
+  avatarInitialLabel: "不選，用名字第一個字",
   nicknamePlaceholder: '大家認得出你的名字',
   enterButton: '進入房間',
 
@@ -87,6 +88,7 @@ export default {
   roomCodeLabel: '房間代碼',
   shareHint: '請大家掃 QR code，或到首頁輸入這組代碼。',
   copyLink: '複製連結',
+  shareButton: "分享",
   copiedLabel: '已複製',
   qrAlt: '加入房間的 QR code',
 

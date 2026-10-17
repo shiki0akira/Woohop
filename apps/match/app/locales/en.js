@@ -70,6 +70,7 @@ export default {
   joinTitle: 'Joining {code}',
   nicknameLabel: 'Your name',
   avatarLabel: 'Pick an avatar',
+  avatarInitialLabel: "No picture, use my initial",
   nicknamePlaceholder: 'What the others will recognise',
   enterButton: 'Enter room',
 
@@ -81,6 +82,7 @@ export default {
   roomCodeLabel: 'Room code',
   shareHint: 'Have everyone scan the QR code, or enter this code from the home page.',
   copyLink: 'Copy link',
+  shareButton: "Share",
   copiedLabel: 'Copied',
   qrAlt: 'QR code to join the room',
 

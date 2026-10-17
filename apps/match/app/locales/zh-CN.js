@@ -70,6 +70,7 @@ export default {
   joinTitle: '加入 {code}',
   nicknameLabel: '你的昵称',
   avatarLabel: '挑一个头像',
+  avatarInitialLabel: "不选，用名字第一个字",
   nicknamePlaceholder: '大家认得出你的名字',
   enterButton: '进入房间',
 
@@ -81,6 +82,7 @@ export default {
   roomCodeLabel: '房间代码',
   shareHint: '请大家扫二维码，或到首页输入这组代码。',
   copyLink: '复制链接',
+  shareButton: "分享",
   copiedLabel: '已复制',
   qrAlt: '加入房间的二维码',
 

@@ -170,7 +170,8 @@
     } catch (e) {
       /* 存壞了就當作沒有 */
     }
-    state.avatar = (saved && saved.avatar) || pickAvatarFor(state.clientId);
+    // 沒選過的人預設用名字第一個字（設計系統的頭像選擇器也是這樣，第一格就是它）
+    state.avatar = (saved && saved.avatar) || 'initial';
     if (saved && saved.nickname && el.nickname) el.nickname.value = saved.nickname;
   }
 
@@ -185,27 +186,44 @@
     }
   }
 
-  // 沒選過的人也要有頭像，用 clientId 決定，同一個人每次進來都是同一張臉
-  function pickAvatarFor(clientId) {
-    var hash = 0;
-    for (var i = 0; i < clientId.length; i += 1) {
-      hash = (hash * 31 + clientId.charCodeAt(i)) >>> 0;
-    }
-    return AVATARS[hash % AVATARS.length].id;
+
+
+  /*
+   * 頭像一律用設計系統那套（design/brand-exploration.html 的食物頭像，粗描邊可愛風），
+   * 圖在 Woohop 全站共用的 woohop-art.js（window.Woohop.AVATARS）。id 跟舊的 app/avatars.js 一樣是那 10 種食物，
+   * 房間裡已經存的頭像不用轉換。
+   *
+   * 'initial' 是「不選，用名字第一個字」：底色從頭像的底色裡依名字挑一個（同一個名字每次都一樣），字用深色。
+   */
+  function avatarList() {
+    return (window.Woohop && window.Woohop.AVATARS) || AVATARS;
   }
 
-  function avatarSvg(id, size) {
-    var found = null;
-    for (var i = 0; i < AVATARS.length; i += 1) {
-      if (AVATARS[i].id === id) found = AVATARS[i];
+  function initialBg(name) {
+    var list = avatarList();
+    var hash = 0;
+    var chars = Array.from(name || '');
+    for (var i = 0; i < chars.length; i += 1) hash = (hash * 31 + chars[i].codePointAt(0)) >>> 0;
+    return list[hash % list.length].bg;
+  }
+
+  function avatarSvg(id, size, name) {
+    var head = '<svg class="avatar" viewBox="0 0 64 64" width="' + size + '" height="' + size + '" ' +
+      'aria-hidden="true" focusable="false">';
+    if (id === 'initial') {
+      var letter = Array.from((name || '').trim())[0] || '?';
+      return head + '<rect width="64" height="64" fill="' + initialBg(name) + '"/>' +
+        '<text x="32" y="33" text-anchor="middle" dominant-baseline="central" font-size="30" font-weight="900" ' +
+        'fill="#22222c">' + escapeHtml(letter) + '</text></svg>';
     }
-    // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回用 id 推算
-    if (!found) found = AVATARS[0];
-    return (
-      '<svg class="avatar" viewBox="0 0 64 64" width="' + size + '" height="' + size + '" ' +
-      'aria-hidden="true" focusable="false"><rect width="64" height="64" fill="' + found.bg +
-      '"/>' + found.svg + '</svg>'
-    );
+    var list = avatarList();
+    var found = null;
+    for (var i = 0; i < list.length; i += 1) {
+      if (list[i].id === id) found = list[i];
+    }
+    // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回第一張
+    if (!found) found = list[0];
+    return head + '<rect width="64" height="64" fill="' + found.bg + '"/>' + found.svg + '</svg>';
   }
 
   /* ---------- 建房：選題 ---------- */
@@ -394,9 +412,14 @@
   /* ---------- 頭像選擇 ---------- */
 
   function renderAvatarPicker() {
-    var html = '';
-    for (var i = 0; i < AVATARS.length; i += 1) {
-      var avatar = AVATARS[i];
+    // 第一格是「用名字第一個字」，打字時跟著換字（見 bindEvents 的 nickname input）
+    var html =
+      '<button class="avatar-option" type="button" role="radio" data-avatar="initial" aria-checked="' +
+      (state.avatar === 'initial') + '" aria-label="' + escapeHtml(t('avatarInitialLabel')) + '">' +
+      avatarSvg('initial', 56, el.nickname ? el.nickname.value : '') + '</button>';
+    var list = avatarList();
+    for (var i = 0; i < list.length; i += 1) {
+      var avatar = list[i];
       html +=
         '<button class="avatar-option" type="button" role="radio" data-avatar="' + avatar.id +
         '" aria-checked="' + (avatar.id === state.avatar) + '" aria-label="' +
@@ -498,6 +521,11 @@
       if (button) selectAvatar(button.dataset.avatar);
     });
     el.enterRoom.addEventListener('click', enterRoom);
+    // 「用名字第一個字」那一格跟著暱稱換字
+    el.nickname.addEventListener('input', function () {
+      var option = el.avatarPicker.querySelector('[data-avatar="initial"]');
+      if (option) option.innerHTML = avatarSvg('initial', 56, el.nickname.value);
+    });
     el.nickname.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') enterRoom();
     });
@@ -513,6 +541,7 @@
     el.setupDone.addEventListener('click', finishSetup);
     el.editQuestions.addEventListener('click', showSetup);
     el.copyLink.addEventListener('click', copyShareLink);
+    bindDesignControls();
     el.startGame.addEventListener('click', startGame);
     el.nextQuestion.addEventListener('click', function () {
       send({ t: 'next' });
@@ -954,7 +983,7 @@
       var player = ordered[i];
       html +=
         '<li class="player' + (player.online ? '' : ' is-offline') + (player.id === state.clientId ? ' is-me' : '') + '">' +
-        avatarSvg(player.avatar, 32) +
+        avatarSvg(player.avatar, 32, player.nickname) +
         '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
         /* 標籤樣式跟 04_HappyBingo 一致（.role-badge 膠囊），三個專案要長一樣。
            主持人打開「也一起作答」時會同時有「主持人」和「玩家」兩個標籤——
@@ -1073,7 +1102,7 @@
       if (!player) continue;
       html +=
         '<li class="chip' + (player.id === state.clientId ? ' me' : '') + '">' +
-        avatarSvg(player.avatar, 24) +
+        avatarSvg(player.avatar, 24, player.nickname) +
         '<span class="name">' + escapeHtml(player.nickname) + '</span></li>';
     }
     return html;
@@ -1283,11 +1312,75 @@
     el.qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
   }
 
+  /*
+   * 設計系統元件的行為（design/brand-exploration.html）：
+   *  - 房號四格：打一個字跳下一格、刪除退回上一格、貼上整組自動分格；組起來寫進隱藏的 #join-code
+   *  - 數量增減：2～30，寫進隱藏的 #max-players
+   *  - 分享：手機支援 navigator.share 才出現
+   */
+  function bindDesignControls() {
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('#code-boxes input'));
+    var sync = function () {
+      el.joinCode.value = boxes.map(function (b) { return b.value; }).join('');
+    };
+    var fill = function (from, text) {
+      var chars = text.replace(/[^a-z0-9]/gi, '').toUpperCase().split('');
+      for (var i = from; i < boxes.length && chars.length; i += 1) boxes[i].value = chars.shift();
+      sync();
+      var next = boxes.filter(function (b) { return !b.value; })[0];
+      (next || boxes[boxes.length - 1]).focus();
+    };
+    boxes.forEach(function (box, i) {
+      box.addEventListener('input', function () {
+        var v = box.value;
+        box.value = '';
+        fill(i, v);
+      });
+      box.addEventListener('keydown', function (event) {
+        if (event.key === 'Backspace' && !box.value && boxes[i - 1]) {
+          boxes[i - 1].value = '';
+          boxes[i - 1].focus();
+          sync();
+          event.preventDefault();
+        }
+        // Enter 跟原本的房號輸入框一樣：直接加入
+        if (event.key === 'Enter') el.joinRoom.click();
+      });
+      box.addEventListener('paste', function (event) {
+        var text = (event.clipboardData || window.clipboardData).getData('text');
+        if (!text) return;
+        event.preventDefault();
+        fill(i, text);
+      });
+    });
+
+    var out = document.getElementById('max-players-out');
+    document.getElementById('max-stepper').addEventListener('click', function (event) {
+      var button = event.target.closest('[data-step]');
+      if (!button) return;
+      var value = Math.min(30, Math.max(2, (Number(el.maxPlayers.value) || 10) + Number(button.dataset.step)));
+      el.maxPlayers.value = String(value);
+      out.textContent = String(value);
+    });
+
+    var share = document.getElementById('share-link');
+    if (navigator.share) {
+      share.hidden = false;
+      share.addEventListener('click', function () {
+        navigator.share({ title: document.title, url: shareLink() }).catch(function () {
+          /* 使用者取消分享，不用做什麼 */
+        });
+      });
+    }
+  }
+
   function copyShareLink() {
     navigator.clipboard.writeText(shareLink()).then(function () {
-      el.copyLink.textContent = t('copiedLabel');
+      // 只換字，不換掉前面的圖示
+      var label = el.copyLink.querySelector('.label') || el.copyLink;
+      label.textContent = t('copiedLabel');
       setTimeout(function () {
-        el.copyLink.textContent = t('copyLink');
+        label.textContent = t('copyLink');
       }, 1500);
     });
   }
