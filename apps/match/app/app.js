@@ -106,7 +106,7 @@
       'max-players', 'group-count', 'question-seconds', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
-      'role-badge', 'exit-room', 'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
+      'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
       'setup-done', 'setup-error', 'edit-questions',
       'lobby-card', 'player-count', 'player-list', 'player-empty',
       'start-game-block', 'start-game', 'start-game-error', 'waiting-hint',
@@ -552,7 +552,6 @@
     el.answerX.addEventListener('click', function () {
       answer('X');
     });
-    el.exitRoom.addEventListener('click', confirmExit);
     el.playerList.addEventListener('click', onKick);
 
     el.confirmCancel.addEventListener('click', function () {
@@ -917,8 +916,9 @@
     var room = state.room;
     var isHost = state.role === 'host';
 
-    el.roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
-    el.exitRoom.textContent = isHost ? t('closeRoomButton') : t('leaveRoomButton');
+    // 身分標籤放在遊戲內頂欄右邊。離開／關閉房間就是頂欄的返回鍵（window.gameBack → confirmExit），不另外放按鈕
+    var roleBadge = document.getElementById('game-bar-badge');
+    if (roleBadge) roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
 
     var inLobby = room.status === 'lobby';
     var inResults = room.status === 'results';

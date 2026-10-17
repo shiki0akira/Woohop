@@ -80,6 +80,7 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
  *   遊戲名    回這個遊戲的主頁
  *   分頁      「玩法」，以及可選的「設定」（window.openSettings；玩法頁沒有設定框，就帶 #settings 回遊戲頁）
  *   選單鍵    電腦上是下拉（site.js 的 .nav-more），手機上開底部面板，裡面是網站的頁面
+ *   身分標籤  #game-bar-badge，玩的時候顯示在右邊（例如房間裡的「主持人」「玩家」），沒填字就不出現
  *
  * 樣式在 assets/game.css、行為在 assets/game.js。玩的時候要藏起分頁和選單，
  * 由遊戲在 <body> 掛 data-game-mode="play"（平常是 "browse"）。
@@ -112,6 +113,8 @@ export function gameBar(s, lang, opts) {
           <button class="btn btn-icon btn-ghost" id="game-menu" type="button" aria-label="${esc(s.menu)}" aria-expanded="false" aria-haspopup="true"><svg><use href="#i-menu"/></svg></button>
           <div class="nav-menu" hidden>${links.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</div>
         </div>
+        <!-- 玩的時候右邊的身分標籤（房間型遊戲的「主持人」「玩家」），遊戲用 id 填字；空的就不顯示 -->
+        <span class="badge b-info game-bar-badge" id="game-bar-badge"></span>
         <span class="game-bar-spacer" aria-hidden="true"></span>
       </div>
     </div>

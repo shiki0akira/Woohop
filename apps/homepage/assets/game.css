@@ -58,6 +58,10 @@
 /* 玩的時候：只剩返回＋置中的遊戲名（右邊補一個等寬的空位讓名字真的置中），不能點出去 */
 [data-game-mode="play"] .game-tabs, [data-game-mode="play"] .game-menu { display: none; }
 [data-game-mode="play"] .game-bar-spacer { display: block; }
+/* 身分標籤（例如「主持人」）：只在玩的時候、有字的時候出現，佔掉右邊那個空位 */
+.game-bar-badge { display: none; flex: none; margin-right: 6px; }
+[data-game-mode="play"] .game-bar-badge:not(:empty) { display: inline-flex; }
+[data-game-mode="play"] .game-bar-badge:not(:empty) ~ .game-bar-spacer { display: none; }
 [data-game-mode="play"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; pointer-events: none; }
 
 /* ============================================================
