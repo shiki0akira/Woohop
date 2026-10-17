@@ -89,6 +89,8 @@
 
 .woohop-game .hint { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
 .form-error { margin: 0; padding: 12px 14px; border-radius: var(--r-md); border: 2px solid var(--coral-edge); background: var(--coral-face); color: var(--coral-text); font-weight: 700; }
+/* 卡片裡的錯誤提示通常接在按鈕下面：按鈕有 4px 的底部厚度，再留一段距離才不會黏在一起 */
+.panel .form-error { margin-top: 14px; }
 .field-label { display: block; margin: 14px 0 8px; font-size: 14px; font-weight: 800; }
 .field-label-gap { margin-top: 18px; }
 .rules-link { margin: 4px 0 0; text-align: center; }
