@@ -115,11 +115,9 @@
     --danger: #ff8f80; --danger-edge: #e0705f;
     --ok: #6fd39a;
     --toast-action: #3d54b6;
-    --outline: #d9d9e3;
     color-scheme: dark;
   }
-  /* 插圖的粗描邊（woohop-art.js 寫死 #22222c）在深底上會消失：深色時換成淺灰，像貼紙的白邊 */
-  :root[data-theme="dark"] svg [stroke="#22222c"] { stroke: #d9d9e3; }
+  /* 插圖、頭像（含外框 --outline）、QR code 深色時都不換色，維持原本的樣子 */
   /* 從淺色換到深色時，帶點過場，不要整頁瞬間反白 */
   :root[data-theme] body { transition: background-color .25s, color .25s; }
 
