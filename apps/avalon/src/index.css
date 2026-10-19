@@ -36,7 +36,7 @@
 .voice-status { margin: 0 0 14px; color: var(--muted); font-weight: 700; }
 .voice-player { display: grid; gap: 12px; }
 .voice-player > .btn-lg { margin-bottom: 5px; }
-.voice-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.voice-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .voice-controls .btn { min-width: 0; padding: 0 8px; white-space: normal; line-height: 1.2; margin-bottom: 4px; }
 .voice-player .field-label { margin: 4px 0 0; }
 

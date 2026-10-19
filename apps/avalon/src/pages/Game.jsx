@@ -36,7 +36,6 @@ export default function Game() {
 
   const {
     speak: speechSpeak,
-    restart: speechRestart,
     pause: speechPause,
     resume: speechResume,
     rate,
@@ -269,6 +268,13 @@ export default function Game() {
     const runId = runIdRef.current;
 
     const a = audioRef.current;
+    // 錄音版開始前先把瀏覽器語音停掉：網路慢時錄音檔沒在 2.5 秒內偵測到，會先退回瀏覽器語音開唸，
+    // 之後再按播放就變成兩個聲音疊在一起
+    try {
+      window.speechSynthesis?.cancel?.();
+    } catch {
+      // ignore
+    }
     try {
       ensureRecordedAudioGraph();
       a.pause();
@@ -332,11 +338,6 @@ export default function Game() {
 
   const pause = isRecordedMode ? pauseRecorded : speechPause;
   const resume = isRecordedMode ? resumeRecorded : speechResume;
-  const restart = useCallback(() => {
-    trackEvent('avalon_game_restarted', { lang, player_count: playerCount });
-    if (isRecordedMode) startRecorded();
-    else speechRestart();
-  }, [isRecordedMode, startRecorded, speechRestart, lang, playerCount]);
   const supported = isRecordedMode ? true : speechSupported;
 
   useEffect(() => {
@@ -380,12 +381,17 @@ export default function Game() {
     };
   }, [isRecordedMode]);
 
+  /*
+   * 「播放旁白」＝從頭再唸一次。進到這頁就會自動開唸，所以這顆一律先把正在唸的（錄音、瀏覽器語音都算）
+   * 停掉再從第一句開始，不會疊出好幾個聲音。原本另外一顆「重新開始」做的是同一件事，拿掉了
+   */
   const onSpeak = useCallback(
     () => {
+      trackEvent('avalon_game_restarted', { lang, player_count: playerCount });
       if (isRecordedMode) startRecorded();
       else speechSpeak(script);
     },
-    [isRecordedMode, speechSpeak, startRecorded, script],
+    [isRecordedMode, speechSpeak, startRecorded, script, lang, playerCount],
   );
 
   const s = siteStrings(lang);
@@ -419,7 +425,6 @@ export default function Game() {
             setRate={setRate}
             pause={pause}
             resume={resume}
-            restart={restart}
           />
         </section>
 

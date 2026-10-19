@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 
 /*
  * 語音控制：主要動作（播放）是設計系統的大實心按鈕，語速是 game.css 的單選分段（.seg），
- * 暫停／繼續／重新開始是白底的次要按鈕。停用的樣子（壓扁變灰）都內建在元件裡。
+ * 暫停／繼續是白底的次要按鈕。「播放旁白」就是從頭再唸（Game.jsx 的 onSpeak），不另外放「重新開始」。停用的樣子（壓扁變灰）都內建在元件裡。
  */
-export default function VoicePlayer({ text, onSpeak, supported, rate, setRate, pause, resume, restart }) {
+export default function VoicePlayer({ text, onSpeak, supported, rate, setRate, pause, resume }) {
   const { t } = useTranslation();
   const speeds = [0.5, 0.75, 1, 1.25, 1.5];
 
@@ -24,9 +24,6 @@ export default function VoicePlayer({ text, onSpeak, supported, rate, setRate, p
         </button>
         <button type="button" className="btn btn-secondary" disabled={!supported} onClick={resume}>
           {t('voice.resume')}
-        </button>
-        <button type="button" className="btn btn-secondary" disabled={!supported} onClick={restart}>
-          {t('voice.restart')}
         </button>
       </div>
 
