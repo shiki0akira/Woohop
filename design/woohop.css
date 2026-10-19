@@ -112,7 +112,7 @@
     --glass: #262630d9;
     --glass-strong: #262630e6;
     --bg-glass: #1c1c24e6;
-    --grid-line: #ffffff0d;
+    --grid-line: #ffffff17;
     --prompt-bg: #2a2516;
     --danger: #ff8f80; --danger-edge: #e0705f;
     --ok: #6fd39a;
@@ -120,6 +120,12 @@
     color-scheme: dark;
   }
   /* 插圖、頭像（含外框 --outline）、QR code 深色時都不換色，維持原本的樣子 */
+  /* 插圖本身不改色，改成在背後墊一圈柔和的淺色光暈：深色描邊有東西可以襯，看起來像打了燈 */
+  :root[data-theme="dark"] .game .art::before {
+    content: ""; position: absolute; z-index: -1; left: -24px; top: 50%; width: 200px; height: 170px; transform: translateY(-50%);
+    background: radial-gradient(closest-side, #ffffff30, #ffffff14 55%, transparent);
+  }
+  :root[data-theme="dark"] svg.illo { background: radial-gradient(closest-side, #ffffff2a, #ffffff10 60%, transparent); border-radius: 50%; }
   /* 轉盤的指針不是插圖、是操作提示：深色時用文字色，不然深底上看不到 */
   :root[data-theme="dark"] .wheel-pointer { border-top-color: var(--ink); }
   /* 從淺色換到深色時，帶點過場，不要整頁瞬間反白 */
