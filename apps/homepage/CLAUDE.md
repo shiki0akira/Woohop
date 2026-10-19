@@ -13,7 +13,8 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 | `assets/site.css`、`assets/site.js` | 三頁共用的頁面樣式與程式（導覽、語言選單、遊戲卡、推薦器、破冰組合、GA） |
 | `assets/home.js`、`games.js`、`combo.js` | 各頁專用 |
 | `og/{lang}.png`、`scripts/og-image.mjs` | 分享縮圖（1200×630，每語言一張，用首頁標語＋主視覺）。同一支腳本也產生遊戲的縮圖（`node scripts/og-image.mjs bomb` → `apps/bomb/public/og/`），新遊戲改版時在 `TARGETS` 加一筆。**Vercel 建置時不會重產**（沒有瀏覽器）：改了 `heroTitle1/2` 或主視覺插圖後，本機跑 `node scripts/og-image.mjs`，把 PNG 一起 commit |
-| `design-tokens.css` | **舊的配色檔，阿瓦隆（tailwind.config.js）與首頁的 404.html 還在用，不能刪**；四個小遊戲都改版完了，剩這兩個改完才能拿掉 |
+| `404.html` | 獨立頁（不走 prerender），Woohop 新設計：直接連 `/assets/woohop.css`＋`woohop-art.js`，八語文案內嵌、執行期判斷語言。只有淺色 |
+| `design-tokens.css` | 舊的配色檔。monorepo 裡已經沒有人引用（阿瓦隆、404 都改版了），但舊專案可能用絕對網址連它，先留著照樣輸出 |
 
 文案在建置時寫進靜態 HTML（給爬蟲），當頁語言的那一份也嵌進 `window.WOOHOP.t` 給執行期 JS 用，兩邊同一個來源。改了 `assets/` 的檔案要換 `prerender.js` 的 `ASSET_VERSION`，瀏覽器才會抓新版。
 

@@ -56,6 +56,7 @@ function render(lang, page, d, appHtml) {
       `$1${esc(d.seo.ogDescription || description)}$2`,
     )
     .replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${url}$2`)
+    .replace(/(<meta property="og:image" content=")[^"]*(")/, `$1${SITE}/${GAME_SLUG}/og/${lang}.png$2`)
     // hreflang 接在 canonical 後面，讓 head 裡的網址相關標籤集中在一起
     .replace(/(<link rel="canonical"[^>]*>)/, `$1\n${alternates}\n${xDefault}`)
     .replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);

@@ -10,7 +10,8 @@ const avalonDir = path.join(distDir, 'avalon');
 
 mkdirSync(avalonDir, { recursive: true });
 
-const itemsToMove = ['index.html', 'assets', 'audio'];
+// og/ 是分享縮圖（apps/homepage 的 node scripts/og-image.mjs avalon 產生到 public/og/）
+const itemsToMove = ['index.html', 'assets', 'audio', 'og'];
 
 for (const item of itemsToMove) {
   const src = path.join(distDir, item);

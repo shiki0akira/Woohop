@@ -54,6 +54,12 @@
 .game-bar.is-compact #game-settings .tab-icon, .game-bar.is-tight .tab-rules .tab-icon { display: block; }
 .game-bar.is-compact #game-settings .tab-text, .game-bar.is-tight .tab-rules .tab-text { display: none; }
 .game-bar.is-compact #game-settings, .game-bar.is-tight .tab-rules { padding: 0 10px; }
+/* 手機（頂欄窄到 560 以下）一律用圖示，不管遊戲名有沒有被截，各遊戲看起來才一致 */
+@container (max-width: 560px) {
+  .game-tabs .tab-icon { display: block; }
+  .game-tabs .tab-text { display: none; }
+  .game-tabs .tab-rules, .game-tabs #game-settings { padding: 0 10px; }
+}
 
 /* 玩的時候：只剩返回＋置中的遊戲名（右邊補一個等寬的空位讓名字真的置中），不能點出去 */
 [data-game-mode="play"] .game-tabs, [data-game-mode="play"] .game-menu { display: none; }

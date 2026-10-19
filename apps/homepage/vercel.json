@@ -143,7 +143,7 @@
       "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:lang/:page"
     },
     {
-      "source": "/avalon/:dir(assets|audio)/:path*",
+      "source": "/avalon/:dir(assets|audio|og)/:path*",
       "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:dir/:path*"
     },
     {

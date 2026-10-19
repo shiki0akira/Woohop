@@ -10,7 +10,7 @@
  * 手動跑一次 `node scripts/og-image.mjs`，把產生的 PNG 一起 commit。
  * 版面：左邊 logo＋首頁標語＋網址，右邊首頁主視覺插圖，底下鋪首頁同款的淡色 W 圖案。
  */
-import { writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
@@ -52,6 +52,15 @@ const TARGETS = {
       out: path.join(ROOT, '..', 'buzzer', 'public', 'og'),
       title: (lang) => splitTitle(Z[lang].heroTitle),
       scripts: [], art: 'window.Woohop.art.buzzer()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
+  // 阿瓦隆的文案在 JSON（React 專案）：分享標題 seo.ogTitle 用「 - 」分成遊戲名＋一句話
+  avalon: async () => {
+    const read = (lang) => JSON.parse(readFileSync(path.join(ROOT, '..', 'avalon', 'src', 'locales', `${lang}.json`), 'utf8'));
+    return {
+      out: path.join(ROOT, '..', 'avalon', 'public', 'og'),
+      title: (lang) => { const [a, b = ''] = read(lang).seo.ogTitle.split(/\s+-\s+/); return [a, b]; },
+      scripts: [], art: 'window.Woohop.art.avalon()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
   bingo: async () => {

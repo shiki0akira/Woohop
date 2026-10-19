@@ -393,7 +393,7 @@ for (const lang of LANGS) {
 writeFileSync(path.join(OUT, 'index.html'), homePage(DEFAULT_LANG));
 writeFileSync(path.join(OUT, 'sitemap.xml'), buildSitemap());
 
-// 靜態檔。design-tokens.css 給還沒改版的遊戲頁引用（它們直接連 /design-tokens.css），不能拿掉
+// 靜態檔。design-tokens.css 是舊配色檔：monorepo 裡已沒人用，但外部舊頁面可能用絕對網址連它，先照樣輸出
 for (const file of ['robots.txt', 'design-tokens.css', 'favicon.svg', 'apple-touch-icon.png', '404.html']) {
   if (existsSync(file)) copyFileSync(file, path.join(OUT, file));
 }
