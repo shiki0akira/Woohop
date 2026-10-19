@@ -142,7 +142,7 @@
       'bingo-card', 'cell-list',
       'spectator-box', 'spectator-title', 'spectator-desc', 'board-box', 'board-list',
       'incoming-list', 'incoming-empty',
-      'end-game', 'results-card', 'final-list', 'reset-block', 'reset-room',
+      'results-card', 'final-list', 'reset-block', 'reset-room',
       'pick-dialog', 'pick-question', 'pick-list', 'pick-empty', 'pick-self-claim', 'pick-cancel',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -421,11 +421,7 @@
         (n === state.winnerCount ? ' checked' : '') + ' /><span>' +
         escapeHtml(t('winnerCountUnit', { n: n })) + '</span></label>';
     }
-    // 0 = 不限：不自動結束，開到主持人按「結束這輪」為止
-    html +=
-      '<label class="seg-item"><input type="radio" name="winner-count" value="0"' +
-      (state.winnerCount === 0 ? ' checked' : '') + ' /><span>' +
-      escapeHtml(t('winnerCountUnlimited')) + '</span></label>';
+    // 沒有「不限」：沒有手動結束的按鈕，一輪一定要靠達標人數收場（2026-10-19 拿掉）
     el.winnerSeg.innerHTML = html;
   }
 
@@ -770,12 +766,6 @@
     el.pickSelfClaim.addEventListener('click', onSelfClaim);
     el.pickCancel.addEventListener('click', function () { el.pickDialog.close(); });
 
-    el.endGame.addEventListener('click', function () {
-      askConfirm('confirmEnd', function () {
-        send({ t: 'endGame' });
-        track('bingo_round_ended');
-      });
-    });
     // 再玩一輪。不跳確認：這一輪已經結束、最終榜也拍好快照了，回大廳沒有東西會被打斷
     el.resetRoom.addEventListener('click', function () {
       track('bingo_play_again');
@@ -978,7 +968,7 @@
     state.linesTouched = true;
     state.allowSelfClaim = room.allowSelfClaim;
     state.hostPlays = room.hostPlays;
-    state.winnerCount = room.winnerCount;
+    state.winnerCount = Math.max(1, room.winnerCount);
     state.anchor = room.anchor;
     // 自訂的保底題要把文字放回輸入框，不然重整之後框是空的、看起來像沒設定
     if (room.anchor && room.anchor.text) {
@@ -1111,7 +1101,7 @@
     state.size = saved.size;
     state.targetLines = Math.min(Number(saved.targetLines) || B.defaultTargetLines[saved.size], B.maxTargetLines[saved.size]);
     state.linesTouched = Boolean(saved.linesTouched);
-    state.winnerCount = Number(saved.winnerCount) || 0;
+    state.winnerCount = Math.min(3, Math.max(1, Number(saved.winnerCount) || 1));
     state.hostPlays = saved.hostPlays !== false;
     state.allowSelfClaim = Boolean(saved.allowSelfClaim);
     state.anchor = needsAnchor(state.size) ? saved.anchor || { id: BANK.defaultAnchorId } : null;
@@ -1492,8 +1482,6 @@
     el.lobbyCard.hidden = !inLobby;
     el.playTabs.hidden = !playing;
     el.playGrid.hidden = !playing;
-    // 「結束這一輪」在進行中畫面的最下面，只有主持人看得到
-    el.endGame.hidden = !playing || !isHost;
     el.resultsCard.hidden = !ended;
 
     if (inLobby) renderLobby(room, isHost);
@@ -2029,7 +2017,7 @@
   /*
    * 破壞性動作一律走這個對話框，不用原生 confirm()——原生的長相由瀏覽器決定，
    * 跟系列其他專案的 .modal 對不起來，手機上也常常被當成廣告攔掉。
-   * prefix 是文案的前綴，例如 confirmEnd → confirmEndTitle / Desc / Ok。
+   * prefix 是文案的前綴，例如 confirmClose → confirmCloseTitle / Desc / Ok。
    */
   function askConfirm(prefix, onOk) {
     el.confirmTitle.textContent = t(prefix + 'Title');

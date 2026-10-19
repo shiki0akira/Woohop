@@ -57,8 +57,7 @@ export default {
   "hostPlaysHint": "關掉的話你只負責控場，不會拿到賓果卡。但你還在名單上，別人一樣可以找你配對、請你確認。",
   "winnerCountLabel": "幾個人達標就結束",
   "winnerCountUnit": "{n} 人",
-  "winnerCountUnlimited": "不限",
-  "winnerCountHint": "達到此人數就自動結束跳到最終排行榜。或是主持人可以隨時點選「結束這輪」。",
+  "winnerCountHint": "達到這個人數就自動結束，跳到最終排行榜。拿到卡的人比這個數字少時，大家都達標就結束。",
   "selfClaimLabel": "允許「找不到人，自行認定」",
   "selfClaimHint": "找不到符合的人時可以自己打勾，榜上會標成不同顏色。2～4 人的場合建議開。",
   "anchorHeading": "保底題（固定放正中央）",
@@ -125,7 +124,6 @@ export default {
   "listHeading": "題目",
   "pickPendingBadge": "待確認",
   "screenRequests": "待你確認",
-  "endButton": "結束這輪",
   "endedHeading": "排行榜",
   "endedDesc": "這一輪已結束，快來看看自己有沒有上榜吧！",
   "resetButton": "再玩一輪",
@@ -138,9 +136,6 @@ export default {
   "confirmCloseTitle": "要關閉房間嗎？",
   "confirmCloseDesc": "所有人都會被請出房間，這一輪的結果不會留下來。",
   "confirmCloseOk": "關閉房間",
-  "confirmEndTitle": "要結束這輪嗎？",
-  "confirmEndDesc": "結束之後大家就不能再配對了，畫面會切到最終排行榜。",
-  "confirmEndOk": "結束",
   "toastConfirmed": "{name} 確認了，打勾！",
   "toastDeclined": "{name} 覺得不太符合，再找別人吧",
   "toastLine": "連成 {n} 條線了",
@@ -185,13 +180,13 @@ export default {
     "主持人開房間，螢幕上會出現房號和 QR code。想調尺寸或換題目，按頂欄的「設定」。",
     "大家掃碼加入，主持人按「開始遊戲」，每人拿到一張排列不同的賓果卡。",
     "挑一格去找符合的人聊兩句，回手機點那一格、選他，等他在自己手機上按確認就打勾。",
-    "連成主持人設定的條數就上榜。主持人覺得差不多了，按「結束這輪」看排行榜。"
+    "連成主持人設定的條數就上榜。達標的人數到了，遊戲自動結束、跳到排行榜。"
   ],
   "rulesLeadHeading": "主持人怎麼帶",
   "rulesLeadSay": "等一下每一格都是一種人，去找到符合的人聊兩句，請他在自己手機上按確認才算數。連成線就上榜，但重點是多認識幾個人！",
   "rulesLeadSteps": [
     "先把「沒有人符合」或「只有一個人符合」的題目換掉。",
     "人少（2～4 人）記得在設定裡打開「允許自行認定」，不然找不到人的格子會卡住。",
-    "有人達標遊戲不會停，大家玩得差不多了再按「結束這輪」。"
+    "人少時「幾個人達標就結束」選 1 人，節奏比較快；人多想玩久一點就選 2～3 人。"
   ]
 };

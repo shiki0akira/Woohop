@@ -55,8 +55,7 @@ export default {
   "hostPlaysHint": "Désactive-le pour seulement animer : tu n’auras pas de carte. Tu restes sur la liste, donc on peut t’associer à une case et te demander de confirmer.",
   "winnerCountLabel": "Combien de réussites avant la fin",
   "winnerCountUnit": "{n}",
-  "winnerCountUnlimited": "Sans limite",
-  "winnerCountHint": "La manche se termine automatiquement dès que ce nombre de personnes atteint l’objectif — l’animateur peut aussi y mettre fin quand il veut.",
+  "winnerCountHint": "La manche se termine automatiquement dès que ce nombre de personnes atteint l’objectif, et le classement final s’affiche. Si moins de personnes ont une carte, elle se termine quand toutes l’ont atteint.",
   "selfClaimLabel": "Autoriser « personne ne correspond, je coche moi-même »",
   "selfClaimHint": "On peut cocher une case à laquelle personne ne correspond ; elle apparaît d’une autre couleur au classement. Utile à 2–4 personnes.",
   "anchorHeading": "Case fixe au centre",
@@ -123,7 +122,6 @@ export default {
   "listHeading": "Questions",
   "pickPendingBadge": "En attente",
   "screenRequests": "On attend ta confirmation",
-  "endButton": "Terminer la manche",
   "endedHeading": "Classement",
   "endedDesc": "La manche est finie — regarde si tu es au tableau !",
   "resetButton": "Rejouer une manche",
@@ -136,9 +134,6 @@ export default {
   "confirmCloseTitle": "Fermer la salle ?",
   "confirmCloseDesc": "Tout le monde est renvoyé et le résultat de cette manche n’est pas conservé.",
   "confirmCloseOk": "Fermer la salle",
-  "confirmEndTitle": "Terminer la manche ?",
-  "confirmEndDesc": "Ensuite plus personne ne peut s’associer, et tout le monde passe au classement final.",
-  "confirmEndOk": "Terminer",
   "toastConfirmed": "{name} a confirmé — coché !",
   "toastDeclined": "{name} trouve que ça ne correspond pas. Essaie quelqu’un d’autre",
   "toastLine": "{n} lignes complétées",
@@ -183,13 +178,13 @@ export default {
     "L’animateur crée une salle ; le code et le QR code s’affichent à l’écran. Pour changer la taille ou les questions, touche « Réglages » en haut.",
     "Tout le monde scanne le code, l’animateur touche « Lancer la partie », et chacun reçoit une carte dans un ordre différent.",
     "Choisis une case, trouve quelqu’un qui correspond et discute un peu. Touche la case, choisis la personne : c’est coché dès qu’elle confirme sur son téléphone.",
-    "Complète le nombre de lignes fixé par l’animateur pour entrer au classement. Quand c’est le bon moment, l’animateur touche « Terminer la manche »."
+    "Complète le nombre de lignes fixé par l’animateur pour entrer au classement. Quand assez de personnes y sont arrivées, la manche se termine toute seule."
   ],
   "rulesLeadHeading": "Comment animer",
   "rulesLeadSay": "Chaque case est un profil de personne. Trouvez quelqu’un qui correspond, discutez un peu, et demandez-lui de confirmer sur son téléphone : c’est ça qui compte. Les lignes vous font monter au classement, mais le vrai but, c’est de rencontrer quelques personnes de plus !",
   "rulesLeadSteps": [
     "Remplace les questions auxquelles personne, ou une seule personne, ne correspond.",
     "À 2–4 personnes seulement, active « Autoriser “personne ne correspond, je coche moi-même” » dans les réglages, sinon certaines cases resteront bloquées.",
-    "La partie continue même quand quelqu’un a gagné. Touche « Terminer la manche » quand l’énergie retombe."
+    "En petit groupe, choisis 1 gagnant pour une manche rapide ; en grand groupe, 2 ou 3 la font durer plus longtemps."
   ]
 };

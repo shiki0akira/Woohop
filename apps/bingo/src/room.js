@@ -321,8 +321,8 @@ export class BingoRoom {
     if (msg.hostPlays !== undefined) room.hostPlays = Boolean(msg.hostPlays);
     if (msg.winnerCount !== undefined) {
       const count = Number(msg.winnerCount);
-      // 0 = 不限，開到主持人按「結束這輪」為止
-      if (Number.isInteger(count) && count >= 0 && count <= MAX_WINNERS) room.winnerCount = count;
+      // 1～3 人。沒有「不限」：介面上沒有手動結束的按鈕，一輪一定要靠達標人數收場（2026-10-19 拿掉）
+      if (Number.isInteger(count) && count >= 1 && count <= MAX_WINNERS) room.winnerCount = count;
     }
 
     if (msg.anchor !== undefined) {
@@ -393,8 +393,8 @@ export class BingoRoom {
   }
 
   /*
-   * 主持人手動結束。達標**不會**自動結束遊戲——第一個達標的人只是上榜，
-   * 其他人繼續玩到主持人喊停，達標的人可以繼續挑戰全滿貫（CONCEPT.md 2.6）。
+   * 主持人手動結束。2026-10-19 起介面上已經沒有「結束這輪」的按鈕（一輪靠達標人數自動收場，見 checkWin），
+   * 這個訊息留給煙霧測試直接收場用，也讓舊版頁面送來時不會出錯。
    */
   async handleEndGame(ws, room, who) {
     if (who.role !== 'host') return this.sendError(ws, 'host_only');
@@ -544,9 +544,14 @@ export class BingoRoom {
 
     room.wins[playerId] = Date.now();
 
-    // 達標人數到了就自動收場，走跟主持人按「結束這輪」同一條路。
-    // winnerCount = 0 是「不限」，永遠不自動結束
-    if (room.winnerCount > 0 && Object.keys(room.wins).length >= room.winnerCount) {
+    /*
+     * 達標人數到了就自動收場（介面上已經沒有「結束這輪」的按鈕，這是唯一的收場方式）。
+     *
+     * 拿到卡的人比設定的人數少時（例如設 3 人、只有 2 個人在玩），改成「拿卡的人全部達標」就收場，
+     * 不然這一輪永遠結束不了。舊房間存著 0（以前的「不限」）的也當成 1。
+     */
+    const need = Math.min(Math.max(1, room.winnerCount), Object.keys(room.cards).length);
+    if (Object.keys(room.wins).length >= need) {
       this.finishRound(room);
     }
   }

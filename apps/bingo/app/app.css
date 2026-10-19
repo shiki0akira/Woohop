@@ -247,8 +247,6 @@
 .board-score strong { font-weight: 900; }
 .board-score .hint { margin: 0 !important; font-size: 12px; }
 
-/* 主持人的「結束這輪」：進行中畫面的最下面 */
-.bingo-app .end-game { margin-top: 4px; }
 
 /* 結算頁的「再玩一輪」 */
 .play-again { display: grid; gap: 8px; margin-top: 18px; }

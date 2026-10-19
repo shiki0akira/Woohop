@@ -389,27 +389,41 @@ async function main() {
   check('自動結束也清掉待確認', Object.keys(autoPlayer.you.outgoing).length === 0, autoPlayer.you.outgoing);
   for (const client of [autoHost, autoPlayer]) client.close();
 
-  // winnerCount = 0 是「不限」：達標了也不收場，開到主持人喊停
-  const freeId = 'host-free-' + Math.random().toString(36).slice(2, 8);
-  const freeCode = await createRoom(freeId);
-  const freeHost = await new Client(freeCode, freeId, '不限主持').connect();
-  const freePlayer = await new Client(freeCode, 'free-p1', '衝線的人').connect();
+  /*
+   * 沒有「不限」了（2026-10-19，介面上也沒有「結束這輪」）：winnerCount = 0 要被擋下來。
+   * 另外設 3 人、但只有 2 個人拿卡時，兩個人都達標就要收場，不然這一輪永遠結束不了。
+   */
+  const fewId = 'host-few-' + Math.random().toString(36).slice(2, 8);
+  const fewCode = await createRoom(fewId);
+  const fewHost = await new Client(fewCode, fewId, '人少主持').connect();
+  const fewPlayer = await new Client(fewCode, 'few-p1', '衝線的人').connect();
   await sleep(200);
-  await setupRound(freeHost, { size: 3, targetLines: 1, winnerCount: 0 });
-  check('不限收得到', freeHost.state.winnerCount === 0, freeHost.state.winnerCount);
+  await setupRound(fewHost, { size: 3, targetLines: 1, winnerCount: 0 });
+  check('不收 0（不限）', fewHost.state.winnerCount === 1, fewHost.state.winnerCount);
+  await setupRound(fewHost, { size: 3, targetLines: 1, winnerCount: 3 });
+  check('3 人收得到', fewHost.state.winnerCount === 3, fewHost.state.winnerCount);
 
-  await freeHost.act({ t: 'startGame' });
+  await fewHost.act({ t: 'startGame' });
   await sleep(250);
+  // 玩家連成一條線：只有 1 人達標，還沒結束
   for (const index of [0, 1, 2]) {
-    await freePlayer.act({ t: 'requestMatch', index, playerId: freeId });
+    await fewPlayer.act({ t: 'requestMatch', index, playerId: fewId });
     await sleep(150);
-    const req = freeHost.you.incoming.find((item) => item.from === 'free-p1');
-    await freeHost.act({ t: 'respond', requestId: req.requestId, accept: true });
+    const req = fewHost.you.incoming.find((item) => item.from === 'few-p1');
+    await fewHost.act({ t: 'respond', requestId: req.requestId, accept: true });
     await sleep(150);
   }
-  check('有人達標了', freePlayer.you.won === true, freePlayer.you.won);
-  check('設成不限就不會自動結束', freeHost.state.status === 'playing', freeHost.state.status);
-  for (const client of [freeHost, freePlayer]) client.close();
+  check('1 人達標時還沒結束', fewHost.state.status === 'playing', fewHost.state.status);
+  // 主持人也連成一條線：拿卡的 2 人都達標了，就算設的是 3 人也要收場
+  for (const index of [0, 1, 2]) {
+    await fewHost.act({ t: 'requestMatch', index, playerId: 'few-p1' });
+    await sleep(150);
+    const req = fewPlayer.you.incoming.find((item) => item.from === fewId);
+    await fewPlayer.act({ t: 'respond', requestId: req.requestId, accept: true });
+    await sleep(150);
+  }
+  check('拿卡的人全部達標就收場', fewHost.state.status === 'ended', fewHost.state.status);
+  for (const client of [fewHost, fewPlayer]) client.close();
 
   /* ---------- 中途加入 ---------- */
   console.log('\n中途加入');

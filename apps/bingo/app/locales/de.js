@@ -56,8 +56,7 @@ export default {
   "hostPlaysHint": "Ausgeschaltet leitest du nur — du bekommst dann keine Karte. Du stehst trotzdem auf der Liste, also können andere dich zuordnen und um Bestätigung bitten.",
   "winnerCountLabel": "Nach wie vielen Treffern endet die Runde",
   "winnerCountUnit": "{n}",
-  "winnerCountUnlimited": "Ohne Grenze",
-  "winnerCountHint": "Sobald so viele das Ziel erreicht haben, endet die Runde automatisch und die Endwertung erscheint. Die Spielleitung kann jederzeit selbst beenden.",
+  "winnerCountHint": "Sobald so viele das Ziel erreicht haben, endet die Runde automatisch und die Endwertung erscheint. Haben weniger Personen eine Karte, endet sie, wenn alle es geschafft haben.",
   "selfClaimLabel": "„Niemand passt — selbst abhaken“ erlauben",
   "selfClaimHint": "Passt niemand, darf man das Feld selbst abhaken; in der Wertung erscheint es andersfarbig. Bei 2–4 Personen lohnt sich das.",
   "anchorHeading": "Festes Feld in der Mitte",
@@ -124,7 +123,6 @@ export default {
   "listHeading": "Fragen",
   "pickPendingBadge": "Wartet",
   "screenRequests": "Wartet auf dich",
-  "endButton": "Runde beenden",
   "endedHeading": "Wertung",
   "endedDesc": "Die Runde ist vorbei — schau nach, ob du es aufs Treppchen geschafft hast!",
   "resetButton": "Noch eine Runde",
@@ -137,9 +135,6 @@ export default {
   "confirmCloseTitle": "Raum schließen?",
   "confirmCloseDesc": "Alle werden hinausgeschickt und das Ergebnis dieser Runde wird nicht behalten.",
   "confirmCloseOk": "Raum schließen",
-  "confirmEndTitle": "Runde beenden?",
-  "confirmEndDesc": "Danach kann niemand mehr zuordnen, und alle sehen die Endwertung.",
-  "confirmEndOk": "Beenden",
   "toastConfirmed": "{name} hat bestätigt — abgehakt!",
   "toastDeclined": "{name} findet, das passt nicht. Frag jemand anderen",
   "toastLine": "{n} Reihen voll",
@@ -184,13 +179,13 @@ export default {
     "Die Spielleitung eröffnet einen Raum; Raumcode und QR-Code erscheinen auf dem Bildschirm. Größe oder Fragen ändert man oben unter „Einstellungen“.",
     "Alle scannen den Code, die Spielleitung tippt auf „Spiel starten“, und jede Person bekommt eine Karte in eigener Reihenfolge.",
     "Such dir ein Feld aus, finde jemanden, der passt, und plaudere kurz. Tipp das Feld an, wähl die Person aus – sobald sie auf ihrem Handy bestätigt, ist es abgehakt.",
-    "Wer die festgelegte Zahl an Reihen schafft, kommt in die Rangliste. Wenn es reicht, tippt die Spielleitung auf „Runde beenden“."
+    "Wer die festgelegte Zahl an Reihen schafft, kommt in die Rangliste. Sind es genug, endet die Runde automatisch und die Rangliste erscheint."
   ],
   "rulesLeadHeading": "So leitest du an",
   "rulesLeadSay": "Jedes Feld ist eine Art Mensch. Findet jemanden, der passt, plaudert kurz und lasst es auf seinem Handy bestätigen – nur dann zählt es. Reihen bringen euch in die Rangliste, aber eigentlich geht es darum, ein paar Leute mehr kennenzulernen!",
   "rulesLeadSteps": [
     "Tausch Fragen aus, auf die niemand oder nur eine einzige Person passt.",
     "Bei nur 2–4 Personen in den Einstellungen „Niemand passt — selbst abhaken“ erlauben, sonst bleiben manche Felder hängen.",
-    "Das Spiel läuft weiter, auch wenn jemand gewonnen hat. Tipp auf „Runde beenden“, wenn die Luft raus ist."
+    "Bei wenigen Personen 1 Gewinner einstellen, dann geht es schneller; in großen Gruppen machen 2–3 die Runde länger."
   ]
 };

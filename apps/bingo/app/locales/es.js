@@ -55,8 +55,7 @@ export default {
   "hostPlaysHint": "Desactívalo para solo dirigir: no recibirás cartón. Sigues en la lista, así que pueden asignarte a una casilla y pedirte que confirmes.",
   "winnerCountLabel": "Cuántos aciertos antes de terminar",
   "winnerCountUnit": "{n}",
-  "winnerCountUnlimited": "Sin límite",
-  "winnerCountHint": "La ronda termina automáticamente cuando este número de personas alcanza el objetivo; quien dirige también puede terminarla cuando quiera.",
+  "winnerCountHint": "La ronda termina automáticamente cuando este número de personas alcanza el objetivo y aparece la clasificación final. Si hay menos personas con cartón, termina cuando todas lo logran.",
   "selfClaimLabel": "Permitir «no encuentro a nadie, lo marco yo»",
   "selfClaimHint": "Si no aparece nadie que encaje, se puede marcar la casilla igualmente; en la clasificación sale de otro color. Va bien con 2–4 personas.",
   "anchorHeading": "Casilla fija del centro",
@@ -123,7 +122,6 @@ export default {
   "listHeading": "Preguntas",
   "pickPendingBadge": "Pendiente",
   "screenRequests": "Esperan tu confirmación",
-  "endButton": "Terminar la ronda",
   "endedHeading": "Clasificación",
   "endedDesc": "La ronda ha terminado: ¡mira si has entrado en la tabla!",
   "resetButton": "Otra ronda",
@@ -136,9 +134,6 @@ export default {
   "confirmCloseTitle": "¿Cerrar la sala?",
   "confirmCloseDesc": "Todo el mundo sale y el resultado de esta ronda no se guarda.",
   "confirmCloseOk": "Cerrar la sala",
-  "confirmEndTitle": "¿Terminar la ronda?",
-  "confirmEndDesc": "Después ya nadie puede asignar casillas y todos pasan a la clasificación final.",
-  "confirmEndOk": "Terminar",
   "toastConfirmed": "{name} lo ha confirmado: ¡marcada!",
   "toastDeclined": "{name} cree que no encaja. Prueba con otra persona",
   "toastLine": "{n} líneas completadas",
@@ -183,13 +178,13 @@ export default {
     "Quien dirige crea una sala y en pantalla aparecen el código y el código QR. Para cambiar el tamaño o las preguntas, toca «Ajustes» arriba.",
     "Todos escanean el código, quien dirige toca «Empezar» y cada persona recibe un cartón con un orden distinto.",
     "Elige una casilla, busca a alguien que encaje y charla un poco. Toca la casilla, elígelo y se marca en cuanto lo confirme en su teléfono.",
-    "Completa las líneas que fijó quien dirige para entrar en la clasificación. Cuando sea el momento, quien dirige toca «Terminar la ronda»."
+    "Completa las líneas que fijó quien dirige para entrar en la clasificación. Cuando lo logran suficientes personas, la ronda termina sola y aparece la clasificación."
   ],
   "rulesLeadHeading": "Cómo dirigirlo",
   "rulesLeadSay": "Cada casilla es un tipo de persona. Encuentren a alguien que encaje, charlen un poco y pídanle que lo confirme en su teléfono: solo así cuenta. Las líneas los llevan a la clasificación, pero el objetivo de verdad es conocer a unas cuantas personas más.",
   "rulesLeadSteps": [
     "Cambia las preguntas en las que no encaje nadie o solo una persona.",
     "Si solo son 2–4 personas, activa «Permitir “no encuentro a nadie, lo marco yo”» en los ajustes, o algunas casillas se quedarán atascadas.",
-    "El juego sigue aunque alguien gane. Toca «Terminar la ronda» cuando la energía baje."
+    "Con pocas personas, elige 1 ganador para una ronda rápida; con un grupo grande, 2 o 3 la hacen durar más."
   ]
 };

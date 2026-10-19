@@ -51,8 +51,7 @@ export default {
   "hostPlaysHint": "Turn this off to run the room only — no card for you. You are still on the list, so people can match with you and ask you to confirm.",
   "winnerCountLabel": "Winners before the round ends",
   "winnerCountUnit": "{n}",
-  "winnerCountUnlimited": "No limit",
-  "winnerCountHint": "The round ends automatically once this many people hit the target — or the host can end it at any time.",
+  "winnerCountHint": "The round ends automatically once this many people hit the target and the final ranking appears. If fewer people have cards than this, it ends when all of them have.",
   "selfClaimLabel": "Allow \"nobody matches, claim it myself\"",
   "selfClaimHint": "Players can tick a square nobody fits, shown in a different colour. Worth it for 2–4 people.",
   "anchorHeading": "Anchor square (fixed in the centre)",
@@ -119,7 +118,6 @@ export default {
   "listHeading": "Questions",
   "pickPendingBadge": "Pending",
   "screenRequests": "Waiting on you",
-  "endButton": "End this round",
   "endedHeading": "Leaderboard",
   "endedDesc": "The round is over — see if you made the board!",
   "resetButton": "Play another round",
@@ -132,9 +130,6 @@ export default {
   "confirmCloseTitle": "Close the room?",
   "confirmCloseDesc": "Everyone is sent out and this round’s results are not kept.",
   "confirmCloseOk": "Close room",
-  "confirmEndTitle": "End this round?",
-  "confirmEndDesc": "Nobody can match after this, and everyone moves to the final board.",
-  "confirmEndOk": "End round",
   "toastConfirmed": "{name} confirmed — ticked!",
   "toastDeclined": "{name} does not think it fits. Try someone else.",
   "toastLine": "{n} lines complete",
@@ -179,13 +174,13 @@ export default {
     "The host opens a room, and a room code and QR code appear on screen. To change the size or questions, tap “Settings” at the top.",
     "Everyone scans the code to join, the host taps “Start game”, and each player gets a card in a different order.",
     "Pick a square, find someone who fits and chat for a bit. Tap that square, choose them, and it gets ticked once they confirm on their phone.",
-    "Complete the number of lines the host set to make the leaderboard. When it feels done, the host taps “End this round” to show the final ranking."
+    "Complete the number of lines the host set to make the leaderboard. Once enough people have, the round ends automatically and shows the ranking."
   ],
   "rulesLeadHeading": "How to lead it",
   "rulesLeadSay": "Every square is a kind of person. Find someone who fits, chat for a bit, and ask them to confirm on their own phone — that’s what makes it count. Lines get you on the leaderboard, but the real goal is meeting a few more people!",
   "rulesLeadSteps": [
     "Swap out questions that nobody, or only one person, would fit.",
     "With only 2–4 people, turn on “Allow ‘nobody matches, claim it myself’” in Settings, or some squares will get stuck.",
-    "The game keeps going after someone wins. Tap “End this round” when people are winding down."
+    "With few people, set the winner count to 1 for a quicker round; with a big group, 2–3 keeps it going longer."
   ]
 };
