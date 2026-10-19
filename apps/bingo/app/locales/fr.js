@@ -102,7 +102,6 @@ export default {
   "progressWon": "Objectif atteint — tente la carte pleine",
   "blackoutBadge": "Carte pleine",
   "wonBadge": "Réussi",
-  "cellPending": "En attente",
   "cellSelf": "Coché soi-même",
   "cellWaiting": "En attente de {name}",
   "cellDone": "Confirmé par {name}",

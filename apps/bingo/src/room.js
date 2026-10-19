@@ -246,15 +246,28 @@ export class BingoRoom {
     const known = room.players[clientId];
 
     /*
-     * 中途加入的人變成**旁觀者**：拿不到卡（題庫與卡片在開始時就鎖定了），
-     * 但留在名單上、可以被別人選來配對、也可以按確認。
+     * 遊戲進行中才到的人**直接發一張卡**（2026-10-19 改）：題庫在開始時就鎖定了，
+     * 但發卡只是把同一份題目換個順序排，晚到的人拿到的卡跟大家同一套規則，不影響別人。
+     * 現場的人本來就是陸續到的，讓他乾等到下一輪太可惜。
      *
-     * 他人就在現場、也符合描述，把他從名單裡排除反而奇怪（CONCEPT.md 第四節）。
+     * 只有這一輪已經結束（結算畫面）才進來的人是**旁觀者**：留在名單上，
+     * 主持人按「再玩一輪」就會拿到卡（CONCEPT.md 第四節）。
      */
-    const spectator = !known && room.started && !isHost;
+    const lateJoin = !known && room.status === 'playing' && !isHost;
+    const spectator = !known && room.started && room.status !== 'playing' && !isHost;
 
     if (!known && !spectator && Object.keys(room.players).length >= room.maxPlayers) {
       return this.sendError(ws, 'room_full', true);
+    }
+
+    if (lateJoin) {
+      room.cards[clientId] = buildCard(
+        room.size,
+        room.questions.map((question) => question.id),
+        room.anchor ? room.anchor.id : null,
+        `${room.code}:${clientId}`,
+      );
+      room.marks[clientId] = {};
     }
 
     room.players[clientId] = {

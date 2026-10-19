@@ -103,7 +103,6 @@ export default {
   "progressWon": "Ziel erreicht — jetzt geh auf die volle Karte",
   "blackoutBadge": "Volle Karte",
   "wonBadge": "Geschafft",
-  "cellPending": "Wartet",
   "cellSelf": "Selbst abgehakt",
   "cellWaiting": "Wartet auf {name}",
   "cellDone": "Von {name} bestätigt",

@@ -104,7 +104,6 @@ export default {
   "progressWon": "你已經達標了，繼續挑戰全滿貫吧",
   "blackoutBadge": "全滿貫",
   "wonBadge": "獲勝",
-  "cellPending": "確認中",
   "cellSelf": "自行認定",
   "cellWaiting": "等 {name} 確認",
   "cellDone": "{name} 確認了",

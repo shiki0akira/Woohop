@@ -416,21 +416,24 @@ async function main() {
   const carol = await new Client(code, 'p-carol', '小華').connect();
   await sleep(250);
   check('遲到的人加得進來', carol.role === 'player', carol.errors);
-  check('但這一輪沒有卡片', carol.you.card === null, carol.you.card);
+  // 進行中才到的人直接發卡（同一份題目、自己的排列），不再當旁觀
+  check('遲到的人也拿到卡片', Array.isArray(carol.you.card) && carol.you.card.length === bob.you.card.length, carol.you.card);
   const carolRow = carol.state.players.find((player) => player.id === 'p-carol');
-  check('榜上標成旁觀', carolRow?.spectator === true, carolRow);
+  check('榜上不是旁觀', carolRow?.spectator === false, carolRow);
 
-  const beforeSpectator = carol.errors.length;
+  const beforeLate = carol.errors.length;
   await carol.act({ t: 'requestMatch', index: 0, playerId: 'p-bob' });
-  check('旁觀者不能送配對請求', carol.errors.includes('spectator_only'), carol.errors.slice(beforeSpectator));
+  await sleep(150);
+  check('遲到的人可以送配對請求', !carol.errors.slice(beforeLate).includes('spectator_only'), carol.errors.slice(beforeLate));
+  await carol.act({ t: 'cancelMatch', index: 0 });
 
-  // 但他可以被別人選、也可以按確認——他人就在現場
+  // 也可以被別人選、按確認
   await bob.act({ t: 'requestMatch', index: 0, playerId: 'p-carol' });
   await sleep(150);
-  check('旁觀者收得到待確認', carol.you.incoming.length === 1, carol.you.incoming);
+  check('遲到的人收得到待確認', carol.you.incoming.length === 1, carol.you.incoming);
   await carol.act({ t: 'respond', requestId: carol.you.incoming[0].requestId, accept: true });
   await sleep(200);
-  check('旁觀者確認後對方打勾', Boolean(bob.you.marks[0]), bob.you.marks);
+  check('遲到的人確認後對方打勾', Boolean(bob.you.marks[0]), bob.you.marks);
 
   /* ---------- 結束與再玩一輪 ---------- */
   console.log('\n結束與再玩一輪');

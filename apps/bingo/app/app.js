@@ -1635,7 +1635,8 @@
         note = mark.mode === 'self' ? t('cellSelf') : playerName(mark.by);
       } else if (pending[i] !== undefined) {
         classes.push('is-pending');
-        note = t('cellPending');
+        // 寫出在等誰：同時送出好幾格時，才知道要去催哪一個人
+        note = t('cellWaiting', { name: playerName(pending[i]) });
       }
       if (inLine[i]) classes.push('in-line');
       if (i === room.anchorIndex) classes.push('is-anchor');

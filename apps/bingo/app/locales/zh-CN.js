@@ -103,7 +103,6 @@ export default {
   "progressWon": "你已经达标了，继续挑战全满贯吧",
   "blackoutBadge": "全满贯",
   "wonBadge": "获胜",
-  "cellPending": "确认中",
   "cellSelf": "自行认定",
   "cellWaiting": "等 {name} 确认",
   "cellDone": "{name} 确认了",

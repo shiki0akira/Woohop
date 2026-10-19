@@ -102,7 +102,6 @@ export default {
   "progressWon": "Objetivo cumplido: ve a por el cartón lleno",
   "blackoutBadge": "Cartón lleno",
   "wonBadge": "Conseguido",
-  "cellPending": "Pendiente",
   "cellSelf": "Marcada por ti",
   "cellWaiting": "Esperando a {name}",
   "cellDone": "Confirmada por {name}",

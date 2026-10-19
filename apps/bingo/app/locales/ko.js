@@ -102,7 +102,6 @@ export default {
   "progressWon": "목표를 채웠어요. 이제 전체 칸을 노려 보세요",
   "blackoutBadge": "전체 완성",
   "wonBadge": "달성",
-  "cellPending": "확인 대기",
   "cellSelf": "직접 인정",
   "cellWaiting": "{name}의 확인 대기 중",
   "cellDone": "{name}이(가) 확인함",

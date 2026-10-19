@@ -102,7 +102,6 @@ export default {
   "progressWon": "目標達成です。全マス制覇を狙いましょう",
   "blackoutBadge": "全マス制覇",
   "wonBadge": "達成",
-  "cellPending": "確認待ち",
   "cellSelf": "自己申告",
   "cellWaiting": "{name} の確認待ち",
   "cellDone": "{name} が確認",

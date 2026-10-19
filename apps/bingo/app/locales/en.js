@@ -98,7 +98,6 @@ export default {
   "progressWon": "You have hit the target — go for the blackout",
   "blackoutBadge": "Blackout",
   "wonBadge": "Winner",
-  "cellPending": "Pending",
   "cellSelf": "Self-claimed",
   "cellWaiting": "Waiting for {name}",
   "cellDone": "Confirmed by {name}",
