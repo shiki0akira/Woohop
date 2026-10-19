@@ -36,7 +36,7 @@
 
   /* ================= 遊戲資料 =================
    * players：最少～最多人；time：0=5 分內／1=5–15 分／2=15 分以上；minutes：排破冰組合用的大約長度
-   * phones：none / one / each；purpose：warmup / know
+   * phones：none / one / each；purpose：warmup / know（桌遊助手不是破冰遊戲，留空，選了目的就不會出現）
    * 幸福模擬器不是遊戲（獨立專案），不在這裡，只在首頁專區與頁尾。
    */
   const GAMES = [
@@ -44,7 +44,7 @@
     { key: 'bingo',   players: [8, 30], time: [1, 2], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
     { key: 'bomb',    players: [4, 15], time: [0, 1], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
     { key: 'buzzer',  players: [5, 30], time: [0, 1], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
-    { key: 'avalon',  players: [5, 10], time: [2],    minutes: 40, phones: 'one',  purpose: ['warmup'],         color: '#3D54B6', boardgame: true },
+    { key: 'avalon',  players: [5, 10], time: [2],    minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
     { key: 'orchard', players: [5, 20], time: [0, 1], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
     { key: 'stairs',  players: [6, 30], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', soon: true },
@@ -60,9 +60,9 @@
   const artSvg = key => `<svg viewBox="0 0 160 126" aria-hidden="true">${art[key]()}</svg>`;
 
   /* ================= 遊戲卡片 ================= */
-  const card = g => {
+  const card = (g, purposes = new Set()) => {
     const tag = g.soon ? 'div' : 'a';
-    const badge = g.soon ? ['b-soon', t.soon] : g.boardgame ? ['b-info', t.badgeBoard] : g.purpose[0] === 'know' ? ['b-info', t.badgeKnow] : ['b-new', t.badgeWarm];
+    const badge = g.soon ? ['b-soon', t.soon] : g.boardgame ? ['b-info', t.badgeBoard] : (g.purpose.find(p => purposes.has(p)) || g.purpose[0]) === 'know' ? ['b-info', t.badgeKnow] : ['b-new', t.badgeWarm];
     return `<${tag} class="game${g.soon ? ' soon' : ''}" ${g.soon ? '' : `href="${g.url}"`} data-key="${g.key}">
       <span class="badge ${badge[0]} purpose">${esc(badge[1])}</span>
       <div class="art">${artSvg(g.key)}</div>
@@ -75,10 +75,10 @@
 
   /* ================= 推薦器 =================
    * finder(root, { filters, limit, moreHref })：首頁只放兩個條件、列三張；找遊戲頁放全部。
-   * 條件同步到網址（?people=5-12&phones=each），首頁的「看全部遊戲」帶著條件過去。
+   * 條件同步到網址（?people=5-15&phones=each），首頁的「看全部遊戲」帶著條件過去。
    */
   const FILTERS = {
-    people:  { label: t.fPeople,  type: 'one',  values: ['2-4', '5-12', '13-30', '31-99'], labels: t.oPeople },
+    people:  { label: t.fPeople,  type: 'one',  values: ['2-4', '5-15', '15-30', '31-99'], labels: t.oPeople },
     time:    { label: t.fTime,    type: 'one',  values: ['0', '1', '2'],                  labels: t.oTime },
     phones:  { label: t.fPhones,  type: 'many', values: ['none', 'one', 'each'],          labels: t.oPhones },
     purpose: { label: t.fPurpose, type: 'many', values: ['warmup', 'know'],               labels: t.oPurpose },
@@ -139,8 +139,10 @@
     };
     const $ = sel => root.querySelector(sel);
     const render = flashKey => {
-      const all = GAMES.filter(match).sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0));
-      $('[data-results]').innerHTML = all.slice(0, limit).map(card).join('');
+      // 選了任何條件就只列能玩的；即將推出的只在沒篩選時排在最後
+      const filtered = !!query();
+      const all = GAMES.filter(g => match(g) && !(filtered && g.soon)).sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0));
+      $('[data-results]').innerHTML = all.slice(0, limit).map(g => card(g, state.purpose)).join('');
       const n = all.filter(g => !g.soon).length, soon = all.filter(g => g.soon).length;
       $('[data-count]').innerHTML = fmt(esc(t.found), { n: `<em>${n}</em>` }) + (soon ? `<span class="t-small">${esc(fmt(t.soonCount, { n: soon }))}</span>` : '');
       $('[data-empty]').hidden = all.length > 0;
