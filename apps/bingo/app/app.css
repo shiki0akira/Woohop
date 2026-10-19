@@ -129,6 +129,8 @@
 .bingo-app .player .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 .role-badge { flex: none; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: var(--r-pill); background: var(--blue-face); color: var(--blue-text); border: 1.5px solid var(--blue-edge); white-space: nowrap; }
 .role-badge.is-muted { background: #ececf0; color: #55555c; border-color: #b9b9c3; }
+/* 主持人：設計系統 .badge.b-host 的黃色，跟藍色的「玩家」一眼分得出來 */
+.role-badge.is-host { background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
 .role-badge.is-win { background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
 .bingo-app .player .kick { --h: 32px; width: 32px; padding: 0; color: var(--muted); }
 .bingo-app .player .kick:hover { --face: var(--coral-face); color: var(--coral-text); }

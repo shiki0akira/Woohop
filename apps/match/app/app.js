@@ -929,7 +929,12 @@
 
     // 身分標籤放在遊戲內頂欄右邊。離開／關閉房間就是頂欄的返回鍵（window.gameBack → confirmExit），不另外放按鈕
     var roleBadge = document.getElementById('game-bar-badge');
-    if (roleBadge) roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
+    if (roleBadge) {
+      roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
+      // 主持人用設計系統的主持人徽章（黃），玩家維持藍色，跟名單上的標籤同一套顏色
+      roleBadge.classList.toggle('b-host', isHost);
+      roleBadge.classList.toggle('b-info', !isHost);
+    }
 
     var inLobby = room.status === 'lobby';
     var inResults = room.status === 'results';
@@ -998,7 +1003,7 @@
         /* 標籤樣式跟 04_HappyBingo 一致（.role-badge 膠囊），三個專案要長一樣。
            主持人打開「也一起作答」時會同時有「主持人」和「玩家」兩個標籤——
            這比在別的地方寫一句說明清楚，別人也看得到誰真的參與分組 */
-        (player.host ? '<span class="role-badge">' + escapeHtml(t('hostTag')) + '</span>' : '') +
+        (player.host ? '<span class="role-badge is-host">' + escapeHtml(t('hostTag')) + '</span>' : '') +
         (!player.host || room.hostPlays
           ? '<span class="role-badge">' + escapeHtml(t('playerTag')) + '</span>'
           : '') +

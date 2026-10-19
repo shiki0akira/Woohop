@@ -1461,7 +1461,12 @@
 
     // 身分標籤放在遊戲內頂欄右邊。離開／關閉房間就是頂欄的返回鍵（window.gameBack → confirmExit），不另外放按鈕
     var roleBadge = document.getElementById('game-bar-badge');
-    if (roleBadge) roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
+    if (roleBadge) {
+      roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
+      // 主持人用設計系統的主持人徽章（黃），玩家維持藍色，跟名單上的標籤同一套顏色
+      roleBadge.classList.toggle('b-host', isHost);
+      roleBadge.classList.toggle('b-info', !isHost);
+    }
     syncSettingsGear();
 
     el.shareCard.hidden = !inLobby;
@@ -1530,7 +1535,7 @@
        * 這比在名單下面寫一句「你同時也是玩家」清楚，而且別人也看得到誰真的在玩。
        */
       var badges = '';
-      if (player.host) badges += '<span class="role-badge">' + escapeHtml(t('hostBadge')) + '</span>';
+      if (player.host) badges += '<span class="role-badge is-host">' + escapeHtml(t('hostBadge')) + '</span>';
       if (!player.host || room.hostPlays) {
         badges += '<span class="role-badge">' + escapeHtml(t('playerBadge')) + '</span>';
       }

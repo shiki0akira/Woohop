@@ -270,7 +270,12 @@
     var inRoom = name === 'host' || name === 'play';
     document.body.setAttribute('data-game-mode', inRoom ? 'play' : 'browse');
     var badge = document.getElementById('game-bar-badge');
-    if (badge) badge.textContent = name === 'host' ? T.hostBadge : name === 'play' ? T.playerBadge : '';
+    if (badge) {
+      badge.textContent = name === 'host' ? T.hostBadge : name === 'play' ? T.playerBadge : '';
+      // 主持人用設計系統的主持人徽章（黃），玩家維持藍色（跟喜好二選一、幸福賓果一樣）
+      badge.classList.toggle('b-host', name === 'host');
+      badge.classList.toggle('b-info', name !== 'host');
+    }
     var gameTitle = document.querySelector('.game-bar .title');
     if (gameTitle) gameTitle.tabIndex = inRoom ? -1 : 0;
 
