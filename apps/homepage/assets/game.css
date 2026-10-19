@@ -21,7 +21,7 @@
 
 /* 遊戲名：回遊戲主頁的連結，平常看起來就是標題；放不下時截成「⋯」，分頁不讓 */
 .game-bar .title { flex: 0 1 auto; min-width: 0; padding-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; font-weight: 900; text-align: left; color: var(--ink); text-decoration: none; border-radius: var(--r-sm); }
-.game-bar .title:hover { color: var(--indigo); }
+.game-bar .title:hover { color: var(--accent-text); }
 .game-bar .title:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
 
 /* 分頁（玩法、設定）：跟網站導覽列的連結同一種樣子；目前所在的分頁只換字色 */
@@ -32,7 +32,7 @@
   font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
 }
 .game-tabs a:hover, .game-tabs button:hover { background: #eef1fc; }
-.game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--indigo); }
+.game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--accent-text); }
 .game-tabs .tab-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
 .game-tabs .tab-count:empty { display: none; }
 
@@ -87,7 +87,7 @@
 /* 主標題拆成「遊戲名」＋「一句話」兩行（build 的 heroTitleHtml），冒號留在 HTML 給爬蟲、畫面上藏起來 */
 .game-main .page-head h1 > span { display: block; }
 .h1-name { font-size: 1.15em; }
-.h1-line { color: var(--indigo); font-size: .78em; margin-top: 2px; }
+.h1-line { color: var(--accent-text); font-size: .78em; margin-top: 2px; }
 .sr-colon { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .game-main h1:lang(ja) { word-break: auto-phrase; }
 

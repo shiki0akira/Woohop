@@ -163,7 +163,7 @@
   .guide .meta { font-size: 13px; color: var(--muted); font-weight: 700; }
 
   /* 目前所在的分頁不做成按鈕，只換顏色（靛藍）；滑過時一樣只有淡底 */
-  .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--indigo); }
+  .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--accent-text); }
   .nav-links a[aria-current="page"]:hover { background: #eef1fc; }
 
   /* 小縮圖（約 72px 寬）的插圖描邊改成 2px，跟 UI 線條一樣粗 */

@@ -172,11 +172,11 @@
   .guide .meta { font-size: 13px; color: var(--muted); font-weight: 700; }
 
   /* 目前所在的分頁不做成按鈕，只換顏色（靛藍）；滑過時一樣只有淡底 */
-  .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--indigo); }
+  .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--accent-text); }
   .nav-links a[aria-current="page"]:hover { background: #eef1fc; }
   /* 手機選單：目前這頁跟電腦版一樣只換字色；關閉放右下 */
   dialog.sheet:focus { outline: none; }
-  .sheet-list a[aria-current="page"] { color: var(--indigo); }
+  .sheet-list a[aria-current="page"] { color: var(--accent-text); }
   .sheet-foot { display: flex; justify-content: flex-end; margin-top: 12px; }
 
   /* 小縮圖（約 72px 寬）的插圖描邊改成 2px，跟 UI 線條一樣粗 */
@@ -202,7 +202,7 @@
   /* 語言選單：跟「更多」同一種下拉 */
   .lang-wrap { position: relative; }
   .lang-wrap .nav-menu { right: 0; min-width: 160px; }
-  .lang-wrap .nav-menu a[aria-current="page"] { color: var(--indigo); font-weight: 800; }
+  .lang-wrap .nav-menu a[aria-current="page"] { color: var(--accent-text); font-weight: 800; }
   /* 中文長文：怎麼選破冰遊戲 */
   .article { max-width: 760px; }
   .article section { margin-bottom: 28px; }

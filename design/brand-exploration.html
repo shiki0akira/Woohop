@@ -68,6 +68,7 @@
     /* 介面用的中性色（深色模式在下面的 [data-theme="dark"] 換值）。元件裡不要再寫死灰白，一律用這組 */
     --on-ink: #ffffff;        /* 墨色底（浮動通知、提示泡泡、實心徽章）上的字 */
     --solid-edge: var(--indigo-edge); /* 實心主要按鈕的底部厚度 */
+    --accent-text: var(--indigo); /* 強調的文字（連結滑過、目前所在的分頁） */
     --hover: #eef1fc;         /* 滑過的淡藍底 */
     --hover-faint: #f7f8fe;
     --track: #e8e8ee;         /* 分段控制、單選的灰底軌道 */
@@ -114,6 +115,7 @@
 
     --on-ink: #1c1c24;
     --solid-edge: #1b2350;
+    --accent-text: #a9b8f5;
     --hover: #2e3450;
     --hover-faint: #2a2e44;
     --track: #1c1c24;
@@ -559,7 +561,7 @@
   .crumbs { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
   /* 純文字連結：平常深藍、hover 換成靛藍＋2px 底線（跟其他線條同粗），按下再深一階 */
   .link, .crumbs a, .footer-demo a { color: var(--blue-text); font-weight: 700; text-decoration: none; text-underline-offset: 4px; text-decoration-thickness: 2px; border-radius: var(--r-xs); transition: color .15s; }
-  .link:hover, .crumbs a:hover, .footer-demo a:hover { color: var(--indigo); text-decoration-line: underline; }
+  .link:hover, .crumbs a:hover, .footer-demo a:hover { color: var(--accent-text); text-decoration-line: underline; }
   .link:active, .crumbs a:active, .footer-demo a:active { color: var(--indigo-edge); }
   .link:focus-visible, .crumbs a:focus-visible, .footer-demo a:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
 
