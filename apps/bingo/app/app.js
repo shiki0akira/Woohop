@@ -1220,18 +1220,39 @@
       })
       .then(function () {
         /*
-         * 已經填過名字就直接連回去，不再擋一次頭像暱稱頁。
-         *
+         * **這支手機進過這間房間**（重整、斷線回來）就直接連回去，不再擋一次頭像暱稱頁：
          * 遊戲中按 F5 每次都要重填一遍很煩，而且開始之後本來就不該改暱稱——
-         * 別人卡上的「等 ◯◯ 確認」會跟著變。真的沒名字（換裝置、清過快取）
-         * 伺服器會回 nickname_required，那時 handleServerError 再把這一頁叫出來。
+         * 別人卡上的「等 ◯◯ 確認」會跟著變。
+         *
+         * 第一次進這間房間（掃 QR code、輸入房號，包括遊戲已經開始才到的人）一律先挑頭像、填暱稱，
+         * 欄位會先帶上次用的（web100-profile），不想改直接按就好。
+         * 真的沒名字（換裝置、清過快取）伺服器會回 nickname_required，那時 handleServerError 再把這一頁叫出來。
          */
-        if (el.nickname.value.trim()) return connect();
+        if (hasJoined(state.code) && el.nickname.value.trim()) return connect();
         pushView('profile', roomUrl());
       })
       .catch(function () {
         showFatal(t('errorTitle'), t('errRoomNotFound'));
       });
+  }
+
+  // 這支手機進過哪些房間（只記房號，房間清掉之後留著也無害）
+  var JOINED_KEY_PREFIX = 'web100-bingo-joined-';
+
+  function hasJoined(code) {
+    try {
+      return localStorage.getItem(JOINED_KEY_PREFIX + code) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markJoined(code) {
+    try {
+      localStorage.setItem(JOINED_KEY_PREFIX + code, '1');
+    } catch (e) {
+      /* 記不住就算了：重整時再填一次暱稱頁而已 */
+    }
   }
 
   function enterRoom() {
@@ -1295,6 +1316,7 @@
     if (msg.t === 'welcome') {
       // 「我是主持人還是玩家」不由前端決定，一律等伺服器在 welcome 裡回答
       state.role = msg.you.role;
+      markJoined(state.code);
       if (!state.joinReported) {
         track('bingo_player_joined');
         state.joinReported = true;
