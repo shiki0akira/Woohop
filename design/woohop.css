@@ -434,6 +434,9 @@
   .stepper { display: inline-flex; align-items: center; gap: 0; border: 2px solid var(--blue-edge); border-radius: var(--r-md); background: var(--surface); box-shadow: 0 4px 0 var(--blue-edge); overflow: hidden; }
   .stepper button { width: 52px; height: 52px; border: 0; background: var(--blue-face); color: var(--blue-text); font-size: 24px; font-weight: 900; cursor: pointer; }
   .stepper button:active { filter: brightness(.95); }
+  /* 深色模式：−／+ 用淺一點的藍，不要跟深底黏在一起；滑過再亮一階 */
+  :root[data-theme="dark"] .stepper button { background: #3a4680; }
+  :root[data-theme="dark"] .stepper button:hover { background: #46549a; }
   .stepper output { min-width: 64px; text-align: center; font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; }
 
   /* 開關 */
