@@ -209,7 +209,22 @@ async function main() {
     host.state.result.groups.flatMap((g) => g.members).includes(leaverId),
   );
 
-  // 8. 收攤
+  // 8. 再玩一輪：主持人在結算頁按「再玩一輪」，全房退回大廳，同一批人、同一個房號、同一份題目再開一場
+  host.ws.send(JSON.stringify({ t: 'reset' }));
+  await waitFor(host, (s) => s.status === 'lobby', '再玩一輪回到大廳');
+  check('再玩一輪：題目還在', host.state.questionCount === QUESTIONS.length, `拿到 ${host.state.questionCount}`);
+  check('再玩一輪：上一輪的結果清掉了', !host.state.result);
+  const stayed = players.filter((p) => p !== leaver);
+  check('再玩一輪：留下來的人都還在名單上', stayed.every((p) => host.state.players.some((x) => x.id === p.clientId)));
+
+  host.ws.send(JSON.stringify({ t: 'startGame' }));
+  await waitFor(host, (s) => s.status === 'question' && s.index === 0, '第二輪第一題');
+  for (const player of stayed) player.ws.send(JSON.stringify({ t: 'answer', index: 0, value: 'O' }));
+  await waitFor(host, (s) => s.status === 'reveal' && s.index === 0, '第二輪第一題結算', 15000);
+  check('第二輪從頭計票（只有這一輪的 9 票）', host.state.tally.O + host.state.tally.X === 9,
+    `O=${host.state.tally.O} X=${host.state.tally.X}`);
+
+  // 9. 收攤
   host.ws.send(JSON.stringify({ t: 'close' }));
   await new Promise((r) => setTimeout(r, 300));
   const gone = await fetch(`${API}/rooms/${code}`);

@@ -239,10 +239,11 @@
             <div class="all-groups" id="all-groups"></div>
           </div>
 
-          <!-- 主持人專用：結算頁看完之後回房間，同一批人可以再玩一輪 -->
-          <button class="btn btn-lg btn-solid btn-block" id="back-to-room" type="button" hidden>
-            {{backToRoomButton}}
-          </button>
+          <!-- 主持人專用：再玩一輪＝全房退回大廳（成員、房號、題目都留著），不用重新掃 QR code -->
+          <div class="play-again" id="back-to-room" hidden>
+            <button class="btn btn-lg btn-solid btn-block" id="play-again" type="button">{{playAgainButton}}</button>
+            <p class="hint">{{playAgainHint}}</p>
+          </div>
         </section>
       </div>
 

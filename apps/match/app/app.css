@@ -216,3 +216,6 @@
   width: min(420px, calc(100% - 32px)); padding: 12px 16px; border-radius: var(--r-md);
   background: var(--ink); color: #fff; font-weight: 700; text-align: center; box-shadow: 0 10px 30px #0000003d;
 }
+
+/* 結果頁的「再玩一輪」：按鈕下的說明置中 */
+.play-again .hint { text-align: center; }

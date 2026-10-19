@@ -119,7 +119,7 @@
       'next-question',
       'results-card', 'my-group-card', 'my-group-members', 'my-group-topics', 'my-group-empty',
       'top-pairs-card', 'top-pairs', 'top-pairs-hint', 'top-pairs-empty',
-      'all-groups-card', 'all-groups', 'all-groups-heading', 'back-to-room',
+      'all-groups-card', 'all-groups', 'all-groups-heading', 'back-to-room', 'play-again',
       'error-title', 'error-desc', 'conn-banner',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -484,7 +484,8 @@
 
     el.randomPick.addEventListener('click', randomPick);
     el.clearPick.addEventListener('click', clearPick);
-    el.backToRoom.addEventListener('click', function () {
+    el.playAgain.addEventListener('click', function () {
+      track('match_play_again');
       send({ t: 'reset' });
     });
     el.customAdd.addEventListener('click', addCustomQuestion);
@@ -1624,13 +1625,15 @@
     // 四個畫面共用同一個網址，page_view 靠自動送只會記到一筆，
     // 分不出多少人真的開了房間，所以在這裡手動送
     // 遊戲內頂欄（Woohop 的 game.css）：進了房間就是 play（藏起玩法分頁、選單、頁尾，遊戲名不能點），其他畫面是 browse
-    document.body.setAttribute('data-game-mode', name === 'room' ? 'play' : 'browse');
+    // 房間裡的主持人點齒輪改題目，那也還是在房間裡：頂欄維持房間的樣子（返回＝回房間、沒有玩法分頁可以點出去）
+    var inRoom = name === 'room' || (name === 'setup' && isOpen());
+    document.body.setAttribute('data-game-mode', inRoom ? 'play' : 'browse');
     // 齒輪只給大廳裡的主持人。從設定按返回回到房間時不會重畫房間，所以在這裡也要判斷一次
     var canSet = name === 'room' && state.role === 'host' && state.room && state.room.status === 'lobby';
     if (canSet) document.body.setAttribute('data-game-settings', '');
     else document.body.removeAttribute('data-game-settings');
     var gameTitle = document.querySelector('.game-bar .title');
-    if (gameTitle) gameTitle.tabIndex = name === 'room' ? -1 : 0;
+    if (gameTitle) gameTitle.tabIndex = inRoom ? -1 : 0;
     if (window.trackPageView) window.trackPageView(CFG.base + '/' + CFG.lang + '/' + name);
   }
 
