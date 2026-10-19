@@ -22,7 +22,7 @@
 /* 遊戲名：回遊戲主頁的連結，平常看起來就是標題；放不下時截成「⋯」，分頁不讓 */
 .game-bar .title { flex: 0 1 auto; min-width: 0; padding-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; font-weight: 900; text-align: left; color: var(--ink); text-decoration: none; border-radius: var(--r-sm); }
 .game-bar .title:hover { color: var(--accent-text); }
-.game-bar .title:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.game-bar .title:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 /* 分頁（玩法、設定）：跟網站導覽列的連結同一種樣子；目前所在的分頁只換字色 */
 .game-tabs { flex: none; margin-left: auto; display: flex; gap: 4px; }
@@ -131,7 +131,7 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 .seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 var(--edge-mid); }
 /* 深色：選中的那格用亮一階的灰浮起來，跟軌道、卡片分得出來 */
 :root[data-theme="dark"] .seg-item:has(input:checked) { background: #3a3a48; color: #fff; box-shadow: 0 2px 0 #14141a; }
-.seg-item:has(input:focus-visible) { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.seg-item:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
 .seg-item:has(input:disabled) { color: var(--text-dim); cursor: not-allowed; }
 
 /* ---------- 玩法頁（刻意精簡：一眼資訊、幾步怎麼玩、主持人怎麼帶） ---------- */

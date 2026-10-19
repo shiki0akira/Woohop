@@ -71,7 +71,7 @@
 .bank input[type="checkbox"]:checked::after { content: ""; width: 10px; height: 6px; border: solid #fff; border-width: 0 0 3px 3px; transform: rotate(-45deg) translate(1px, -1px); }
 .bank input[type="checkbox"]:indeterminate { background: var(--indigo); border-color: var(--indigo-edge); }
 .bank input[type="checkbox"]:indeterminate::after { content: ""; width: 10px; height: 3px; background: #fff; border-radius: 2px; }
-.bank input[type="checkbox"]:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.bank input[type="checkbox"]:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 .custom-box { margin-top: 16px; padding-top: 4px; }
 .custom-row { display: flex; gap: 8px; align-items: flex-start; }

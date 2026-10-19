@@ -79,7 +79,7 @@
 .anchor-options input[type="radio"]:checked::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
 .bank input[type="checkbox"]:indeterminate { background: var(--indigo); border-color: var(--indigo-edge); }
 .bank input[type="checkbox"]:indeterminate::after { content: ""; width: 10px; height: 3px; background: #fff; border-radius: 2px; }
-.bank input:focus-visible, .anchor-options input:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.bank input:focus-visible, .anchor-options input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 .custom-box { margin-top: 16px; padding-top: 4px; }
 .custom-row { display: flex; gap: 8px; align-items: flex-start; }
@@ -146,7 +146,7 @@
 }
 .seg-tab:hover { color: var(--ink); }
 .seg-tab[aria-selected="true"] { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 var(--edge-mid); }
-.seg-tab:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.seg-tab:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 /* 「待你確認」的數字：珊瑚色小膠囊，有人在等就要看得到 */
 .tab-badge { min-width: 22px; padding: 1px 7px; border-radius: var(--r-pill); background: var(--coral); color: #fff; font-size: 12px; font-weight: 900; text-align: center; }
 .tab-badge[hidden] { display: none; }
@@ -178,7 +178,7 @@
 .bingo-card[data-size="5"] .bingo-cell { font-size: clamp(14px, 3.8vw, 20px); border-radius: var(--r-sm); }
 .bingo-cell:hover:not(:disabled) { border-color: var(--yellow-edge); }
 .bingo-cell:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 var(--edge-n); }
-.bingo-cell:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.bingo-cell:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .bingo-cell:disabled { cursor: default; }
 .cell-no { display: block; }
 /* 格子裡的確認人名字：太長就截斷加省略號 */

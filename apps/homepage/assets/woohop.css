@@ -53,6 +53,7 @@
     --solid-edge: var(--indigo-edge); /* 實心主要按鈕的底部厚度 */
     --accent-text: var(--indigo); /* 強調的文字（連結滑過、目前所在的分頁） */
     --timer: var(--indigo);   /* 倒數圈的進度 */
+    --focus: var(--indigo);   /* 鍵盤焦點框：深色模式換亮藍，對比才夠 3:1 */
     --hover: #eef1fc;         /* 滑過的淡藍底 */
     --hover-faint: #f7f8fe;
     --track: #e8e8ee;         /* 分段控制、單選的灰底軌道 */
@@ -104,6 +105,7 @@
     --solid-edge: #1b2350;
     --accent-text: #a9b8f5;
     --timer: #8a9cf0;
+    --focus: #a9b8f5;
     --hover: #2e3450;
     --hover-faint: #2a2e44;
     --track: #1c1c24;
@@ -203,7 +205,7 @@
   .btn:hover:not(:disabled), .btn.is-hover { transform: translateY(-2px); box-shadow: 0 calc(var(--depth) + 2px) 0 var(--edge); filter: brightness(1.05) saturate(1.1); }
   :root[data-theme="dark"] .btn:hover:not(:disabled), :root[data-theme="dark"] .btn.is-hover { filter: brightness(1.2); }
   .btn:active:not(:disabled), .btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
-  .btn:focus-visible, .btn.is-focus { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .btn:focus-visible, .btn.is-focus { outline: 3px solid var(--focus); outline-offset: 3px; }
 
   .btn-solid { --face: var(--indigo); --edge: var(--solid-edge); --text: #fff; }
   .btn-secondary { --face: var(--surface); --edge: var(--blue-edge); --text: var(--blue-text); }
@@ -251,7 +253,7 @@
   .chip svg { width: 16px; height: 16px; }
 
   .segmented { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--r-md); background: var(--track); }
-  .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: #55555c; cursor: pointer; }
+  .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: var(--text-2); cursor: pointer; }
   .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 var(--edge-mid); }
   /* 深色：選中的那格用亮一階的灰浮起來，跟軌道、卡片分得出來 */
   :root[data-theme="dark"] .segmented button[aria-pressed="true"] { background: #3a3a48; color: #fff; box-shadow: 0 2px 0 #14141a; }
@@ -270,7 +272,7 @@
   }
   .choice:hover:not(:disabled) { border-color: var(--sel-edge); }
   .choice:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--edge); }
-  .choice:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .choice:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
   .choice[aria-pressed="true"], .choice.is-selected { --face: var(--sel-face); --edge: var(--sel-edge); --text: var(--sel-text); --mark: var(--sel-edge); }
   .choice::after {
     content: ""; position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
@@ -307,7 +309,7 @@
     transition: transform .06s, box-shadow .06s, background .15s;
   }
   .buzz-btn:active:not(:disabled), .buzz-btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
-  .buzz-btn:focus-visible { outline: 3px solid var(--indigo); outline-offset: 6px; }
+  .buzz-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 6px; }
   .buzz-btn:disabled { --face: var(--disabled-face); --edge: var(--edge-mid); --text: var(--disabled-text); --depth: 4px; transform: translateY(6px); cursor: not-allowed; }
   .buzz-btn.is-counting { font-size: clamp(64px, 18vw, 96px); font-variant-numeric: tabular-nums; }
   .buzz-btn.is-done { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); }
@@ -423,7 +425,7 @@
   .textarea { height: auto; min-height: 104px; padding: 12px 16px; resize: vertical; line-height: 1.6; }
   .select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23303a66' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 44px; }
   .input::placeholder, .textarea::placeholder { color: var(--faint); }
-  .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 4px #3d54b62e; }
+  .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 4px #3d54b62e; }
   .input.is-error { border-color: var(--danger-edge); box-shadow: 0 0 0 4px #ee7b6a33; }
   .input:disabled { background: var(--sunken); color: var(--disabled-text); }
 
@@ -452,7 +454,7 @@
   .switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 #0000002e; transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
   .switch input:checked + .track { background: var(--indigo); border-color: var(--indigo-edge); }
   .switch input:checked + .track::after { transform: translateX(24px); }
-  .switch input:focus-visible + .track { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .switch input:focus-visible + .track { outline: 3px solid var(--focus); outline-offset: 3px; }
 
   /* 勾選與單選 */
   .check { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; min-height: 44px; }
@@ -461,7 +463,7 @@
   .check input:checked { background: var(--indigo); border-color: var(--indigo-edge); }
   .check input[type="checkbox"]:checked::after { content: ""; width: 12px; height: 7px; border: solid #fff; border-width: 0 0 3px 3px; transform: rotate(-45deg) translate(1px, -1px); }
   .check input[type="radio"]:checked::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #fff; }
-  .check input:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+  .check input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   /* 滑桿 */
   .range { -webkit-appearance: none; appearance: none; width: 100%; max-width: 360px; height: 10px; border-radius: var(--r-pill); background: linear-gradient(var(--indigo), var(--indigo)) 0/var(--p, 50%) 100% no-repeat, #e1e1e7; }
@@ -497,7 +499,7 @@
   .avatar-option:hover { transform: scale(1.08); }
   /* 選中：跟按鈕同一套——深色外框＋往下的厚度 */
   .avatar-option[aria-checked="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--blue-edge); transform: translateY(-2px); }
-  .avatar-option:focus-visible { outline: 3px solid var(--indigo); outline-offset: 3px; }
+  .avatar-option:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
   .avatar-stack { display: flex; }
   .avatar-stack .avatar { margin-left: -10px; border-color: var(--surface); box-shadow: 0 0 0 2px var(--outline); }
   .avatar-stack .avatar:first-child { margin-left: 0; }
@@ -542,7 +544,7 @@
   /* 選中的那一格：淺色是淡藍底＋深藍圖示；深色要亮一點的藍＋白圖示，不然跟深底分不出來 */
   .theme-switch button[aria-pressed="true"] { background: #dfe5fb; color: var(--indigo-edge); }
   :root[data-theme="dark"] .theme-switch button[aria-pressed="true"] { background: #5263b8; color: #fff; }
-  .theme-switch button:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+  .theme-switch button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
   .theme-switch svg { width: 18px; height: 18px; }
   .nav-burger { display: none; }
   /* 看導覽列自己的寬度（container query），不看整個視窗 */
@@ -568,7 +570,7 @@
   .link, .crumbs a, .footer-demo a { color: var(--blue-text); font-weight: 700; text-decoration: none; text-underline-offset: 4px; text-decoration-thickness: 2px; border-radius: var(--r-xs); transition: color .15s; }
   .link:hover, .crumbs a:hover, .footer-demo a:hover { color: var(--accent-text); text-decoration-line: underline; }
   .link:active, .crumbs a:active, .footer-demo a:active { color: var(--indigo-edge); }
-  .link:focus-visible, .crumbs a:focus-visible, .footer-demo a:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+  .link:focus-visible, .crumbs a:focus-visible, .footer-demo a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   .footer-demo { border-top: 2px solid var(--line); padding-top: 18px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--muted); }
   .footer-demo .links { display: flex; gap: 16px; flex-wrap: wrap; }
