@@ -56,7 +56,7 @@ export default {
     'De 2 à 4. La taille des groupes se calcule selon le nombre de participants présents. En dessous de 5, pas de groupes.',
   groupSizeHint: '3 à 5. En dessous de 6 participants, pas de groupes : des binômes à la place.',
   secondsLabel: 'Secondes par question',
-  secondsHint: '10 convient à la plupart des salons. 12 ou 15 pour des questions plus longues, 5 ou 8 pour aller vite.',
+  secondsHint: "20 convient à la plupart des salons, 25 ou 30 pour des questions plus longues. Le résultat s’affiche dès que tout le monde a répondu.",
   hostPlaysLabel: "L'animation répond aussi",
   hostPlaysHint: 'Désactivez pour animer seulement et ne pas être réparti.',
   createButton: 'Créer le salon',

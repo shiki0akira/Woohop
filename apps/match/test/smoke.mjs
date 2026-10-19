@@ -120,7 +120,7 @@ async function main() {
   host.ws.send(JSON.stringify({ t: 'startGame' }));
   await waitFor(host, (s) => s.status === 'question', '進入第一題');
   check('開始後進入第一題', host.state.status === 'question' && host.state.index === 0);
-  check('倒數有帶下來', host.state.remainingMs > 0 && host.state.remainingMs <= 10000);
+  check('倒數有帶下來', host.state.remainingMs > 0 && host.state.remainingMs <= 20000);
 
   // 4. 逐題作答
   for (let index = 0; index < QUESTIONS.length; index += 1) {
@@ -131,7 +131,7 @@ async function main() {
       player.ws.send(JSON.stringify({ t: 'answer', index, value }));
     }
 
-    // 等伺服器的 10 秒倒數自己到期（alarm 觸發 reveal），不由客戶端推
+    // 大家都答完伺服器就直接公布（不用等倒數），不由客戶端推
     await waitFor(host, (s) => s.status === 'reveal' && s.index === index, `第 ${index + 1} 題結算`, 15000);
 
     const tally = host.state.tally;

@@ -728,7 +728,7 @@
   // 秒數是一排單選，取選中的那顆；沒有選中（理論上不會）就退回預設
   function secondsValue() {
     var picked = el.questionSeconds.querySelector('input:checked');
-    return picked ? Number(picked.value) : 10;
+    return picked ? Number(picked.value) : 20;
   }
 
   // 組數同樣是一排單選。伺服器還會依實到人數夾一次，這裡送什麼都不會算出壞的分組

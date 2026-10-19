@@ -57,7 +57,7 @@ export default {
   groupSizeHint:
     '3 bis 5. Unter 6 Personen wird nicht aufgeteilt — dann gibt es stattdessen Paare.',
   secondsLabel: 'Sekunden pro Frage',
-  secondsHint: '10 passt für die meisten Runden. 12 oder 15 für längere Fragen, 5 oder 8 für mehr Tempo.',
+  secondsHint: "20 passt für die meisten Runden, 25 oder 30 für längere Fragen. Sobald alle geantwortet haben, kommt das Ergebnis sofort.",
   hostPlaysLabel: 'Moderation macht mit',
   hostPlaysHint: 'Ausschalten, wenn du nur moderieren und nicht eingeteilt werden willst.',
   createButton: 'Raum erstellen',

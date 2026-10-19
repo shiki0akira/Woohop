@@ -56,7 +56,7 @@ export default {
     '2～4 组。每组几个人由实到人数平均分，不到 5 人就不分组。',
   groupSizeHint: '3～5 人。人数不足 6 人时不分组，改列两两契合度。',
   secondsLabel: '每题几秒',
-  secondsHint: '10 秒适合大多数场合。题目长一点就选 12 或 15，想要紧凑一点就选 5 或 8。',
+  secondsHint: "20 秒适合大多数场合，题目长一点就选 25 或 30。大家都答完会直接公布，不用等倒数。",
   hostPlaysLabel: '主持人也一起作答',
   hostPlaysHint: '关掉的话你只负责控场，不会被分到组里。',
   createButton: '创建房间',

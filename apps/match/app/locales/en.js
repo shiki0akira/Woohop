@@ -56,7 +56,7 @@ export default {
     '2 to 4. Group sizes are worked out from who actually shows up. Under 5 players the room is not split.',
   groupSizeHint: '3 to 5. Under 6 players the room is not split — you get pair matches instead.',
   secondsLabel: 'Seconds per question',
-  secondsHint: '10 works for most rooms. Pick 12 or 15 for longer questions, 5 or 8 to keep it brisk.',
+  secondsHint: "20 works for most rooms; pick 25 or 30 for longer questions. Results show as soon as everyone has answered.",
   hostPlaysLabel: 'Host answers too',
   hostPlaysHint: 'Turn this off to run the room only and stay out of the grouping.',
   createButton: 'Create room',

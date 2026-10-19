@@ -56,7 +56,7 @@ export default {
     'De 2 a 4. El tamaño de cada grupo sale del número de personas que participen. Con menos de 5 no se hacen grupos.',
   groupSizeHint: 'De 3 a 5. Con menos de 6 no se hacen grupos: salen parejas en su lugar.',
   secondsLabel: 'Segundos por pregunta',
-  secondsHint: '10 va bien casi siempre. Elige 12 o 15 para preguntas largas, 5 u 8 para ir rápido.',
+  secondsHint: "20 va bien casi siempre; elige 25 o 30 para preguntas largas. El resultado sale en cuanto todos han respondido.",
   hostPlaysLabel: 'Quien dirige también responde',
   hostPlaysHint: 'Desactívalo para solo dirigir y quedarte fuera del reparto.',
   createButton: 'Crear sala',

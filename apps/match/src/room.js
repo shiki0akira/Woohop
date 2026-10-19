@@ -22,8 +22,10 @@ import {
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
 // 每題幾秒。主持人可以在大廳改，只收這幾個值——開放任意數字會出現 1 秒或 300 秒這種
 // 沒人想玩的設定，而且 UI 是下拉選單，本來就只給這幾個選項
-const QUESTION_SECONDS = [5, 8, 10, 12, 15];
-const DEFAULT_QUESTION_SECONDS = 10;
+// 2026-10-19 實際帶過之後調整：5、8 秒太趕（讀完題目就沒時間了），改成至少 10 秒、預設 20 秒。
+// 大家都答完會直接公布（見 handleAnswer），秒數拉長不會讓節奏變慢
+const QUESTION_SECONDS = [10, 15, 20, 25, 30];
+const DEFAULT_QUESTION_SECONDS = 20;
 
 /*
  * 過了 deadline 之後還願意收的緩衝。
@@ -356,10 +358,23 @@ export class MatchRoom {
     mine[question.id] = value;
     room.answers[who.clientId] = mine;
 
+    // 在線上、該作答的人都答了：不用等倒數，直接公布。
+    // 只算連線中的人——有人斷線或把手機收起來，就照原本的倒數結束，不會卡住全場
+    if (everyoneAnswered(room, this.onlineIds(), question.id)) this.closeQuestion(room);
+
     // 作答本身不 touch：一輪作答前面一定有主持人的動作推過閒置時間，
     // 替十幾個人同時按的路徑多寫一次 alarm 不划算
     await this.saveRoom();
     this.broadcast(room);
+  }
+
+  onlineIds() {
+    const online = new Set();
+    for (const socket of this.ctx.getWebSockets()) {
+      const who = socket.deserializeAttachment();
+      if (who?.clientId) online.add(who.clientId);
+    }
+    return online;
   }
 
   // 主持人按「下一題」：從 reveal 前進到下一題，最後一題之後進結果頁
@@ -501,11 +516,7 @@ export class MatchRoom {
 
   broadcast(room) {
     const sockets = this.ctx.getWebSockets();
-    const online = new Set();
-    for (const socket of sockets) {
-      const who = socket.deserializeAttachment();
-      if (who?.clientId) online.add(who.clientId);
-    }
+    const online = this.onlineIds();
 
     // 所有人收到的內容一樣：沒有匿名模式，誰選了什麼本來就公開。
     // 「我選了什麼」由客戶端拿自己的 clientId 去 tally.voters 裡找，不用每條連線各算一份
@@ -615,6 +626,18 @@ function syncAutoGroupCount(room) {
 
   const ids = Object.keys(room.players).filter((id) => room.hostPlays || id !== room.hostId);
   room.groupCount = suggestedGroupCount(ids.length);
+}
+
+/*
+ * 這一題在線上、該作答的人是不是都答了。主持人只控場時不算他；一個要作答的人都不在線上時回 false
+ * （沒有人能答，交給倒數結束）。
+ */
+export function everyoneAnswered(room, online, questionId) {
+  const expected = Object.keys(room.players).filter(
+    (id) => (room.hostPlays || id !== room.hostId) && online.has(id),
+  );
+  if (!expected.length) return false;
+  return expected.every((id) => room.answers[id]?.[questionId] !== undefined);
 }
 
 function computeResult(room) {

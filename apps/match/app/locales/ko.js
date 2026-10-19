@@ -56,7 +56,7 @@ export default {
     '2~4개. 한 조 인원은 실제 참여 인원에 맞춰 나눕니다. 5명 미만이면 조를 나누지 않습니다.',
   groupSizeHint: '3~5명. 6명 미만이면 조를 나누지 않고 둘씩 궁합만 보여 줍니다.',
   secondsLabel: '문항당 초',
-  secondsHint: '보통은 10초. 문항이 길면 12~15초, 빠르게 진행하려면 5~8초.',
+  secondsHint: "보통은 20초, 문항이 길면 25~30초. 모두 답하면 바로 결과가 나와요.",
   hostPlaysLabel: '진행자도 함께 답하기',
   hostPlaysHint: '끄면 진행만 맡고 조에는 들어가지 않습니다.',
   createButton: '방 만들기',

@@ -62,7 +62,7 @@ export default {
     '2～4 組。每組幾個人由實到人數平均分，不到 5 人就不分組。',
   groupSizeHint: '3～5 人。人數不足 6 人時不分組，改列兩兩契合度。',
   secondsLabel: '每題幾秒',
-  secondsHint: '10 秒適合大多數場合。題目長一點就選 12 或 15，想要緊湊一點就選 5 或 8。',
+  secondsHint: "20 秒適合大多數場合，題目長一點就選 25 或 30。大家都答完會直接公布，不用等倒數。",
   hostPlaysLabel: '主持人也一起作答',
   hostPlaysHint: '關掉的話你只負責控場，不會被分到組裡。',
   createButton: '建立房間',
