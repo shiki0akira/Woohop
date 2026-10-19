@@ -225,7 +225,7 @@
   .btn-solid { --face: var(--indigo); --edge: var(--solid-edge); --text: #fff; }
   .btn-secondary { --face: var(--surface); --edge: var(--blue-edge); --text: var(--blue-text); }
   .btn-ghost { --face: transparent; --edge: transparent; --text: var(--blue-text); --depth: 0px; }
-  .btn-ghost:hover, .btn-ghost.is-hover, :root[data-theme="dark"] .btn-ghost:hover { --face: var(--hover); filter: none; transform: none; box-shadow: none; }
+  .btn-ghost:hover:not(:disabled), .btn-ghost.is-hover, :root[data-theme="dark"] .btn-ghost:hover:not(:disabled) { --face: var(--hover); filter: none; transform: none; box-shadow: none; }
   .btn-danger { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); }
 
   .btn-lg { --h: 56px; font-size: 18px; padding: 0 28px; border-radius: var(--r-md); --depth: 5px; }
