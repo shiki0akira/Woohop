@@ -38,9 +38,6 @@
     '<path d="M465-363.5q-7-2.5-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11' +
     't28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5q-8 0-15-2.5Z"/></svg>';
 
-  var CHECK =
-    '<svg class="tick" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" ' +
-    'aria-hidden="true" focusable="false"><path d="M382-253.5 168.5-467l53-53L382-359.5 738.5-716l53 53L382-253.5Z"/></svg>';
 
   /*
    * 正式網域上的頁面是 Vercel 代理過來的，而 Vercel 代理外部網址時對 WebSocket 升級
@@ -1653,7 +1650,7 @@
         ' aria-label="' + escapeHtml((i + 1) + '. ' + questionText(me.card[i])) + '">' +
         '<span class="cell-no">' + (i + 1) + '</span>' +
         (note ? '<span class="cell-note">' + escapeHtml(note) + '</span>' : '') +
-        (mark ? CHECK : '') +
+        // 打勾的圓圈是 CSS 畫的（跟設計系統的大選項卡 .choice 同一個樣子），見 app.css 的 .bingo-cell::after
         '</button>';
     }
     el.bingoCard.style.setProperty('--size', room.size);

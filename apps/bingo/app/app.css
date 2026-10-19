@@ -185,7 +185,8 @@
 .bingo-cell:disabled { cursor: default; }
 .cell-no { display: block; }
 /* 格子裡的確認人名字：太長就截斷加省略號 */
-.cell-note { max-width: 100%; font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cell-note { max-width: 100%; font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bingo-card[data-size="4"] .cell-note { font-size: 12px; }
 .bingo-card[data-size="5"] .cell-note { display: none; }
 /* 保底題（正中央）：虛線框，看得出它是大家共同的那一格 */
 .bingo-cell.is-anchor { border-style: dashed; }
@@ -197,7 +198,14 @@
 .bingo-cell.in-line { background: var(--yellow); }
 /* 自行認定跟正常配對要看得出來不一樣：那不是真的找到人 */
 .bingo-cell.is-self { background: #ececf0; border-style: dashed; border-color: #b9b9c3; box-shadow: 0 3px 0 #b9b9c3; color: #55555c; }
-.bingo-cell .tick { position: absolute; top: 3px; right: 3px; width: 14px; height: 14px; fill: currentColor; }
+/* 打勾：跟設計系統的大選項卡（.choice）同一個樣子——右上角實心圓＋白勾，顏色跟著格子的外框 */
+.bingo-cell.is-marked::after, .bingo-cell.is-self::after {
+  content: ""; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--yellow-edge) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / 16px;
+}
+.bingo-cell.is-self::after { background-color: #8a8a93; }
+.bingo-card[data-size="4"] .bingo-cell::after { top: 5px; right: 5px; width: 20px; height: 20px; background-size: 12px; }
+.bingo-card[data-size="5"] .bingo-cell::after { top: 3px; right: 3px; width: 16px; height: 16px; background-size: 10px; }
 
 /* 題目清單：格子的完整版。手機上這裡才是主要的操作面——格子放不下描述句，讀跟點都在這一區 */
 .cell-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
@@ -248,7 +256,15 @@
 .play-again .hint { text-align: center; margin: 0; }
 
 /* ---------- 選人視窗 ---------- */
-.pick-modal h2 { margin: 0 0 6px; font-size: 20px; line-height: 1.4; }
+.pick-modal { position: relative; }
+.pick-modal h2 { margin: 0 0 6px; padding: 0 28px; font-size: 20px; line-height: 1.4; }
+/* 右上角的叉叉＝取消 */
+.pick-close { position: absolute; top: 10px; right: 10px; --h: 40px; color: var(--muted); }
+.pick-close svg { width: 22px; height: 22px; }
+/* 名單撐滿視窗寬（.m-body 是置中的 grid） */
+.pick-list { width: 100%; }
+/* 沒開放自行認定時，底下那一列整個收掉，只留一點下邊距 */
+.pick-modal .m-actions:not(:has(button:not([hidden]))) { padding: 0 0 16px; }
 .pick-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; max-height: 50vh; overflow-y: auto; text-align: left; }
 .pick-option {
   width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 10px;

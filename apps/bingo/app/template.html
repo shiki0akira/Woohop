@@ -263,15 +263,17 @@
 
     <!-- 選人視窗：點某一格之後開。名單排除自己（CONCEPT.md 第四節） -->
     <dialog class="modal pick-modal" id="pick-dialog">
+      <!-- 關閉是右上角的叉叉，底下不另放「取消」按鈕 -->
+      <button class="btn btn-icon btn-ghost pick-close" id="pick-cancel" type="button" aria-label="{{pickCancel}}"><svg><use href="#i-close"/></svg></button>
       <div class="m-body">
         <h2 id="pick-question"></h2>
         <p>{{pickHint}}</p>
         <ul class="pick-list" id="pick-list"></ul>
         <p class="empty-note" id="pick-empty" hidden>{{pickEmpty}}</p>
       </div>
-      <div class="m-actions">
+      <!-- 只有主持人開放「自行認定」時才有這一顆 -->
+      <div class="m-actions m-one" id="pick-actions">
         <button class="btn btn-secondary" id="pick-self-claim" type="button" hidden>{{selfClaimButton}}</button>
-        <button class="btn btn-ghost" id="pick-cancel" type="button">{{pickCancel}}</button>
       </div>
     </dialog>
 
