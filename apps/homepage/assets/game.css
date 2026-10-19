@@ -58,6 +58,13 @@
 /* 玩的時候：只剩返回＋置中的遊戲名（右邊補一個等寬的空位讓名字真的置中），不能點出去 */
 [data-game-mode="play"] .game-tabs, [data-game-mode="play"] .game-menu { display: none; }
 [data-game-mode="play"] .game-bar-spacer { display: block; }
+/* 玩的時候還要能開設定（例如房間大廳裡的主持人）：遊戲在 <body> 掛 data-game-settings，
+   分頁只留「設定」、而且只剩齒輪圖示 */
+[data-game-mode="play"][data-game-settings] .game-tabs { display: flex; }
+[data-game-mode="play"][data-game-settings] .tab-rules { display: none; }
+[data-game-mode="play"][data-game-settings] #game-settings { padding: 0 10px; }
+[data-game-mode="play"][data-game-settings] #game-settings .tab-icon { display: block; }
+[data-game-mode="play"][data-game-settings] #game-settings .tab-text { display: none; }
 /* 身分標籤（例如「主持人」）：只在玩的時候、有字的時候出現，佔掉右邊那個空位 */
 .game-bar-badge { display: none; flex: none; margin-right: 6px; }
 [data-game-mode="play"] .game-bar-badge:not(:empty) { display: inline-flex; }

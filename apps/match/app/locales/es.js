@@ -24,7 +24,8 @@ export default {
   questionsHint: 'Entre 8 y 10 va mejor. No se pueden cambiar una vez empezada la partida.',
   setupDoneButton: 'Crear sala',
   saveQuestionsButton: 'Listo',
-  editQuestionsButton: 'Preguntas propias',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "Ajustes",
   selectedHeading: 'Seleccionadas',
   randomButton: 'Aleatorio',
   clearButton: 'Vaciar',

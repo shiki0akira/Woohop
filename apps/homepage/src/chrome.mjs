@@ -83,7 +83,8 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
  *   身分標籤  #game-bar-badge，玩的時候顯示在右邊（例如房間裡的「主持人」「玩家」），沒填字就不出現
  *
  * 樣式在 assets/game.css、行為在 assets/game.js。玩的時候要藏起分頁和選單，
- * 由遊戲在 <body> 掛 data-game-mode="play"（平常是 "browse"）。
+ * 由遊戲在 <body> 掛 data-game-mode="play"（平常是 "browse"）。玩的時候還要能開設定（房間大廳的主持人），
+ * 再加掛 data-game-settings，分頁只留「設定」齒輪。
  *
  * opts: { title, gameHref, rulesHref, rulesLabel, isRules, settingsLabel?, backHref }
  */

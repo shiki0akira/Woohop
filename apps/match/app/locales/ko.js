@@ -24,7 +24,8 @@ export default {
   questionsHint: '8~10문항이 적당합니다. 시작한 뒤에는 문항을 바꿀 수 없습니다.',
   setupDoneButton: '방 만들기',
   saveQuestionsButton: '완료',
-  editQuestionsButton: '문항 직접 설정',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "설정",
   selectedHeading: '선택한 문항',
   randomButton: '무작위',
   clearButton: '비우기',

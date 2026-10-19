@@ -24,7 +24,8 @@ export default {
   questionsHint: '8 à 10, c’est l’idéal. Elles ne changent plus une fois la partie lancée.',
   setupDoneButton: 'Créer le salon',
   saveQuestionsButton: 'Terminé',
-  editQuestionsButton: 'Questions perso',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "Réglages",
   selectedHeading: 'Sélectionnées',
   randomButton: 'Aléatoire',
   clearButton: 'Effacer',

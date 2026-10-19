@@ -23,6 +23,8 @@
   // 暱稱與頭像存成一份 profile，之後的 Web100 遊戲都能直接沿用，
   // 不用為了「記住我是誰」去做帳號系統
   var PROFILE_KEY = 'web100-profile';
+  // 主持人在頂欄「設定」先挑好的題目與設定（開房前就能設，隔天打開還在）
+  var PREP_KEY = 'web100-match-prep';
 
   var MIN_QUESTIONS = 1;
   var MAX_QUESTIONS = 20;
@@ -83,6 +85,7 @@
     loadProfile();
 
     renderCategories();
+    loadPrep();
     renderAvatarPicker();
     bindEvents();
 
@@ -106,8 +109,8 @@
       'max-players', 'group-count', 'question-seconds', 'host-plays', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
-      'share-card', 'room-code', 'copy-link', 'share-url', 'qr-box',
-      'setup-done', 'setup-error', 'edit-questions',
+      'share-card', 'room-code', 'copy-link', 'qr-box',
+      'setup-done', 'setup-error',
       'lobby-card', 'player-count', 'player-list', 'player-empty',
       'start-game-block', 'start-game', 'start-game-error', 'waiting-hint',
       'question-card', 'question-progress', 'countdown', 'timer-fill', 'question-text',
@@ -539,7 +542,6 @@
     el.hostPlays.addEventListener('change', sendSettings);
 
     el.setupDone.addEventListener('click', finishSetup);
-    el.editQuestions.addEventListener('click', showSetup);
     el.copyLink.addEventListener('click', copyShareLink);
     bindDesignControls();
     el.startGame.addEventListener('click', startGame);
@@ -649,7 +651,8 @@
          *
          * 每一場重抽一次題目：不去改題目的人，兩場也不會玩到同一份。
          */
-        pickRandomDefaults();
+        // 主持人在「設定」先挑過題目就沿用；沒碰過才每場重抽一份
+        if (!state.prepared) pickRandomDefaults();
         updateSelectedCount();
         renderSelectedListOnly();
         showJoinForm();
@@ -706,7 +709,8 @@
    * 用有沒有連線來分辨，不另外記一個旗標：連線狀態本來就是唯一的事實來源。
    */
   function showSetup() {
-    el.setupDone.textContent = isOpen() ? t('saveQuestionsButton') : t('setupDoneButton');
+    // 兩個進入點（首頁頂欄的「設定」、大廳主持人的齒輪）按鈕都是「完成」：存起來、回剛剛的畫面
+    el.setupDone.textContent = t('saveQuestionsButton');
     hideError(el.setupError);
     pushView('setup');
   }
@@ -717,7 +721,9 @@
     if (total < MIN_QUESTIONS) return showError(el.setupError, t('errNoQuestions'));
     if (total > MAX_QUESTIONS) return showError(el.setupError, t('errTooManyQuestions'));
 
-    if (!isOpen()) return showJoinForm();
+    savePrep();
+    // 還沒開房：只是先準備好，回首頁畫面
+    if (!isOpen()) return history.back();
 
     sendSettings();
     // 「完成」＝退回剛剛那一格房間，不要再往前推一格，
@@ -916,6 +922,10 @@
     var room = state.room;
     var isHost = state.role === 'host';
 
+    // 大廳裡主持人可以從頂欄右上角的齒輪改題目（game.css 看 data-game-settings）；開始作答後就藏起來
+    if (isHost && room.status === 'lobby') document.body.setAttribute('data-game-settings', '');
+    else document.body.removeAttribute('data-game-settings');
+
     // 身分標籤放在遊戲內頂欄右邊。離開／關閉房間就是頂欄的返回鍵（window.gameBack → confirmExit），不另外放按鈕
     var roleBadge = document.getElementById('game-bar-badge');
     if (roleBadge) roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
@@ -958,7 +968,6 @@
       return '<span>' + escapeHtml(ch) + '</span>';
     }).join('');
     el.roomCode.setAttribute('aria-label', room.code);
-    el.shareUrl.textContent = shareLink();
     renderQr();
 
     el.playerCount.textContent = t('playerCount', { n: room.players.length, max: room.maxPlayers });
@@ -1014,6 +1023,55 @@
    * 覆蓋掉，游標與展開狀態都會跳（搶答那邊的題目輸入框踩過同樣的坑，用 questionSynced 擋）。
    * 同步完之後以本機為準，本機每次改動都會整份送出去。
    */
+  /* ---------- 先準備好的題目（頂欄「設定」）：存在這支手機上 ---------- */
+
+  function savePrep() {
+    state.prepared = true;
+    try {
+      localStorage.setItem(PREP_KEY, JSON.stringify({
+        selected: state.selected,
+        custom: state.custom,
+        seconds: secondsValue(),
+        hostPlays: el.hostPlays.checked,
+        groupCount: state.groupCountTouched ? groupCountValue() : null,
+      }));
+    } catch (e) {
+      /* 記不住就算了，這一場照樣用 */
+    }
+  }
+
+  function loadPrep() {
+    var saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(PREP_KEY) || 'null');
+    } catch (e) {
+      /* 存壞了就當作沒有 */
+    }
+    if (!saved || !Array.isArray(saved.selected)) return;
+
+    // 題庫改版後已經不存在的題目丟掉
+    var known = {};
+    for (var i = 0; i < BANK.list.length; i += 1) known[BANK.list[i].id] = true;
+    state.selected = saved.selected.filter(function (id) { return known[id]; });
+    state.custom = Array.isArray(saved.custom) ? saved.custom.slice(0, MAX_QUESTIONS) : [];
+    if (!state.selected.length && !state.custom.length) return;
+
+    state.prepared = true;
+    syncQuestionBoxes();
+    var seconds = el.questionSeconds.querySelector('[value="' + saved.seconds + '"]');
+    if (seconds) seconds.checked = true;
+    if (typeof saved.hostPlays === 'boolean') el.hostPlays.checked = saved.hostPlays;
+    if (saved.groupCount) {
+      var group = el.groupCount.querySelector('[value="' + saved.groupCount + '"]');
+      if (group) {
+        group.checked = true;
+        state.groupCountTouched = true;
+      }
+    }
+    renderSelectedListOnly();
+    updateSelectedCount();
+  }
+
   function syncSettingsOnce(room) {
     if (state.settingsSynced || !room.questions) return;
     state.settingsSynced = true;
@@ -1421,6 +1479,12 @@
    *  - 房間裡：跟「離開／關閉房間」同一個確認框
    *  - 錯誤畫面：回這個遊戲的首頁
    */
+  // 頂欄的「設定」（game.js 呼叫）：首頁畫面是先準備題目，大廳裡是主持人改題目
+  window.openSettings = function () {
+    if (state.view === 'setup') return;
+    showSetup();
+  };
+
   window.gameBack = function () {
     if (state.view === 'home') location.href = '/' + CFG.lang + '/games/';
     else if (state.view === 'room') confirmExit();
@@ -1561,6 +1625,10 @@
     // 分不出多少人真的開了房間，所以在這裡手動送
     // 遊戲內頂欄（Woohop 的 game.css）：進了房間就是 play（藏起玩法分頁、選單、頁尾，遊戲名不能點），其他畫面是 browse
     document.body.setAttribute('data-game-mode', name === 'room' ? 'play' : 'browse');
+    // 齒輪只給大廳裡的主持人。從設定按返回回到房間時不會重畫房間，所以在這裡也要判斷一次
+    var canSet = name === 'room' && state.role === 'host' && state.room && state.room.status === 'lobby';
+    if (canSet) document.body.setAttribute('data-game-settings', '');
+    else document.body.removeAttribute('data-game-settings');
     var gameTitle = document.querySelector('.game-bar .title');
     if (gameTitle) gameTitle.tabIndex = name === 'room' ? -1 : 0;
     if (window.trackPageView) window.trackPageView(CFG.base + '/' + CFG.lang + '/' + name);

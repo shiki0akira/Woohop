@@ -24,7 +24,8 @@ export default {
   questionsHint: '8 bis 10 passen am besten. Nach dem Start lassen sie sich nicht mehr ändern.',
   setupDoneButton: 'Raum erstellen',
   saveQuestionsButton: 'Fertig',
-  editQuestionsButton: 'Eigene Fragen',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "Einstellungen",
   selectedHeading: 'Ausgewählt',
   randomButton: 'Zufall',
   clearButton: 'Leeren',

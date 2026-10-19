@@ -30,7 +30,8 @@ export default {
   questionsHint: '建議 8～10 題。題目在開始後就不能改了。',
   setupDoneButton: '創建房間',
   saveQuestionsButton: '完成',
-  editQuestionsButton: '自訂題目',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "設定",
   selectedHeading: '已選題目',
   randomButton: '隨機',
   clearButton: '清空',

@@ -24,7 +24,8 @@ export default {
   questionsHint: '8〜10問がちょうどいい。開始後は質問を変更できません。',
   setupDoneButton: 'ルームを作成',
   saveQuestionsButton: '完了',
-  editQuestionsButton: '質問をカスタム',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "設定",
   selectedHeading: '選んだ質問',
   randomButton: 'ランダム',
   clearButton: 'クリア',

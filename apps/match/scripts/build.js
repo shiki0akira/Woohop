@@ -192,13 +192,15 @@ function tokensFor(lang, page, assetVersion) {
     woohopFooter: footer(SITE_STRINGS[lang], lang, 'match', (l) => pagePath(l, page)),
     // 給 site.js（導覽互動）用的當頁文案；遊戲頁的 page_view 由 app.js 依畫面送，玩法頁交給 site.js
     woohopJson: toScriptJson({ lang, page: 'match', t: SITE_STRINGS[lang], langs: LANGS, ownPageView: !page.dir }),
-    // 遊戲內頂欄（全站共用，見 apps/homepage/src/chrome.mjs 的 gameBar）。沒有「設定」分頁：出題是開房流程的一部分
+    // 遊戲內頂欄（全站共用，見 apps/homepage/src/chrome.mjs 的 gameBar）
     gameBarHtml: gameBar(SITE_STRINGS[lang], lang, {
       title: strings.navTitle,
       gameHref: pagePath(lang, PAGES[0]),
       rulesHref: pagePath(lang, PAGES[1]),
       rulesLabel: strings.navRules,
       isRules: page.dir === 'rules',
+      // 設定：出題、分幾組、每題幾秒、主持人要不要作答。開房前就能先設（存在這支手機上）
+      settingsLabel: strings.settingsTab,
       backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
     }),
     // 玩法頁（精簡版）的三塊

@@ -104,7 +104,7 @@
 @media (min-width: 640px) {
   .match-app .room-code-card {
     grid-template-columns: 1fr auto; column-gap: 32px; row-gap: 12px;
-    grid-template-areas: 'cap qr' 'code qr' 'actions qr' 'hint qr' 'url qr';
+    grid-template-areas: 'cap qr' 'code qr' 'actions qr' 'hint qr';
     justify-items: start; text-align: left; align-items: center; padding: 28px 32px;
   }
   .match-app .room-code-card > .t-caption { grid-area: cap; }
@@ -112,11 +112,9 @@
   .match-app .room-code-card > .qr { grid-area: qr; width: 188px; height: 188px; }
   .match-app .room-code-card > .share-actions { grid-area: actions; justify-content: flex-start; }
   .match-app .room-code-card > .t-small { grid-area: hint; }
-  .match-app .room-code-card > .share-url { grid-area: url; }
 }
 .share-actions { justify-content: center; gap: 8px; }
 .share-actions .btn { margin-bottom: 3px; }
-.share-url { margin: 0; font-size: 12px; color: var(--muted); word-break: break-all; }
 .qr-box svg { display: block; width: 100%; height: 100%; }
 
 /* 成員名單：Woohop 的 .player 一列一人 */

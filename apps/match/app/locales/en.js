@@ -24,7 +24,8 @@ export default {
   questionsHint: '8 to 10 works best. Questions are locked once the game starts.',
   setupDoneButton: 'Create room',
   saveQuestionsButton: 'Done',
-  editQuestionsButton: 'Custom questions',
+  // 頂欄的「設定」分頁：開房前先出題，或大廳裡主持人改題目
+  settingsTab: "Settings",
   selectedHeading: 'Chosen',
   randomButton: 'Shuffle',
   clearButton: 'Clear',
