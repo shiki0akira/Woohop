@@ -270,6 +270,8 @@
   .segmented { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--r-md); background: var(--track); }
   .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: #55555c; cursor: pointer; }
   .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 var(--edge-mid); }
+  /* 深色：選中的那格用亮一階的灰浮起來，跟軌道、卡片分得出來 */
+  :root[data-theme="dark"] .segmented button[aria-pressed="true"] { background: #3a3a48; color: #fff; box-shadow: 0 2px 0 #14141a; }
 
   /* 大選項卡：一次要做的決定只有一兩個時用的大按鈕（題型、同意／不同意⋯），可以複選也可以單選。
      沒選：白底灰框、右上角空圈；選了：換成自己的粉彩色（.c-blue／.c-coral／.c-mint⋯），右上角實心打勾。按下去會沉下去。

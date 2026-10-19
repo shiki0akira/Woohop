@@ -123,6 +123,8 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 .seg-item input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .seg-item:hover { color: var(--ink); }
 .seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 var(--edge-mid); }
+/* 深色：選中的那格用亮一階的灰浮起來，跟軌道、卡片分得出來 */
+:root[data-theme="dark"] .seg-item:has(input:checked) { background: #3a3a48; color: #fff; box-shadow: 0 2px 0 #14141a; }
 .seg-item:has(input:focus-visible) { outline: 3px solid var(--indigo); outline-offset: 2px; }
 .seg-item:has(input:disabled) { color: var(--text-dim); cursor: not-allowed; }
 
