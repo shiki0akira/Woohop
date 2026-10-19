@@ -96,6 +96,7 @@ export default {
   offlineTag: '오프라인',
   kickLabel: '방에서 내보내기',
   startGameButton: '시작',
+  startNeedPlayers: "시작하려면 최소 두 명이 필요해요",
   startGameHint: '시작하면 새로운 사람은 들어올 수 없습니다.',
   waitingHint: '진행자가 시작하기를 기다리는 중입니다.',
 

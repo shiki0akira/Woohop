@@ -96,6 +96,7 @@ export default {
   offlineTag: 'オフライン',
   kickLabel: 'ルームから外す',
   startGameButton: '開始',
+  startNeedPlayers: "始めるには最低二人必要です",
   startGameHint: '開始すると新しい人は参加できなくなります。',
   waitingHint: '進行役が始めるのを待っています。',
 

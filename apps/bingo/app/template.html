@@ -175,6 +175,8 @@
 
           <div class="start-block" id="host-lobby" hidden>
             <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startButton}}</button>
+            <!-- 人數不夠時按鈕停用，這一行說為什麼（三個房間遊戲同一個做法） -->
+            <p class="hint start-need" id="start-need" hidden>{{startBlockedPlayers}}</p>
             <p class="hint" id="settings-summary"></p>
             <p class="form-error" id="start-error" role="alert" hidden></p>
           </div>
@@ -197,7 +199,7 @@
             <section class="panel" id="card-box">
               <div class="progress-head">
                 <h2 id="progress-lines"></h2>
-                <span class="role-badge is-win" id="progress-badge" hidden></span>
+                <span class="badge b-live" id="progress-badge" hidden></span>
                 <p class="hint" id="progress-cells"></p>
               </div>
               <!-- 達標訊息自己一行：跟「打勾 N 格」擠同一行會把標題壓成兩行 -->
@@ -240,6 +242,8 @@
         <section class="panel" id="results-card" hidden>
           <h2>{{endedHeading}}</h2>
           <p class="hint">{{endedDesc}}</p>
+          <!-- 設計系統的排行榜：前三名站頒獎台，其餘接在下面（名次從 4 開始） -->
+          <div class="podium final-podium" id="final-podium"></div>
           <ol class="rank-list board-list" id="final-list"></ol>
           <!-- 主持人專用：再玩一輪＝全房退回大廳（成員、房號、設定都留著），不用重新掃 QR code -->
           <div class="play-again" id="reset-block" hidden>

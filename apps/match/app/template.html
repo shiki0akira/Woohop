@@ -170,6 +170,8 @@
 
           <div class="start-block" id="start-game-block" hidden>
             <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
+            <!-- 人數不夠時按鈕停用，這一行說為什麼（三個房間遊戲同一個做法） -->
+            <p class="hint start-need" id="start-need" hidden>{{startNeedPlayers}}</p>
             <p class="hint" id="start-game-hint">{{startGameHint}}</p>
             <p class="form-error" id="start-game-error" role="alert" hidden></p>
           </div>

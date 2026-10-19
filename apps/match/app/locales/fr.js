@@ -96,6 +96,7 @@ export default {
   offlineTag: 'Hors ligne',
   kickLabel: 'Retirer du salon',
   startGameButton: 'Commencer',
+  startNeedPlayers: "Il faut au moins deux personnes pour commencer",
   startGameHint: 'Une fois lancé, plus personne ne peut rejoindre.',
   waitingHint: 'En attente du lancement par l’animation.',
 

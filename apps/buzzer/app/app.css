@@ -67,12 +67,12 @@
 .buzzer-app .player { gap: 10px; padding: 8px 10px; }
 .buzzer-app .player svg.avatar { width: 32px; height: 32px; }
 .buzzer-app .player .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
-.role-badge { flex: none; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: var(--r-pill); background: var(--blue-face); color: var(--blue-text); border: 1.5px solid var(--blue-edge); }
-.role-badge.is-muted { background: #ececf0; color: #55555c; border-color: #b9b9c3; }
 .buzzer-app .player .kick { --h: 32px; width: 32px; padding: 0; color: var(--muted); }
 .buzzer-app .player .kick:hover { --face: var(--coral-face); color: var(--coral-text); }
 .start-block { display: grid; gap: 10px; margin-top: 18px; }
 .start-block .btn { margin-bottom: 4px; }
+/* 人數不夠時按鈕下面那一行：比一般提示醒目一點 */
+.start-block .start-need { margin: 0; text-align: center; color: var(--ink); font-weight: 800; }
 .start-block .hint { text-align: center; }
 
 /* ---------- 主持人：出題 ---------- */
@@ -114,3 +114,7 @@
   width: min(420px, calc(100% - 32px)); padding: 12px 16px; border-radius: var(--r-md);
   background: var(--ink); color: #fff; font-weight: 700; text-align: center; box-shadow: 0 10px 30px #0000003d;
 }
+
+/* 身分標籤：設計系統的 .badge（woohop.css），在名單、排行榜裡不要被擠扁；離線的灰字也不要換行 */
+.player .badge, .rank-list .badge, .pick-option .badge, .progress-head .badge { flex: none; white-space: nowrap; }
+.player .t-caption, .rank-list .t-caption, .pick-option .t-caption { flex: none; white-space: nowrap; }

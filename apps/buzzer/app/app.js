@@ -101,7 +101,7 @@
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
       'share-card', 'question-card', 'host-rank-card',
-      'start-game-block', 'start-game', 'start-game-error',
+      'start-game-block', 'start-game', 'start-need', 'start-game-error',
       'play-lobby-card', 'play-player-count', 'play-player-list', 'play-rank-card',
       'host-countdown',
     ].forEach(function (id) {
@@ -700,7 +700,9 @@
         el['host-room-code'].setAttribute('aria-label', state.code);
       }
       renderQr(shareLink());
+      // 主持人不搶答，至少要一位玩家：不夠就把按鈕停用，下面寫原因（三個房間遊戲同一個做法）
       el['start-game'].disabled = state.players.length === 0;
+      el['start-need'].hidden = state.players.length > 0;
     }
 
     el['player-count'].textContent = t('playerCount', {
@@ -762,7 +764,7 @@
 
       if (!player.online) {
         var tag = document.createElement('span');
-        tag.className = 'role-badge is-muted';
+        tag.className = 't-caption';
         tag.textContent = T.offlineTag;
         item.append(tag);
       }

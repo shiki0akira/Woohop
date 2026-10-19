@@ -96,6 +96,7 @@ export default {
   offlineTag: 'Sin conexión',
   kickLabel: 'Sacar de la sala',
   startGameButton: 'Empezar',
+  startNeedPlayers: "Hacen falta al menos dos personas para empezar",
   startGameHint: 'Una vez empezada, ya no puede entrar nadie más.',
   waitingHint: 'Esperando a que empiece quien dirige.',
 

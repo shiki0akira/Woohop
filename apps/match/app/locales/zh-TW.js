@@ -102,6 +102,7 @@ export default {
   offlineTag: '離線',
   kickLabel: '移出房間',
   startGameButton: '開始遊戲',
+  startNeedPlayers: "至少要兩個人才能開始",
   startGameHint: '開始後就不再開放新成員加入。',
   waitingHint: '等主持人開始。',
 

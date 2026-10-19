@@ -112,7 +112,7 @@
       'share-card', 'room-code', 'copy-link', 'qr-box',
       'setup-done', 'setup-error',
       'lobby-card', 'player-count', 'player-list', 'player-empty',
-      'start-game-block', 'start-game', 'start-game-error', 'waiting-hint',
+      'start-game-block', 'start-game', 'start-need', 'start-game-error', 'waiting-hint',
       'question-card', 'question-progress', 'countdown', 'timer-fill', 'question-text',
       'ox-buttons', 'answer-o', 'answer-x', 'answer-hint',
       'tally', 'tally-o-count', 'tally-o-list', 'tally-x-count', 'tally-x-list',
@@ -1000,16 +1000,16 @@
         '<li class="player' + (player.online ? '' : ' is-offline') + (player.id === state.clientId ? ' is-me' : '') + '">' +
         avatarSvg(player.avatar, 32, player.nickname) +
         '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
-        /* 標籤樣式跟 04_HappyBingo 一致（.role-badge 膠囊），三個專案要長一樣。
+        /* 標籤用設計系統的 .badge（主持人 b-host 黃、玩家 b-info 藍），離線是 .t-caption 灰字，三個房間遊戲一樣。
            主持人打開「也一起作答」時會同時有「主持人」和「玩家」兩個標籤——
            這比在別的地方寫一句說明清楚，別人也看得到誰真的參與分組 */
-        (player.host ? '<span class="role-badge is-host">' + escapeHtml(t('hostTag')) + '</span>' : '') +
+        (player.host ? '<span class="badge b-host">' + escapeHtml(t('hostTag')) + '</span>' : '') +
         (!player.host || room.hostPlays
-          ? '<span class="role-badge">' + escapeHtml(t('playerTag')) + '</span>'
+          ? '<span class="badge b-info">' + escapeHtml(t('playerTag')) + '</span>'
           : '') +
         (player.online
           ? ''
-          : '<span class="role-badge is-muted">' + escapeHtml(t('offlineTag')) + '</span>') +
+          : '<span class="t-caption">' + escapeHtml(t('offlineTag')) + '</span>') +
         (isHost && !player.host
           ? '<button class="btn btn-sm btn-ghost kick" type="button" data-kick="' + player.id +
             '" aria-label="' + escapeHtml(t('kickLabel')) + '">✕</button>'
@@ -1019,6 +1019,10 @@
     el.playerList.innerHTML = html;
 
     el.startGameBlock.hidden = !isHost;
+    // 至少兩個人作答才有東西可以比（主持人關掉「也一起作答」時不算他）：不夠就把按鈕停用，下面寫原因
+    var answerers = room.players.filter(function (p) { return !p.host || room.hostPlays; }).length;
+    el.startGame.disabled = answerers < 2;
+    el.startNeed.hidden = answerers >= 2;
     el.waitingHint.hidden = isHost;
   }
 

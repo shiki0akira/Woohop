@@ -96,6 +96,7 @@ export default {
   offlineTag: 'Offline',
   kickLabel: 'Remove from room',
   startGameButton: 'Start',
+  startNeedPlayers: "You need at least two people to start",
   startGameHint: 'Nobody new can join once you start.',
   waitingHint: 'Waiting for the host to start.',
 

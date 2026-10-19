@@ -134,7 +134,7 @@
       'custom-input', 'custom-add', 'selected-list', 'random-pick', 'clear-pick',
       'setup-done', 'setup-error',
       'lobby-card', 'player-count', 'player-list', 'waiting-hint',
-      'host-lobby', 'settings-summary', 'start-game', 'start-error',
+      'host-lobby', 'settings-summary', 'start-game', 'start-need', 'start-error',
       'play-tabs', 'play-grid',
       'tab-card', 'tab-requests', 'tab-requests-badge',
       'pane-card', 'pane-list', 'pane-requests',
@@ -142,7 +142,7 @@
       'bingo-card', 'cell-list',
       'spectator-box', 'spectator-title', 'spectator-desc', 'board-box', 'board-list',
       'incoming-list', 'incoming-empty',
-      'results-card', 'final-list', 'reset-block', 'reset-room',
+      'results-card', 'final-podium', 'final-list', 'reset-block', 'reset-room',
       'pick-dialog', 'pick-question', 'pick-list', 'pick-empty', 'pick-self-claim', 'pick-cancel',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -1498,6 +1498,10 @@
     renderQr();
 
     el.hostLobby.hidden = !isHost;
+    // 至少兩個人才有人可以配對：不夠就把按鈕停用，下面寫原因（不是按了才跳錯誤）
+    var short = room.players.length < 2;
+    el.startGame.disabled = short;
+    el.startNeed.hidden = !short;
     el.waitingHint.hidden = isHost;
 
     // 設定收在頂欄右上角的齒輪後面，大廳只留一行摘要——主持人在這一頁要做的是等人到齊
@@ -1542,12 +1546,12 @@
        * 這比在名單下面寫一句「你同時也是玩家」清楚，而且別人也看得到誰真的在玩。
        */
       var badges = '';
-      if (player.host) badges += '<span class="role-badge is-host">' + escapeHtml(t('hostBadge')) + '</span>';
+      if (player.host) badges += '<span class="badge b-host">' + escapeHtml(t('hostBadge')) + '</span>';
       if (!player.host || room.hostPlays) {
-        badges += '<span class="role-badge">' + escapeHtml(t('playerBadge')) + '</span>';
+        badges += '<span class="badge b-info">' + escapeHtml(t('playerBadge')) + '</span>';
       }
-      if (player.spectator) badges += '<span class="role-badge">' + escapeHtml(t('spectatorBadge')) + '</span>';
-      if (!player.online) badges += '<span class="role-badge is-muted">' + escapeHtml(t('offlineBadge')) + '</span>';
+      if (player.spectator) badges += '<span class="badge b-info">' + escapeHtml(t('spectatorBadge')) + '</span>';
+      if (!player.online) badges += '<span class="t-caption">' + escapeHtml(t('offlineBadge')) + '</span>';
 
       var kick = isHost && !player.host
         ? '<button class="btn btn-sm btn-ghost kick" type="button" data-kick="' + player.id + '" aria-label="' +
@@ -1761,18 +1765,22 @@
    * 純控場的主持人與中途加入的旁觀者都沒有卡，把他們列進來只會是一排 0 條線 0 格，
    * 看起來像落後的人而不是沒在比的人。他們仍然在大廳名單上。
    */
-  function renderBoard(room, listNode, emptyNode) {
+  // skip：前面幾名已經放在頒獎台上了，排行榜從後面接著列
+  function renderBoard(room, listNode, emptyNode, skip) {
     var html = '';
     var shown = 0;
+    var ranked = 0;
     for (var i = 0; i < room.players.length; i += 1) {
       var player = room.players[i];
       if (player.spectator) continue;
+      ranked += 1;
+      if (ranked <= (skip || 0)) continue;
       shown += 1;
       var badges = '';
-      if (player.wonAt) badges += '<span class="role-badge is-win">' + escapeHtml(t('wonBadge')) + '</span>';
-      if (player.blackout) badges += '<span class="role-badge is-win">' + escapeHtml(t('blackoutBadge')) + '</span>';
-      if (player.spectator) badges += '<span class="role-badge">' + escapeHtml(t('spectatorBadge')) + '</span>';
-      if (!player.online) badges += '<span class="role-badge is-muted">' + escapeHtml(t('offlineBadge')) + '</span>';
+      if (player.wonAt) badges += '<span class="badge b-live">' + escapeHtml(t('wonBadge')) + '</span>';
+      if (player.blackout) badges += '<span class="badge b-live">' + escapeHtml(t('blackoutBadge')) + '</span>';
+      if (player.spectator) badges += '<span class="badge b-info">' + escapeHtml(t('spectatorBadge')) + '</span>';
+      if (!player.online) badges += '<span class="t-caption">' + escapeHtml(t('offlineBadge')) + '</span>';
 
       var waiting = player.waiting
         ? '<span class="hint">' + escapeHtml(t('leaderboardWaiting', { n: player.waiting })) + '</span>'
@@ -1791,8 +1799,34 @@
     if (emptyNode) emptyNode.hidden = shown > 0;
   }
 
+  /*
+   * 結算：設計系統的排行榜（design/brand-exploration.html「結果」）——前三名站上頒獎台
+   * （第一名在中間、最高、黃色加皇冠，第二名藍、第三名橘），其餘接在下面的 .rank-list，名次從 4 開始。
+   */
   function renderEnded(room) {
-    renderBoard(room, el.finalList, null);
+    var top = room.players.filter(function (player) { return !player.spectator; }).slice(0, 3);
+    var steps = [
+      { height: 100, face: 'var(--yellow-face)', edge: 'var(--yellow-edge)' },
+      { height: 70, face: 'var(--blue-face)', edge: 'var(--blue-edge)' },
+      { height: 52, face: 'var(--orange-face)', edge: 'var(--orange-edge)' },
+    ];
+    // 畫面上的順序是 2、1、3
+    var order = [1, 0, 2].filter(function (rank) { return rank < top.length; });
+    el.finalPodium.innerHTML = order.map(function (rank) {
+      var player = top[rank];
+      var step = steps[rank];
+      return (
+        '<div class="col">' +
+        (rank === 0 ? '<svg class="crown" width="26" height="26" aria-hidden="true"><use href="#i-crown"/></svg>' : '') +
+        avatarSvg(player.avatar, rank === 0 ? 72 : 48, player.nickname) +
+        '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
+        '<span class="podium-score">' + escapeHtml(t('leaderboardLines', { n: player.lines })) + '</span>' +
+        '<div class="block" style="height:' + step.height + 'px;background:' + step.face + ';border-color:' + step.edge + '">' +
+        (rank + 1) + '</div></div>'
+      );
+    }).join('');
+    el.finalPodium.hidden = top.length === 0;
+    renderBoard(room, el.finalList, null, 3);
     // 關房是頂欄返回鍵的事，結算卡只留「再玩一輪」
     el.resetBlock.hidden = state.role !== 'host';
   }
@@ -1837,9 +1871,9 @@
         '" type="button" data-pick="' + player.id + '">' +
         avatarSvg(player.avatar, 32, player.nickname) + '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
         (player.id === pendingTo
-          ? '<span class="role-badge">' + escapeHtml(t('pickPendingBadge')) + '</span>'
+          ? '<span class="badge b-info">' + escapeHtml(t('pickPendingBadge')) + '</span>'
           : '') +
-        (player.online ? '' : '<span class="role-badge is-muted">' +
+        (player.online ? '' : '<span class="t-caption">' +
           escapeHtml(t('offlineBadge')) + '</span>') +
         '</button></li>';
     }

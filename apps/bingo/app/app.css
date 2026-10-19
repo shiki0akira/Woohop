@@ -127,15 +127,12 @@
 .bingo-app .player { gap: 8px; padding: 8px 10px; }
 .bingo-app .player svg.avatar { width: 32px; height: 32px; }
 .bingo-app .player .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
-.role-badge { flex: none; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: var(--r-pill); background: var(--blue-face); color: var(--blue-text); border: 1.5px solid var(--blue-edge); white-space: nowrap; }
-.role-badge.is-muted { background: #ececf0; color: #55555c; border-color: #b9b9c3; }
-/* 主持人：設計系統 .badge.b-host 的黃色，跟藍色的「玩家」一眼分得出來 */
-.role-badge.is-host { background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
-.role-badge.is-win { background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
 .bingo-app .player .kick { --h: 32px; width: 32px; padding: 0; color: var(--muted); }
 .bingo-app .player .kick:hover { --face: var(--coral-face); color: var(--coral-text); }
 .start-block { display: grid; gap: 10px; margin-top: 18px; }
 .start-block .btn { margin-bottom: 4px; }
+/* 人數不夠時按鈕下面那一行：比一般提示醒目一點 */
+.start-block .start-need { margin: 0; text-align: center; color: var(--ink); font-weight: 800; }
 .start-block .hint, .waiting { text-align: center; }
 
 /* ---------- 進行中 ---------- */
@@ -248,6 +245,15 @@
 .board-score .hint { margin: 0 !important; font-size: 12px; }
 
 
+/* 結算：設計系統的頒獎台（woohop.css 的 .podium），這裡只排位置與分數；下面的排行榜名次從 4 開始 */
+.bingo-app .final-podium { max-width: 420px; margin: 18px auto 0; }
+.bingo-app .final-podium[hidden] { display: none; }
+.bingo-app .final-podium .crown { color: #c49a1e; }
+.bingo-app .final-podium .name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.podium-score { font-size: 13px; font-weight: 800; color: var(--muted); }
+.bingo-app #final-list { counter-reset: rank 3; }
+.bingo-app #final-list:empty { display: none; }
+
 /* 結算頁的「再玩一輪」 */
 .play-again { display: grid; gap: 8px; margin-top: 18px; }
 .play-again .btn { margin-bottom: 5px; }
@@ -288,3 +294,7 @@
 @media (min-width: 720px) {
   .bingo-card { max-width: 520px; margin-left: auto; margin-right: auto; }
 }
+
+/* 身分標籤：設計系統的 .badge（woohop.css），在名單、排行榜裡不要被擠扁；離線的灰字也不要換行 */
+.player .badge, .rank-list .badge, .pick-option .badge, .progress-head .badge { flex: none; white-space: nowrap; }
+.player .t-caption, .rank-list .t-caption, .pick-option .t-caption { flex: none; white-space: nowrap; }
