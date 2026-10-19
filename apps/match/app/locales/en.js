@@ -100,7 +100,7 @@ export default {
   questionProgress: 'Question {current} of {total}',
   agreeLabel: 'Agree',
   disagreeLabel: 'Disagree',
-  answerHintOpen: 'You can change your answer until time is up.',
+  answerHintOpen: "You can change your answer until time runs out or everyone has answered.",
   answerHintLocked: 'Time is up — this one is locked.',
   answerHintMissed: 'You missed this one, so it will not count towards your matches.',
   notAnsweredTag: 'No answer',

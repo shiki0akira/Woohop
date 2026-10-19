@@ -100,7 +100,7 @@ export default {
   questionProgress: '{total}문항 중 {current}번째',
   agreeLabel: '동의',
   disagreeLabel: '비동의',
-  answerHintOpen: '시간 안에는 답을 바꿀 수 있습니다.',
+  answerHintOpen: "모두 답하기 전까지, 시간 안에는 답을 바꿀 수 있어요.",
   answerHintLocked: '시간이 다 됐습니다. 이 문항은 확정되었습니다.',
   answerHintMissed: '이 문항은 시간을 놓쳐서 매칭 계산에 들어가지 않습니다.',
   notAnsweredTag: '미응답',

@@ -101,7 +101,7 @@ export default {
   questionProgress: 'Frage {current} von {total}',
   agreeLabel: 'Stimmt',
   disagreeLabel: 'Stimmt nicht',
-  answerHintOpen: 'Bis die Zeit abläuft, kannst du deine Antwort ändern.',
+  answerHintOpen: "Du kannst deine Antwort ändern, bis die Zeit abläuft oder alle geantwortet haben.",
   answerHintLocked: 'Zeit abgelaufen — diese Frage ist fest.',
   answerHintMissed: 'Diese Frage hast du verpasst, sie zählt nicht für dein Matching.',
   notAnsweredTag: 'Keine Antwort',

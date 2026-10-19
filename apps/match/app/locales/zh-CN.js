@@ -100,7 +100,7 @@ export default {
   questionProgress: '第 {current} / {total} 题',
   agreeLabel: '同意',
   disagreeLabel: '不同意',
-  answerHintOpen: '时间内都可以改答案。',
+  answerHintOpen: "其他人都答完之前，时间内都可以改答案。",
   answerHintLocked: '时间到，这题锁定了。',
   answerHintMissed: '这题没赶上，不会列入你的配对计算。',
   notAnsweredTag: '没作答',

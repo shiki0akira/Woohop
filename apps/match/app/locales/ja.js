@@ -100,7 +100,7 @@ export default {
   questionProgress: '{total}問中 {current}問目',
   agreeLabel: '賛成',
   disagreeLabel: '反対',
-  answerHintOpen: '時間内なら答えを変えられます。',
+  answerHintOpen: "全員が答えるまで、時間内なら答えを変えられます。",
   answerHintLocked: '時間切れ。この問題は確定しました。',
   answerHintMissed: 'この問題は間に合わなかったので、相性の計算には入りません。',
   notAnsweredTag: '未回答',

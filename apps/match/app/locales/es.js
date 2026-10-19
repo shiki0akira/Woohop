@@ -100,7 +100,7 @@ export default {
   questionProgress: 'Pregunta {current} de {total}',
   agreeLabel: 'De acuerdo',
   disagreeLabel: 'En desacuerdo',
-  answerHintOpen: 'Puedes cambiar tu respuesta hasta que se acabe el tiempo.',
+  answerHintOpen: "Puedes cambiar tu respuesta hasta que acabe el tiempo o todos hayan respondido.",
   answerHintLocked: 'Se acabó el tiempo: esta queda fijada.',
   answerHintMissed: 'Se te pasó esta pregunta, así que no contará para tus coincidencias.',
   notAnsweredTag: 'Sin responder',

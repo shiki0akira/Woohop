@@ -106,7 +106,7 @@ export default {
   questionProgress: '第 {current} / {total} 題',
   agreeLabel: '同意',
   disagreeLabel: '不同意',
-  answerHintOpen: '時間內都可以改答案。',
+  answerHintOpen: "其他人都答完之前，時間內都可以改答案。",
   answerHintLocked: '時間到，這題鎖定了。',
   answerHintMissed: '這題沒趕上，不會列入你的配對計算。',
   notAnsweredTag: '沒作答',
