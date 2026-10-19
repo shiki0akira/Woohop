@@ -1931,7 +1931,8 @@
     var qr = window.qrcode(0, 'M');
     qr.addData(url);
     qr.make();
-    el.qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    // 設計系統房號卡的 QR 樣式（woohop-art.js 的 qrSvg），三個房間遊戲同一個長相
+    el.qrBox.innerHTML = (window.Woohop && window.Woohop.qrSvg ? window.Woohop.qrSvg(qr) : qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true }));
   }
 
   function copyShareLink() {

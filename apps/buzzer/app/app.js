@@ -896,7 +896,7 @@
     qr.addData(url);
     qr.make();
     // 靜區由設計系統的 .qr 外框給（白底＋內距），跟喜好二選一一樣不另外留 margin
-    el['qr-box'].innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    el['qr-box'].innerHTML = (window.Woohop && window.Woohop.qrSvg ? window.Woohop.qrSvg(qr) : qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true }));
     renderedQrUrl = url;
   }
 
