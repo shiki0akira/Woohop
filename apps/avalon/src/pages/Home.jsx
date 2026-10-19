@@ -4,11 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { ROLE_CONFIGS, ROLE_ORDER } from '../constants/roles';
 import { gameSlug } from '../i18n';
 import { trackEvent } from '../analytics';
+import { siteStrings, sitePath } from '../woohop';
+
+const MIN_PLAYERS = 5;
+const MAX_PLAYERS = 10;
 
 export default function Home() {
   const { lang } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const s = siteStrings(lang);
   const [playerCount, setPlayerCount] = useState(5);
   const recommended = ROLE_CONFIGS[String(playerCount)];
   const [selectedRoles, setSelectedRoles] = useState(recommended.roles);
@@ -24,6 +29,13 @@ export default function Home() {
     trackEvent('avalon_game_setup_start', { lang });
   }, [lang]);
 
+  const changeCount = (step) => {
+    const next = Math.min(MAX_PLAYERS, Math.max(MIN_PLAYERS, playerCount + step));
+    if (next === playerCount) return;
+    setPlayerCount(next);
+    setSelectedRoles(ROLE_CONFIGS[String(next)].roles);
+  };
+
   const toggleRole = (role) => {
     if (requiredRoles.includes(role)) return;
     setSelectedRoles((current) =>
@@ -32,83 +44,89 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl p-4 space-y-6">
-      <section className="surface">
-        <h1 className="text-3xl font-bold">{t('home.title')}</h1>
-        <p className="mt-2 text-neutral-900/70 dark:text-neutral-200/70">{t('home.description')}</p>
-      </section>
-
-      <section className="surface grid gap-4 md:grid-cols-2">
-        <label className="space-y-2">
-          <span className="font-medium">{t('home.playerCount')}</span>
-          <select
-            className="btn-outline w-full justify-start px-4"
-            value={playerCount}
-            onChange={(e) => {
-              const next = Number(e.target.value);
-              setPlayerCount(next);
-              setSelectedRoles((prev) => {
-                const nextRoles = ROLE_CONFIGS[String(next)].roles;
-                return nextRoles;
-              });
-            }}
-          >
-            {[5, 6, 7, 8, 9, 10].map((count) => (
-              <option key={count} value={count}>
-                {count}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="space-y-2">
-          <div className="font-medium">{t('home.recommendation')}</div>
-          <p>
-            {t('home.good')} {recommended.good} / {t('home.evil')} {recommended.evil}
-          </p>
-          <p className="text-sm text-neutral-900/70 dark:text-neutral-200/70">
-            {recommended.roles.map((role) => t(`roles.${role}`)).join('、')}
-          </p>
+    <main id="main" className="game-main">
+      <div className="view">
+        <div className="page-head">
+          <nav className="crumbs" aria-label="breadcrumb">
+            <a href={sitePath(lang, 'home')}>{s.home}</a>
+            <span>›</span>
+            <a href={sitePath(lang, 'games')}>{s.navGames}</a>
+            <span>›</span>
+            <span>{t('nav.title')}</span>
+          </nav>
+          <h1>{t('home.title')}</h1>
+          <p>{t('home.description')}</p>
         </div>
-      </section>
 
-      <section className="surface">
-        <h2 className="text-xl font-semibold">{t('home.roleConfig')}</h2>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {ROLE_ORDER.map((role) => (
-            <button
-              key={role}
-              type="button"
-              onClick={() => toggleRole(role)}
-              className={selectedRoles.includes(role) ? 'btn-solid' : 'btn-outline'}
-              disabled={requiredRoles.includes(role)}
-            >
-              {t(`roles.${role}`)}
+        <section className="panel">
+          <h2 id="player-count-label">{t('home.playerCount')}</h2>
+          {/* 設計系統的數量增減（stepper），5～10 人 */}
+          <div className="stepper avalon-stepper" role="group" aria-labelledby="player-count-label">
+            <button type="button" aria-label="−" disabled={playerCount <= MIN_PLAYERS} onClick={() => changeCount(-1)}>
+              −
             </button>
-          ))}
-        </div>
-        {mismatch && <p className="mt-3 font-medium text-secondary-900 dark:text-secondary-500">{t('home.mismatch')}</p>}
-      </section>
+            <output aria-live="polite">{playerCount}</output>
+            <button type="button" aria-label="+" disabled={playerCount >= MAX_PLAYERS} onClick={() => changeCount(1)}>
+              +
+            </button>
+          </div>
 
-      <button
-        type="button"
-        className={`w-full rounded-2xl border-0 px-6 py-4 text-lg font-semibold transition-[background-color,box-shadow,transform] duration-150 ${
-          canStart
-            ? 'bg-secondary-500 text-secondary-900 shadow-[0_3px_0_theme(colors.secondary.600)] hover:translate-y-px hover:bg-secondary-600 hover:shadow-[0_2px_0_theme(colors.secondary.700)] active:translate-y-[3px] active:shadow-[0_0_0_theme(colors.secondary.700)] dark:bg-primary-700 dark:text-white dark:shadow-[0_3px_0_theme(colors.primary.800)] dark:hover:bg-primary-800 dark:hover:shadow-[0_2px_0_theme(colors.primary.900)]'
-            : 'cursor-not-allowed bg-secondary-200 text-secondary-800 shadow-none dark:bg-primary-800 dark:text-primary-400'
-        }`}
-        disabled={!canStart}
-        onClick={() => {
-          trackEvent('avalon_game_start', {
-            lang,
-            player_count: playerCount,
-            role_config: selectedRoles.join(','),
-          });
-          navigate(`/${gameSlug}/${lang}/game`, { state: { playerCount, selectedRoles } });
-        }}
-      >
-        {t('home.start')}
-      </button>
+          <h3 className="field-label field-label-gap">{t('home.recommendation')}</h3>
+          <div className="team-split">
+            <span className="badge b-info">
+              {t('home.good')} {recommended.good}
+            </span>
+            <span className="badge b-new">
+              {t('home.evil')} {recommended.evil}
+            </span>
+          </div>
+          <p className="hint">{recommended.roles.map((role) => t(`roles.${role}`)).join('、')}</p>
+        </section>
+
+        <section className="panel">
+          <h2>{t('home.roleConfig')}</h2>
+          {/* 設計系統的篩選膠囊（.chip）：選了是 aria-pressed；梅林、刺客、莫甘娜一定要有，鎖住不能取消 */}
+          <div className="role-chips">
+            {ROLE_ORDER.map((role) => {
+              const on = selectedRoles.includes(role);
+              return (
+                <button
+                  key={role}
+                  type="button"
+                  className="chip"
+                  aria-pressed={on}
+                  disabled={requiredRoles.includes(role)}
+                  onClick={() => toggleRole(role)}
+                >
+                  {on && (
+                    <svg aria-hidden="true">
+                      <use href="#i-check" />
+                    </svg>
+                  )}
+                  {t(`roles.${role}`)}
+                </button>
+              );
+            })}
+          </div>
+          {mismatch && <p className="form-error">{t('home.mismatch')}</p>}
+        </section>
+
+        <button
+          type="button"
+          className="btn btn-lg btn-solid btn-block"
+          disabled={!canStart}
+          onClick={() => {
+            trackEvent('avalon_game_start', {
+              lang,
+              player_count: playerCount,
+              role_config: selectedRoles.join(','),
+            });
+            navigate(`/${gameSlug}/${lang}/game`, { state: { playerCount, selectedRoles } });
+          }}
+        >
+          {t('home.start')}
+        </button>
+      </div>
     </main>
   );
 }

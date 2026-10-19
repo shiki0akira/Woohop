@@ -29,7 +29,7 @@
   :lang(ko) { word-break: keep-all; }
   .hero .lead { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); max-width: 30em; margin: 0 0 24px; }
   .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: #55555c; }
+  .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: var(--text-2); }
   .hero .trust span { display: inline-flex; align-items: center; gap: 6px; }
   .hero .trust svg { width: 18px; height: 18px; color: var(--mint-edge); }
 
@@ -80,7 +80,7 @@
   .game.soon { cursor: default; border-style: dashed; box-shadow: none; }
   .game.soon:hover { transform: none; box-shadow: none; }
   .game.soon .art { opacity: .85; }
-  .badge.b-soon { background: #ececf0; color: #55555c; border-color: #b9b9c3; }
+  .badge.b-soon { background: var(--sunken); color: var(--text-2); border-color: var(--edge-strong); }
   .game .flash { animation: pop .35s cubic-bezier(.34,1.56,.64,1); }
   @keyframes pop { from { transform: scale(.94); opacity: .3; } }
 
@@ -173,7 +173,7 @@
 
   /* 目前所在的分頁不做成按鈕，只換顏色（靛藍）；滑過時一樣只有淡底 */
   .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--accent-text); }
-  .nav-links a[aria-current="page"]:hover { background: #eef1fc; }
+  .nav-links a[aria-current="page"]:hover { background: var(--hover); }
   /* 手機選單：目前這頁跟電腦版一樣只換字色；關閉放右下 */
   dialog.sheet:focus { outline: none; }
   .sheet-list a[aria-current="page"] { color: var(--accent-text); }
@@ -192,8 +192,8 @@
 
   /* 還沒做的連結、文章：停用，不能點，顏色變淡 */
   .is-disabled { cursor: not-allowed; }
-  .link.is-disabled { color: #8a8a93; font-weight: 700; }
-  .link.is-disabled:hover { text-decoration: none; color: #8a8a93; }
+  .link.is-disabled { color: var(--faint); font-weight: 700; }
+  .link.is-disabled:hover { text-decoration: none; color: var(--faint); }
   .guide.is-disabled { cursor: default; }
   .guide.is-disabled:hover { transform: none; }
   .guide.is-disabled .badge.b-soon { justify-self: start; }
@@ -207,7 +207,7 @@
   .article { max-width: 760px; }
   .article section { margin-bottom: 28px; }
   .article h3 { font-size: 20px; margin: 0 0 10px; }
-  .article p { margin: 0 0 12px; color: #3b3b42; line-height: 1.85; }
+  .article p { margin: 0 0 12px; color: var(--text-body); line-height: 1.85; }
   .feature .note { font-size: 13px; opacity: .75; margin-top: 8px; }
 
   /* 破冰組合頁：「怎麼帶」流程，左邊時間軸、右邊照著念的話 */
@@ -223,7 +223,7 @@
   .flow .prompt-card { font-size: 16px; padding: 16px 18px; margin-top: 14px; }
   /* 語言按鈕放在下拉容器裡，會吃到「更多」按鈕的無框樣式；這裡把它的框和 3px 底線補回來 */
   .nav-more.lang-wrap > button.lang { height: 44px; padding: 0 12px; border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); font-size: 14px; border-radius: var(--r-md); margin-bottom: 3px; }
-  .nav-more.lang-wrap > button.lang:hover { background: #eef1fc; }
+  .nav-more.lang-wrap > button.lang:hover { background: var(--hover); }
   .nav-more.lang-wrap > button.lang svg { transform: none; }
   /* 正式版的指南卡片標題用 h3 */
   .guide h3 { margin: 0; font-size: 18px; line-height: 1.45; }
@@ -231,7 +231,7 @@
   .lang-wrap.up .nav-menu { top: auto; bottom: calc(100% + 10px); }
   /* 常見問題放在頁面最下面，寬度跟內文一樣 */
   #faq .faq { max-width: none; }
-  #faq .faq p { color: #3b3b42; line-height: 1.85; }
+  #faq .faq p { color: var(--text-body); line-height: 1.85; }
 
   /* 常見問題：左邊問答、右邊插圖（捲動時插圖停在畫面上）；手機上插圖放在問答上面、縮小 */
   .faq-wrap { display: grid; gap: 20px; align-items: start; }

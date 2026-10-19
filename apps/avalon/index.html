@@ -3,7 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#252326" />
+    <!-- 跟 Woohop 其他頁面同一個淺灰底；深色模式時由下面那段改成深色 -->
+    <meta name="theme-color" content="#f4f4f6" />
+    <script>
+      /* 顯示模式：選過就用選的（localStorage web100-theme，系列共用），沒選過就跟隨裝置。
+         要在畫面畫出來之前決定，深色的人才不會先看到一下淺色（之後的切換在 src/context/ThemeContext.jsx） */
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('web100-theme'); } catch (e) {}
+        var dark = saved === 'dark' || (saved !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        if (dark) document.querySelector('meta[name=theme-color]').setAttribute('content', '#1c1c24');
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
     <!-- 根目錄絕對路徑：postbuild 把 index.html 搬進 dist/avalon/，但 public 的檔案留在 dist 根目錄；
          掛到 www.vibeweb100.com/avalon/* 時也是抓首頁那份同一個檔案 -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -25,7 +40,8 @@
       gtag('config', 'G-S7PE5687BG', { send_page_view: false });
     </script>
   </head>
-  <body class="bg-neutral-200 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-200">
+  <!-- Woohop 遊戲頁的版型（game.css）：woohop-game＋data-game-mode="browse"（阿瓦隆沒有「玩的時候」那種收起分頁的狀態） -->
+  <body class="woohop-game avalon-app" data-game-mode="browse">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

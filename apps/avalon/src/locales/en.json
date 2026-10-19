@@ -34,6 +34,7 @@
     "description": "Avalon is a hidden-role deduction game where good tries to complete quests and evil tries to stop them."
   },
   "voice": {
+    "speak": "Play narration",
     "script": [
       "All players close your eyes.",
       "Merlin, open your eyes. Evil players except Mordred, show a thumbs up.",

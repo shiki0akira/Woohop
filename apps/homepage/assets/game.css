@@ -16,7 +16,7 @@
 
 /* ---------- 遊戲內頂欄：跟網站導覽列同一個位置、同一套外框（2px＋4px 底） ---------- */
 .game-bar-host { position: sticky; top: 10px; z-index: 30; margin-top: 10px; }
-.game-bar { container-type: inline-size; height: 64px; padding: 0 8px; background: #ffffffcc; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); border-radius: var(--r-lg); box-shadow: var(--raise-n); }
+.game-bar { container-type: inline-size; height: 64px; padding: 0 8px; background: var(--glass); backdrop-filter: blur(12px); border: 2px solid var(--edge-n); border-radius: var(--r-lg); box-shadow: var(--raise-n); }
 .game-bar .btn-icon { --h: 44px; flex: none; }
 
 /* 遊戲名：回遊戲主頁的連結，平常看起來就是標題；放不下時截成「⋯」，分頁不讓 */
@@ -31,7 +31,7 @@
   border: 0; border-radius: var(--r-md); background: none; color: var(--ink);
   font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
 }
-.game-tabs a:hover, .game-tabs button:hover { background: #eef1fc; }
+.game-tabs a:hover, .game-tabs button:hover { background: var(--hover); }
 .game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--accent-text); }
 .game-tabs .tab-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
 .game-tabs .tab-count:empty { display: none; }
@@ -110,28 +110,28 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 
 /* 一排單選：長得跟 Woohop 的分段控制一樣（灰底軌道，選中的那格白色浮起來）。
    底層還是 <input type="radio">，鍵盤方向鍵與螢幕閱讀器都照舊，只是把圓點藏起來 */
-.seg { display: grid; gap: 4px; padding: 4px; border-radius: var(--r-md); background: #e8e8ee; }
+.seg { display: grid; gap: 4px; padding: 4px; border-radius: var(--r-md); background: var(--track); }
 .seg-3 { grid-template-columns: repeat(3, 1fr); }
 .seg-4 { grid-template-columns: repeat(4, 1fr); }
 .seg-5 { grid-template-columns: repeat(5, 1fr); }
 .seg-item {
   position: relative; display: flex; align-items: center; justify-content: center;
   height: 44px; padding: 0 4px; border-radius: calc(var(--r-md) - 4px);
-  font-size: 14px; font-weight: 700; color: #55555c; font-variant-numeric: tabular-nums; white-space: nowrap;
+  font-size: 14px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap;
   cursor: pointer; transition: background .12s, color .12s;
 }
 .seg-item input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .seg-item:hover { color: var(--ink); }
-.seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 #c9c9d3; }
+.seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 var(--edge-mid); }
 .seg-item:has(input:focus-visible) { outline: 3px solid var(--indigo); outline-offset: 2px; }
-.seg-item:has(input:disabled) { color: #b4b4bc; cursor: not-allowed; }
+.seg-item:has(input:disabled) { color: var(--text-dim); cursor: not-allowed; }
 
 /* ---------- 玩法頁（刻意精簡：一眼資訊、幾步怎麼玩、主持人怎麼帶） ---------- */
 .game-rules { display: flex; flex-direction: column; gap: 20px; }
 .prose h2 { margin-bottom: 10px; }
 .prose ol, .prose ul { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; }
 .prose li { line-height: 1.8; }
-.prose p { margin: 0 0 12px; color: #3b3b42; line-height: 1.85; }
+.prose p { margin: 0 0 12px; color: var(--text-body); line-height: 1.85; }
 .prose p:last-child { margin-bottom: 0; }
 .rules-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 .rules-facts li { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); }

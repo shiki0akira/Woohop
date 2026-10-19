@@ -34,6 +34,7 @@
     "description": "Avalon est un jeu à rôles cachés."
   },
   "voice": {
+    "speak": "Lancer la narration",
     "script": [
       "Tous les joueurs, fermez les yeux.",
       "Merlin, ouvrez les yeux. Les forces du mal sauf Mordred, montrez le pouce levé.",

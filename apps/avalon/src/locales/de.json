@@ -34,6 +34,7 @@
     "description": "Avalon ist ein Deduktionsspiel mit versteckten Rollen, bei dem das Gute versucht, Quests zu erfüllen, und das Böse versucht, sie zu verhindern."
   },
   "voice": {
+    "speak": "Erzählung abspielen",
     "script": [
       "Alle Spieler, schließen Sie bitte die Augen.",
       "Merlin, öffnen Sie die Augen. Böse Spieler außer Mordred: Bitte zeigen Sie einen Daumen nach oben.",

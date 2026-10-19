@@ -5,6 +5,8 @@ import { useSpeech } from '../hooks/useSpeech';
 import VoicePlayer from '../components/VoicePlayer';
 import { trackEvent } from '../analytics';
 import { ROLE_CONFIGS, DEFAULT_PLAYER_COUNT } from '../constants/roles';
+import { gameSlug } from '../i18n';
+import { siteStrings, sitePath } from '../woohop';
 
 const PAUSE_AFTER_MS = 1000;
 const RECORDED_VOLUME_GAIN = 2;
@@ -386,13 +388,29 @@ export default function Game() {
     [isRecordedMode, speechSpeak, startRecorded, script],
   );
 
+  const s = siteStrings(lang);
+
   return (
-    <main className="mx-auto max-w-3xl p-4 space-y-6">
-      <section className="surface">
-        <h1 className="text-3xl font-bold">{t('game.title')}</h1>
-        <p className="mt-2 text-neutral-900/70 dark:text-neutral-200/70">{t('game.description')}</p>
-        <p className="mt-4">{supported ? t('game.speaking') : t('game.unsupported')}</p>
-        <div className="mt-4">
+    <main id="main" className="game-main">
+      <div className="view">
+        <div className="page-head">
+          <nav className="crumbs" aria-label="breadcrumb">
+            <a href={sitePath(lang, 'home')}>{s.home}</a>
+            <span>›</span>
+            <a href={sitePath(lang, 'games')}>{s.navGames}</a>
+            <span>›</span>
+            <a href={`/${gameSlug}/${lang}`}>{t('nav.title')}</a>
+            <span>›</span>
+            <span>{t('game.title')}</span>
+          </nav>
+          <h1>{t('game.title')}</h1>
+          <p>{t('game.description')}</p>
+        </div>
+
+        <section className="panel">
+          <p className={supported ? 'voice-status' : 'form-error'}>
+            {supported ? t('game.speaking') : t('game.unsupported')}
+          </p>
           <VoicePlayer
             text={script}
             onSpeak={onSpeak}
@@ -403,14 +421,17 @@ export default function Game() {
             resume={resume}
             restart={restart}
           />
-        </div>
-      </section>
-      <section className="surface">
-        <h2 className="text-xl font-semibold">{t('game.summary')}</h2>
-        <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-secondary-700/30 bg-secondary-600/10 p-4 text-sm dark:border-primary-600/30 dark:bg-primary-600/10">
-          {script}
-        </pre>
-      </section>
+        </section>
+
+        <section className="panel">
+          <h2>{t('game.summary')}</h2>
+          {/* 設計系統的「照著念」卡片：語音沒聲音或想自己唸時，主持人照著唸 */}
+          <div className="prompt-card voice-script">
+            <span className="say">{s.sayLabel}</span>
+            {script}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

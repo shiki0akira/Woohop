@@ -34,6 +34,7 @@
     "description": "Avalon es un juego de roles ocultos."
   },
   "voice": {
+    "speak": "Reproducir narración",
     "script": [
       "Todos los jugadores, cierren los ojos.",
       "Merlín, abre los ojos. Los jugadores malvados excepto Mordred, levanten el pulgar.",

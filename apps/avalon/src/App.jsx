@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from './context/ThemeContext';
 import { GameProvider } from './context/GameContext';
 import { applySeo, defaultLang, gameSlug, getPathSuffix, normalizeLang, supportedLangs } from './i18n';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import GameBar from './components/GameBar';
+import SiteFooter from './components/SiteFooter';
 import Home from './pages/Home';
 import Game from './pages/Game';
 import Rules from './pages/Rules';
@@ -37,20 +37,21 @@ function LangLayout() {
     }
   }, [i18n, lang, location.pathname, navigate, safeLang]);
 
+  // 目前是哪一頁：頂欄的返回鍵與「規則」分頁要用
+  const suffix = getPathSuffix(location.pathname);
+  const page = suffix.startsWith('/rules') ? 'rules' : suffix.startsWith('/game') ? 'game' : 'home';
+
   return (
-    // 這層刻意不上底色：底色和文字色由 body 決定，這裡若填色會蓋掉背景光暈（光暈是 body 的 ::before，z-index -1）。
-    // flex-col + flex-1 是為了讓內容不夠長時頁尾仍然貼在視窗底部。
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <div className="flex-1">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="game" element={<Game />} />
-          <Route path="rules" element={<Rules />} />
-          <Route path="*" element={<Navigate to={`/${gameSlug}/${safeLang}`} replace />} />
-        </Routes>
-      </div>
-      <Footer />
+    // Woohop 遊戲頁的版型（跟其他遊戲一樣）：.page 置中，裡面是遊戲內頂欄、單欄 720px 的內容、全站頁尾
+    <div className="page">
+      <GameBar page={page} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="game" element={<Game />} />
+        <Route path="rules" element={<Rules />} />
+        <Route path="*" element={<Navigate to={`/${gameSlug}/${safeLang}`} replace />} />
+      </Routes>
+      <SiteFooter />
     </div>
   );
 }

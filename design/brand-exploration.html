@@ -79,6 +79,9 @@
     --edge-strong: #b9b9c3;   /* 勾選框、開關的外框、虛線框 */
     --faint: #8a8a93;         /* 輸入框提示字、沒選的圖示 */
     --tab-text: #63636b;
+    --text-2: #55555c;        /* 次要的灰字（分段控制沒選的字、信任列） */
+    --text-body: #3b3b42;     /* 長段內文 */
+    --text-dim: #b4b4bc;      /* 停用選項的字 */
     --disabled-face: #e6e6ea; --disabled-edge: #d2d2d8; --disabled-text: #6e6e76;
     --glass: #ffffffcc;       /* 導覽列的毛玻璃 */
     --glass-strong: #ffffffe0;
@@ -127,6 +130,9 @@
     --edge-strong: #5e5e6c;
     --faint: #8d8d99;
     --tab-text: #a6a6b1;
+    --text-2: #b4b4bf;
+    --text-body: #d6d6de;
+    --text-dim: #5e5e6c;
     --disabled-face: #30303a; --disabled-edge: #3a3a46; --disabled-text: #7b7b87;
     --glass: #262630d9;
     --glass-strong: #262630e6;
@@ -548,7 +554,9 @@
   .theme-switch { display: inline-flex; gap: 2px; padding: 3px; height: 44px; border-radius: var(--r-md); border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); margin-bottom: 3px; }
   .theme-switch button { width: 34px; border: 0; border-radius: calc(var(--r-md) - 5px); background: none; color: var(--muted); display: grid; place-items: center; cursor: pointer; }
   .theme-switch button:hover { color: var(--ink); background: var(--hover); }
-  .theme-switch button[aria-pressed="true"] { background: var(--indigo-face); color: var(--indigo-text); }
+  /* 選中的那一格：淺色是淡藍底＋深藍圖示；深色要亮一點的藍＋白圖示，不然跟深底分不出來 */
+  .theme-switch button[aria-pressed="true"] { background: #dfe5fb; color: var(--indigo-edge); }
+  :root[data-theme="dark"] .theme-switch button[aria-pressed="true"] { background: #5263b8; color: #fff; }
   .theme-switch button:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
   .theme-switch svg { width: 18px; height: 18px; }
   .nav-burger { display: none; }

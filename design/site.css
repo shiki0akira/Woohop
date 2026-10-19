@@ -20,7 +20,7 @@
   .hero h1 { margin: 10px 0 14px; font-size: clamp(36px, 6.4vw, 60px); line-height: 1.15; font-weight: 900; letter-spacing: -0.01em; }
   .hero .lead { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); max-width: 30em; margin: 0 0 24px; }
   .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: #55555c; }
+  .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: var(--text-2); }
   .hero .trust span { display: inline-flex; align-items: center; gap: 6px; }
   .hero .trust svg { width: 18px; height: 18px; color: var(--mint-edge); }
 
@@ -71,7 +71,7 @@
   .game.soon { cursor: default; border-style: dashed; box-shadow: none; }
   .game.soon:hover { transform: none; box-shadow: none; }
   .game.soon .art { opacity: .85; }
-  .badge.b-soon { background: #ececf0; color: #55555c; border-color: #b9b9c3; }
+  .badge.b-soon { background: var(--sunken); color: var(--text-2); border-color: var(--edge-strong); }
   .game .flash { animation: pop .35s cubic-bezier(.34,1.56,.64,1); }
   @keyframes pop { from { transform: scale(.94); opacity: .3; } }
 
@@ -164,7 +164,7 @@
 
   /* 目前所在的分頁不做成按鈕，只換顏色（靛藍）；滑過時一樣只有淡底 */
   .nav-links a[aria-current="page"] { background: none; border-color: transparent; box-shadow: none; color: var(--accent-text); }
-  .nav-links a[aria-current="page"]:hover { background: #eef1fc; }
+  .nav-links a[aria-current="page"]:hover { background: var(--hover); }
 
   /* 小縮圖（約 72px 寬）的插圖描邊改成 2px，跟 UI 線條一樣粗 */
   .plan-step .mini svg { --ill-sw: 2px; }
@@ -179,8 +179,8 @@
 
   /* 還沒做的連結、文章：停用，不能點，顏色變淡 */
   .is-disabled { cursor: not-allowed; }
-  .link.is-disabled { color: #8a8a93; font-weight: 700; }
-  .link.is-disabled:hover { text-decoration: none; color: #8a8a93; }
+  .link.is-disabled { color: var(--faint); font-weight: 700; }
+  .link.is-disabled:hover { text-decoration: none; color: var(--faint); }
   .guide.is-disabled { cursor: default; }
   .guide.is-disabled:hover { transform: none; }
   .guide.is-disabled .badge.b-soon { justify-self: start; }

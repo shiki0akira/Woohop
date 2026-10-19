@@ -8,12 +8,14 @@
 
 ## 配色 / UI
 
-色階定義在 `tailwind.config.js` 的 `palette`，名稱與數值跟 Figma 變數庫、`apps/homepage/design-tokens.css` 三邊一致（Primary / Secondary / Accent / Neutral）。**改配色的順序是 Figma → design-tokens.css → 這裡**，不要只改一邊。
+2026-10 改版成 Woohop 新設計（跟其他四個遊戲同一套），**UI 一律先用設計系統的元件**（`design/brand-exploration.html`）。不再用 Tailwind。
 
-- `neutral` 會蓋掉 Tailwind 內建的同名色階，這是刻意的；不要再用 `slate-*` 或內建 `neutral-*`
-- 共用的元件樣式在 `src/index.css` 的 `@layer components`：`.nav-pill`（玻璃導覽列）、`.btn-outline`、`.btn-solid`、`.surface`（卡片）
-- 背景光暈與顆粒是 `body::before` / `body::after`（`z-index: -1`）。**任何全頁的外層容器都不要上底色**，會把光暈整片蓋掉——`src/App.jsx` 最外層那個 div 就是為了這個才只留 `min-h-screen`
-- 實心按鈕的文字用 `neutral-900` 而不是白色：白字疊 `primary-600` 只有 2.71:1，過不了 WCAG AA
+- 樣式：`src/main.jsx` 直接匯入 `apps/homepage/assets` 的 `woohop.css`（元件與色票）、`site.css`（頁尾、選單）、`game.css`（遊戲內頂欄、單欄 720px 版型）、`woohop-art.js`（圖示 sprite）。唯一來源在首頁，**改了那幾個檔，阿瓦隆也要重新 build、部署**。`src/index.css` 只排阿瓦隆自己的東西
+- 全站文案（頂欄選單、頁尾、模式切換）來自 `apps/homepage/src/locales.mjs`（`src/woohop.js` 包一層）；阿瓦隆自己的字還是在 `src/locales/`
+- 頂欄 `GameBar.jsx`、頁尾 `SiteFooter.jsx` 是 `chrome.mjs` 的 gameBar()／footer() 的 React 版，結構與 class 要跟它一樣（行為照 game.js：返回、規則分頁、手機選單面板）
+- **淺色／深色模式**：頁尾的 `ThemeSwitch`（跟隨系統／淺色／深色），預設跟隨裝置、選過記在 `web100-theme`。生效的是 `<html data-theme>`，設計系統的深色色票掛在 `[data-theme="dark"]`。`index.html` 的 `<head>` 先決定一次（不會閃一下淺色），之後由 `ThemeContext` 切換。**顏色一律用設計系統的變數，不要寫死**，深色才會跟著換
+- 元件：人數 `.stepper`、角色 `.chip`（梅林、刺客、莫甘娜鎖住）、好人／壞人 `.badge`、開始 `.btn-lg.btn-solid`、語速 `.seg`、旁白台詞 `.prompt-card`（照著念）
+- 開發伺服器（`npm run dev`）直接開 `/avalon/de` 這類非中文網址時，頁面文字可能停在中文（React 開發模式的 StrictMode 會讓 effect 跑兩次）；正式 build（`npm run build` 後的 dist）是對的，判斷前先用 build 版確認
 
 ## 網址結構
 
