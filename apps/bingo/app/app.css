@@ -219,11 +219,11 @@
 .cell-row-cancel { flex: none; width: 32px; height: 32px; margin-right: 6px; border: 0; border-radius: var(--r-sm); background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
 .cell-row-cancel:hover { background: var(--coral-face); color: var(--coral-text); }
 
-/* 待你確認：一列一筆，誰選了你、哪一題、確認／不是 */
+/* 待你確認：一列一筆，誰選了你、哪一題、確認／不是。用賓果的黃（不用紅，不是錯誤） */
 .req-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
-.req-list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border-radius: var(--r-md); border: 2px solid var(--coral-edge); background: var(--coral-face); box-shadow: 0 4px 0 var(--coral-edge); margin-bottom: 4px; }
+.req-list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border-radius: var(--r-md); border: 2px solid var(--yellow-edge); background: var(--yellow-face); box-shadow: 0 4px 0 var(--yellow-edge); margin-bottom: 4px; }
 .req-main { flex: 1 1 12rem; min-width: 0; display: grid; gap: 2px; }
-.req-main .hint { margin: 0 !important; color: var(--coral-text); font-weight: 700; }
+.req-main .hint { margin: 0 !important; color: var(--yellow-text); font-weight: 700; }
 .req-question { font-weight: 900; line-height: 1.45; }
 .req-actions { display: flex; gap: 8px; flex: none; }
 .req-actions .btn { margin-bottom: 3px; }
