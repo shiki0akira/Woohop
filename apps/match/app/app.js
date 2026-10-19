@@ -210,6 +210,17 @@
     return list[hash % list.length].bg;
   }
 
+  /*
+   * 頭像圖裡的 clipPath 有固定 id（av-boba-2 這種）。同一個頭像在頁面上會畫好幾次（頭像選擇器、名單、排行榜），
+   * id 重複時瀏覽器一律拿第一個——第一個常常在已經藏起來的頭像選擇器裡，裁切就失效、色塊溢出輪廓（破圖）。
+   * 每畫一次就把 id 換成獨一無二的。
+   */
+  var avatarSeq = 0;
+  function uniqueAvatarIds(svg) {
+    avatarSeq += 1;
+    return svg.replace(/av-[a-z]+-[0-9]+/g, function (id) { return id + '-' + avatarSeq; });
+  }
+
   function avatarSvg(id, size, name) {
     var head = '<svg class="avatar" viewBox="0 0 64 64" width="' + size + '" height="' + size + '" ' +
       'aria-hidden="true" focusable="false">';
@@ -226,7 +237,7 @@
     }
     // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回第一張
     if (!found) found = list[0];
-    return head + '<rect width="64" height="64" fill="' + found.bg + '"/>' + found.svg + '</svg>';
+    return head + '<rect width="64" height="64" fill="' + found.bg + '"/>' + uniqueAvatarIds(found.svg) + '</svg>';
   }
 
   /* ---------- 建房：選題 ---------- */

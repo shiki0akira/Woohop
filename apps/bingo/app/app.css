@@ -255,7 +255,7 @@
 .bingo-app #final-list:empty { display: none; }
 
 /* 結算頁的「再玩一輪」 */
-.play-again { display: grid; gap: 8px; margin-top: 18px; }
+.play-again { display: grid; gap: 8px; margin-top: 28px; }
 .play-again .btn { margin-bottom: 5px; }
 .play-again .hint { text-align: center; margin: 0; }
 

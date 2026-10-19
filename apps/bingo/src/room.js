@@ -824,12 +824,15 @@ function leaderboard(room, online) {
         waiting: Object.values(room.pending).filter((request) => request.to === id).length,
       };
     })
+    /*
+     * 排名（2026-10-19 改）：**連線越多越前面，連線一樣比打勾的格數**。
+     * 兩項都一樣才看誰先達標，最後照暱稱，順序才穩定。
+     */
     .sort((a, b) => {
-      if (a.wonAt && b.wonAt) return a.wonAt - b.wonAt; // 都達標了，先達標的在前
-      if (a.wonAt) return -1;
-      if (b.wonAt) return 1;
       if (b.lines !== a.lines) return b.lines - a.lines;
       if (b.marked !== a.marked) return b.marked - a.marked;
+      if (a.wonAt && b.wonAt) return a.wonAt - b.wonAt;
+      if (a.wonAt || b.wonAt) return a.wonAt ? -1 : 1;
       return a.nickname.localeCompare(b.nickname);
     });
 }
