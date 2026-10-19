@@ -564,13 +564,13 @@
   /* ============================================================
      回饋
      ============================================================ */
-  .alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--r-md); border: 2px solid; box-shadow: 0 4px 0 currentColor; font-size: 15px; margin-bottom: 4px; }
+  .alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--r-md); border: 2px solid var(--a-edge); box-shadow: 0 4px 0 var(--a-edge); font-size: 15px; margin-bottom: 4px; }
   .alert svg { width: 22px; height: 22px; flex: none; margin-top: 1px; }
   .alert b { display: block; }
-  .alert.info { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); }
-  .alert.success { background: var(--mint-face); border-color: var(--mint-edge); color: var(--mint-text); }
-  .alert.warning { background: var(--yellow-face); border-color: var(--yellow-edge); color: var(--yellow-text); }
-  .alert.error { background: var(--coral-face); border-color: var(--coral-edge); color: var(--coral-text); }
+  .alert.info { background: var(--blue-face); --a-edge: var(--blue-edge); color: var(--blue-text); }
+  .alert.success { background: var(--mint-face); --a-edge: var(--mint-edge); color: var(--mint-text); }
+  .alert.warning { background: var(--yellow-face); --a-edge: var(--yellow-edge); color: var(--yellow-text); }
+  .alert.error { background: var(--coral-face); --a-edge: var(--coral-edge); color: var(--coral-text); }
 
   .toast-zone { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 50; display: grid; gap: 8px; width: min(420px, calc(100% - 32px)); }
   .toast { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 18px; border-radius: var(--r-md); background: var(--ink); color: var(--on-ink); font-weight: 700; box-shadow: 0 10px 30px #0000003d; animation: toast-in .35s cubic-bezier(.34,1.56,.64,1); }
