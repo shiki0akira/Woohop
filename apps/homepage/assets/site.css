@@ -151,7 +151,8 @@
 
   /* ---------- 頁尾 ---------- */
   .site-footer { display: grid; gap: 28px; }
-  .footer-grid { display: grid; gap: 28px 24px; grid-template-columns: 1fr 1fr; }
+  /* 手機一欄：品牌、網站、其他專案、關於由上往下排（兩欄時「其他專案」會被擠到右邊、跟「關於」錯開） */
+  .footer-grid { display: grid; gap: 28px 24px; grid-template-columns: 1fr; }
   @media (min-width: 760px) { .footer-grid { grid-template-columns: 1.6fr repeat(3, 1fr); } }
   .footer-brand { grid-column: 1 / -1; display: grid; gap: 10px; align-content: start; }
   @media (min-width: 760px) { .footer-brand { grid-column: auto; } }

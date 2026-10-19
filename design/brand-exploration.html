@@ -12,6 +12,15 @@
   v3（2026-10-16）：放回色票；按鈕色碼改成寫死的 token 並全部通過 WCAG AAA；
   loading 按鈕改成彈跳的「…」；遊戲列表改用插圖；logo 陣列與翻牌改成 W 相連不留縫。
 -->
+<script>
+  /* 顯示模式：選過就用選的（localStorage web100-theme，跟系列其他專案同一個 key），沒選過就跟隨裝置 */
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('web100-theme'); } catch (e) {}
+    var dark = saved === 'dark' || (saved !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  })();
+</script>
 <style>
   :root {
     /* logo 六色（使用者給定）。橘、黃在 2026-10-16 依使用者要求調亮、調鮮豔兩次：#DA862D→#FF9419、#E9C561→#FFC628（原本偏暗偏土） */
@@ -56,7 +65,80 @@
     --r-xs: 4px; --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
     --radius: var(--r-lg);
     --shadow: 0 8px 32px #252c4b1a;
+    /* 介面用的中性色（深色模式在下面的 [data-theme="dark"] 換值）。元件裡不要再寫死灰白，一律用這組 */
+    --on-ink: #ffffff;        /* 墨色底（浮動通知、提示泡泡、實心徽章）上的字 */
+    --solid-edge: var(--indigo-edge); /* 實心主要按鈕的底部厚度 */
+    --hover: #eef1fc;         /* 滑過的淡藍底 */
+    --hover-faint: #f7f8fe;
+    --track: #e8e8ee;         /* 分段控制、單選的灰底軌道 */
+    --sunken: #ececf0;        /* 凹下去的灰（停用的輸入框、進度條底、節拍點） */
+    --sunken-hi: #f5f5f8;     /* 載入骨架的亮帶 */
+    --edge-mid: #c9c9d3;      /* 選中格的薄底線、空圈 */
+    --edge-strong: #b9b9c3;   /* 勾選框、開關的外框、虛線框 */
+    --faint: #8a8a93;         /* 輸入框提示字、沒選的圖示 */
+    --tab-text: #63636b;
+    --disabled-face: #e6e6ea; --disabled-edge: #d2d2d8; --disabled-text: #6e6e76;
+    --glass: #ffffffcc;       /* 導覽列的毛玻璃 */
+    --glass-strong: #ffffffe0;
+    --bg-glass: #f4f4f6e6;
+    --grid-line: #0000000b;   /* 卡片的大格子紙 */
+    --prompt-bg: #fffdf4;     /* 照著念卡片 */
+    --danger: #a3261a; --danger-edge: #c2412f;
+    --ok: #1e6b3a;
+    --toast-action: #c9d3f7;
+    color-scheme: light;
   }
+
+  /* ============================================================
+     深色模式：頁面在 <html> 掛 data-theme="dark" 才生效（由頁面的程式依「跟隨系統／淺色／深色」決定，
+     見 .theme-switch）。沒有掛的頁面永遠是淺色，所以這份樣式可以安全地放進還沒做深色的頁面
+     ============================================================ */
+  :root[data-theme="dark"] {
+    --indigo-face: #2b3468; --indigo-edge: #7186e0; --indigo-text: #e3e8ff;
+    --blue-face: #283252;   --blue-edge: #7d90dc;   --blue-text: #e2e8ff;
+    --orange-face: #4a2e12; --orange-edge: #d98a3a; --orange-text: #ffe8d1;
+    --pink-face: #43284a;   --pink-edge: #c48ccf;   --pink-text: #fbe6ff;
+    --yellow-face: #463914; --yellow-edge: #d4aa3e; --yellow-text: #fff2cc;
+    --coral-face: #4a2822;  --coral-edge: #d6806f;  --coral-text: #ffe1db;
+    --mint-face: #1c3c33;   --mint-edge: #4fa98f;   --mint-text: #d9f4eb;
+
+    --bg: #131318;
+    --surface: #1d1d24;
+    --card: #ffffff0a;
+    --card-strong: #ffffff14;
+    --ink: #ececf1;
+    --muted: #ececf1a3;
+    --line: #ffffff1f;
+    --edge-n: #383844;
+    --shadow: 0 8px 32px #00000066;
+
+    --on-ink: #131318;
+    --solid-edge: #1b2350;
+    --hover: #262c42;
+    --hover-faint: #22263a;
+    --track: #26262f;
+    --sunken: #2a2a33;
+    --sunken-hi: #34343e;
+    --edge-mid: #4a4a57;
+    --edge-strong: #5a5a68;
+    --faint: #8d8d99;
+    --tab-text: #a6a6b1;
+    --disabled-face: #2a2a33; --disabled-edge: #34343e; --disabled-text: #7b7b87;
+    --glass: #1d1d24d9;
+    --glass-strong: #1d1d24e6;
+    --bg-glass: #131318e6;
+    --grid-line: #ffffff0d;
+    --prompt-bg: #2a2516;
+    --danger: #ff8f80; --danger-edge: #e0705f;
+    --ok: #6fd39a;
+    --toast-action: #3d54b6;
+    --outline: #d9d9e3;
+    color-scheme: dark;
+  }
+  /* 插圖的粗描邊（woohop-art.js 寫死 #22222c）在深底上會消失：深色時換成淺灰，像貼紙的白邊 */
+  :root[data-theme="dark"] svg [stroke="#22222c"] { stroke: #d9d9e3; }
+  /* 從淺色換到深色時，帶點過場，不要整頁瞬間反白 */
+  :root[data-theme] body { transition: background-color .25s, color .25s; }
 
   * { box-sizing: border-box; }
   body {
@@ -91,14 +173,14 @@
   .sw .scale { display: grid; grid-template-columns: repeat(5, 1fr); height: 22px; }
   .sw .meta { padding: 8px 12px 12px; font-size: 13px; }
   .sw .meta b { display: block; font-size: 14px; }
-  .tag-new { font-size: 11px; background: var(--ink); color: #fff; border-radius: var(--r-pill); padding: 1px 7px; margin-left: 4px; vertical-align: 2px; }
+  .tag-new { font-size: 11px; background: var(--ink); color: var(--on-ink); border-radius: var(--r-pill); padding: 1px 7px; margin-left: 4px; vertical-align: 2px; }
 
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   th { color: var(--muted); font-weight: 600; }
   .table-scroll { overflow-x: auto; }
   .dot { display: inline-block; width: 12px; height: 12px; border-radius: var(--r-xs); vertical-align: -1px; margin-right: 6px; border: 1px solid var(--line); }
-  .pass { color: #1e6b3a; font-weight: 700; }
+  .pass { color: var(--ok); font-weight: 700; }
 
   /* ============================================================
      按鈕：每顆只吃 --face / --edge / --text 三個變數
@@ -121,10 +203,10 @@
   .btn:active, .btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
   .btn:focus-visible, .btn.is-focus { outline: 3px solid var(--indigo); outline-offset: 3px; }
 
-  .btn-solid { --face: var(--indigo); --edge: var(--indigo-edge); --text: #fff; }
+  .btn-solid { --face: var(--indigo); --edge: var(--solid-edge); --text: #fff; }
   .btn-secondary { --face: var(--surface); --edge: var(--blue-edge); --text: var(--blue-text); }
   .btn-ghost { --face: transparent; --edge: transparent; --text: var(--blue-text); --depth: 0px; }
-  .btn-ghost:hover, .btn-ghost.is-hover { --face: #eef1fc; filter: none; }
+  .btn-ghost:hover, .btn-ghost.is-hover { --face: var(--hover); filter: none; }
   .btn-danger { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); }
 
   .btn-lg { --h: 56px; font-size: 18px; padding: 0 28px; border-radius: var(--r-md); --depth: 5px; }
@@ -137,7 +219,7 @@
 
   /* 停用：照 ARCHITECTURE 第 7 節的「壓扁」語言——沒有厚度、灰掉，不疊 opacity */
   .btn:disabled, .btn.is-disabled {
-    --face: #e6e6ea; --edge: #d2d2d8; --text: #6e6e76; --depth: 0px;
+    --face: var(--disabled-face); --edge: var(--disabled-edge); --text: var(--disabled-text); --depth: 0px;
     transform: translateY(4px); cursor: not-allowed; filter: none;
   }
 
@@ -166,16 +248,16 @@
   .chip[aria-pressed="true"] { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); box-shadow: 0 3px 0 var(--blue-edge); }
   .chip svg { width: 16px; height: 16px; }
 
-  .segmented { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--r-md); background: #e8e8ee; }
+  .segmented { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--r-md); background: var(--track); }
   .segmented button { height: 40px; padding: 0 16px; border-radius: calc(var(--r-md) - 4px); border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 14px; color: #55555c; cursor: pointer; }
-  .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 #c9c9d3; }
+  .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 2px 0 var(--edge-mid); }
 
   /* 大選項卡：一次要做的決定只有一兩個時用的大按鈕（題型、同意／不同意⋯），可以複選也可以單選。
      沒選：白底灰框、右上角空圈；選了：換成自己的粉彩色（.c-blue／.c-coral／.c-mint⋯），右上角實心打勾。按下去會沉下去。
      狀態看 aria-pressed="true"（或 .is-selected）；停用（例如時間到鎖定）時沒選的那顆淡掉 */
   .choice {
     --sel-face: var(--blue-face); --sel-edge: var(--blue-edge); --sel-text: var(--blue-text);
-    --face: var(--surface); --edge: var(--edge-n); --text: var(--ink); --mark: #8a8a93;
+    --face: var(--surface); --edge: var(--edge-n); --text: var(--ink); --mark: var(--faint);
     position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
     min-height: 136px; padding: 16px 8px; margin-bottom: 4px;
     border: 2px solid var(--edge); border-radius: var(--r-lg); background: var(--face); color: var(--text);
@@ -188,7 +270,7 @@
   .choice[aria-pressed="true"], .choice.is-selected { --face: var(--sel-face); --edge: var(--sel-edge); --text: var(--sel-text); --mark: var(--sel-edge); }
   .choice::after {
     content: ""; position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%;
-    border: 2px solid #c9c9d3; background: var(--surface) no-repeat center / 16px;
+    border: 2px solid var(--edge-mid); background: var(--surface) no-repeat center / 16px;
   }
   .choice[aria-pressed="true"]::after, .choice.is-selected::after {
     border-color: var(--edge); background-color: var(--edge);
@@ -222,9 +304,11 @@
   }
   .buzz-btn:active:not(:disabled), .buzz-btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
   .buzz-btn:focus-visible { outline: 3px solid var(--indigo); outline-offset: 6px; }
-  .buzz-btn:disabled { --face: #e6e6ea; --edge: #c9c9d3; --text: #6e6e76; --depth: 4px; transform: translateY(6px); cursor: not-allowed; }
+  .buzz-btn:disabled { --face: var(--disabled-face); --edge: var(--edge-mid); --text: var(--disabled-text); --depth: 4px; transform: translateY(6px); cursor: not-allowed; }
   .buzz-btn.is-counting { font-size: clamp(64px, 18vw, 96px); font-variant-numeric: tabular-nums; }
   .buzz-btn.is-done { --face: var(--coral-face); }
+  /* 深色模式：珊瑚底配淺字對比不夠，可以按的時候維持深色字、底部厚度用深一階的紅棕（按過、停用照上面的） */
+  :root[data-theme="dark"] .buzz-btn:not(:disabled):not(.is-done) { --text: #361712; --edge: #8f3f33; }
 
   /* ============================================================
      遊戲列表：白底大格子＋每個遊戲自己的插圖
@@ -236,7 +320,7 @@
     border: 2px solid var(--edge-n); border-radius: var(--radius);
     padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; min-height: 300px; isolation: isolate;
     background-color: var(--surface);
-    background-image: linear-gradient(#0000000b 1px, transparent 1px), linear-gradient(90deg, #0000000b 1px, transparent 1px);
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 32px 32px; background-position: -1px -1px;
     box-shadow: var(--raise-n);
     transition: transform .15s, box-shadow .15s; cursor: pointer;
@@ -255,7 +339,7 @@
      logo 陣列：W 彼此相連、淺色同色系、白底
      ============================================================ */
   .pattern-box { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); position: relative; min-height: 280px; display: grid; place-items: center; background: var(--surface); }
-  .pattern-box .label { position: relative; background: #ffffffe0; backdrop-filter: blur(6px); padding: 14px 24px; border-radius: var(--r-md); font-weight: 800; font-size: 22px; box-shadow: var(--shadow); }
+  .pattern-box .label { position: relative; background: var(--glass-strong); backdrop-filter: blur(6px); padding: 14px 24px; border-radius: var(--r-md); font-weight: 800; font-size: 22px; box-shadow: var(--shadow); }
   .pattern-box svg.tiles { position: absolute; inset: 0; width: 100%; height: 100%; }
 
   /* ============================================================
@@ -296,7 +380,7 @@
   /* ============================================================
      目錄（設計系統頁的導覽）
      ============================================================ */
-  .toc { position: sticky; top: 0; z-index: 20; margin: 24px -16px 0; padding: 10px 16px; background: #f4f4f6e6; backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .toc { position: sticky; top: 0; z-index: 20; margin: 24px -16px 0; padding: 10px 16px; background: var(--bg-glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
   .toc a { flex: none; font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: none; padding: 6px 12px; border-radius: var(--r-pill); background: var(--surface); border: 1px solid var(--line); }
   .toc a:hover { background: var(--blue-face); }
   h2[id] { scroll-margin-top: 70px; }
@@ -327,7 +411,7 @@
   .field { display: grid; gap: 6px; max-width: 360px; width: 100%; }
   .field label { font-weight: 800; font-size: 14px; }
   .field .help { font-size: 13px; color: var(--muted); }
-  .field .error-msg { font-size: 13px; color: #a3261a; font-weight: 700; display: flex; gap: 4px; align-items: center; }
+  .field .error-msg { font-size: 13px; color: var(--danger); font-weight: 700; display: flex; gap: 4px; align-items: center; }
   .input, .select, .textarea {
     width: 100%; height: 52px; padding: 0 16px; border-radius: var(--r-md);
     border: 2px solid var(--edge-n); background: var(--surface); color: var(--ink);
@@ -336,10 +420,10 @@
   }
   .textarea { height: auto; min-height: 104px; padding: 12px 16px; resize: vertical; line-height: 1.6; }
   .select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23303a66' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 44px; }
-  .input::placeholder, .textarea::placeholder { color: #8a8a93; }
+  .input::placeholder, .textarea::placeholder { color: var(--faint); }
   .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 4px #3d54b62e; }
-  .input.is-error { border-color: #c2412f; box-shadow: 0 0 0 4px #ee7b6a33; }
-  .input:disabled { background: #ececf0; color: #6e6e76; }
+  .input.is-error { border-color: var(--danger-edge); box-shadow: 0 0 0 4px #ee7b6a33; }
+  .input:disabled { background: var(--sunken); color: var(--disabled-text); }
 
   /* 房號：四格各一個字 */
   .code-input { display: flex; gap: 10px; }
@@ -359,7 +443,7 @@
   /* 開關 */
   .switch { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 700; }
   .switch input { position: absolute; opacity: 0; pointer-events: none; }
-  .switch .track { width: 56px; height: 32px; border-radius: var(--r-pill); background: #d4d4dc; border: 2px solid #b9b9c3; position: relative; transition: background .2s, border-color .2s; }
+  .switch .track { width: 56px; height: 32px; border-radius: var(--r-pill); background: var(--edge-n); border: 2px solid var(--edge-strong); position: relative; transition: background .2s, border-color .2s; }
   .switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 #0000002e; transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
   .switch input:checked + .track { background: var(--indigo); border-color: var(--indigo-edge); }
   .switch input:checked + .track::after { transform: translateX(24px); }
@@ -367,7 +451,7 @@
 
   /* 勾選與單選 */
   .check { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; min-height: 44px; }
-  .check input { appearance: none; width: 26px; height: 26px; margin: 0; border: 2px solid #b9b9c3; background: var(--surface); border-radius: var(--r-sm); display: grid; place-items: center; cursor: pointer; transition: background .15s; }
+  .check input { appearance: none; width: 26px; height: 26px; margin: 0; border: 2px solid var(--edge-strong); background: var(--surface); border-radius: var(--r-sm); display: grid; place-items: center; cursor: pointer; transition: background .15s; }
   .check input[type="radio"] { border-radius: 50%; }
   .check input:checked { background: var(--indigo); border-color: var(--indigo-edge); }
   .check input[type="checkbox"]:checked::after { content: ""; width: 12px; height: 7px; border: solid #fff; border-width: 0 0 3px 3px; transform: rotate(-45deg) translate(1px, -1px); }
@@ -383,7 +467,7 @@
      徽章、頭像
      ============================================================ */
   .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: var(--r-pill); border: 1.5px solid currentColor; }
-  .badge.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .badge.solid { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
   .badge.b-new { background: var(--coral-face); color: var(--coral-text); border-color: var(--coral-edge); }
   .badge.b-live { background: var(--mint-face); color: var(--mint-text); border-color: var(--mint-edge); }
   .badge.b-host { background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
@@ -421,7 +505,7 @@
    * 分頁會越加越多，所以連結由資料產生，放不下的自動收進「更多」（priority+ 導覽）；
    * 手機寬度只留 logo、語言和選單鍵，選單用底部面板打開。
    */
-  .navbar { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: var(--r-lg); background: #ffffffcc; backdrop-filter: blur(12px); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
+  .navbar { position: relative; display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: var(--r-lg); background: var(--glass); backdrop-filter: blur(12px); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); }
   /* 字標：圓體粗字（Fredoka 700）跟 W 的圓拱同一個份量；logo 跟字只隔 6px，高度對齊字的大寫高 */
   .wordmark { flex: none; display: inline-flex; align-items: center; gap: 6px; font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -0.01em; color: var(--indigo-edge); text-decoration: none; }
   .wordmark svg { width: 34px; height: 27.7px; flex: none; transform: translateY(-1px); }
@@ -432,7 +516,7 @@
     border-radius: var(--r-md); border: 2px solid transparent; background: none;
     color: var(--ink); font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
   }
-  .nav-links a:hover, .nav-more > button:hover { background: #eef1fc; }
+  .nav-links a:hover, .nav-more > button:hover { background: var(--hover); }
   .nav-links a[aria-current="page"] { background: var(--blue-face); color: var(--blue-text); border-color: var(--blue-edge); box-shadow: 0 3px 0 var(--blue-edge); }
   .nav-more { position: relative; flex: none; }
   .nav-more > button svg { width: 16px; height: 16px; transition: transform .2s; }
@@ -440,10 +524,19 @@
   .nav-menu { position: absolute; top: calc(100% + 10px); right: 0; min-width: 200px; padding: 8px; display: grid; gap: 2px; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n), var(--shadow); border-radius: var(--r-lg); z-index: 5; }
   .nav-menu[hidden] { display: none; }
   .nav-menu a { padding: 10px 12px; border-radius: var(--r-md); color: var(--ink); font-weight: 700; text-decoration: none; }
-  .nav-menu a:hover { background: #eef1fc; }
+  .nav-menu a:hover { background: var(--hover); }
   .nav-actions { flex: none; display: flex; align-items: center; gap: 8px; margin-left: auto; }
   .lang { height: 44px; border-radius: var(--r-md); border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); padding: 0 12px; font: inherit; font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 3px; }
   .lang svg { width: 16px; height: 16px; }
+
+  /* 模式切換（頁尾，語言選單左邊）：跟隨系統／淺色／深色，三個圖示的分段控制。
+     預設跟隨裝置；選過就記住（localStorage web100-theme）。外框跟語言鈕同一套（2px＋3px 厚度、高 44） */
+  .theme-switch { display: inline-flex; gap: 2px; padding: 3px; height: 44px; border-radius: var(--r-md); border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); margin-bottom: 3px; }
+  .theme-switch button { width: 34px; border: 0; border-radius: calc(var(--r-md) - 5px); background: none; color: var(--muted); display: grid; place-items: center; cursor: pointer; }
+  .theme-switch button:hover { color: var(--ink); background: var(--hover); }
+  .theme-switch button[aria-pressed="true"] { background: var(--indigo-face); color: var(--indigo-text); }
+  .theme-switch button:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+  .theme-switch svg { width: 18px; height: 18px; }
   .nav-burger { display: none; }
   /* 看導覽列自己的寬度（container query），不看整個視窗 */
   .nav-host { container-type: inline-size; }
@@ -459,7 +552,7 @@
 
   /* 選中的分頁跟按鈕同一套語言：粉彩表面＋5px 深色底線 */
   .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); overflow-x: auto; overflow-y: hidden; }
-  .tabs button { flex: none; padding: 12px 16px; border: 0; border-radius: var(--r-md) var(--r-md) 0 0; background: none; font: inherit; font-weight: 800; font-size: 15px; color: #63636b; cursor: pointer; border-bottom: 5px solid transparent; margin-bottom: -2px; }
+  .tabs button { flex: none; padding: 12px 16px; border: 0; border-radius: var(--r-md) var(--r-md) 0 0; background: none; font: inherit; font-weight: 800; font-size: 15px; color: var(--tab-text); cursor: pointer; border-bottom: 5px solid transparent; margin-bottom: -2px; }
   .tabs button:hover { color: var(--ink); }
   .tabs button[aria-selected="true"] { color: var(--blue-text); background: var(--blue-face); border-bottom-color: var(--blue-edge); }
 
@@ -499,30 +592,30 @@
   .alert.error { background: var(--coral-face); border-color: var(--coral-edge); color: var(--coral-text); }
 
   .toast-zone { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 50; display: grid; gap: 8px; width: min(420px, calc(100% - 32px)); }
-  .toast { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 18px; border-radius: var(--r-md); background: var(--ink); color: #fff; font-weight: 700; box-shadow: 0 10px 30px #0000003d; animation: toast-in .35s cubic-bezier(.34,1.56,.64,1); }
+  .toast { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 18px; border-radius: var(--r-md); background: var(--ink); color: var(--on-ink); font-weight: 700; box-shadow: 0 10px 30px #0000003d; animation: toast-in .35s cubic-bezier(.34,1.56,.64,1); }
   .toast span { flex: 1; }
-  .toast button { background: none; border: 0; color: #c9d3f7; font: inherit; font-weight: 800; cursor: pointer; padding: 6px 8px; }
+  .toast button { background: none; border: 0; color: var(--toast-action); font: inherit; font-weight: 800; cursor: pointer; padding: 6px 8px; }
   @keyframes toast-in { from { transform: translateY(20px) scale(.96); opacity: 0; } }
 
-  .progress { height: 14px; border-radius: var(--r-pill); background: #e4e4ea; border: 2px solid var(--outline); overflow: hidden; max-width: 420px; }
+  .progress { height: 14px; border-radius: var(--r-pill); background: var(--sunken); border: 2px solid var(--outline); overflow: hidden; max-width: 420px; }
   .progress > div { height: 100%; width: var(--p); background: repeating-linear-gradient(-45deg, var(--blue), var(--blue) 10px, var(--periwinkle) 10px, var(--periwinkle) 20px); border-right: 2px solid var(--outline); transition: width .4s; }
 
   .timer-ring { position: relative; width: 120px; height: 120px; }
   .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .timer-ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; font-weight: 900; font-variant-numeric: tabular-nums; }
-  .timer-ring.is-urgent .num { color: #a3261a; animation: urgent .5s ease-in-out infinite alternate; }
+  .timer-ring.is-urgent .num { color: var(--danger); animation: urgent .5s ease-in-out infinite alternate; }
   @keyframes urgent { to { transform: scale(1.12); } }
 
-  .skeleton { border-radius: var(--r-sm); background: linear-gradient(90deg, #e7e7ec 0%, #f2f2f5 40%, #e7e7ec 80%) 0 0/300% 100%; animation: shimmer 1.4s linear infinite; }
+  .skeleton { border-radius: var(--r-sm); background: linear-gradient(90deg, var(--sunken) 0%, var(--sunken-hi) 40%, var(--sunken) 80%) 0 0/300% 100%; animation: shimmer 1.4s linear infinite; }
   @keyframes shimmer { to { background-position: -150% 0; } }
 
-  .empty { text-align: center; display: grid; justify-items: center; gap: 10px; padding: 28px 16px; border: 2px dashed #cfcfd8; border-radius: var(--r-lg); background: var(--surface); }
+  .empty { text-align: center; display: grid; justify-items: center; gap: 10px; padding: 28px 16px; border: 2px dashed var(--edge-strong); border-radius: var(--r-lg); background: var(--surface); }
   .empty svg.illo { width: 120px; }
   .empty h4 { margin: 0; font-size: 18px; }
   .empty p { margin: 0; color: var(--muted); font-size: 14px; }
 
   .tip { position: relative; display: inline-block; }
-  .tip .bubble { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: var(--r-sm); white-space: nowrap; pointer-events: none; }
+  .tip .bubble { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--on-ink); font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: var(--r-sm); white-space: nowrap; pointer-events: none; }
   .tip .bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: var(--ink); }
 
   /* ============================================================
@@ -538,7 +631,7 @@
   dialog.modal .m-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px 24px 24px; }
   dialog.sheet { margin: auto 0 0; width: 100%; max-width: 100%; border: 0; border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 12px 20px 28px; box-shadow: 0 -10px 40px #0000002e; background: var(--surface); color: var(--ink); }
   dialog.sheet::backdrop { background: #11111355; }
-  dialog.sheet .grabber { width: 44px; height: 5px; border-radius: var(--r-pill); background: #d0d0d8; margin: 0 auto 14px; }
+  dialog.sheet .grabber { width: 44px; height: 5px; border-radius: var(--r-pill); background: var(--edge-strong); margin: 0 auto 14px; }
   dialog.sheet h4 { margin: 0 0 12px; font-size: 18px; }
   dialog.sheet .sheet-list { display: grid; gap: 8px; }
   dialog.sheet .sheet-list button { text-align: left; justify-content: flex-start; }
@@ -548,7 +641,7 @@
      ============================================================ */
   .player-frame { max-width: 380px; border-radius: var(--r-lg); border: 2px solid var(--outline); background: var(--bg); padding: 16px; display: grid; gap: 14px; box-shadow: 0 6px 0 var(--outline); }
   .step-dots { display: flex; gap: 6px; justify-content: center; }
-  .step-dots i { width: 10px; height: 10px; border-radius: var(--r-pill); background: #cfcfd8; transition: width .25s, background .25s; }
+  .step-dots i { width: 10px; height: 10px; border-radius: var(--r-pill); background: var(--edge-strong); transition: width .25s, background .25s; }
   .step-dots i.on { width: 28px; background: var(--indigo); }
   .step-card { background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 18px; text-align: center; display: grid; gap: 8px; justify-items: center; }
   .step-card .step-no { font-size: 12px; font-weight: 900; letter-spacing: .12em; color: var(--muted); }
@@ -557,7 +650,7 @@
   .step-card p { margin: 0; color: var(--muted); }
   .step-nav { display: flex; justify-content: space-between; align-items: center; }
 
-  .prompt-card { background: #fffdf4; border: 2px solid var(--yellow-edge); border-radius: var(--r-lg); padding: 20px 22px; box-shadow: 0 4px 0 var(--yellow-edge); max-width: 520px; font-size: 19px; line-height: 1.8; position: relative; }
+  .prompt-card { background: var(--prompt-bg); border: 2px solid var(--yellow-edge); border-radius: var(--r-lg); padding: 20px 22px; box-shadow: 0 4px 0 var(--yellow-edge); max-width: 520px; font-size: 19px; line-height: 1.8; position: relative; }
   .prompt-card .say { position: absolute; top: -13px; left: 18px; background: var(--yellow); color: var(--yellow-text); border: 2px solid var(--yellow-edge); font-size: 12px; font-weight: 900; padding: 1px 10px; border-radius: var(--r-pill); }
   .prompt-card mark { background: var(--yellow-face); color: inherit; padding: 0 3px; border-radius: var(--r-xs); }
 
@@ -569,7 +662,7 @@
 
   .metronome { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .beats { display: flex; gap: 8px; }
-  .beats i { width: 26px; height: 26px; border-radius: 50%; background: #e0e0e6; border: 2px solid var(--outline); }
+  .beats i { width: 26px; height: 26px; border-radius: 50%; background: var(--sunken); border: 2px solid var(--outline); }
   .beats i.on { background: var(--orange); transform: scale(1.15); }
   .beats i.on.accent { background: var(--coral); }
 
@@ -598,8 +691,9 @@
   @media (min-width: 760px) { .demo-grid.two { grid-template-columns: 1fr 1fr; } }
   /* 問答框滑過時變色：外框與底線換藍紫、背景帶一點淡藍（跟按鈕 hover 同一個感覺） */
   .faq details { transition: border-color .15s, box-shadow .15s, background-color .15s; }
-  .faq details:hover { border-color: var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); background: #f7f8fe; }
+  .faq details:hover { border-color: var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); background: var(--hover-faint); }
   .faq summary:hover { color: var(--blue-text); }
+  .footer-demo-bottom { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -619,6 +713,9 @@
     <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="m7.5 12.5 3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5 2.8 19.5h18.4z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 10v4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1.4" fill="currentColor"/></symbol>
     <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></symbol>
     <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M16 5.5A2.5 2.5 0 0 0 13.5 3H6a3 3 0 0 0-3 3v7.5A2.5 2.5 0 0 0 5.5 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
@@ -988,6 +1085,16 @@
           <span>© 2026 Woohop</span>
           <div class="links"><a href="#nav">關於我們</a><a href="#nav">隱私權政策</a><a href="#nav">聯絡</a></div>
         </div>
+        <div class="footer-demo-bottom">
+          <!-- 模式切換：跟隨系統／淺色／深色。這一組是真的，會切換整個設計系統頁 -->
+          <div class="theme-switch" role="group" aria-label="顯示模式">
+            <button type="button" data-theme-choice="system" aria-label="跟隨系統" title="跟隨系統"><svg><use href="#i-auto"/></svg></button>
+            <button type="button" data-theme-choice="light" aria-label="淺色" title="淺色"><svg><use href="#i-sun"/></svg></button>
+            <button type="button" data-theme-choice="dark" aria-label="深色" title="深色"><svg><use href="#i-moon"/></svg></button>
+          </div>
+          <button class="lang"><svg><use href="#i-globe"/></svg>繁中</button>
+        </div>
+        <p class="note" style="margin:12px 0 0">模式切換放在頁尾、語言左邊。預設跟隨裝置的深淺設定；選過就記住（<code>web100-theme</code>）。頁面要在 &lt;head&gt; 先決定 <code>data-theme</code>，深色色票才會生效。</p>
       </div>
     </div>
   </div>
@@ -1159,6 +1266,26 @@
 </div>
 
 <script>
+  // 顯示模式切換：跟隨系統／淺色／深色。選「跟隨系統」就把記住的拿掉，之後跟著裝置變
+  (() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const read = () => { try { return localStorage.getItem('web100-theme') || 'system'; } catch (e) { return 'system'; } };
+    const apply = (choice) => {
+      const dark = choice === 'dark' || (choice === 'system' && media.matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      document.querySelectorAll('[data-theme-choice]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeChoice === choice)));
+    };
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-theme-choice]');
+      if (!b) return;
+      const choice = b.dataset.themeChoice;
+      try { choice === 'system' ? localStorage.removeItem('web100-theme') : localStorage.setItem('web100-theme', choice); } catch (err) {}
+      apply(choice);
+    });
+    media.addEventListener('change', () => { if (read() === 'system') apply('system'); });
+    apply(read());
+  })();
+
   const W = (fill, attrs = '') => `<svg viewBox="0 0 59 48" ${attrs}><use href="#w" fill="${fill}"/></svg>`;
 
   /* ---------- 1. 色票與對比表（數值由 oklab 混色算出，跟 :root 的 token 一致） ---------- */
