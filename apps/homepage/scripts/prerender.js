@@ -15,14 +15,14 @@
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES } from '../src/locales.mjs';
-import { navbar, footer, PAGES, local, esc } from '../src/chrome.mjs';
+import { navbar, footer, PAGES, local, esc, THEME_HEAD } from '../src/chrome.mjs';
 
 const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-19g';
+const ASSET_VERSION = '2026-10-19h';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -41,6 +41,7 @@ function head(s, lang, page, title, desc, jsonLd) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f4f6" />
+    ${THEME_HEAD}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>${esc(title)}</title>

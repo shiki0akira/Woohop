@@ -29,7 +29,7 @@ import { AVATARS } from '../app/avatars.js';
 // Woohop 全站共用的導覽列、頁尾、遊戲內頂欄與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
 // 改首頁那份就是全站一起改。樣式與程式複製進 dist/match/woohop/，跟這個遊戲一起部署（不跨網域引用）
 import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
-import { navbar, footer, gameBar } from '../../homepage/src/chrome.mjs';
+import { navbar, footer, gameBar, THEME_HEAD } from '../../homepage/src/chrome.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -87,7 +87,7 @@ async function main() {
   await mkdir(outBase, { recursive: true });
 
   const partials = {
-    head: await readPartial('head.html'),
+    head: (await readPartial('head.html')).replace(/(<meta name="theme-color"[^>]*>)/, (m) => m + THEME_HEAD),
     header: await readPartial('header.html'),
     footer: await readPartial('footer.html'),
   };

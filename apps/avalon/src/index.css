@@ -43,5 +43,3 @@
 /* 旁白台詞：照著念卡片，一句一行 */
 .voice-script { white-space: pre-line; max-width: none; line-height: 1.9; font-size: 17px; margin-top: 18px; }
 
-/* 頁尾右下：模式切換＋語言選單 */
-.footer-controls { display: flex; align-items: center; gap: 10px; }

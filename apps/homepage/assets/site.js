@@ -262,6 +262,30 @@
     if (a) track('select_game', { game: a.dataset.key, source: page });
   });
 
+  /* ================= 淺色／深色模式（頁尾 .theme-switch） =================
+   * 選過就記住（web100-theme，系列共用；選回「跟隨系統」就拿掉記錄），沒選過跟隨裝置、裝置切換也跟著變。
+   * 第一次決定在 <head> 的 THEME_HEAD（chrome.mjs），這裡負責之後的切換。 */
+  const THEME_KEY = 'web100-theme';
+  const darkMedia = window.matchMedia('(prefers-color-scheme: dark)');
+  const readTheme = () => { try { const v = localStorage.getItem(THEME_KEY); return v === 'light' || v === 'dark' ? v : 'system'; } catch { return 'system'; } };
+  const applyTheme = choice => {
+    const dark = choice === 'dark' || (choice === 'system' && darkMedia.matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    const meta = document.querySelector('meta[name=theme-color]');
+    if (meta) meta.setAttribute('content', dark ? '#1c1c24' : '#f4f4f6');
+    document.querySelectorAll('[data-theme-choice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeChoice === choice)));
+  };
+  applyTheme(readTheme());
+  darkMedia.addEventListener('change', () => { if (readTheme() === 'system') applyTheme('system'); });
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-theme-choice]');
+    if (!b) return;
+    const choice = b.dataset.themeChoice;
+    try { if (choice === 'system') localStorage.removeItem(THEME_KEY); else localStorage.setItem(THEME_KEY, choice); } catch { /* 記不住就只套用這一次 */ }
+    applyTheme(choice);
+    track('change_theme', { theme: choice });
+  });
+
   /* ================= 頁尾的聯絡信箱：HTML 裡只放拆開的兩半，這裡組回 mailto 連結 ================= */
   document.querySelectorAll('.footer-mail[data-u]').forEach(a => {
     const addr = a.dataset.u + '@' + a.dataset.d;

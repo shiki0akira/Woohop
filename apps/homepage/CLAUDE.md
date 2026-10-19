@@ -10,10 +10,12 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 | `scripts/prerender.js` | 建置：為 8 語言 × 4 頁產生 `dist/{lang}/`、`games/`、`combo/`、`guides/`，含 title、description、canonical、hreflang、og、結構化資料、sitemap |
 | `assets/woohop.css`、`assets/woohop-art.js`、`assets/hero-art.js` | 從 `design/` 複製的設計系統樣式與插圖（**兩邊要同步改**） |
 | `src/chrome.mjs` | **全站共用的導覽列與頁尾（HTML）**。首頁 prerender 與各遊戲的 build（已改版的 `apps/bomb`、`match`、`buzzer`、`bingo`）都 import 這一份；遊戲 build 也會把 `woohop.css`、`site.css`、`game.css`、`woohop-art.js`、`site.js`、`game.js` 複製進自己的 dist，所以**改這幾個檔案後，已改版的遊戲也要重新 build、部署**才會跟上 |
-| `assets/site.css`、`assets/site.js` | 三頁共用的頁面樣式與程式（導覽、語言選單、遊戲卡、推薦器、破冰組合、GA） |
+| `assets/site.css`、`assets/site.js` | 三頁共用的頁面樣式與程式（導覽、語言選單、遊戲卡、推薦器、破冰組合、GA、深淺模式切換） |
+
+**深淺模式（全站）**：頁尾的 `.theme-switch`（chrome.mjs 的 footer）＋ `site.js` 的切換；`<head>` 一開始要放 `chrome.mjs` 的 `THEME_HEAD`（首頁 prerender 與四個遊戲的 build 都已接上，404 與阿瓦隆各有一份同樣的內嵌）。選擇記在 `localStorage web100-theme`。**顏色一律用 woohop.css 的變數**；JS 寫死在 SVG `fill` 屬性的顏色，用 `:root[data-theme="dark"] … use { fill }` 在 CSS 蓋過去（例：主視覺 W 陣列）。
 | `assets/home.js`、`games.js`、`combo.js` | 各頁專用 |
 | `og/{lang}.png`、`scripts/og-image.mjs` | 分享縮圖（1200×630，每語言一張，用首頁標語＋主視覺）。同一支腳本也產生遊戲的縮圖（`node scripts/og-image.mjs bomb` → `apps/bomb/public/og/`），新遊戲改版時在 `TARGETS` 加一筆。**Vercel 建置時不會重產**（沒有瀏覽器）：改了 `heroTitle1/2` 或主視覺插圖後，本機跑 `node scripts/og-image.mjs`，把 PNG 一起 commit |
-| `404.html` | 獨立頁（不走 prerender），Woohop 新設計：直接連 `/assets/woohop.css`＋`woohop-art.js`，八語文案內嵌、執行期判斷語言。只有淺色 |
+| `404.html` | 獨立頁（不走 prerender），Woohop 新設計：直接連 `/assets/woohop.css`＋`woohop-art.js`，八語文案內嵌、執行期判斷語言。深淺模式照記住的選擇或裝置（沒有切換鈕） |
 | `design-tokens.css` | 舊的配色檔。monorepo 裡已經沒有人引用（阿瓦隆、404 都改版了），但舊專案可能用絕對網址連它，先留著照樣輸出 |
 
 文案在建置時寫進靜態 HTML（給爬蟲），當頁語言的那一份也嵌進 `window.WOOHOP.t` 給執行期 JS 用，兩邊同一個來源。改了 `assets/` 的檔案要換 `prerender.js` 的 `ASSET_VERSION`，瀏覽器才會抓新版。

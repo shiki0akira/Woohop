@@ -44,6 +44,20 @@ export function navbar(s, lang, page, langHref = (l) => local(l, page)) {
       </dialog>`;
 }
 
+/*
+ * 淺色／深色模式（全站共用，localStorage web100-theme：light / dark，沒有就跟隨裝置）。
+ * THEME_HEAD 放在 <head> 最前面，畫面畫出來之前就決定好 <html data-theme>，深色的人不會先閃一下淺色；
+ * 之後的切換在 site.js。阿瓦隆（React）的 index.html 有同一段。
+ */
+export const THEME_HEAD = `<script>(function(){var s=null;try{s=localStorage.getItem('web100-theme')}catch(e){}var d=s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light');if(d){var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content','#1c1c24')}})()</script>`;
+
+// 頁尾的模式切換（設計系統的 .theme-switch）：哪一個按下去由 site.js 依記住的選擇標
+function themeSwitch(s) {
+  const opt = (value, icon, label) =>
+    `<button type="button" data-theme-choice="${value}" aria-pressed="false" aria-label="${esc(label)}" title="${esc(label)}"><svg aria-hidden="true"><use href="#${icon}"/></svg></button>`;
+  return `<div class="theme-switch" role="group" aria-label="${esc(s.themeLabel)}">${opt('system', 'i-auto', s.themeSystem)}${opt('light', 'i-sun', s.themeLight)}${opt('dark', 'i-moon', s.themeDark)}</div>`;
+}
+
 export function footer(s, lang, page, langHref = (l) => local(l, page)) {
   const langMenu = LANGS.map(
     (l) => `<a href="${langHref(l)}" hreflang="${l}" lang="${l}" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${esc(LANG_NAMES[l])}</a>`,
@@ -64,9 +78,12 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
         </div>
         <div class="footer-bottom">
           <span>© 2026 Woohop</span>
+          <div class="footer-controls">
+          ${themeSwitch(s)}
           <div class="nav-more lang-wrap up">
             <button class="lang" type="button" aria-expanded="false" aria-haspopup="true" aria-label="${esc(s.langMenu)}"><svg><use href="#i-globe"/></svg>${esc(s.langShort)}</button>
             <div class="nav-menu" hidden>${langMenu}</div>
+          </div>
           </div>
         </div>
       </footer>

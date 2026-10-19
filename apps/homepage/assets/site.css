@@ -31,6 +31,9 @@
   .hero .cta { display: flex; flex-wrap: wrap; gap: 12px; }
   .hero .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 22px; font-size: 14px; font-weight: 700; color: var(--text-2); }
   .hero .trust span { display: inline-flex; align-items: center; gap: 6px; }
+  /* 深色：主視覺 W 陣列與「湊不出組合」的灰 W 是 JS 寫死在 fill 屬性的淺色，CSS 蓋過去 */
+  :root[data-theme="dark"] #hero-tiles use { fill: #252a3c; }
+  :root[data-theme="dark"] .plan-step.is-empty .mini use { fill: var(--edge-mid); }
   .hero .trust svg { width: 18px; height: 18px; color: var(--mint-edge); }
 
   /* 主視覺的 logo 陣列是整個區塊的滿版背景，往下淡出；卡片直接浮在上面 */
@@ -161,6 +164,8 @@
   .footer-col h4 { margin: 0 0 2px; font-size: 13px; letter-spacing: .1em; color: var(--muted); }
   .footer-col .link { font-size: 15px; }
   .footer-bottom { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 2px solid var(--line); }
+  /* 頁尾右下：模式切換＋語言選單 */
+  .footer-controls { display: flex; align-items: center; gap: 10px; }
 
   /* ---------- 子頁的標題區 ---------- */
   .page-head { padding: 40px 0 8px; }

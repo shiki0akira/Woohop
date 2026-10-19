@@ -68,7 +68,7 @@ dialog.modal h2 { margin: 0 0 4px; font-size: 20px; }
 .custom-list:empty { display: none; }
 .custom-list li { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--r-md); border: 2px solid var(--edge-n); background: var(--surface); font-size: 15px; }
 .custom-list .text { flex: 1; min-width: 0; }
-.custom-list .cat-tag { flex: none; font-size: 12px; font-weight: 800; padding: 1px 8px; border-radius: var(--r-pill); background: #ececf0; color: #55555c; }
+.custom-list .cat-tag { flex: none; font-size: 12px; font-weight: 800; padding: 1px 8px; border-radius: var(--r-pill); background: var(--sunken); color: var(--text-2); }
 .chosen-remove { flex: none; width: 32px; height: 32px; border: 0; border-radius: var(--r-sm); background: none; color: var(--muted); cursor: pointer; font-size: 16px; }
 .chosen-remove:hover { background: var(--coral-face); color: var(--coral-text); }
 .custom-empty { margin: 16px 0 0; text-align: center; font-size: 14px; color: var(--muted); }
@@ -135,7 +135,7 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 /* ---------- 規則頁 ---------- */
 .rules-faq h2 { margin: 12px 0 12px; font-size: 22px; font-weight: 900; }
 .rules-faq .faq { max-width: none; }
-.rules-faq .faq p { color: #3b3b42; line-height: 1.85; }
+.rules-faq .faq p { color: var(--text-body); line-height: 1.85; }
 
 /* ---------- 主標題：遊戲名一行、一句話一行 ---------- */
 /* 日文照詞組斷行（不然會切在「お題」中間） */

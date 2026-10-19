@@ -66,11 +66,11 @@
 .cat-count { flex: none; min-width: 2.2em; text-align: right; font-size: 13px; font-weight: 800; color: var(--game-edge); font-variant-numeric: tabular-nums; }
 .q-list { list-style: none; margin: 0; padding: 0 12px 10px; display: grid; gap: 2px; }
 .check-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 4px; border-radius: var(--r-sm); cursor: pointer; font-size: 15px; line-height: 1.5; }
-.check-row:hover { background: #f7f8fe; }
+.check-row:hover { background: var(--hover-faint); }
 /* 勾選框與單選圓鈕：Woohop 的樣式（選了填靛藍＋白勾／白點） */
 .bank input[type="checkbox"], .anchor-options input[type="radio"] {
   appearance: none; flex: none; width: 22px; height: 22px; margin: 0; margin-top: 1px;
-  border: 2px solid #b9b9c3; border-radius: var(--r-sm); background: var(--surface);
+  border: 2px solid var(--edge-strong); border-radius: var(--r-sm); background: var(--surface);
   display: grid; place-items: center; cursor: pointer;
 }
 .anchor-options input[type="radio"] { border-radius: 50%; }
@@ -142,10 +142,10 @@
 .seg-tab {
   position: relative; display: flex; align-items: center; justify-content: center; gap: 6px;
   height: 44px; padding: 0 6px; border: 0; border-radius: calc(var(--r-md) - 4px); background: none;
-  font: inherit; font-size: 15px; font-weight: 700; color: #55555c; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 700; color: var(--text-2); cursor: pointer;
 }
 .seg-tab:hover { color: var(--ink); }
-.seg-tab[aria-selected="true"] { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 #c9c9d3; }
+.seg-tab[aria-selected="true"] { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 var(--edge-mid); }
 .seg-tab:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
 /* 「待你確認」的數字：珊瑚色小膠囊，有人在等就要看得到 */
 .tab-badge { min-width: 22px; padding: 1px 7px; border-radius: var(--r-pill); background: var(--coral); color: #fff; font-size: 12px; font-weight: 900; text-align: center; }
@@ -194,13 +194,13 @@
 .bingo-cell.is-marked .cell-note { color: inherit; opacity: .85; }
 .bingo-cell.in-line { background: var(--yellow); }
 /* 自行認定跟正常配對要看得出來不一樣：那不是真的找到人 */
-.bingo-cell.is-self { background: #ececf0; border-style: dashed; border-color: #b9b9c3; box-shadow: 0 3px 0 #b9b9c3; color: #55555c; }
+.bingo-cell.is-self { background: var(--sunken); border-style: dashed; border-color: var(--edge-strong); box-shadow: 0 3px 0 var(--edge-strong); color: var(--text-2); }
 /* 打勾：跟設計系統的大選項卡（.choice）同一個樣子——右上角實心圓＋白勾，顏色跟著格子的外框 */
 .bingo-cell.is-marked::after, .bingo-cell.is-self::after {
   content: ""; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%;
   background: var(--yellow-edge) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center / 16px;
 }
-.bingo-cell.is-self::after { background-color: #8a8a93; }
+.bingo-cell.is-self::after { background-color: var(--faint); }
 .bingo-card[data-size="4"] .bingo-cell::after { top: 5px; right: 5px; width: 20px; height: 20px; background-size: 12px; }
 .bingo-card[data-size="5"] .bingo-cell::after { top: 3px; right: 3px; width: 16px; height: 16px; background-size: 10px; }
 
@@ -208,7 +208,7 @@
 .cell-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
 .cell-list li { display: flex; align-items: center; gap: 2px; border: 2px solid var(--edge-n); border-radius: var(--r-md); background: var(--surface); overflow: hidden; }
 .cell-row-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; background: none; color: var(--ink); font: inherit; font-size: 15px; line-height: 1.45; text-align: left; cursor: pointer; }
-.cell-row-main:hover:not(:disabled) { background: #f7f8fe; }
+.cell-row-main:hover:not(:disabled) { background: var(--hover-faint); }
 .cell-row-main:disabled { cursor: default; }
 .cell-row-no { flex: none; width: 1.8em; color: var(--muted); font-weight: 900; font-variant-numeric: tabular-nums; text-align: right; }
 .cell-row-text { flex: 1; min-width: 0; font-weight: 700; }
@@ -275,7 +275,7 @@
   border: 2px solid var(--edge-n); border-radius: var(--r-md); background: var(--surface);
   color: var(--ink); font: inherit; font-weight: 800; text-align: left; cursor: pointer;
 }
-.pick-option:hover { border-color: var(--blue-edge); background: #f7f8fe; }
+.pick-option:hover { border-color: var(--blue-edge); background: var(--hover-faint); }
 .pick-option .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pick-option.is-pending { border-color: var(--blue-edge); background: var(--blue-face); }
 
@@ -283,7 +283,7 @@
 .conn-banner {
   position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 60;
   width: min(420px, calc(100% - 32px)); padding: 12px 16px; border-radius: var(--r-md);
-  background: var(--ink); color: #fff; font-weight: 700; text-align: center; box-shadow: 0 10px 30px #0000003d;
+  background: var(--ink); color: var(--on-ink); font-weight: 700; text-align: center; box-shadow: 0 10px 30px #0000003d;
 }
 .bingo-app .toast { justify-content: center; text-align: center; padding: 12px 18px; }
 

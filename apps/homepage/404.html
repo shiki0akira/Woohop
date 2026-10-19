@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f4f6" />
+    <!-- 深淺模式：跟全站同一段（chrome.mjs 的 THEME_HEAD）。這頁沒有頁尾的切換鈕，照記住的選擇或裝置 -->
+    <script>(function(){var s=null;try{s=localStorage.getItem('web100-theme')}catch(e){}var d=s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light');if(d){var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content','#1c1c24')}})()</script>
     <!-- 404 不該被收錄。Vercel 會以 404 狀態碼回這一頁，這行只是雙保險 -->
     <meta name="robots" content="noindex, follow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -33,6 +35,8 @@
       .lost .code { margin: 0; font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-weight: 700; font-size: clamp(56px, 16vw, 88px); line-height: 1; letter-spacing: -0.02em; color: var(--indigo-edge); }
       .lost h1 { margin: 0; font-size: clamp(24px, 6vw, 32px); line-height: 1.25; }
       .lost .lead { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
+      .lost .lead span { display: inline-block; text-wrap: balance; }
+      .lost h1 { text-wrap: balance; }
       .lost .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
       .lost .actions .btn { text-decoration: none; }
     </style>
@@ -149,7 +153,14 @@
         document.documentElement.lang = lang;
         document.title = s.title + ' - Woohop';
         document.getElementById('title').textContent = s.title;
-        document.getElementById('lead').textContent = s.lead;
+        // 說明一句一塊（inline-block）：寬的時候在句子之間換行，窄的時候每句自己平均分行，不會剩一兩個字（例如「吧。」）掉到最後一行
+        var leadEl = document.getElementById('lead');
+        s.lead.split(/(?<=[。．！？.!?])\s*/).forEach(function (part) {
+          if (!part) return;
+          var span = document.createElement('span');
+          span.textContent = part;
+          leadEl.appendChild(span);
+        });
         document.getElementById('brand').href = '/' + lang + '/';
 
         var home = document.getElementById('home-btn');
