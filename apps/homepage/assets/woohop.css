@@ -190,14 +190,17 @@
     transition: transform .08s, box-shadow .08s, filter .15s;
   }
   .btn svg { width: 20px; height: 20px; flex: none; }
-  .btn:hover, .btn.is-hover { filter: brightness(1.03) saturate(1.15); }
-  .btn:active, .btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
+  /* 滑過：往上浮 2px、底部厚度多 2px（底邊位置不變），再亮一點——跟「按下去沉下去」是同一套語言。
+     停用的不浮；按下（:active）排在後面，按住時一定是沉下去 */
+  .btn:hover:not(:disabled), .btn.is-hover { transform: translateY(-2px); box-shadow: 0 calc(var(--depth) + 2px) 0 var(--edge); filter: brightness(1.05) saturate(1.1); }
+  :root[data-theme="dark"] .btn:hover:not(:disabled), :root[data-theme="dark"] .btn.is-hover { filter: brightness(1.2); }
+  .btn:active:not(:disabled), .btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
   .btn:focus-visible, .btn.is-focus { outline: 3px solid var(--indigo); outline-offset: 3px; }
 
   .btn-solid { --face: var(--indigo); --edge: var(--solid-edge); --text: #fff; }
   .btn-secondary { --face: var(--surface); --edge: var(--blue-edge); --text: var(--blue-text); }
   .btn-ghost { --face: transparent; --edge: transparent; --text: var(--blue-text); --depth: 0px; }
-  .btn-ghost:hover, .btn-ghost.is-hover { --face: var(--hover); filter: none; }
+  .btn-ghost:hover, .btn-ghost.is-hover, :root[data-theme="dark"] .btn-ghost:hover { --face: var(--hover); filter: none; transform: none; box-shadow: none; }
   .btn-danger { --face: var(--coral-face); --edge: var(--coral-edge); --text: var(--coral-text); }
 
   .btn-lg { --h: 56px; font-size: 18px; padding: 0 28px; border-radius: var(--r-md); --depth: 5px; }
