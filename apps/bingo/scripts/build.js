@@ -33,6 +33,10 @@ import {
   checkQuestions,
 } from '../app/questions.js';
 import { AVATARS } from '../app/avatars.js';
+// Woohop 全站共用的導覽列、頁尾、遊戲內頂欄與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
+// 改首頁那份就是全站一起改。樣式與程式複製進 dist/bingo/woohop/，跟這個遊戲一起部署（不跨網域引用）
+import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
+import { navbar, footer, gameBar } from '../../homepage/src/chrome.mjs';
 import {
   SIZES,
   DEFAULT_SIZE,
@@ -47,6 +51,8 @@ import {
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const outBase = join(dist, BASE_PATH.replace(/^\//, ''));
+const siteAssets = join(root, '..', 'homepage', 'assets');
+const SITE_ASSET_FILES = ['woohop.css', 'site.css', 'game.css', 'woohop-art.js', 'site.js', 'game.js'];
 
 // 這幾個 token 是直接塞 HTML / JSON，不做跳脫；其餘一律當純文字處理
 const RAW_TOKENS = new Set([
@@ -56,9 +62,14 @@ const RAW_TOKENS = new Set([
   'avatarsJson',
   'bingoJson',
   'langOptions',
-  'rulesHostList',
-  'rulesPlayerList',
-  'rulesFaqList',
+  'woohopHeader',
+  'woohopFooter',
+  'woohopJson',
+  'gameBarHtml',
+  'heroTitleHtml',
+  'rulesFactsList',
+  'rulesHowList',
+  'rulesLeadList',
 ]);
 
 // dir 是語言後面的路徑：遊戲頁在 /bingo/{lang}/、規則頁在 /bingo/{lang}/rules/
@@ -84,6 +95,7 @@ async function main() {
     .update(await readFile(join(root, 'app', 'app.js')))
     .update(await readFile(join(root, 'app', 'app.css')))
     .update(await readFile(join(root, 'app', 'header.js')))
+    .update((await Promise.all(SITE_ASSET_FILES.map((f) => readFile(join(siteAssets, f))))).join(''))
     .digest('hex')
     .slice(0, 8);
 
@@ -112,6 +124,8 @@ async function main() {
   await cp(join(root, 'app', 'app.js'), join(outBase, 'app.js'));
   await cp(join(root, 'app', 'header.js'), join(outBase, 'header.js'));
   await cp(join(root, 'app', 'app.css'), join(outBase, 'app.css'));
+  await mkdir(join(outBase, 'woohop'), { recursive: true });
+  for (const f of SITE_ASSET_FILES) await cp(join(siteAssets, f), join(outBase, 'woohop', f));
 
   // QR 產生器整包放進來，不走 CDN：多一個網路請求、多一個第三方故障點都不值得
   await mkdir(join(outBase, 'vendor'), { recursive: true });
@@ -170,8 +184,8 @@ function checkStrings() {
     }
   }
 
-  // 規則頁的三份清單長度要一致，否則某個語言會少一步驟而沒人發現
-  for (const key of ['rulesHostSteps', 'rulesPlayerSteps', 'rulesFaq']) {
+  // 玩法頁的三份清單長度要一致，否則某個語言會少一步驟而沒人發現
+  for (const key of ['rulesFacts', 'rulesHowSteps', 'rulesLeadSteps']) {
     const size = STRINGS[DEFAULT_LANG][key].length;
     for (const lang of LANGS) {
       if (STRINGS[lang][key].length !== size) {
@@ -198,6 +212,28 @@ function tokensFor(lang, page, assetVersion) {
     langOptions: langOptions(lang),
     base: BASE_PATH,
     projectId: PROJECT_ID,
+    // 全站導覽列（遊戲頁藏起來，只留給語言選單等互動用）與頁尾。'bingo' 不是首頁的分頁，所以不標目前頁面；
+    // 語言選單連到「這個遊戲同一頁」的其他語言
+    woohopHeader: navbar(SITE_STRINGS[lang], lang, 'bingo', (l) => pagePath(l, page)),
+    woohopFooter: footer(SITE_STRINGS[lang], lang, 'bingo', (l) => pagePath(l, page)),
+    // 給 site.js（導覽互動）用的當頁文案；遊戲頁的 page_view 由 app.js 依畫面送，玩法頁交給 site.js
+    woohopJson: toScriptJson({ lang, page: 'bingo', t: SITE_STRINGS[lang], langs: LANGS, ownPageView: !page.dir }),
+    // 遊戲內頂欄（全站共用，見 apps/homepage/src/chrome.mjs 的 gameBar）
+    gameBarHtml: gameBar(SITE_STRINGS[lang], lang, {
+      title: strings.navTitle,
+      gameHref: pagePath(lang, PAGES[0]),
+      rulesHref: pagePath(lang, PAGES[1]),
+      rulesLabel: strings.navRules,
+      isRules: page.dir === 'rules',
+      // 設定：尺寸、獲勝條件、保底題、出題。開房前就能先設（存在這支手機上），大廳裡主持人用齒輪改
+      settingsLabel: strings.settingsTab,
+      backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
+    }),
+    sayLabel: SITE_STRINGS[lang].sayLabel,
+    crumbHome: SITE_STRINGS[lang].home,
+    crumbGames: SITE_STRINGS[lang].navGames,
+    // 主標題拆成「遊戲名」＋「一句話」兩行（冒號那裡分開），冒號留在 HTML 給爬蟲，畫面上藏起來
+    heroTitleHtml: heroTitleHtml(strings.heroTitle),
     siteOrigin: ORIGIN,
     workerOrigin: WORKER_ORIGIN,
     assetVersion,
@@ -220,9 +256,12 @@ function tokensFor(lang, page, assetVersion) {
      * 交叉驗證過），複製一份到 app.js 遲早會跟伺服器端算出不一樣的數字。
      */
     bingoJson: toScriptJson(bingoConstants()),
-    rulesHostList: listHtml(strings.rulesHostSteps),
-    rulesPlayerList: listHtml(strings.rulesPlayerSteps),
-    rulesFaqList: faqHtml(strings.rulesFaq),
+    // 玩法頁（精簡版，跟定時炸彈、喜好二選一同一個格式）的三塊
+    rulesFactsList: strings.rulesFacts
+      .map(([k, v]) => `<li><span>${escapeHtml(k)}</span><b>${escapeHtml(v)}</b></li>`)
+      .join('\n        '),
+    rulesHowList: listHtml(strings.rulesHowSteps),
+    rulesLeadList: listHtml(strings.rulesLeadSteps),
   };
 }
 
@@ -268,15 +307,6 @@ function questionsFor(lang) {
 
 function listHtml(items) {
   return items.map((item) => `<li>${escapeHtml(item)}</li>`).join('\n            ');
-}
-
-function faqHtml(items) {
-  return items
-    .map(
-      (item) =>
-        `<div class="faq-item">\n              <h3>${escapeHtml(item.q)}</h3>\n              <p>${escapeHtml(item.a)}</p>\n            </div>`,
-    )
-    .join('\n            ');
 }
 
 // selected 直接寫進 HTML：JS 還沒跑的時候下拉就已經指著當前語言，不會先閃成第一個選項
@@ -333,6 +363,12 @@ function render(template, tokens) {
   if (leftover) throw new Error(`還有沒替換掉的 token：${[...new Set(leftover)].join(', ')}`);
 
   return html;
+}
+
+function heroTitleHtml(title) {
+  const m = title.match(/^(.+?)(\s*[:：]\s*)(.+)$/);
+  if (!m) return escapeHtml(title);
+  return `<span class="h1-name">${escapeHtml(m[1])}<span class="sr-colon">${escapeHtml(m[2])}</span></span><span class="h1-line">${escapeHtml(m[3])}</span>`;
 }
 
 function escapeHtml(value) {

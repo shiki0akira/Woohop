@@ -4,37 +4,40 @@
     {{head}}
   </head>
 
-  <body>
+  <body class="bingo-app woohop-game" data-game-mode="browse">
     {{header}}
 
-    <main id="main">
-      <section class="view">
-        <div class="hero">
-          <h1>{{rulesTitle}}</h1>
-          <p>{{rulesIntro}}</p>
-        </div>
+    <!-- 玩法頁刻意精簡（2026-10-17，跟定時炸彈、喜好二選一同一個格式）：一眼資訊、4 步怎麼玩、主持人怎麼帶 -->
+    <main id="main" class="game-main game-rules">
+      <div class="page-head">
+        <nav class="crumbs" aria-label="breadcrumb">
+          <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><a href="{{base}}/{{lang}}/">{{navTitle}}</a><span>›</span><span>{{navRules}}</span>
+        </nav>
+        <h1>{{rulesHeading}}</h1>
+        <p>{{rulesIntro}}</p>
+      </div>
 
-        <section class="surface prose">
-          <h2>{{rulesHostHeading}}</h2>
-          <ol>
-            {{rulesHostList}}
-          </ol>
-        </section>
+      <ul class="rules-facts">
+        {{rulesFactsList}}
+      </ul>
 
-        <section class="surface prose">
-          <h2>{{rulesPlayerHeading}}</h2>
-          <ol>
-            {{rulesPlayerList}}
-          </ol>
-        </section>
-
-        <section class="surface prose faq">
-          <h2>{{rulesFaqHeading}}</h2>
-          {{rulesFaqList}}
-        </section>
-
-        <p class="rules-back"><a href="{{base}}/{{lang}}/">{{rulesBack}}</a></p>
+      <section class="panel prose">
+        <h2>{{rulesHowHeading}}</h2>
+        <ol>
+          {{rulesHowList}}
+        </ol>
       </section>
+
+      <section class="panel prose rules-lead">
+        <h2>{{rulesLeadHeading}}</h2>
+        <!-- 開場那一句做成首頁破冰組合同款的「照著念」卡片，主持人直接念 -->
+        <div class="prompt-card"><span class="say">{{sayLabel}}</span>{{rulesLeadSay}}</div>
+        <ul>
+          {{rulesLeadList}}
+        </ul>
+      </section>
+
+      <p class="rules-back"><a class="btn btn-lg btn-solid" href="{{base}}/{{lang}}/">{{rulesBack}}</a></p>
     </main>
 
     {{footer}}

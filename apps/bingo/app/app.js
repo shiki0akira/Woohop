@@ -25,6 +25,8 @@
   // 這幾個 key 跟系列其他專案共用，不要各專案自己發明一套
   var CLIENT_KEY = 'web100-client-id';
   var PROFILE_KEY = 'web100-profile';
+  // 主持人在頂欄「設定」先準備好的設定與題目（開房前就能設，隔天打開還在）
+  var PREP_KEY = 'web100-bingo-prep';
 
   // 跟 src/worker.js 的同名常數一致，兩邊要一起改
   var MIN_PLAYERS = 2;
@@ -67,7 +69,7 @@
     /*
      * 設定頁的狀態。**在連上房間之前就要能編輯**（流程是先設定、再創建、再填暱稱），
      * 所以這幾項先留在前端，等連進房間由 syncSettingsOnce 一次送上去。
-     * 之後在大廳按「改設定」回來改，因為已經連線了，每動一次就直接送出。
+     * 之後在大廳按右上角的齒輪回來改，因為已經連線了，每動一次就直接送出。
      */
     size: 0,
     targetLines: 0,
@@ -104,6 +106,7 @@
     state.clientId = loadClientId();
     loadProfile();
     resetSettings();
+    loadPrep();
 
     renderAvatarPicker();
     renderSetup();
@@ -127,15 +130,14 @@
       'max-players', 'create-room', 'create-error',
       'join-code', 'join-room', 'join-error',
       'join-title', 'nickname', 'avatar-picker', 'profile-done', 'profile-error',
-      'role-badge', 'exit-room',
-      'share-card', 'room-code', 'copy-link', 'qr-box', 'share-url',
+      'share-card', 'room-code', 'copy-link', 'share-link', 'qr-box',
       'size-seg', 'lines-seg', 'lines-hint', 'winner-seg', 'self-claim', 'host-plays',
       'anchor-card', 'anchor-options', 'anchor-choices', 'anchor-custom-radio', 'anchor-custom',
       'question-count', 'category-list',
       'custom-input', 'custom-add', 'selected-list', 'random-pick', 'clear-pick',
       'setup-done', 'setup-error',
       'lobby-card', 'player-count', 'player-list', 'waiting-hint',
-      'host-lobby', 'settings-summary', 'edit-settings', 'start-game', 'start-error',
+      'host-lobby', 'settings-summary', 'start-game', 'start-error',
       'play-tabs', 'play-grid',
       'tab-card', 'tab-requests', 'tab-requests-badge',
       'pane-card', 'pane-list', 'pane-requests',
@@ -143,7 +145,7 @@
       'bingo-card', 'cell-list',
       'spectator-box', 'spectator-title', 'spectator-desc', 'board-box', 'board-list',
       'incoming-list', 'incoming-empty',
-      'end-game', 'results-card', 'final-list', 'reset-room',
+      'end-game', 'results-card', 'final-list', 'reset-block', 'reset-room',
       'pick-dialog', 'pick-question', 'pick-list', 'pick-empty', 'pick-self-claim', 'pick-cancel',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -198,7 +200,8 @@
     } catch (e) {
       /* 存壞了就當作沒有 */
     }
-    state.avatar = (saved && saved.avatar) || pickAvatarFor(state.clientId);
+    // 沒選過的人預設用名字第一個字（設計系統的頭像選擇器也是這樣，第一格就是它）
+    state.avatar = (saved && saved.avatar) || 'initial';
     if (saved && saved.nickname && el.nickname) el.nickname.value = saved.nickname;
   }
 
@@ -213,33 +216,53 @@
     }
   }
 
-  // 沒選過的人也要有頭像，用 clientId 決定，同一個人每次進來都是同一張臉
-  function pickAvatarFor(clientId) {
-    var hash = 0;
-    for (var i = 0; i < clientId.length; i += 1) {
-      hash = (hash * 31 + clientId.charCodeAt(i)) >>> 0;
-    }
-    return AVATARS[hash % AVATARS.length].id;
+  /*
+   * 頭像一律用設計系統那套（design/brand-exploration.html 的食物頭像，粗描邊可愛風），
+   * 圖在 Woohop 全站共用的 woohop-art.js（window.Woohop.AVATARS）。id 跟舊的 app/avatars.js 一樣是那 10 種食物，
+   * 房間裡已經存的頭像不用轉換。跟喜好二選一同一套寫法。
+   *
+   * 'initial' 是「不選，用名字第一個字」：底色從頭像的底色裡依名字挑一個（同一個名字每次都一樣），字用深色。
+   */
+  function avatarList() {
+    return (window.Woohop && window.Woohop.AVATARS) || AVATARS;
   }
 
-  function avatarSvg(id, size) {
-    var found = null;
-    for (var i = 0; i < AVATARS.length; i += 1) {
-      if (AVATARS[i].id === id) found = AVATARS[i];
+  function initialBg(name) {
+    var list = avatarList();
+    var hash = 0;
+    var chars = Array.from(name || '');
+    for (var i = 0; i < chars.length; i += 1) hash = (hash * 31 + chars[i].codePointAt(0)) >>> 0;
+    return list[hash % list.length].bg;
+  }
+
+  function avatarSvg(id, size, name) {
+    var head = '<svg class="avatar" viewBox="0 0 64 64" width="' + size + '" height="' + size + '" ' +
+      'aria-hidden="true" focusable="false">';
+    if (id === 'initial') {
+      var letter = Array.from((name || '').trim())[0] || '?';
+      return head + '<rect width="64" height="64" fill="' + initialBg(name) + '"/>' +
+        '<text x="32" y="33" text-anchor="middle" dominant-baseline="central" font-size="30" font-weight="900" ' +
+        'fill="#22222c">' + escapeHtml(letter) + '</text></svg>';
     }
-    // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回預設
-    if (!found) found = AVATARS[0];
-    return (
-      '<svg class="avatar" viewBox="0 0 64 64" width="' + size + '" height="' + size + '" ' +
-      'aria-hidden="true" focusable="false"><rect width="64" height="64" fill="' + found.bg +
-      '"/>' + found.svg + '</svg>'
-    );
+    var list = avatarList();
+    var found = null;
+    for (var i = 0; i < list.length; i += 1) {
+      if (list[i].id === id) found = list[i];
+    }
+    // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回第一張
+    if (!found) found = list[0];
+    return head + '<rect width="64" height="64" fill="' + found.bg + '"/>' + found.svg + '</svg>';
   }
 
   function renderAvatarPicker() {
-    var html = '';
-    for (var i = 0; i < AVATARS.length; i += 1) {
-      var avatar = AVATARS[i];
+    // 第一格是「用名字第一個字」，打字時跟著換字（見 bindEvents 的 nickname input）
+    var html =
+      '<button class="avatar-option" type="button" role="radio" data-avatar="initial" aria-checked="' +
+      (state.avatar === 'initial') + '" aria-label="' + escapeHtml(t('avatarInitialLabel')) + '">' +
+      avatarSvg('initial', 56, el.nickname ? el.nickname.value : '') + '</button>';
+    var list = avatarList();
+    for (var i = 0; i < list.length; i += 1) {
+      var avatar = list[i];
       html +=
         '<button class="avatar-option" type="button" role="radio" data-avatar="' + avatar.id +
         '" aria-checked="' + (avatar.id === state.avatar) + '" aria-label="' +
@@ -585,20 +608,23 @@
   function bindEvents() {
     el.createRoom.addEventListener('click', createRoom);
     el.joinRoom.addEventListener('click', joinByCode);
-    el.joinCode.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') joinByCode();
-    });
 
     el.avatarPicker.addEventListener('click', function (event) {
       var button = event.target.closest('[data-avatar]');
       if (button) selectAvatar(button.dataset.avatar);
     });
     el.profileDone.addEventListener('click', enterRoom);
+    // 「用名字第一個字」那一格跟著暱稱換字
+    el.nickname.addEventListener('input', function () {
+      var option = el.avatarPicker.querySelector('[data-avatar="initial"]');
+      if (option) option.innerHTML = avatarSvg('initial', 56, el.nickname.value);
+    });
     el.nickname.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') enterRoom();
     });
 
     el.copyLink.addEventListener('click', copyShareLink);
+    bindDesignControls();
 
     el.sizeSeg.addEventListener('change', function (event) {
       state.size = Number(event.target.value);
@@ -666,7 +692,7 @@
       state.anchorCustomText = el.anchorCustom.value;
       el.anchorCustomRadio.checked = true;
       state.anchor = customAnchor();
-      // 每一個按鍵都送一次太吵（大廳按「改設定」回來改時是連線狀態），停手才送
+      // 每一個按鍵都送一次太吵（大廳按右上角的齒輪回來改時是連線狀態），停手才送
       clearTimeout(state.anchorTimer);
       state.anchorTimer = setTimeout(settingsChanged, 400);
     });
@@ -731,10 +757,8 @@
     });
 
     el.setupDone.addEventListener('click', finishSetup);
-    el.editSettings.addEventListener('click', showSetup);
     el.startGame.addEventListener('click', startGame);
     el.playerList.addEventListener('click', onKick);
-    el.exitRoom.addEventListener('click', confirmExit);
     el.confirmCancel.addEventListener('click', function () { el.confirmDialog.close(); });
 
     el.tabCard.addEventListener('click', function () { showTab('card'); });
@@ -755,8 +779,9 @@
         track('bingo_round_ended');
       });
     });
-    // 不跳確認：這一輪已經結束、最終榜也拍好快照了，回大廳沒有東西會被打斷
+    // 再玩一輪。不跳確認：這一輪已經結束、最終榜也拍好快照了，回大廳沒有東西會被打斷
     el.resetRoom.addEventListener('click', function () {
+      track('bingo_play_again');
       send({ t: 'reset' });
     });
 
@@ -1020,15 +1045,14 @@
   }
 
   /*
-   * 設定頁有兩個進入點，按鈕的意思也不同（跟 03 一致）：
+   * 設定頁有兩個進入點（跟喜好二選一一致），按鈕都是「完成」：存起來、回剛剛的畫面。
    *
-   *  1. 剛建好房、還沒連線 —— 按鈕是「創建房間」，按完去挑頭像填暱稱。
-   *  2. 已經在大廳，按「改設定」回來 —— 按鈕是「完成」，按完回房間。
+   *  1. 首頁頂欄的「設定」分頁 —— 還沒開房，只是先準備好（存在這支手機上），開房時沿用。
+   *  2. 大廳裡主持人按頂欄右上角的齒輪 —— 已經連線，存起來之後送給伺服器。
    *
    * 用有沒有連線來分辨，不另外記旗標：連線狀態本來就是唯一的事實來源。
    */
   function showSetup() {
-    el.setupDone.textContent = isOpen() ? t('saveSettingsButton') : t('setupDoneButton');
     hideError(el.setupError);
     pushView('setup');
   }
@@ -1037,9 +1061,69 @@
     hideError(el.setupError);
     if (!settingsReady(el.setupError)) return;
 
-    if (!isOpen()) return pushView('profile', roomUrl());
-    sendSettings();
-    pushView('room', roomUrl());
+    savePrep();
+    if (isOpen()) sendSettings();
+    // 「完成」＝退回剛剛那一格（首頁或房間），不要再往前推一格，
+    // 否則返回鍵會在設定頁與房間之間來回打轉
+    history.back();
+  }
+
+  /* ---------- 先準備好的設定（頂欄「設定」）：存在這支手機上 ---------- */
+
+  function savePrep() {
+    state.prepared = true;
+    try {
+      localStorage.setItem(PREP_KEY, JSON.stringify({
+        size: state.size,
+        targetLines: state.targetLines,
+        linesTouched: state.linesTouched,
+        winnerCount: state.winnerCount,
+        hostPlays: state.hostPlays,
+        allowSelfClaim: state.allowSelfClaim,
+        anchor: state.anchor,
+        anchorCustomText: state.anchorCustomText,
+        anchorCustomId: state.anchorCustomId,
+        selected: state.selected,
+        custom: state.custom,
+      }));
+    } catch (e) {
+      /* 記不住就算了，這一場照樣用 */
+    }
+  }
+
+  /*
+   * 讀回先準備好的設定。讀到了就算主持人「動過設定」（settingsTouched）：
+   * 尺寸不再跟著人數自己升（見 syncAutoSize），他挑好的題目也不會被補題蓋掉。
+   * 存的東西對不上現在的規則（題庫改版、題數不合）就整份不用，回到每場重抽的預設。
+   */
+  function loadPrep() {
+    var saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(PREP_KEY) || 'null');
+    } catch (e) {
+      /* 存壞了就當作沒有 */
+    }
+    if (!saved || B.sizes.indexOf(saved.size) < 0 || !Array.isArray(saved.selected)) return;
+
+    var known = {};
+    for (var i = 0; i < BANK.list.length; i += 1) known[BANK.list[i].id] = true;
+    var selected = saved.selected.filter(function (id) { return known[id]; });
+    var custom = Array.isArray(saved.custom) ? saved.custom : [];
+    if (selected.length + custom.length !== slotsFor(saved.size)) return;
+
+    state.size = saved.size;
+    state.targetLines = Math.min(Number(saved.targetLines) || B.defaultTargetLines[saved.size], B.maxTargetLines[saved.size]);
+    state.linesTouched = Boolean(saved.linesTouched);
+    state.winnerCount = Number(saved.winnerCount) || 0;
+    state.hostPlays = saved.hostPlays !== false;
+    state.allowSelfClaim = Boolean(saved.allowSelfClaim);
+    state.anchor = needsAnchor(state.size) ? saved.anchor || { id: BANK.defaultAnchorId } : null;
+    state.anchorCustomText = saved.anchorCustomText || '';
+    state.anchorCustomId = saved.anchorCustomId || '';
+    state.selected = selected;
+    state.custom = custom;
+    state.settingsTouched = true;
+    state.prepared = true;
   }
 
   // 題數與保底題的檢查。設定頁與大廳的「開始遊戲」都要用，錯誤訊息指到真正的原因
@@ -1103,12 +1187,14 @@
          * 設定頁原本是建房到入場之間的必經站，而它上面疊了尺寸、幾條線、幾個贏家、
          * 主持人參不參加、自己認領、保底題，再加上一整區出題——第一次用的人會
          * 停在那裡，即使那一頁的預設值本來就是合法的、直接按過去就好。
-         * 現在它降級成大廳裡的「改設定」，想調的人才進去。
+         * 現在它降級成大廳右上角的齒輪（開房前也能在頂欄的「設定」先準備），想調的人才進去。
          *
          * 重抽一次題目，並讓尺寸回到「跟著人數自動決定」（syncAutoSize）：
          * 同一個分頁連開兩間房，第二間不會沿用第一間的結果。
+         * 主持人在頂欄「設定」先準備過的話就沿用那一份（loadPrep）。
          */
         resetSettings();
+        loadPrep();
         renderSetup();
         pushView('profile', roomUrl());
       })
@@ -1368,19 +1454,21 @@
      * 只有「不在設定頁」時才把畫面切回房間。
      *
      * 廣播是隨時會來的（有人加入、離開、送出配對），每來一次就 pushView('room')
-     * 的話，主持人按「改設定」進去之後會被下一次廣播直接彈回房間。
+     * 的話，主持人按齒輪進去之後會被下一次廣播直接彈回房間。
      * 底下那些卡片的顯示狀態照樣更新，回去時就是對的。
      */
     if (state.view !== 'setup') pushView('room', roomUrl());
 
-    el.roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
-    el.exitRoom.textContent = isHost ? t('closeRoomButton') : t('leaveRoomButton');
+    // 身分標籤放在遊戲內頂欄右邊。離開／關閉房間就是頂欄的返回鍵（window.gameBack → confirmExit），不另外放按鈕
+    var roleBadge = document.getElementById('game-bar-badge');
+    if (roleBadge) roleBadge.textContent = isHost ? t('hostBadge') : t('playerBadge');
+    syncSettingsGear();
 
     el.shareCard.hidden = !inLobby;
     el.lobbyCard.hidden = !inLobby;
     el.playTabs.hidden = !playing;
     el.playGrid.hidden = !playing;
-    // 「結束這一輪」在房間列，只有進行中的主持人看得到
+    // 「結束這一輪」在進行中畫面的最下面，只有主持人看得到
     el.endGame.hidden = !playing || !isHost;
     el.resultsCard.hidden = !ended;
 
@@ -1390,14 +1478,17 @@
   }
 
   function renderLobby(room, isHost) {
-    el.roomCode.textContent = room.code;
-    el.shareUrl.textContent = shareLink();
+    // 房號一格一個字（Woohop 的 .room-code），念給大家聽、對著抄都比較不會錯
+    el.roomCode.innerHTML = String(room.code).split('').map(function (ch) {
+      return '<span>' + escapeHtml(ch) + '</span>';
+    }).join('');
+    el.roomCode.setAttribute('aria-label', room.code);
     renderQr();
 
     el.hostLobby.hidden = !isHost;
     el.waitingHint.hidden = isHost;
 
-    // 設定收在「改設定」後面，大廳只留一行摘要——主持人在這一頁要做的是等人到齊
+    // 設定收在頂欄右上角的齒輪後面，大廳只留一行摘要——主持人在這一頁要做的是等人到齊
     if (isHost) {
       el.settingsSummary.textContent = t('settingsSummary', {
         size: room.size,
@@ -1447,12 +1538,14 @@
       if (!player.online) badges += '<span class="role-badge is-muted">' + escapeHtml(t('offlineBadge')) + '</span>';
 
       var kick = isHost && !player.host
-        ? '<button class="chosen-remove" type="button" data-kick="' + player.id + '" aria-label="' +
-          escapeHtml(t('kickLabel')) + '">&times;</button>'
+        ? '<button class="btn btn-sm btn-ghost kick" type="button" data-kick="' + player.id + '" aria-label="' +
+          escapeHtml(t('kickLabel')) + '">✕</button>'
         : '';
 
+      // 設計系統的 .player：一列一人，自己那一列換成淡藍
       html +=
-        '<li>' + avatarSvg(player.avatar, 32) + '<span class="player-name">' +
+        '<li class="player' + (player.online ? '' : ' is-offline') + (player.id === state.clientId ? ' is-me' : '') + '">' +
+        avatarSvg(player.avatar, 32, player.nickname) + '<span class="name">' +
         escapeHtml(player.nickname) + '</span>' + badges + kick + '</li>';
     }
     return html;
@@ -1640,9 +1733,9 @@
         escapeHtml(t('incomingLine', { name: playerName(request.from) })) + '</span>' +
         '<span class="req-question">' + escapeHtml(questionText(request.questionId)) + '</span></div>' +
         '<div class="req-actions">' +
-        '<button class="btn-solid btn-small" type="button" data-accept="' + request.requestId + '">' +
+        '<button class="btn btn-sm btn-solid" type="button" data-accept="' + request.requestId + '">' +
         escapeHtml(t('confirmButton')) + '</button>' +
-        '<button class="btn-outline btn-small" type="button" data-decline="' + request.requestId + '">' +
+        '<button class="btn btn-sm btn-secondary" type="button" data-decline="' + request.requestId + '">' +
         escapeHtml(t('declineButton')) + '</button></div></li>';
     }
     el.incomingList.innerHTML = html;
@@ -1673,7 +1766,7 @@
         : '';
 
       html +=
-        '<li>' + avatarSvg(player.avatar, 32) +
+        '<li>' + avatarSvg(player.avatar, 32, player.nickname) +
         '<div class="board-main"><span class="player-name">' + escapeHtml(player.nickname) + '</span>' +
         badges + waiting + '</div>' +
         '<div class="board-score"><strong>' +
@@ -1687,8 +1780,8 @@
 
   function renderEnded(room) {
     renderBoard(room, el.finalList, null);
-    // 關房是房間列那顆「關閉房間」的事，結算卡只留「再玩一輪」
-    el.resetRoom.hidden = state.role !== 'host';
+    // 關房是頂欄返回鍵的事，結算卡只留「再玩一輪」
+    el.resetBlock.hidden = state.role !== 'host';
   }
 
   /* ---------- 配對 ---------- */
@@ -1729,7 +1822,7 @@
       html +=
         '<li><button class="pick-option' + (player.id === pendingTo ? ' is-pending' : '') +
         '" type="button" data-pick="' + player.id + '">' +
-        avatarSvg(player.avatar, 32) + '<span>' + escapeHtml(player.nickname) + '</span>' +
+        avatarSvg(player.avatar, 32, player.nickname) + '<span class="name">' + escapeHtml(player.nickname) + '</span>' +
         (player.id === pendingTo
           ? '<span class="role-badge">' + escapeHtml(t('pickPendingBadge')) + '</span>'
           : '') +
@@ -1834,6 +1927,78 @@
     });
   }
 
+  /*
+   * 設計系統元件的行為（design/brand-exploration.html），跟喜好二選一同一套：
+   *  - 房號四格：打一個字跳下一格、刪除退回上一格、貼上整組自動分格；組起來寫進隱藏的 #join-code
+   *  - 數量增減：2～30，寫進隱藏的 #max-players
+   *  - 分享：手機支援 navigator.share 才出現
+   */
+  function bindDesignControls() {
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('#code-boxes input'));
+    var sync = function () {
+      el.joinCode.value = boxes.map(function (b) { return b.value; }).join('');
+      hideError(el.joinError);
+    };
+    var fill = function (from, text) {
+      var chars = text.replace(/[^a-z0-9]/gi, '').toUpperCase().split('');
+      for (var i = from; i < boxes.length && chars.length; i += 1) boxes[i].value = chars.shift();
+      sync();
+      var next = boxes.filter(function (b) { return !b.value; })[0];
+      (next || boxes[boxes.length - 1]).focus();
+    };
+    boxes.forEach(function (box, i) {
+      box.addEventListener('input', function () {
+        var v = box.value;
+        box.value = '';
+        fill(i, v);
+      });
+      box.addEventListener('keydown', function (event) {
+        if (event.key === 'Backspace' && !box.value && boxes[i - 1]) {
+          boxes[i - 1].value = '';
+          boxes[i - 1].focus();
+          sync();
+          event.preventDefault();
+        }
+        // Enter 跟原本的房號輸入框一樣：直接加入
+        if (event.key === 'Enter') joinByCode();
+      });
+      box.addEventListener('paste', function (event) {
+        var text = (event.clipboardData || window.clipboardData).getData('text');
+        if (!text) return;
+        event.preventDefault();
+        fill(i, text);
+      });
+    });
+
+    var out = document.getElementById('max-players-out');
+    document.getElementById('max-stepper').addEventListener('click', function (event) {
+      var button = event.target.closest('[data-step]');
+      if (!button) return;
+      var value = Math.min(MAX_PLAYERS, Math.max(MIN_PLAYERS, (Number(el.maxPlayers.value) || 10) + Number(button.dataset.step)));
+      el.maxPlayers.value = String(value);
+      out.textContent = String(value);
+    });
+
+    if (navigator.share) {
+      el.shareLink.hidden = false;
+      el.shareLink.addEventListener('click', function () {
+        navigator.share({ title: document.title, url: shareLink() }).catch(function () {
+          /* 使用者取消分享，不用做什麼 */
+        });
+      });
+    }
+  }
+
+  /*
+   * 大廳裡主持人可以從頂欄右上角的齒輪改設定（game.css 看 data-game-settings）；開始之後就藏起來。
+   * 從設定頁按返回回到房間時不一定會重畫房間，所以 showView 也會呼叫這支
+   */
+  function syncSettingsGear() {
+    var can = state.view === 'room' && state.role === 'host' && state.room && state.room.status === 'lobby';
+    if (can) document.body.setAttribute('data-game-settings', '');
+    else document.body.removeAttribute('data-game-settings');
+  }
+
   /* ---------- 畫面切換與小工具 ---------- */
 
   /*
@@ -1862,9 +2027,30 @@
     });
   }
 
+  // 用 replace 不用 href：退出之後按返回鍵不該又被拉回剛剛離開的房間
   function backHome() {
-    location.href = CFG.base + '/' + CFG.lang + '/';
+    location.replace(CFG.base + '/' + CFG.lang + '/');
   }
+
+  // 頂欄的「設定」（game.js 呼叫）：首頁畫面是先準備設定與題目，大廳裡是主持人改設定
+  window.openSettings = function () {
+    if (state.view === 'setup') return;
+    showSetup();
+  };
+
+  /*
+   * 遊戲內頂欄的返回鍵（game.js 會呼叫這個），跟喜好二選一一樣：
+   *  - 首頁畫面：回網站的「找遊戲」
+   *  - 設定、填名字：跟瀏覽器返回鍵一樣退一格（onPopState 會處理）
+   *  - 房間裡：跟「離開／關閉房間」同一個確認框
+   *  - 錯誤畫面：回這個遊戲的首頁
+   */
+  window.gameBack = function () {
+    if (state.view === 'home') location.href = '/' + CFG.lang + '/games/';
+    else if (state.view === 'room') confirmExit();
+    else if (state.view === 'error') backHome();
+    else history.back();
+  };
 
   /* ---------- 瀏覽器返回鍵 ---------- */
 
@@ -1889,7 +2075,7 @@
     window.addEventListener('popstate', onPopState);
   }
 
-  // url 不給就沿用目前的網址（設定頁、以及從房間按「改設定」進來的情況）
+  // url 不給就沿用目前的網址（設定頁、以及從房間按齒輪進來的情況）
   function pushView(name, url) {
     if (state.entry !== name) {
       state.depth += 1;
@@ -1987,6 +2173,7 @@
     state.prevWon = false;
     state.cancelled = {};
     resetSettings();
+    loadPrep();
     renderSetup();
     hideBanner();
   }
@@ -2004,6 +2191,14 @@
     // 到這一步一定已經有房號了（建房完或掃碼進來），標題直接帶上，
     // 掃錯 QR code 的人在填名字之前就看得出來
     if (name === 'profile') el.joinTitle.textContent = t('joinTitle', { code: state.code });
+
+    // 遊戲內頂欄（Woohop 的 game.css）：進了房間就是 play（藏起玩法分頁、選單、頁尾，遊戲名不能點），其他畫面是 browse。
+    // 房間裡的主持人點齒輪改設定，那也還是在房間裡：頂欄維持房間的樣子（返回＝回房間、沒有玩法分頁可以點出去）
+    var inRoom = name === 'room' || (name === 'setup' && isOpen());
+    document.body.setAttribute('data-game-mode', inRoom ? 'play' : 'browse');
+    syncSettingsGear();
+    var gameTitle = document.querySelector('.game-bar .title');
+    if (gameTitle) gameTitle.tabIndex = inRoom ? -1 : 0;
 
     // 所有畫面共用同一個網址，page_view 靠自動送只會記到一筆，
     // 分不出多少人真的開了房間，所以在這裡手動送

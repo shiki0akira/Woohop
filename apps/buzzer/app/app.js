@@ -943,17 +943,35 @@
   /* ---------- 離開 / 關閉房間 ---------- */
 
   /*
-   * 遊戲內頂欄的返回鍵（game.js 會呼叫這個）。離開／關閉房間就是這顆，房間裡不另外放按鈕：
+   * 遊戲內頂欄的返回鍵（game.js 會呼叫這個），跟喜好二選一、幸福賓果一樣。
+   * 離開／關閉房間就是這顆，房間裡不另外放按鈕：
    *  - 首頁畫面：回網站的「找遊戲」
-   *  - 填暱稱、房間裡：跟瀏覽器返回鍵一樣退一格，交給 onPopState——
-   *    還在等待大廳就直接離開（主持人是關房），開始搶答之後先跳確認框
+   *  - 填暱稱：跟瀏覽器返回鍵一樣退一格（onPopState 會處理）
+   *  - 房間裡（主持人控制台、玩家畫面）：先跳「離開／關閉房間」的確認框
    *  - 錯誤畫面：回這個遊戲的首頁
    */
   window.gameBack = function () {
     if (currentView === 'home') location.href = '/' + LANG + '/games/';
+    else if (currentView === 'host' || currentView === 'play') confirmExit();
     else if (currentView === 'error') goHome();
     else history.back();
   };
+
+  function confirmExit() {
+    var isHost = me && me.role === 'host';
+    askConfirm(
+      isHost ? T.closeConfirmTitle : T.leaveConfirmTitle,
+      isHost ? T.closeConfirmDesc : T.leaveConfirmDesc,
+      isHost ? T.closeRoomButton : T.leaveRoomButton,
+      function () {
+        // 不等伺服器回覆就離開：房間關掉之後這條連線本來就會斷，
+        // 停在原地等只會讓主持人看到一瞬間的「重新連線中」
+        if (isHost) track('buzzer_room_closed');
+        send({ t: isHost ? 'close' : 'leave' });
+        goHome();
+      },
+    );
+  }
 
   function bindExit() {
     el['confirm-cancel'].addEventListener('click', function () {
@@ -1028,17 +1046,7 @@
     if (lastState && lastState.started) {
       // 先把房間那一格補回去，按「取消」的人才留在原地
       pushRoomEntry(roomCode);
-      var isHost = me && me.role === 'host';
-      askConfirm(
-        isHost ? T.closeConfirmTitle : T.leaveConfirmTitle,
-        isHost ? T.closeConfirmDesc : T.leaveConfirmDesc,
-        isHost ? T.closeRoomButton : T.leaveRoomButton,
-        function () {
-          if (isHost) track('buzzer_room_closed');
-          send({ t: isHost ? 'close' : 'leave' });
-          goHome();
-        },
-      );
+      confirmExit();
       return;
     }
 

@@ -77,7 +77,7 @@ id 跟舊版一樣是那 10 種食物，房間裡已經存的頭像不用轉換�
 - 樣式來自 Woohop 全站的 `woohop.css`＋`site.css`＋`game.css`，唯一來源在 `apps/homepage/assets`，build 時複製進 `dist/buzzer/woohop/`；導覽列、頁尾、遊戲內頂欄的 HTML 來自 `apps/homepage/src/chrome.mjs`。**改了那幾個檔案，這個遊戲也要重新 build、部署**
 - `app.css` 只排這個遊戲自己的東西；跟全站樣式撞名的（`.avatar`、`.room-code`、`.rank-list`）一律加 `.buzzer-app` 限定
 - 用到的元件：人數 `.stepper`、房號四格 `.code-input`、頭像選擇器、房號卡 `.room-code-card`、成員 `.player`、排行榜 `.rank-list`、確認框 `dialog.modal`、**大搶答鈕 `.buzz-btn`**（這次新增到設計系統的元件，倒數 `.is-counting`、按過 `.is-done`）
-- 頂欄：返回、遊戲名、「玩法」分頁、選單；進了房間（主持人控制台、玩家畫面）切成 `data-game-mode="play"`，右邊放「主持人／玩家」標籤。**離開／關閉房間就是頂欄的返回鍵**，房間裡不另外放按鈕（`window.gameBack` → 跟瀏覽器返回鍵同一套：大廳直接退、開始後先確認）
+- 頂欄：返回、遊戲名、「玩法」分頁、選單；進了房間（主持人控制台、玩家畫面）切成 `data-game-mode="play"`，右邊放「主持人／玩家」標籤。**離開／關閉房間就是頂欄的返回鍵**，房間裡不另外放按鈕（`window.gameBack` → 先跳確認框；瀏覽器返回鍵則是大廳直接退、開始後先確認）
 - 只有淺色，不再有深色模式與主題切換鈕
 - 按鈕的立體／壓扁語言、disabled 的配色照設計系統，不要改成疊 `opacity`
 
