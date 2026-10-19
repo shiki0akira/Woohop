@@ -135,6 +135,8 @@
     color-scheme: dark;
   }
   /* 插圖、頭像（含外框 --outline）、QR code 深色時都不換色，維持原本的樣子 */
+  /* 轉盤的指針不是插圖、是操作提示：深色時用文字色，不然深底上看不到 */
+  :root[data-theme="dark"] .wheel-pointer { border-top-color: var(--ink); }
   /* 從淺色換到深色時，帶點過場，不要整頁瞬間反白 */
   :root[data-theme] body { transition: background-color .25s, color .25s; }
 
