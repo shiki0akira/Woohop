@@ -200,6 +200,24 @@
   .choice.c-yellow { --sel-face: var(--yellow-face); --sel-edge: var(--yellow-edge); --sel-text: var(--yellow-text); }
   .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+  /* 大搶答鈕：每個人手上那一顆（搶答遊戲）。圓形、厚底，按下去整顆沉下去；停用時壓扁變灰（跟 .btn 同一套語言）。
+     倒數中加 .is-counting（數字直接長在按鈕上，字放大）；這一輪已經按過加 .is-done（退一階變淡色，還是按得下去）。
+     顏色預設是搶答的橘，要換色就蓋 --face／--edge／--text */
+  .buzz-btn {
+    --face: var(--orange); --edge: var(--orange-edge); --text: var(--orange-text); --depth: 10px;
+    display: grid; place-items: center; width: min(260px, 70vw); aspect-ratio: 1; margin: 0 auto var(--depth); padding: 16px;
+    border-radius: 50%; border: 3px solid var(--edge); background: var(--face); color: var(--text);
+    box-shadow: 0 var(--depth) 0 var(--edge);
+    font: inherit; font-size: clamp(30px, 9vw, 42px); font-weight: 900; line-height: 1.1; text-align: center;
+    cursor: pointer; user-select: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    transition: transform .06s, box-shadow .06s, background .15s;
+  }
+  .buzz-btn:active:not(:disabled), .buzz-btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
+  .buzz-btn:focus-visible { outline: 3px solid var(--indigo); outline-offset: 6px; }
+  .buzz-btn:disabled { --face: #e6e6ea; --edge: #c9c9d3; --text: #6e6e76; --depth: 4px; transform: translateY(6px); cursor: not-allowed; }
+  .buzz-btn.is-counting { font-size: clamp(64px, 18vw, 96px); font-variant-numeric: tabular-nums; }
+  .buzz-btn.is-done { --face: var(--orange-face); }
+
   /* ============================================================
      遊戲列表：白底大格子＋每個遊戲自己的插圖
      ============================================================ */

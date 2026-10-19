@@ -46,6 +46,22 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.match()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  buzzer: async () => {
+    const { STRINGS: Z } = await import(pathToFileURL(path.join(ROOT, '..', 'buzzer', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'buzzer', 'public', 'og'),
+      title: (lang) => splitTitle(Z[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.buzzer()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
+  bingo: async () => {
+    const { STRINGS: G } = await import(pathToFileURL(path.join(ROOT, '..', 'bingo', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'bingo', 'public', 'og'),
+      title: (lang) => splitTitle(G[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.bingo()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
 };
 const which = process.argv[2] || 'home';
 if (!TARGETS[which]) throw new Error('不認得的對象：' + which + '（可用：' + Object.keys(TARGETS).join('、') + '）');

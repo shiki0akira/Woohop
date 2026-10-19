@@ -191,6 +191,14 @@
       "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:file"
     },
     {
+      "source": "/buzzer/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/woohop/:file"
+    },
+    {
+      "source": "/buzzer/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/og/:file"
+    },
+    {
       "source": "/match-sitemap.xml",
       "destination": "https://web100-03-preference-match.shiki0akira.workers.dev/match/sitemap.xml"
     },
@@ -277,6 +285,14 @@
     {
       "source": "/bingo/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
       "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/:file"
+    },
+    {
+      "source": "/bingo/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/woohop/:file"
+    },
+    {
+      "source": "/bingo/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://web100-04-happy-bingo.shiki0akira.workers.dev/bingo/og/:file"
     },
     {
       "source": "/bomb-sitemap.xml",

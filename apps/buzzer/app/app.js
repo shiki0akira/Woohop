@@ -47,16 +47,23 @@
   var joinReported = false; // GA4 的加入事件只算第一次，重連不重複計
   var buzzReported = false; // 這一輪的搶答事件是否已經送過
 
+  // 暱稱與頭像（跟系列其他遊戲共用同一份，見下面的 readProfile）
+  var PROFILE_KEY = 'web100-profile';
+  var currentAvatar = 'initial';
+
   var el = {};
 
   init();
 
   function init() {
     cacheElements();
-    // 頭像要在畫選擇器之前決定：沒挑過的人用 clientId 推一個，不會每次重整換一張臉
-    currentAvatar = readProfile().avatar || defaultAvatar();
+    // 沒挑過頭像的人預設用名字第一個字（設計系統的頭像選擇器也是這樣，第一格就是它）
+    var profile = readProfile();
+    currentAvatar = profile.avatar || 'initial';
+    if (profile.nickname) el['nickname'].value = profile.nickname;
     renderAvatarPicker();
-    // 深淺色與語言切換在 header.js（規則頁也要用），這裡只管遊戲本身
+    // 導覽（語言選單）用 Woohop 全站的 site.js、遊戲內頂欄用 game.js，這裡只管遊戲本身
+    bindDesignControls();
     bindHome();
     bindJoin();
     bindHost();
@@ -84,14 +91,13 @@
       'view-home', 'view-join', 'view-host', 'view-play', 'view-error',
       'max-players', 'create-room', 'create-error', 'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
-      'host-room-code', 'share-url', 'copy-link', 'qr-box',
+      'host-room-code', 'copy-link', 'share-link', 'qr-box',
       'player-count', 'player-list', 'player-empty',
       'question', 'show-question', 'start-buzz', 'reset-round',
       'host-rank-list', 'host-rank-empty',
       'play-title', 'play-desc', 'play-question', 'play-question-text',
       'buzz', 'buzz-label', 'play-rank-list', 'play-rank-empty',
       'error-title', 'error-desc', 'conn-banner',
-      'close-room', 'leave-room',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
       'share-card', 'question-card', 'host-rank-card',
@@ -143,9 +149,8 @@
    * 暱稱與頭像存成一份 profile，key 跟系列其他專案共用（喜好二選一也讀同一份），
    * 下次進任何一個 Web100 遊戲都不用重挑。不做帳號系統：現場遊戲的人就在同一個房間裡，
    * 帳號只會在「免下載免註冊」這個賣點上加摩擦。
+   * （PROFILE_KEY 與 currentAvatar 宣告在檔案最上面：init() 一開始就要用，放在這裡會在 init 跑完後才被賦值、把頭像洗掉）
    */
-  var PROFILE_KEY = 'web100-profile';
-  var currentAvatar = '';
 
   function readProfile() {
     try {
@@ -159,22 +164,26 @@
     writeStore(PROFILE_KEY, JSON.stringify({ nickname: nickname, avatar: currentAvatar }));
   }
 
-  // 沒選過的人也要有頭像，用 clientId 決定，同一個人每次進來都是同一張臉
-  function defaultAvatar() {
-    var id = clientId();
-    var hash = 0;
-    for (var i = 0; i < id.length; i += 1) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-    return window.AVATARS[hash % window.AVATARS.length].id;
+  /*
+   * 頭像一律用設計系統那套（design/brand-exploration.html 的食物頭像，粗描邊可愛風），
+   * 圖在 Woohop 全站共用的 woohop-art.js（window.Woohop.AVATARS）。id 跟舊的 app/avatars.js 一樣是那 10 種食物，
+   * 房間裡已經存的頭像不用轉換。跟喜好二選一同一套寫法。
+   *
+   * 'initial' 是「不選，用名字第一個字」：底色從頭像的底色裡依名字挑一個（同一個名字每次都一樣），字用深色。
+   */
+  function avatarList() {
+    return (window.Woohop && window.Woohop.AVATARS) || window.AVATARS;
   }
 
-  function avatarSvg(id, size) {
-    var found = null;
-    for (var i = 0; i < window.AVATARS.length; i += 1) {
-      if (window.AVATARS[i].id === id) found = window.AVATARS[i];
-    }
-    // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回第一個
-    if (!found) found = window.AVATARS[0];
+  function initialBg(name) {
+    var list = avatarList();
+    var hash = 0;
+    var chars = Array.from(name || '');
+    for (var i = 0; i < chars.length; i += 1) hash = (hash * 31 + chars[i].codePointAt(0)) >>> 0;
+    return list[hash % list.length].bg;
+  }
 
+  function avatarSvg(id, size, name) {
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'avatar');
     svg.setAttribute('viewBox', '0 0 64 64');
@@ -182,6 +191,23 @@
     svg.setAttribute('height', size);
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('focusable', 'false');
+
+    if (id === 'initial') {
+      var letter = Array.from((name || '').trim())[0] || '?';
+      svg.innerHTML =
+        '<rect width="64" height="64" fill="' + initialBg(name) + '"/>' +
+        '<text x="32" y="33" text-anchor="middle" dominant-baseline="central" font-size="30" font-weight="900" fill="#22222c"></text>';
+      svg.querySelector('text').textContent = letter;
+      return svg;
+    }
+
+    var list = avatarList();
+    var found = null;
+    for (var i = 0; i < list.length; i += 1) {
+      if (list[i].id === id) found = list[i];
+    }
+    // 伺服器不驗證頭像 id（見 src/room.js 的 cleanAvatar），對不到就退回第一個
+    if (!found) found = list[0];
     svg.innerHTML = '<rect width="64" height="64" fill="' + found.bg + '"/>' + found.svg;
     return svg;
   }
@@ -190,20 +216,32 @@
     var picker = el['avatar-picker'];
     picker.replaceChildren();
 
-    window.AVATARS.forEach(function (avatar, index) {
+    // 第一格是「用名字第一個字」，打字時跟著換字（見 bindJoin 的 nickname input）
+    var options = [{ id: 'initial', label: T.avatarInitialLabel }].concat(
+      avatarList().map(function (avatar, index) {
+        return { id: avatar.id, label: T.avatarLabel + ' ' + (index + 1) };
+      }),
+    );
+    options.forEach(function (option) {
       var button = document.createElement('button');
       button.type = 'button';
       button.className = 'avatar-option';
       button.setAttribute('role', 'radio');
-      button.dataset.avatar = avatar.id;
-      button.setAttribute('aria-checked', String(avatar.id === currentAvatar));
-      button.setAttribute('aria-label', T.avatarLabel + ' ' + (index + 1));
-      button.append(avatarSvg(avatar.id, 56));
+      button.dataset.avatar = option.id;
+      button.setAttribute('aria-checked', String(option.id === currentAvatar));
+      button.setAttribute('aria-label', option.label);
+      button.append(avatarSvg(option.id, 56, el['nickname'].value));
       button.addEventListener('click', function () {
-        selectAvatar(avatar.id);
+        selectAvatar(option.id);
       });
       picker.append(button);
     });
+  }
+
+  // 暱稱改了，「名字第一個字」那一格跟著換
+  function refreshInitialOption() {
+    var option = el['avatar-picker'].querySelector('[data-avatar="initial"]');
+    if (option) option.replaceChildren(avatarSvg('initial', 56, el['nickname'].value));
   }
 
   function selectAvatar(id) {
@@ -226,6 +264,15 @@
     ['home', 'join', 'host', 'play', 'error'].forEach(function (view) {
       el['view-' + view].hidden = view !== name;
     });
+
+    // 遊戲內頂欄（Woohop 的 game.css）：進了房間就是 play（藏起玩法分頁、選單、頁尾，遊戲名不能點），
+    // 右邊放身分標籤；其他畫面是 browse
+    var inRoom = name === 'host' || name === 'play';
+    document.body.setAttribute('data-game-mode', inRoom ? 'play' : 'browse');
+    var badge = document.getElementById('game-bar-badge');
+    if (badge) badge.textContent = name === 'host' ? T.hostBadge : name === 'play' ? T.playerBadge : '';
+    var gameTitle = document.querySelector('.game-bar .title');
+    if (gameTitle) gameTitle.tabIndex = inRoom ? -1 : 0;
 
     // render() 每收到一次廣播就會呼叫 showView，只有真的換畫面才送統計
     if (name !== currentView) {
@@ -280,16 +327,73 @@
 
   function bindHome() {
     el['create-room'].addEventListener('click', createRoom);
-
-    el['join-code'].addEventListener('input', function () {
-      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      hideFieldError(el['join-error']);
-    });
-
     el['join-room'].addEventListener('click', joinByCode);
-    el['join-code'].addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') joinByCode();
+  }
+
+  /*
+   * 設計系統元件的行為（design/brand-exploration.html），跟喜好二選一同一套：
+   *  - 房號四格：打一個字跳下一格、刪除退回上一格、貼上整組自動分格；組起來寫進隱藏的 #join-code
+   *  - 數量增減：2～30，寫進隱藏的 #max-players
+   *  - 分享：手機支援 navigator.share 才出現
+   */
+  function bindDesignControls() {
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('#code-boxes input'));
+    var sync = function () {
+      el['join-code'].value = boxes.map(function (b) { return b.value; }).join('');
+      hideFieldError(el['join-error']);
+    };
+    var fill = function (from, text) {
+      var chars = text.replace(/[^a-z0-9]/gi, '').toUpperCase().split('');
+      for (var i = from; i < boxes.length && chars.length; i += 1) boxes[i].value = chars.shift();
+      sync();
+      var next = boxes.filter(function (b) { return !b.value; })[0];
+      (next || boxes[boxes.length - 1]).focus();
+    };
+    boxes.forEach(function (box, i) {
+      box.addEventListener('input', function () {
+        var v = box.value;
+        box.value = '';
+        fill(i, v);
+      });
+      box.addEventListener('keydown', function (event) {
+        if (event.key === 'Backspace' && !box.value && boxes[i - 1]) {
+          boxes[i - 1].value = '';
+          boxes[i - 1].focus();
+          sync();
+          event.preventDefault();
+        }
+        // Enter 跟原本的房號輸入框一樣：直接加入
+        if (event.key === 'Enter') joinByCode();
+      });
+      box.addEventListener('paste', function (event) {
+        var text = (event.clipboardData || window.clipboardData).getData('text');
+        if (!text) return;
+        event.preventDefault();
+        fill(i, text);
+      });
     });
+
+    var out = document.getElementById('max-players-out');
+    document.getElementById('max-stepper').addEventListener('click', function (event) {
+      var button = event.target.closest('[data-step]');
+      if (!button) return;
+      var value = Math.min(MAX_PLAYERS, Math.max(MIN_PLAYERS, (Number(el['max-players'].value) || 8) + Number(button.dataset.step)));
+      el['max-players'].value = String(value);
+      out.textContent = String(value);
+    });
+
+    if (navigator.share) {
+      el['share-link'].hidden = false;
+      el['share-link'].addEventListener('click', function () {
+        navigator.share({ title: document.title, url: shareLink() }).catch(function () {
+          /* 使用者取消分享，不用做什麼 */
+        });
+      });
+    }
+  }
+
+  function shareLink() {
+    return location.origin + BASE + '/' + LANG + '/?room=' + roomCode;
   }
 
   function createRoom() {
@@ -351,6 +455,7 @@
 
   function bindJoin() {
     el['enter-room'].addEventListener('click', submitNickname);
+    el['nickname'].addEventListener('input', refreshInitialOption);
     el['nickname'].addEventListener('keydown', function (event) {
       if (event.key === 'Enter') submitNickname();
     });
@@ -482,7 +587,9 @@
       // 連線留著，等使用者填完暱稱再送一次 hello
       hideBanner();
       el['join-title'].textContent = t('joinTitleWithCode', { code: roomCode });
-      el['nickname'].value = pendingNickname;
+      // 這間房間沒填過就沿用上次的暱稱（存在共用的 web100-profile）
+      if (pendingNickname) el['nickname'].value = pendingNickname;
+      refreshInitialOption();
       showView('join');
       el['nickname'].focus();
       return;
@@ -577,10 +684,17 @@
     el['host-rank-card'].hidden = !state.started;
 
     if (!state.started) {
-      el['host-room-code'].textContent = state.code;
-      var joinUrl = location.origin + BASE + '/' + LANG + '/?room=' + state.code;
-      el['share-url'].textContent = joinUrl;
-      renderQr(joinUrl);
+      // 房號一格一個字（Woohop 的 .room-code），念給大家聽、對著抄都比較不會錯
+      if (el['host-room-code'].getAttribute('aria-label') !== state.code) {
+        el['host-room-code'].replaceChildren();
+        Array.from(state.code).forEach(function (ch) {
+          var cell = document.createElement('span');
+          cell.textContent = ch;
+          el['host-room-code'].append(cell);
+        });
+        el['host-room-code'].setAttribute('aria-label', state.code);
+      }
+      renderQr(shareLink());
       el['start-game'].disabled = state.players.length === 0;
     }
 
@@ -630,17 +744,20 @@
     });
 
     ordered.forEach(function (player) {
+      // 設計系統的 .player：一列一人，自己那一列換成淡藍
       var item = document.createElement('li');
+      item.className = 'player';
       if (!player.online) item.classList.add('is-offline');
+      if (player.id === me) item.classList.add('is-me');
 
       var name = document.createElement('span');
       name.className = 'name';
       name.textContent = player.nickname;
-      item.append(avatarSvg(player.avatar, 32), name);
+      item.append(avatarSvg(player.avatar, 32, player.nickname), name);
 
       if (!player.online) {
         var tag = document.createElement('span');
-        tag.className = 'offline';
+        tag.className = 'role-badge is-muted';
         tag.textContent = T.offlineTag;
         item.append(tag);
       }
@@ -648,8 +765,8 @@
       if (withKick) {
         var kick = document.createElement('button');
         kick.type = 'button';
-        kick.className = 'btn-outline btn-danger';
-        kick.textContent = T.kickButton;
+        kick.className = 'btn btn-sm btn-ghost kick';
+        kick.textContent = '✕';
         kick.setAttribute('aria-label', t('kickAria', { nickname: player.nickname }));
         kick.addEventListener('click', function () {
           askConfirm(
@@ -733,8 +850,8 @@
 
     // 已經搶答過還是可以按（規格要求不鎖死畫面），只是視覺上退一階
     el['buzz'].disabled = !open || counting;
-    el['buzz'].classList.toggle('counting', counting);
-    el['buzz'].classList.toggle('buzzed', myPlace > 0);
+    el['buzz'].classList.toggle('is-counting', counting);
+    el['buzz'].classList.toggle('is-done', myPlace > 0);
 
     renderRanks(el['play-rank-list'], el['play-rank-empty'], state.buzzOrder);
   }
@@ -743,24 +860,22 @@
     list.replaceChildren();
     empty.hidden = buzzOrder.length > 0;
 
+    // 設計系統的排行榜（.rank-list）：名次是 CSS 的計數器畫的，螢幕閱讀器另外念 aria-label
     buzzOrder.forEach(function (entry, index) {
       var item = document.createElement('li');
       if (index === 0) item.classList.add('first');
       if (me && entry.playerId === me.id) item.classList.add('me');
-
-      var place = document.createElement('span');
-      place.className = 'place';
-      place.textContent = t('rankLabel', { n: index + 1 });
+      item.setAttribute('aria-label', t('rankLabel', { n: index + 1 }) + ' ' + entry.nickname);
 
       var name = document.createElement('span');
       name.className = 'name';
       name.textContent = entry.nickname;
 
-      item.append(place, avatarSvg(entry.avatar, 28), name);
+      item.append(avatarSvg(entry.avatar, 28, entry.nickname), name);
 
       if (entry.ms !== null && entry.ms !== undefined) {
         var delta = document.createElement('span');
-        delta.className = 'delta';
+        delta.className = 'score delta';
         delta.textContent = t('deltaLabel', { s: (entry.ms / 1000).toFixed(2) });
         item.append(delta);
       }
@@ -775,8 +890,8 @@
     var qr = window.qrcode(0, 'M');
     qr.addData(url);
     qr.make();
-    // margin 給 4 個模組＝規格要求的靜區，掃描率差在這裡
-    el['qr-box'].innerHTML = qr.createSvgTag({ cellSize: 4, margin: 4, scalable: true });
+    // 靜區由設計系統的 .qr 外框給（白底＋內距），跟喜好二選一一樣不另外留 margin
+    el['qr-box'].innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
     renderedQrUrl = url;
   }
 
@@ -809,42 +924,38 @@
     });
 
     el['copy-link'].addEventListener('click', function () {
-      var url = el['share-url'].textContent;
-      var button = el['copy-link'];
+      // 只換字，不換掉前面的圖示
+      var label = el['copy-link'].querySelector('.label');
       navigator.clipboard
-        .writeText(url)
+        .writeText(shareLink())
         .then(function () {
-          button.textContent = T.copied;
+          label.textContent = T.copied;
           setTimeout(function () {
-            button.textContent = T.copyLink;
+            label.textContent = T.copyLink;
           }, 1600);
         })
         .catch(function () {
-          button.textContent = T.copyFailed;
+          label.textContent = T.copyFailed;
         });
     });
   }
 
   /* ---------- 離開 / 關閉房間 ---------- */
 
+  /*
+   * 遊戲內頂欄的返回鍵（game.js 會呼叫這個）。離開／關閉房間就是這顆，房間裡不另外放按鈕：
+   *  - 首頁畫面：回網站的「找遊戲」
+   *  - 填暱稱、房間裡：跟瀏覽器返回鍵一樣退一格，交給 onPopState——
+   *    還在等待大廳就直接離開（主持人是關房），開始搶答之後先跳確認框
+   *  - 錯誤畫面：回這個遊戲的首頁
+   */
+  window.gameBack = function () {
+    if (currentView === 'home') location.href = '/' + LANG + '/games/';
+    else if (currentView === 'error') goHome();
+    else history.back();
+  };
+
   function bindExit() {
-    el['close-room'].addEventListener('click', function () {
-      askConfirm(T.closeConfirmTitle, T.closeConfirmDesc, T.closeRoomButton, function () {
-        // 不等伺服器回覆就離開：房間關掉之後這條連線本來就會斷，
-        // 停在原地等只會讓主持人看到一瞬間的「重新連線中」
-        track('buzzer_room_closed');
-        send({ t: 'close' });
-        goHome();
-      });
-    });
-
-    el['leave-room'].addEventListener('click', function () {
-      askConfirm(T.leaveConfirmTitle, T.leaveConfirmDesc, T.leaveRoomButton, function () {
-        send({ t: 'leave' });
-        goHome();
-      });
-    });
-
     el['confirm-cancel'].addEventListener('click', function () {
       el['confirm-dialog'].close();
     });

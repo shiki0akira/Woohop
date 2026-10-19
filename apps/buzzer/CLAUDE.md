@@ -60,26 +60,26 @@
 
 ## 頭像
 
-10 個固定的食物頭像，資料在 `app/avatars.js`，build 時整份內嵌成 `window.AVATARS`（約 6KB），
-不走圖檔：名單與排名榜會重複用上幾十次，每個都發一次請求不划算。
-**不開放上傳**——上傳要處理儲存、審核、版權與兒少風險，對一個現場小工具不划算。
+用設計系統那套食物頭像（`design/brand-exploration.html`，粗描邊可愛風），圖在 Woohop 全站共用的
+`woohop-art.js`（`window.Woohop.AVATARS`），跟喜好二選一同一套。`app/avatars.js` 只剩備援（woohop-art.js 沒載到時用）。
+id 跟舊版一樣是那 10 種食物，房間裡已經存的頭像不用轉換。**不開放上傳**——上傳要處理儲存、審核、版權與兒少風險。
 
-- 每個圖形的最長邊都對齊到 40（viewBox 是 64），並以各自的邊界框中心對齊到 (32,32)，
-  十個看起來才一樣大、一樣置中。邊界框 `box` 寫在資料裡，**改動路徑時要重新量**，不然會偏掉
-- `src/room.js` 只把頭像當字串存，不驗證是不是那 10 個之一：驗證要把整包 SVG 拉進
-  Worker bundle，只為比對一個字串不划算。客戶端對不到就退回預設值
-- 暱稱與頭像存在 `web100-profile`，**跟系列其他專案共用同一個 key**，
-  玩過喜好二選一的人回來這裡不用重挑。刻意不做帳號系統：現場遊戲的人就在同一個房間裡，
-  帳號只會在「免下載免註冊」這個賣點上加摩擦
-- 30 個人共用 10 個頭像一定會撞，刻意不處理——旁邊一定有暱稱
+- 選擇器第一格是 `'initial'`：不選圖，用名字第一個字，底色依名字從頭像底色裡挑（同一個名字每次都一樣）。沒挑過的人預設就是它
+- `src/room.js` 只把頭像當字串存（`/^[a-z]{1,20}$/`），不驗證是不是那幾個之一。客戶端對不到就退回第一張
+- 暱稱與頭像存在 `web100-profile`，**跟系列其他專案共用同一個 key**，玩過別的遊戲的人回來不用重挑。
+  `PROFILE_KEY`、`currentAvatar` 要宣告在 `app.js` 最上面——`init()` 一開始就讀它們，宣告在後面會在 init 跑完才被賦值、把頭像洗成空的（2026-10 改版時抓到的舊 bug）
+- 刻意不做帳號系統：現場遊戲的人就在同一個房間裡，帳號只會在「免下載免註冊」這個賣點上加摩擦
 
 ## 配色 / UI
 
-色票、圓角、間距全部來自 `https://www.vibeweb100.com/design-tokens.css`（外部引用，**不要把變數複製進這個 repo**）。`app.css` 裡不寫死 hex，唯一例外是 QR code 的白底——掃描率優先，深色模式反白會有相機讀不到。
+2026-10 改版成 Woohop 新設計（照定時炸彈、喜好二選一的做法），**UI 一律先用設計系統的元件**（`design/brand-exploration.html`）：
 
-- 深淺色用 `<html class="light">` 表示淺色，深色是預設值。class 掛在 `<html>` 而不是 `<body>`：決定主題那段 script 在 `<head>` 就要跑完，那時 `<body>` 還不存在
-- 導覽列刻意做成跟阿瓦隆一樣：品牌圓鈕 + 標題 + 語言下拉（`<select>`，顯示語言自己的名字）+ 主題圓鈕，寬 600、高 40 的控制項
-- 按鈕的立體／壓扁語言、disabled 的配色都照 `ARCHITECTURE.md` 第 7 節，不要改成疊 `opacity`
+- 樣式來自 Woohop 全站的 `woohop.css`＋`site.css`＋`game.css`，唯一來源在 `apps/homepage/assets`，build 時複製進 `dist/buzzer/woohop/`；導覽列、頁尾、遊戲內頂欄的 HTML 來自 `apps/homepage/src/chrome.mjs`。**改了那幾個檔案，這個遊戲也要重新 build、部署**
+- `app.css` 只排這個遊戲自己的東西；跟全站樣式撞名的（`.avatar`、`.room-code`、`.rank-list`）一律加 `.buzzer-app` 限定
+- 用到的元件：人數 `.stepper`、房號四格 `.code-input`、頭像選擇器、房號卡 `.room-code-card`、成員 `.player`、排行榜 `.rank-list`、確認框 `dialog.modal`、**大搶答鈕 `.buzz-btn`**（這次新增到設計系統的元件，倒數 `.is-counting`、按過 `.is-done`）
+- 頂欄：返回、遊戲名、「玩法」分頁、選單；進了房間（主持人控制台、玩家畫面）切成 `data-game-mode="play"`，右邊放「主持人／玩家」標籤。**離開／關閉房間就是頂欄的返回鍵**，房間裡不另外放按鈕（`window.gameBack` → 跟瀏覽器返回鍵同一套：大廳直接退、開始後先確認）
+- 只有淺色，不再有深色模式與主題切換鈕
+- 按鈕的立體／壓扁語言、disabled 的配色照設計系統，不要改成疊 `opacity`
 
 ## GA4
 

@@ -4,69 +4,40 @@
     {{head}}
   </head>
 
-  <body>
+  <body class="buzzer-app woohop-game" data-game-mode="browse">
     {{header}}
 
-    <main id="main" class="prose">
-      <div class="hero">
-        <h1>{{rulesH1}}</h1>
+    <!-- 玩法頁刻意精簡（2026-10-17，跟定時炸彈、喜好二選一同一個格式）：一眼資訊、4 步怎麼玩、主持人怎麼帶 -->
+    <main id="main" class="game-main game-rules">
+      <div class="page-head">
+        <nav class="crumbs" aria-label="breadcrumb">
+          <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><a href="{{base}}/{{lang}}/">{{navTitle}}</a><span>›</span><span>{{navRules}}</span>
+        </nav>
+        <h1>{{rulesHeading}}</h1>
         <p>{{rulesIntro}}</p>
       </div>
 
-      <section class="surface">
-        <h2>{{howHeading}}</h2>
+      <ul class="rules-facts">
+        {{rulesFactsList}}
+      </ul>
+
+      <section class="panel prose">
+        <h2>{{rulesHowHeading}}</h2>
         <ol>
-          <li>{{howStep1}}</li>
-          <li>{{howStep2}}</li>
-          <li>{{howStep3}}</li>
-          <li>{{howStep4}}</li>
+          {{rulesHowList}}
         </ol>
       </section>
 
-      <section class="surface">
-        <h2>{{rulesHostHeading}}</h2>
+      <section class="panel prose rules-lead">
+        <h2>{{rulesLeadHeading}}</h2>
+        <!-- 開場那一句做成首頁破冰組合同款的「照著念」卡片，主持人直接念 -->
+        <div class="prompt-card"><span class="say">{{sayLabel}}</span>{{rulesLeadSay}}</div>
         <ul>
-          <li>{{rulesHost1}}</li>
-          <li>{{rulesHost2}}</li>
-          <li>{{rulesHost3}}</li>
+          {{rulesLeadList}}
         </ul>
       </section>
 
-      <section class="surface">
-        <h2>{{rulesPlayerHeading}}</h2>
-        <ul>
-          <li>{{rulesPlayer1}}</li>
-          <li>{{rulesPlayer2}}</li>
-          <li>{{rulesPlayer3}}</li>
-        </ul>
-      </section>
-
-      <section class="surface">
-        <h2>{{rulesJudgeHeading}}</h2>
-        <ul>
-          <li>{{rulesJudge1}}</li>
-          <li>{{rulesJudge2}}</li>
-          <li>{{rulesJudge3}}</li>
-        </ul>
-      </section>
-
-      <section class="surface">
-        <h2>{{rulesFaqHeading}}</h2>
-        <dl class="faq">
-          <dt>{{rulesFaqQ1}}</dt>
-          <dd>{{rulesFaqA1}}</dd>
-          <dt>{{rulesFaqQ2}}</dt>
-          <dd>{{rulesFaqA2}}</dd>
-          <dt>{{rulesFaqQ3}}</dt>
-          <dd>{{rulesFaqA3}}</dd>
-          <dt>{{rulesFaqQ4}}</dt>
-          <dd>{{rulesFaqA4}}</dd>
-        </dl>
-      </section>
-
-      <p class="rules-back">
-        <a class="btn-solid" href="{{base}}/{{lang}}/">{{rulesBackToGame}}</a>
-      </p>
+      <p class="rules-back"><a class="btn btn-lg btn-solid" href="{{base}}/{{lang}}/">{{rulesBack}}</a></p>
     </main>
 
     {{footer}}
@@ -74,9 +45,6 @@
     <script>
       window.BUZZER = { lang: '{{lang}}', base: '{{base}}', page: 'rules/' };
     </script>
-    <script src="{{base}}/header.js"></script>
-    <script>
-      window.trackPageView('{{base}}/{{lang}}/rules/');
-    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
   </body>
 </html>

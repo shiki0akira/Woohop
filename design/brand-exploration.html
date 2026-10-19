@@ -208,6 +208,24 @@
   .choice.c-yellow { --sel-face: var(--yellow-face); --sel-edge: var(--yellow-edge); --sel-text: var(--yellow-text); }
   .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+  /* 大搶答鈕：每個人手上那一顆（搶答遊戲）。圓形、厚底，按下去整顆沉下去；停用時壓扁變灰（跟 .btn 同一套語言）。
+     倒數中加 .is-counting（數字直接長在按鈕上，字放大）；這一輪已經按過加 .is-done（退一階變淡色，還是按得下去）。
+     顏色預設是搶答的橘，要換色就蓋 --face／--edge／--text */
+  .buzz-btn {
+    --face: var(--orange); --edge: var(--orange-edge); --text: var(--orange-text); --depth: 10px;
+    display: grid; place-items: center; width: min(260px, 70vw); aspect-ratio: 1; margin: 0 auto var(--depth); padding: 16px;
+    border-radius: 50%; border: 3px solid var(--edge); background: var(--face); color: var(--text);
+    box-shadow: 0 var(--depth) 0 var(--edge);
+    font: inherit; font-size: clamp(30px, 9vw, 42px); font-weight: 900; line-height: 1.1; text-align: center;
+    cursor: pointer; user-select: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    transition: transform .06s, box-shadow .06s, background .15s;
+  }
+  .buzz-btn:active:not(:disabled), .buzz-btn.is-pressed { transform: translateY(var(--depth)); box-shadow: 0 0 0 var(--edge); }
+  .buzz-btn:focus-visible { outline: 3px solid var(--indigo); outline-offset: 6px; }
+  .buzz-btn:disabled { --face: #e6e6ea; --edge: #c9c9d3; --text: #6e6e76; --depth: 4px; transform: translateY(6px); cursor: not-allowed; }
+  .buzz-btn.is-counting { font-size: clamp(64px, 18vw, 96px); font-variant-numeric: tabular-nums; }
+  .buzz-btn.is-done { --face: var(--orange-face); }
+
   /* ============================================================
      遊戲列表：白底大格子＋每個遊戲自己的插圖
      ============================================================ */
@@ -735,6 +753,16 @@
         <button type="button" class="choice c-coral" aria-pressed="false"><span class="choice-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M5.5 5.5 42.5 42.5M42.5 5.5 5.5 42.5"/></svg></span><span class="choice-name">不同意</span></button>
       </div>
       <p class="note" style="margin:16px 0 0">一次只有一兩個決定時用。沒選是白底灰框＋右上角空圈，選了換成自己的粉彩色＋實心打勾；顏色用 <code>.c-blue</code>、<code>.c-coral</code>、<code>.c-mint</code>⋯ 指定。時間到鎖定（<code>disabled</code>）時，沒選的那顆會淡掉。</p>
+    </div>
+    <div class="card" id="buzz-demo">
+      <h3>大搶答鈕</h3>
+      <div class="row" style="gap:28px;align-items:flex-start">
+        <div class="cell"><button type="button" class="buzz-btn" style="width:150px;font-size:26px">搶答！</button><code>可以按</code></div>
+        <div class="cell"><button type="button" class="buzz-btn is-counting" style="width:150px;font-size:56px" disabled>3</button><code>倒數中（停用）</code></div>
+        <div class="cell"><button type="button" class="buzz-btn is-done" style="width:150px;font-size:26px">搶答！</button><code>已經按過</code></div>
+        <div class="cell"><button type="button" class="buzz-btn" style="width:150px;font-size:26px" disabled>搶答！</button><code>還沒開放</code></div>
+      </div>
+      <p class="note" style="margin:16px 0 0">每個人手上那一顆，畫面上最大的東西。圓形、10px 厚底，按下去整顆沉下去；停用一樣是「壓扁」變灰。倒數的數字直接長在按鈕上（<code>.is-counting</code>），視線不用移開；按過之後退一階變淡色（<code>.is-done</code>），還是按得下去。</p>
     </div>
   </div>
 

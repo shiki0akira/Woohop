@@ -4,208 +4,190 @@
     {{head}}
   </head>
 
-  <body>
+  <body class="buzzer-app woohop-game" data-game-mode="browse">
     {{header}}
 
-    <main id="main">
+    <main id="main" class="game-main">
       <!-- 首頁：建立房間 / 加入房間 -->
-      <section class="view" id="view-home">
-        <div class="hero">
-          <h1>{{heroTitle}}</h1>
+      <div class="view" id="view-home">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
           <p>{{heroDesc}}</p>
         </div>
 
-        <div class="two-col">
-          <section class="surface">
-            <h2>{{createHeading}}</h2>
-            <label class="field-label" for="max-players">{{maxPlayersLabel}}</label>
-            <input
-              class="field"
-              id="max-players"
-              type="number"
-              inputmode="numeric"
-              min="2"
-              max="30"
-              step="1"
-              value="8"
-            />
-            <p class="hint">{{maxPlayersHint}}</p>
-            <button class="btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
-            <p class="form-error" id="create-error" role="alert" hidden></p>
-          </section>
+        <section class="panel">
+          <h2>{{createHeading}}</h2>
+          <span class="field-label" id="max-players-label">{{maxPlayersLabel}}</span>
+          <!-- 設計系統的數量增減（stepper）。值放在隱藏的 #max-players，app.js 照舊讀它 -->
+          <div class="stepper" id="max-stepper" role="group" aria-labelledby="max-players-label">
+            <button type="button" data-step="-1" aria-label="−">−</button><output id="max-players-out" aria-live="polite">8</output><button type="button" data-step="1" aria-label="+">+</button>
+          </div>
+          <input id="max-players" type="hidden" value="8" />
+          <p class="hint">{{maxPlayersHint}}</p>
+          <button class="btn btn-lg btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
+          <p class="form-error" id="create-error" role="alert" hidden></p>
+        </section>
 
-          <section class="surface">
-            <h2>{{joinHeading}}</h2>
-            <label class="field-label" for="join-code">{{codeLabel}}</label>
-            <input
-              class="field field-code"
-              id="join-code"
-              type="text"
-              inputmode="latin"
-              autocomplete="off"
-              autocapitalize="characters"
-              spellcheck="false"
-              maxlength="4"
-              placeholder="{{codePlaceholder}}"
-            />
-            <button class="btn-outline btn-block" id="join-room" type="button">{{joinButton}}</button>
-            <p class="form-error" id="join-error" role="alert" hidden></p>
-          </section>
-        </div>
+        <section class="panel">
+          <h2>{{joinHeading}}</h2>
+          <span class="field-label" id="join-code-label">{{codeLabel}}</span>
+          <!-- 設計系統的房號四格：打一個字自動跳下一格、刪除退回上一格、貼上整組會自動分格。
+               組起來的值放在隱藏的 #join-code，app.js 照舊讀它 -->
+          <div class="code-input" id="code-boxes" role="group" aria-labelledby="join-code-label">
+            <input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="1" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="2" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="3" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="4" />
+          </div>
+          <input id="join-code" type="hidden" value="" />
+          <button class="btn btn-lg btn-secondary btn-block" id="join-room" type="button">{{joinButton}}</button>
+          <p class="form-error" id="join-error" role="alert" hidden></p>
+        </section>
 
-        <p class="rules-link"><a href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
-      </section>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
 
-      <!-- 加入房間：填暱稱 -->
-      <section class="view" id="view-join" hidden>
-        <section class="surface narrow">
+      <!-- 加入房間：挑頭像、填暱稱 -->
+      <div class="view" id="view-join" hidden>
+        <section class="panel">
           <h1 class="join-title" id="join-title">{{joinTitle}}</h1>
 
-          <!-- 10 個固定頭像，不開放上傳。按鈕由 app.js 依 window.AVATARS 產生 -->
+          <!-- 設計系統的頭像（woohop-art.js），第一格是「用名字第一個字」。按鈕由 app.js 產生 -->
           <span class="field-label">{{avatarLabel}}</span>
           <div class="avatar-picker" id="avatar-picker" role="radiogroup" aria-label="{{avatarLabel}}"></div>
 
           <label class="field-label" for="nickname">{{nicknameLabel}}</label>
-          <input
-            class="field"
-            id="nickname"
-            type="text"
-            autocomplete="nickname"
-            maxlength="16"
-            placeholder="{{nicknamePlaceholder}}"
-          />
-          <button class="btn-solid btn-block" id="enter-room" type="button">{{enterButton}}</button>
+          <input class="input" id="nickname" type="text" autocomplete="nickname" maxlength="16" placeholder="{{nicknamePlaceholder}}" />
+          <button class="btn btn-lg btn-solid btn-block" id="enter-room" type="button">{{enterButton}}</button>
           <p class="form-error" id="nickname-error" role="alert" hidden></p>
         </section>
-      </section>
+      </div>
 
-      <!-- 主持人控制台 -->
-      <section class="view" id="view-host" hidden>
-        <div class="room-bar">
-          <span class="role-badge">{{hostBadge}}</span>
-          <button class="btn-outline btn-danger" id="close-room" type="button">{{closeRoomButton}}</button>
-        </div>
-
-        <!-- 等待大廳：只在主持人按下「開始遊戲」之前顯示 -->
-        <section class="surface share" id="share-card">
-          <div class="share-code">
-            <span class="field-label">{{roomCodeLabel}}</span>
-            <strong class="room-code" id="host-room-code">····</strong>
-            <p class="hint">{{shareHint}}</p>
-            <button class="btn-outline" id="copy-link" type="button">{{copyLink}}</button>
-            <p class="share-url" id="share-url"></p>
+      <!-- 主持人控制台。主持人只控場、不搶答（不在名單上，見 src/room.js 的 handleHello） -->
+      <div class="view" id="view-host" hidden>
+        <!-- 等待大廳：設計系統的房號卡（room-code-card）：房號四格、QR code、複製／分享 -->
+        <section class="room-code-card share-card" id="share-card">
+          <span class="t-caption">{{roomCodeLabel}}</span>
+          <div class="room-code" id="host-room-code" aria-live="polite"></div>
+          <div class="qr qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+          <div class="row share-actions">
+            <button class="btn btn-secondary btn-sm" id="copy-link" type="button"><svg><use href="#i-copy"/></svg><span class="label">{{copyLink}}</span></button>
+            <button class="btn btn-secondary btn-sm" id="share-link" type="button" hidden><svg><use href="#i-share"/></svg>{{shareButton}}</button>
           </div>
-          <div class="qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+          <span class="t-small">{{shareHint}}</span>
         </section>
 
-        <section class="surface">
-          <div class="section-head">
+        <!-- 出題與排名：遊戲開始之後才出現，放在名單上面（開始後主持人看的是這兩塊） -->
+        <section class="panel question-card" id="question-card">
+          <label class="field-label field-label-top" for="question">{{questionLabel}}</label>
+          <textarea class="textarea" id="question" rows="3" maxlength="500" placeholder="{{questionPlaceholder}}"></textarea>
+          <!-- 一次只有一顆實心按鈕：開始搶答是這一頁的主角，送出題目、下一題退成白底 -->
+          <button class="btn btn-lg btn-solid btn-block" id="start-buzz" type="button">{{startButton}}</button>
+          <div class="host-actions">
+            <button class="btn btn-secondary" id="show-question" type="button">{{showQuestionButton}}</button>
+            <button class="btn btn-secondary" id="reset-round" type="button">{{resetButton}}</button>
+          </div>
+          <p class="host-countdown" id="host-countdown" role="status" hidden></p>
+        </section>
+
+        <section class="panel" id="host-rank-card">
+          <h2>{{rankingHeading}}</h2>
+          <ol class="rank-list buzz-ranks" id="host-rank-list"></ol>
+          <p class="empty-note" id="host-rank-empty">{{noBuzzYet}}</p>
+        </section>
+        <section class="panel" id="host-players-card">
+          <div class="panel-head">
             <h2>{{playersHeading}}</h2>
             <span class="counter" id="player-count"></span>
           </div>
           <ul class="player-list" id="player-list"></ul>
-          <p class="empty" id="player-empty">{{emptyPlayers}}</p>
+          <p class="empty-note" id="player-empty">{{emptyPlayers}}</p>
 
-          <div id="start-game-block">
-            <button class="btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
+          <div class="start-block" id="start-game-block">
+            <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
             <p class="hint">{{startGameHint}}</p>
             <p class="form-error" id="start-game-error" role="alert" hidden></p>
           </div>
         </section>
 
-        <!-- 出題與排名：遊戲開始之後才出現 -->
-        <section class="surface" id="question-card">
-          <label class="field-label" for="question">{{questionLabel}}</label>
-          <textarea class="field" id="question" rows="3" maxlength="500" placeholder="{{questionPlaceholder}}"></textarea>
-          <div class="host-actions">
-            <button class="btn-outline" id="show-question" type="button">{{showQuestionButton}}</button>
-            <button class="btn-solid" id="start-buzz" type="button">{{startButton}}</button>
-            <button class="btn-outline" id="reset-round" type="button">{{resetButton}}</button>
-          </div>
-          <p class="host-countdown" id="host-countdown" role="status" hidden></p>
-        </section>
-
-        <section class="surface" id="host-rank-card">
-          <h2>{{rankingHeading}}</h2>
-          <ol class="rank-list" id="host-rank-list"></ol>
-          <p class="empty" id="host-rank-empty">{{noBuzzYet}}</p>
-        </section>
-      </section>
+      </div>
 
       <!-- 玩家：等待 / 搶答 -->
-      <section class="view" id="view-play" hidden>
-        <div class="room-bar">
-          <span class="role-badge">{{playerBadge}}</span>
-          <button class="btn-outline btn-danger" id="leave-room" type="button">{{leaveRoomButton}}</button>
-        </div>
-
-        <section class="surface play-status">
+      <div class="view" id="view-play" hidden>
+        <section class="panel play-status">
           <h1 id="play-title">{{waitingTitle}}</h1>
           <p id="play-desc">{{waitingDesc}}</p>
+          <!-- 題目：設計系統的「照著念」卡片同款底色，主持人送出題目後出現 -->
           <div class="question-box" id="play-question" hidden>
-            <span class="field-label">{{questionHeading}}</span>
+            <span class="t-caption">{{questionHeading}}</span>
             <p id="play-question-text"></p>
           </div>
         </section>
 
         <!-- 等待大廳：讓玩家看得到還有誰在，不會以為自己進錯房間 -->
-        <section class="surface" id="play-lobby-card">
-          <div class="section-head">
+        <section class="panel" id="play-lobby-card">
+          <div class="panel-head">
             <h2>{{playersHeading}}</h2>
             <span class="counter" id="play-player-count"></span>
           </div>
           <ul class="player-list" id="play-player-list"></ul>
         </section>
 
-        <button class="buzz-button" id="buzz" type="button" disabled>
+        <!-- 設計系統的大搶答鈕（woohop.css 的 .buzz-btn）：倒數的數字直接長在按鈕上 -->
+        <button class="buzz-btn" id="buzz" type="button" disabled>
           <span id="buzz-label">{{buzzButton}}</span>
         </button>
 
-        <section class="surface" id="play-rank-card">
+        <section class="panel" id="play-rank-card">
           <h2>{{rankingHeading}}</h2>
-          <ol class="rank-list" id="play-rank-list"></ol>
-          <p class="empty" id="play-rank-empty">{{noBuzzYet}}</p>
+          <ol class="rank-list buzz-ranks" id="play-rank-list"></ol>
+          <p class="empty-note" id="play-rank-empty">{{noBuzzYet}}</p>
         </section>
-      </section>
+      </div>
 
       <!-- 連不上 / 房間有問題 -->
-      <section class="view" id="view-error" hidden>
-        <section class="surface narrow center">
+      <div class="view" id="view-error" hidden>
+        <section class="panel center">
           <h1 id="error-title">{{errorTitle}}</h1>
           <p id="error-desc">{{errorDesc}}</p>
-          <a class="btn-solid" href="{{base}}/{{lang}}/">{{backHome}}</a>
+          <a class="btn btn-lg btn-solid" href="{{base}}/{{lang}}/">{{backHome}}</a>
         </section>
-      </section>
+      </div>
     </main>
 
     <div class="conn-banner" id="conn-banner" role="status" hidden></div>
 
-    <!-- 離開／關閉房間的確認。用原生 <dialog>：焦點鎖定、Esc 關閉都不用自己寫，
-         Esc 等同「取消」，正好是這裡想要的行為 -->
+    <!-- 離開／關閉房間、移出玩家的確認。原生 <dialog>：焦點鎖定、Esc 關閉都不用自己寫，Esc 等同「取消」 -->
     <dialog class="modal" id="confirm-dialog">
-      <h2 id="confirm-title"></h2>
-      <p id="confirm-desc"></p>
-      <div class="modal-actions">
-        <button class="btn-outline" id="confirm-cancel" type="button">{{cancelButton}}</button>
-        <button class="btn-solid" id="confirm-ok" type="button"></button>
+      <div class="m-body">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-desc"></p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="confirm-cancel" type="button">{{cancelButton}}</button>
+        <button class="btn btn-danger" id="confirm-ok" type="button"></button>
       </div>
     </dialog>
 
     <!-- 主持人關掉房間時，玩家看到的通知。只有一顆按鈕，按了回搶答首頁 -->
     <dialog class="modal" id="closed-dialog">
-      <h2>{{roomClosedTitle}}</h2>
-      <p>{{roomClosedDesc}}</p>
-      <div class="modal-actions">
-        <button class="btn-solid" id="closed-ok" type="button">{{backHome}}</button>
+      <div class="m-body">
+        <h2>{{roomClosedTitle}}</h2>
+        <p>{{roomClosedDesc}}</p>
+      </div>
+      <div class="m-actions m-one">
+        <button class="btn btn-solid" id="closed-ok" type="button">{{backHome}}</button>
       </div>
     </dialog>
 
     <!-- 被主持人移出房間時看到的通知 -->
     <dialog class="modal" id="kicked-dialog">
-      <h2>{{kickedTitle}}</h2>
-      <p>{{kickedDesc}}</p>
-      <div class="modal-actions">
-        <button class="btn-solid" id="kicked-ok" type="button">{{backHome}}</button>
+      <div class="m-body">
+        <h2>{{kickedTitle}}</h2>
+        <p>{{kickedDesc}}</p>
+      </div>
+      <div class="m-actions m-one">
+        <button class="btn btn-solid" id="kicked-ok" type="button">{{backHome}}</button>
       </div>
     </dialog>
 
@@ -223,7 +205,7 @@
         workerOrigin: '{{workerOrigin}}',
       };
     </script>
-    <script src="{{base}}/header.js"></script>
-    <script src="{{base}}/app.js"></script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
   </body>
 </html>
