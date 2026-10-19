@@ -284,14 +284,9 @@
 .bingo-app .toast { justify-content: center; text-align: center; padding: 12px 18px; }
 
 /*
- * 寬螢幕（電腦、平板）：跟其他遊戲一樣維持單欄 720px，但不用切分頁——
- * 卡片、待你確認、題目清單由上往下全部攤開（待你確認放在卡片正下方，有人在等一眼就看到）。
+ * 寬螢幕（電腦、平板）：跟手機一樣用分頁切「我的卡片」「待你確認」，維持單欄 720px。
  * 格子不跟著欄寬無限放大，最寬 520px 置中。
  */
 @media (min-width: 720px) {
-  .bingo-app .seg-tabs { display: none !important; }
-  .play-grid .pane { display: flex !important; }
-  #pane-requests { order: 1; }
-  #pane-list { order: 2; }
   .bingo-card { max-width: 520px; margin-left: auto; margin-right: auto; }
 }
