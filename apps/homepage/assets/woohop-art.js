@@ -73,6 +73,19 @@
       withAttr(shape, `fill="none" ${K}${dash ? ' ' + gap() : ''}`);
   };
 
+  /*
+   * 竹筍角色（竹筍竹筍蹦蹦出的首頁插圖與遊戲內教學圖共用）。
+   *   x   底部中心；h 高度（蹲著約 40、站著約 84）；face 表情；c 顏色
+   *   底部固定在 y=118（ground 那條線），越高越瘦長
+   */
+  const shoot = (x, h, face = 'happy', c = '#4FB59A') => {
+    const w = Math.min(30, 16 + h * 0.17), top = 118 - h, mid = 118 - h * 0.45;
+    const leaf = `<path d="M${x} ${top + 4}q-2-10 8-14q-1 9-8 14z" fill="#8fd1b9" ${K}/>`;
+    const sheath = `<path d="M${x - w + 4} ${118 - h * 0.28}q${w - 4} -10 ${w * 2 - 8} 0M${x - w * 0.7} ${118 - h * 0.6}q${w * 0.7} -8 ${w * 1.4} 0" fill="none" stroke="#2f8a6f" stroke-width="3" stroke-linecap="round"/>`;
+    return leaf + body(`<path d="M${x - w} 117Q${x - w - 2} ${mid} ${x} ${top}Q${x + w + 2} ${mid} ${x + w} 117Z"/>`, c, sheath) +
+      makeFace(face, x, 118 - h * 0.42, Math.min(2.2, 1 + h / 70));
+  };
+
   const art = {
     // 阿瓦隆：藍紫塔樓＋黃旗＋聲波
     avalon: () => `
@@ -124,6 +137,10 @@
       ${body('<circle cx="76" cy="80" r="34"/>', '#EE7B6A', '<path d="M98 50a38 38 0 0 1-32 70h40z" fill="#d4685a"/>')}
       ${makeFace('worry', 76, 80, 2.2)}
       ${body('<path d="M104 62q5 7 0 11q-5-4 0-11z"/>', '#ffffff', '', false)}`,
+    // 竹筍竹筍蹦蹦出：一根站起來的竹筍、旁邊兩根還蹲著
+    bamboo: () => `
+      ${ground}${burst(132, 24, '#FFC628')}${ring(24, 30, '#7489E6')}${plus(148, 84, '#FF9419')}
+      ${shoot(36, 38, 'smile', '#a8dccb')}${shoot(124, 40, 'wow', '#a8dccb')}${shoot(80, 88, 'grin')}`,
     // 幸福模擬器：戴墨鏡的大螢幕＋愛心
     happiness: () => `
       ${ground}${burst(140, 20, '#F3A4FB')}${ring(22, 26, '#FFC628')}${plus(150, 70, '#FF9419')}${dot(16, 76, '#7489E6')}
@@ -151,5 +168,5 @@
     return `<svg viewBox="0 0 ${n} ${n}" aria-hidden="true">${cells}${finder(0, 0)}${finder(n - 7, 0)}${finder(0, n - 7)}</svg>`;
   };
 
-  window.Woohop = { W, makeFace, body, art, AVATARS, foodSvg, ground, burst, plus, ring, dot, K, qrSvg };
+  window.Woohop = { W, makeFace, body, shoot, art, AVATARS, foodSvg, ground, burst, plus, ring, dot, K, qrSvg };
 })();

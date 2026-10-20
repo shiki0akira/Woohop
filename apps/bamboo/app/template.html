@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="bamboo-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="bamboo-main game-main">
+      <!--
+        帶領的步驟頭（CONCEPT.md 3.2）：整個遊戲就是一步一步帶，每個畫面都是其中一步。
+        只有一份，app.js 的 renderLead 會把它搬進目前畫面的 .lead-slot，填上這一步的標題和「照著念」。
+      -->
+      <section class="lead-head" id="lead-head">
+        <div class="step-dots" id="step-dots" aria-hidden="true"></div>
+        <span class="step-no" id="step-no"></span>
+        <h2 class="lead-title" id="lead-title"></h2>
+        <div class="prompt-card lead-say"><span class="say">{{sayLabel}}</span><span id="lead-say"></span></div>
+      </section>
+
+      <!-- 第 1 步：選主題 -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <section class="panel">
+          <h2>{{themeHeading}}</h2>
+          <!-- 「隨機」＋六個主題＋「用本名」，由 app.js 依名稱庫產生（woohop.css 的 .choice） -->
+          <div class="theme-grid" id="theme-grid" role="group" aria-label="{{themeHeading}}"></div>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startNaming}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!--
+        取名。手機傳一圈，每個人抽一個或自己取，取完按「傳給下一個人」（CONCEPT.md 3.1）。
+        同一張卡片有三個狀態（data-stage）：choose 選抽或自己取 → own 自己取 → reveal 翻出名稱。
+      -->
+      <div class="view" id="view-name" hidden>
+        <div class="lead-slot"></div>
+        <div class="panel name-card" id="name-card" data-stage="choose">
+          <div class="name-top">
+            <span class="name-turn" id="name-turn"></span>
+            <span class="badge b-live name-theme" id="name-theme"></span>
+          </div>
+          <button class="btn btn-sm btn-secondary reroll" id="reroll-theme" type="button" hidden>{{rerollTheme}}</button>
+
+          <div class="name-stage stage-choose">
+            <!-- 一疊名稱卡（網站插圖的畫法，app.js 的 DECK_ART），平常輕輕上下浮；按「抽一個」時最上面那張往上飛 -->
+            <svg class="illo deck" id="deck" viewBox="0 0 160 126" aria-hidden="true"></svg>
+            <button class="btn btn-lg btn-solid btn-block draw-btn" id="draw" type="button">{{drawButton}}</button>
+            <p class="hint pool-empty" id="pool-empty" hidden>{{poolEmpty}}</p>
+            <button class="btn btn-secondary btn-block" id="own-open" type="button">{{ownButton}}</button>
+          </div>
+
+          <!--
+            自己取：不打字（打字會讓整圈卡住），想好一個名稱直接大聲跟大家說。
+            手機只記「這裡有一個人自己取了」，名單上顯示成「自己取 1」（CONCEPT.md 3.1）
+          -->
+          <div class="name-stage stage-own">
+            <div class="prompt-card own-say"><span class="say">{{sayLabel}}</span>{{ownSay}}</div>
+            <div class="pass-row">
+              <button class="btn btn-lg btn-solid pass-bar" id="own-confirm" type="button">{{passNext}}</button>
+              <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="own-cancel" type="button">{{ownCancel}}</button>
+            </div>
+          </div>
+
+          <div class="name-stage stage-reveal">
+            <!-- 抽到的那張卡翻過來 -->
+            <div class="drawn-card">
+              <p class="you-are">{{youAre}}</p>
+              <p class="drawn-name" id="drawn-name" aria-live="polite"></p>
+            </div>
+            <!-- 手機要交出去：明講下一步，不然拿著手機的人會愣在那裡 -->
+            <p class="reveal-hint">{{revealHint}}</p>
+            <!-- 跟定時炸彈的「完成／換一題」同一個樣子：主要動作佔滿，「換一個」是右邊一顆白底按鈕 -->
+            <div class="pass-row">
+              <button class="btn btn-lg btn-solid pass-bar" id="pass-next" type="button">{{passNext}}</button>
+              <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="redraw" type="button">{{redraw}}</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="named" id="named" hidden>
+          <h2 class="t-small">{{namedHeading}}</h2>
+          <ul class="named-list" id="named-list"></ul>
+        </section>
+
+        <p class="form-error" id="need-more" role="status" hidden></p>
+        <!-- 不黏底：手機傳來傳去時拇指很容易碰到畫面底部，誤按就直接進下一步了（使用者要求） -->
+        <button class="btn btn-lg btn-secondary btn-block all-done" id="all-done" type="button">{{allDone}}</button>
+      </div>
+
+      <!-- 第 3 步：說明規則。主持人照著念，三張插圖卡給大家看（用本名時這是第 2 步） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!-- 開始玩。手機不當裁判、不記數字（CONCEPT.md 2.2）。大家的名稱併在上面的「照著念」裡，主持人照順序念一遍（renderLead） -->
+      <div class="view" id="view-play" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel round-panel">
+          <!-- 口令的七個字。配樂的七拍會一個一個亮起來，主持人跟著喊（app.js 的 playChant） -->
+          <div class="chant" id="chant" aria-hidden="true"></div>
+          <button class="btn btn-lg btn-solid btn-block round-btn" id="round-btn" type="button">{{startRound}}</button>
+          <p class="hint play-hint" id="play-hint">{{playHintIdle}}</p>
+        </section>
+      </div>
+
+      <!-- 這輪結束：輸的人拉分享拉霸（redesign-plan §5.1：把暖場轉成認識彼此） -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel end-card">
+          <!--
+            拉霸：題目在窗格裡往上滾，越滾越慢，停在中間那一格（app.js 的 spinSlot）。
+            停下來的題目另外寫進 #slot-result 給螢幕閱讀器念，滾動中的那一長串藏起來。
+          -->
+          <!-- 拉之前先選：真心話／隨機／大冒險（app.js 的 buildSlotModes），每輪回到隨機 -->
+          <div class="seg seg-3 slot-mode" id="slot-mode" role="radiogroup" aria-label="{{slotModeLabel}}"></div>
+          <div class="slot" id="slot">
+            <div class="slot-window" aria-hidden="true"><ul class="slot-reel" id="slot-reel"></ul></div>
+          </div>
+          <p class="slot-sr" id="slot-result" aria-live="polite"></p>
+          <button class="btn btn-lg btn-solid btn-block" id="spin" type="button">{{spin}}</button>
+        </section>
+        <!-- 「再一輪」放在拉霸卡片外面（使用者要求）。不黏底：這一頁比手機畫面高，黏著的話會蓋住「拉一下！」 -->
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+    </main>
+
+    <!-- 回到開頭的確認：取名取到一半、或在玩的畫面按返回時（CONCEPT.md 3.5） -->
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.BAMBOO = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+        names: {{namesJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

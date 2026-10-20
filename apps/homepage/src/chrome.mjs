@@ -98,14 +98,18 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
  *   分頁      「玩法」，以及可選的「設定」（window.openSettings；玩法頁沒有設定框，就帶 #settings 回遊戲頁）
  *   選單鍵    電腦上是下拉（site.js 的 .nav-more），手機上開底部面板，裡面是網站的頁面
  *   身分標籤  #game-bar-badge，玩的時候顯示在右邊（例如房間裡的「主持人」「玩家」），沒填字就不出現
+ *   音樂開關  可選（opts.musicLabel）。有配樂的遊戲才開，玩的時候也留在頂欄右邊。
+ *             按下去呼叫 window.toggleMusic；開或關由遊戲自己寫在 aria-pressed 上（樣式看它換圖示）
  *
  * 樣式在 assets/game.css、行為在 assets/game.js。玩的時候要藏起分頁和選單，
  * 由遊戲在 <body> 掛 data-game-mode="play"（平常是 "browse"）。玩的時候還要能開設定（房間大廳的主持人），
  * 再加掛 data-game-settings，分頁只留「設定」齒輪。
  *
- * opts: { title, gameHref, rulesHref, rulesLabel, isRules, settingsLabel?, backHref }
+ * opts: { title, gameHref, rulesHref, rulesLabel, isRules, settingsLabel?, musicLabel?, backHref }
  */
 const ICON_RULES = '<svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M8 8h8M8 12h5"/></svg>';
+// 音樂開關：一顆音符，關掉時多一條斜線（game.css 依 aria-pressed 切換）
+const ICON_MUSIC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path class="music-off" d="M3 3l18 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 const ICON_GEAR = '<svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>';
 
 export function gameBar(s, lang, opts) {
@@ -119,14 +123,17 @@ export function gameBar(s, lang, opts) {
   const settings = opts.settingsLabel
     ? `<button type="button" id="game-settings" data-game-href="${opts.gameHref}" aria-label="${esc(opts.settingsLabel)}">${ICON_GEAR}<span class="tab-text">${esc(opts.settingsLabel)}</span><span class="tab-count" id="game-settings-count"></span></button>`
     : '';
+  const music = opts.musicLabel
+    ? `<button class="btn btn-icon btn-ghost game-music" id="game-music" type="button" aria-pressed="true" aria-label="${esc(opts.musicLabel)}" title="${esc(opts.musicLabel)}">${ICON_MUSIC}</button>`
+    : '';
   return `
     <div class="game-bar-host">
-      <div class="appbar game-bar${opts.settingsLabel ? ' has-settings' : ''}">
+      <div class="appbar game-bar${opts.settingsLabel ? ' has-settings' : ''}${music ? ' has-music' : ''}">
         <button class="btn btn-icon btn-ghost" id="game-back" type="button" data-href="${opts.backHref}" aria-label="${esc(s.back)}"><svg><use href="#i-back"/></svg></button>
         <a class="title" href="${opts.gameHref}">${esc(opts.title)}</a>
         <nav class="game-tabs" aria-label="${esc(opts.title)}">
           <a class="tab-rules" href="${opts.rulesHref}"${current} aria-label="${esc(opts.rulesLabel)}">${ICON_RULES}<span class="tab-text">${esc(opts.rulesLabel)}</span></a>${settings}
-        </nav>
+        </nav>${music}
         <div class="nav-more game-menu">
           <button class="btn btn-icon btn-ghost" id="game-menu" type="button" aria-label="${esc(s.menu)}" aria-expanded="false" aria-haspopup="true"><svg><use href="#i-menu"/></svg></button>
           <div class="nav-menu" hidden>${links.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</div>

@@ -75,6 +75,12 @@
 .game-bar-badge { display: none; flex: none; margin-right: 6px; }
 [data-game-mode="play"] .game-bar-badge:not(:empty) { display: inline-flex; }
 [data-game-mode="play"] .game-bar-badge:not(:empty) ~ .game-bar-spacer { display: none; }
+/* 音樂開關（chrome.mjs gameBar 的 musicLabel）：玩的時候也在，剛好佔掉右邊那格平衡用的空白 */
+.game-music svg { width: 22px; height: 22px; }
+.game-music .music-off { display: none; }
+.game-music[aria-pressed="false"] { color: var(--muted); }
+.game-music[aria-pressed="false"] .music-off { display: inline; }
+[data-game-mode="play"] .game-bar.has-music .game-bar-spacer { display: none; }
 [data-game-mode="play"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; pointer-events: none; }
 
 /* ============================================================

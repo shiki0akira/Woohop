@@ -30,6 +30,14 @@
     });
   }
 
+  // 音樂開關（有配樂的遊戲才有）：開或關由遊戲處理，也由遊戲把結果寫回 aria-pressed
+  var music = document.getElementById('game-music');
+  if (music) {
+    music.addEventListener('click', function () {
+      if (typeof window.toggleMusic === 'function') window.toggleMusic();
+    });
+  }
+
   // 頂欄放不下時分兩段讓位，讓遊戲名不被截掉：先把「設定」換成齒輪（is-compact），還是放不下再把「玩法」換成書本（is-tight）。
   // 看的是遊戲名有沒有被截，不是固定寬度：中文等短的語言放得下，就維持文字
   var title = bar.querySelector('.title');
