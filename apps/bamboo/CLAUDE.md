@@ -6,9 +6,10 @@
 
 照抄定時炸彈（`apps/bomb`）：assets-only Worker（`wrangler.jsonc` 沒有 `main`）、`scripts/build.js` 為每個語言產生靜態頁、全站共用的頂欄／頁尾／樣式從 `apps/homepage` 拿。返回鍵、`<dialog>`、AudioContext 的坑跟定時炸彈一樣，`apps/bomb/CLAUDE.md` 有寫為什麼。
 
-- **目前只有 zh-TW**（`app/strings.js` 的 `LANGS`）。加語言時：遊戲名用當地類似遊戲的名稱（CONCEPT.md 第五節）、`app/names.js` 每個主題補該語言的名稱庫、首頁 `src/locales.mjs` 的 `GAME_LANGS.bamboo` 補上、`vercel.json` 的 `/bamboo/:lang(...)` 補代碼、`node scripts/og-image.mjs bamboo` 重產縮圖
-- 首頁在還沒開放的語言把這個遊戲標成「即將推出」、不連過來（`GAME_LANGS`）
-- 本機：`.claude/launch.json` 的 `bamboo-dev`（port 8791）
+- **8 種語言**（`app/strings.js` 的 `LANGS`；2026-10-20 先上 zh-TW，同一天補齊）。遊戲名用當地類似遊戲的名稱（CONCEPT.md 第五節），名稱庫在 `app/names/{lang}.js`、各語言自己準備，拉霸題目也是各語言自己寫的（數量不必一樣，build 只要求至少 30 題問題、15 個動作）
+- 拉丁文字的語言（en/de/fr/es）在 `app.css` 換成拉丁字型：全站字型順序裡微軟正黑體排前面，撇號會變全形（`C’ est`）。全站還沒修
+- 口令的格子：中文一格一個字（正方形），其他語言一格一個音節（寬度跟著字走），七格在 375px 要放得下
+- 本機：`.claude/launch.json` 的 `bamboo-dev`（port 8791）。⚠️ `wrangler dev` 開著時 build 出新的資料夾（例如新語言）它不會看到、回 404，要重開 dev server
 
 ## `app/app.js` 的結構
 

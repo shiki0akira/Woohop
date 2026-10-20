@@ -347,19 +347,19 @@
       "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/"
     },
     {
-      "source": "/bamboo/:lang(zh-TW)",
+      "source": "/bamboo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
       "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang"
     },
     {
-      "source": "/bamboo/:lang(zh-TW)/",
+      "source": "/bamboo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
       "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang/"
     },
     {
-      "source": "/bamboo/:lang(zh-TW)/:page(rules)",
+      "source": "/bamboo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
       "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang/:page"
     },
     {
-      "source": "/bamboo/:lang(zh-TW)/:page(rules)/",
+      "source": "/bamboo/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
       "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang/:page/"
     },
     {

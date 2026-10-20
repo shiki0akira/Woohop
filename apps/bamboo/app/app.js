@@ -259,7 +259,7 @@
     var parts = String(T.playNames).split('{names}');
     node.appendChild(document.createTextNode(parts[0]));
     game.names.forEach(function (name, i) {
-      if (i) node.appendChild(document.createTextNode('、'));
+      if (i) node.appendChild(document.createTextNode(T.listSep));
       var mark = document.createElement('mark');
       mark.textContent = name;
       node.appendChild(mark);

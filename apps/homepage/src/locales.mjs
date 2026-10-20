@@ -17,7 +17,7 @@ export const DEFAULT_LANG = 'zh-TW';
  * 那個遊戲加了語言之後，回來這裡補上；8 種都有了就整筆拿掉。
  */
 export const GAME_LANGS = {
-  bamboo: ['zh-TW'],
+  // 竹筍竹筍蹦蹦出 2026-10-20 補齊 8 種語言，已拿掉
 };
 export const gameInLang = (key, lang) => !GAME_LANGS[key] || GAME_LANGS[key].includes(lang);
 export const LANG_NAMES = {

@@ -183,8 +183,8 @@ function checkStrings() {
     }
   }
 
-  // 清單長度要一致，否則某個語言會少一步驟、拉霸少一題而沒人發現
-  for (const key of ['ruleCards', 'chant', 'slotPrompts', 'slotActions', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps']) {
+  // 清單長度要一致，否則某個語言會少一步驟而沒人發現
+  for (const key of ['ruleCards', 'chant', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps']) {
     const size = STRINGS[DEFAULT_LANG][key].length;
     for (const lang of LANGS) {
       if (STRINGS[lang][key].length !== size) {
@@ -192,6 +192,15 @@ function checkStrings() {
       }
     }
   }
+  /*
+   * 拉霸的題目和動作是各語言自己寫的內容（例如日文問「カップ麺は何味」），不要求每種語言一樣多，
+   * 只要求夠多：太少的話拉幾次就重複了
+   */
+  for (const lang of LANGS) {
+    if (STRINGS[lang].slotPrompts.length < 30) throw new Error(`${lang} 的 slotPrompts 只有 ${STRINGS[lang].slotPrompts.length} 題，至少要 30 題`);
+    if (STRINGS[lang].slotActions.length < 15) throw new Error(`${lang} 的 slotActions 只有 ${STRINGS[lang].slotActions.length} 個，至少要 15 個`);
+  }
+
 }
 
 function pagePath(lang, page) {

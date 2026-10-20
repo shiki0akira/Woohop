@@ -30,14 +30,14 @@
 .rule-card p { margin: 0; color: var(--muted); line-height: 1.6; }
 
 /* ---------- 主題：兩欄選項卡 ---------- */
-.theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.theme-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; } /* minmax(0,…)：不讓「Pas de nouveaux noms」這種長例子把格子撐出框 */
 /* 八顆卡要擠在一畫面裡：右上角的打勾圈縮小；上下內距對稱，字才會在卡片正中間 */
-.theme-grid .choice { min-height: 92px; padding: 16px 10px; gap: 2px; }
+.theme-grid .choice { min-width: 0; min-height: 92px; padding: 16px 8px; gap: 2px; }
 /* 只有標題要讓開右上角的打勾圈；例子那一行用全寬、只排一行，太長就「⋯」 */
-.theme-grid .choice-name { padding-inline: 18px; }
+.theme-grid .choice-name { max-width: 100%; padding-inline: 16px; line-height: 1.25; overflow-wrap: break-word; }
 .theme-grid .choice-sub { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.theme-grid .choice::after { top: 8px; right: 8px; width: 20px; height: 20px; background-size: 12px; }
-@media (min-width: 560px) { .theme-grid { grid-template-columns: repeat(4, 1fr); } }
+.theme-grid .choice::after { top: 6px; right: 6px; width: 18px; height: 18px; background-size: 11px; }
+@media (min-width: 560px) { .theme-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 
 /*
@@ -113,12 +113,19 @@
 
 /* 口令的七個字，配樂打到哪一拍就亮哪一個 */
 .chant { display: flex; justify-content: center; gap: 6px; min-width: 0; }
+/*
+ * 中文一格一個字，正方形；其他語言一格是一個音節（Bam、boo、ニョッ、나와、bout !），
+ * 寬度跟著字走、高度固定，字級小一點，七格才放得進手機寬度（375px 實測）
+ */
 .chant span { flex: 1 1 0; min-width: 0; max-width: 44px; aspect-ratio: 1;  display: grid; place-items: center; border-radius: var(--r-md); border: 2px solid var(--edge-n); background: var(--sunken); font-size: 20px; font-weight: 900; color: var(--muted); transition: transform .08s, background .08s; }
 .chant span.on { background: var(--mint); border-color: var(--mint-edge); color: var(--ink); transform: translateY(-4px) scale(1.12); }
 .chant span.accent.on { background: var(--coral); border-color: var(--coral-edge); }
+.chant:not(:lang(zh)) { gap: 4px; }
+.chant:not(:lang(zh)) span { flex: 1 1 auto; max-width: none; aspect-ratio: auto; height: 40px; padding: 0 2px; font-size: 14px; white-space: nowrap; }
 :root[data-theme="dark"] .chant span.on { color: #102a22; }
 
-.round-btn { --h: 76px; position: relative; overflow: hidden; font-size: 22px; border-radius: var(--r-lg); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+/* 外語的「按住結束」比較長：允許換成兩行、平衡斷行，不要被 .btn 的 nowrap 切掉 */
+.round-btn { --h: 76px; position: relative; overflow: hidden; font-size: 22px; white-space: normal; line-height: 1.2; text-wrap: balance; padding-inline: 16px; border-radius: var(--r-lg); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
 /* 玩的時候變成紅色（跟搶答鈕同一組紅），一看就知道這顆是「結束」不是「開始」 */
 .round-btn.is-running { --face: #e0503c; --edge: #8f2f22; --text: #fff; }
 /* 按住時從左到右填滿深紅色，填滿（HOLD_MS）就結束；放開就退回去 */
@@ -195,3 +202,20 @@
   .slot-reel li.on { font-size: 19px; }
 }
 .all-done { margin-top: 8px; }
+
+/*
+ * 拉丁文字的語言（en/de/fr/es）不要用中文字型：全站字型順序裡微軟正黑體排在系統字型前面，
+ * 它的撇號、引號是全形的，法文「C’est」會變成「C’ est」。這裡只修這個遊戲，
+ * 全站的修法要改 apps/homepage/assets/woohop.css（會動到所有遊戲，要一起重新部署）。
+ */
+:root:is(:lang(en), :lang(de), :lang(fr), :lang(es)) body { font-family: "Nunito", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+/*
+ * 確認框兩顆按鈕：woohop.css 是 1fr 1fr，但 1fr 的最小寬度是字的寬度，外語長一點就把右邊那顆擠出框外
+ * （法文「Revenir au début」）。改成 minmax(0, 1fr)，字太長就換行，不撐破框
+ */
+dialog.modal .m-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1.2; text-wrap: balance; }
+
+/* 卡片內距統一 20px（共用 game.css 的 .panel 是 22px 24px 24px）：手機上主題那八張卡多一點寬度（使用者要求） */
+.bamboo-app .panel { padding: 20px; }
