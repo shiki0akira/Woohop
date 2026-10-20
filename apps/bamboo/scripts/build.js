@@ -231,8 +231,9 @@ function tokensFor(lang, page, assetVersion) {
       rulesHref: pagePath(lang, PAGES[1]),
       rulesLabel: strings.navRules,
       isRules: page.dir === 'rules',
-      // 沒有「設定」分頁；音樂開關在頂欄（玩的時候也在），見 CONCEPT.md 3.3
-      musicLabel: strings.musicLabel,
+      // 沒有「設定」分頁；音樂開關在遊戲頁的頂欄（玩的時候也在），見 CONCEPT.md 3.3
+      // 玩法頁沒有配樂，不放音樂開關（使用者要求）
+      musicLabel: page.dir === 'rules' ? '' : strings.musicLabel,
       // 設定畫面的返回鍵回「找遊戲」；玩法頁回遊戲頁（遊戲頁的返回鍵依畫面而定，見 app.js 的 window.gameBack）
       backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
     }),
