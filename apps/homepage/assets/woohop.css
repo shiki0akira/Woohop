@@ -149,6 +149,12 @@
     font-family: "Nunito", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
     line-height: 1.6;
   }
+  /*
+   * 拉丁文字的語言（en/de/fr/es）不用中文字型：上面那串裡微軟正黑體排在系統字型前面，
+   * Nunito 沒載入的時候會拿它來排英文，撇號、引號變全形（法文「C’est」變成「C’ est」）。
+   * 中日韓維持上面那串。改這裡要重新部署所有遊戲（各遊戲 build 時會複製這個檔）
+   */
+  :root:is(:lang(en), :lang(de), :lang(fr), :lang(es)) body { font-family: "Nunito", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
   .wrap { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 96px; }
   h1 { font-size: clamp(28px, 5vw, 44px); margin: 0 0 8px; letter-spacing: -0.01em; }
   h2 { font-size: 24px; margin: 72px 0 6px; }

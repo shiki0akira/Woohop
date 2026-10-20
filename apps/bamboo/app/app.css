@@ -204,13 +204,6 @@
 .all-done { margin-top: 8px; }
 
 /*
- * 拉丁文字的語言（en/de/fr/es）不要用中文字型：全站字型順序裡微軟正黑體排在系統字型前面，
- * 它的撇號、引號是全形的，法文「C’est」會變成「C’ est」。這裡只修這個遊戲，
- * 全站的修法要改 apps/homepage/assets/woohop.css（會動到所有遊戲，要一起重新部署）。
- */
-:root:is(:lang(en), :lang(de), :lang(fr), :lang(es)) body { font-family: "Nunito", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-
-/*
  * 確認框兩顆按鈕：woohop.css 是 1fr 1fr，但 1fr 的最小寬度是字的寬度，外語長一點就把右邊那顆擠出框外
  * （法文「Revenir au début」）。改成 minmax(0, 1fr)，字太長就換行，不撐破框
  */
