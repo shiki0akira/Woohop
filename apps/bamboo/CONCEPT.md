@@ -1,6 +1,6 @@
 # 竹筍竹筍蹦蹦出——小組破冰遊戲設計文件
 
-> 狀態：**zh-TW 版開發中**（2026-10-20）。程式在 app/，本機 `npm run dev`（launch.json 的 bamboo-dev，port 8791）。
+> 狀態：**zh-TW 版已上線**（2026-10-20，https://www.vibeweb100.com/bamboo/zh-TW/）。其他 7 種語言還沒做。程式在 app/，本機 `npm run dev`（launch.json 的 bamboo-dev，port 8791）。
 > 這是第一個「不用手機的遊戲」。帶領播放器的共用部分（步驟教學、照著念、分享拉霸）會在這裡第一次做出來，之後上樓下樓、果園菜園動物園都會沿用。
 > 系列整體架構在 `docs/ARCHITECTURE.md`，帶領播放器的構想在 `docs/redesign-plan.md` §5.1。
 

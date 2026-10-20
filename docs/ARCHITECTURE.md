@@ -84,7 +84,8 @@ Woohop/
 │  ├─ buzzer/     ← web100_02_BuzzerGame      （Workers，在資料夾內 npm run deploy）
 │  ├─ match/      ← web100_03_PreferenceMatch （同上）
 │  ├─ bingo/      ← web100_04_HappyBingo      （同上）
-│  └─ bomb/       ← web100_05_TimeBomb        （同上）
+│  ├─ bomb/       ← web100_05_TimeBomb        （同上）
+│  └─ bamboo/     ← 竹筍竹筍蹦蹦出             （同上，assets-only Worker）
 ├─ packages/      ← 之後的共用程式（design tokens、房間系統、頁首頁尾、帶領播放器）
 └─ docs/          ← 本文件、改版企劃、figma-variables.json
 ```
@@ -158,6 +159,7 @@ Woohop/
 | web100_03_PreferenceMatch | 已上線 | Cloudflare Workers | 二選一破冰配對，路徑 /match/；接法同搶答（網頁走代理、API 與 WebSocket 直連）|
 | web100_04_HappyBingo | 已上線 | Cloudflare Workers | 找人配對的破冰賓果，路徑 /bingo/；接法同搶答。上線時只有 zh-TW／en，2026-08-26 補齊 8 種語言 |
 | web100_05_TimeBomb | 已上線 | Cloudflare Workers | 一台手機傳著玩的定時炸彈，路徑 /bomb/；8 種語言。**純前端卻走 Workers**，是第 4 節那條規則的例外，理由見下方 |
+| bamboo（竹筍竹筍蹦蹦出） | 已上線（2026-10-20） | Cloudflare Workers | 第一個不用手機的遊戲（手機只在主持人手上帶領），路徑 /bamboo/；**目前只有 zh-TW**，其他語言在首頁標「即將推出」（homepage 的 `GAME_LANGS`）。接法同定時炸彈（assets-only Worker） |
 | web100_06_HappinessSimulator | 已上線 | Cloudflare Workers | 幸福小組七關互動信息，路徑 /happiness/；**只有 zh-TW**。接法同搶答（網頁與 /happiness/api 走代理、WebSocket 直連）。首頁上跟其他作品一樣是一張卡片、同樣大小，但換成幸福模擬器自己的像素風（硬邊框、硬陰影、右上角兩條線），標籤是「互動信息分享」 |
 
 ### 搶答遊戲的特殊接法：網頁走代理、WebSocket 直連
