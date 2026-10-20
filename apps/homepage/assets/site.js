@@ -27,6 +27,7 @@
   /* ================= 網址 ================= */
   const PATHS = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
   const pageUrl = (p, l = lang) => `/${l}/${PATHS[p]}`;
+  const gameLangs = window.WOOHOP.gameLangs || {};
   const gameUrl = key => (key === 'avalon' ? `/avalon/${lang}` : key === 'happy' ? '/happiness/zh-TW/' : `/${key}/${lang}/`);
 
   /* ================= GA4 ================= */
@@ -44,19 +45,22 @@
     { key: 'bingo',   players: [8, 30], time: [1, 2], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
     { key: 'bomb',    players: [4, 15], time: [0, 1], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
     { key: 'buzzer',  players: [5, 30], time: [0, 1], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
+    { key: 'bamboo',  players: [4, 20], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
     { key: 'avalon',  players: [5, 10], time: [2],    minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
     { key: 'orchard', players: [5, 20], time: [0, 1], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
     { key: 'stairs',  players: [6, 30], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', soon: true },
-    { key: 'bamboo',  players: [6, 20], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A', soon: true },
-  ].map(g => ({ ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key) }));
+  ].map(g => ({
+    ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
+    // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
+    soon: g.soon || Boolean(gameLangs[g.key] && !gameLangs[g.key].includes(lang)),
+  }));
 
   // 還沒畫插圖的遊戲：一顆有表情的圓球先佔位
   const placeholderArt = (color, face) => () => `${ground}${burst(132, 28, '#FFC628')}${ring(28, 34, color)}${plus(146, 80, color)}
     ${body('<circle cx="80" cy="74" r="36"/>', color)}${makeFace(face, 80, 72, 2.2)}`;
   art.orchard = art.orchard || placeholderArt('#FFC628', 'grin');
   art.stairs = art.stairs || placeholderArt('#aebcf3', 'wow');
-  art.bamboo = art.bamboo || placeholderArt('#a8dccb', 'happy');
   const artSvg = key => `<svg viewBox="0 0 160 126" aria-hidden="true">${art[key]()}</svg>`;
 
   /* ================= 遊戲卡片 ================= */

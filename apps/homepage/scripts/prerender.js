@@ -14,7 +14,7 @@
 
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
-import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES } from '../src/locales.mjs';
+import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES, GAME_LANGS, gameInLang } from '../src/locales.mjs';
 import { navbar, footer, PAGES, local, esc, THEME_HEAD } from '../src/chrome.mjs';
 
 const SITE = 'https://www.vibeweb100.com';
@@ -22,7 +22,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-19i';
+const ASSET_VERSION = '2026-10-20a';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -80,7 +80,8 @@ ${alternates}
 // 每頁都嵌一份當頁語言的文案，執行期 JS 直接讀，不用再發請求
 function scripts(s, lang, page, extra = []) {
   const v = `?v=${ASSET_VERSION}`;
-  const data = { lang, page, t: s, langs: LANGS, langNames: LANG_NAMES };
+  // gameLangs：只開放部分語言的遊戲，site.js 在其他語言把它標成「即將推出」
+  const data = { lang, page, t: s, langs: LANGS, langNames: LANG_NAMES, gameLangs: GAME_LANGS };
   return `
     <script>window.WOOHOP = ${jsonForScript(data)};</script>
     <script src="/assets/woohop-art.js${v}"></script>
@@ -90,8 +91,10 @@ ${extra.map((f) => `    <script src="/assets/${f}${v}"></script>`).join('\n')}`;
 
 /* ---------- 遊戲清單（靜態版，給爬蟲與沒開 JS 的人；JS 會換成有插圖、能篩選的版本） ---------- */
 
-const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'avalon'];
-function staticGames(s, lang, keys = GAME_KEYS) {
+const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'avalon'];
+// 這個語言真的玩得到的遊戲（竹筍目前只有 zh-TW，見 locales.mjs 的 GAME_LANGS）
+const gameKeysFor = (lang) => GAME_KEYS.filter((k) => gameInLang(k, lang));
+function staticGames(s, lang, keys = gameKeysFor(lang)) {
   return keys
     .map((k) => `<a class="game" href="${gameUrl(lang, k)}"><h3>${esc(s.games[k][0])}</h3><p>${esc(s.games[k][1])}</p></a>`)
     .join('');
@@ -125,8 +128,8 @@ function jsonLd(s, lang, page, title, desc) {
       '@type': 'ItemList',
       name: page === 'home' ? s.heroTitle1 + s.heroTitle2 : s.gamesH1,
       itemListOrder: 'https://schema.org/ItemListUnordered',
-      numberOfItems: GAME_KEYS.length,
-      itemListElement: GAME_KEYS.map((k, i) => ({
+      numberOfItems: gameKeysFor(lang).length,
+      itemListElement: gameKeysFor(lang).map((k, i) => ({
         '@type': 'ListItem',
         position: i + 1,
         item: {

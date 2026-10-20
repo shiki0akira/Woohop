@@ -36,7 +36,8 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 1. `src/locales.mjs` 每個語言的 `games` 加上名稱與短介紹
 2. `assets/site.js` 的 `GAMES` 加一筆（人數、時間、手機、目的、代表色）；`prerender.js` 的 `GAME_KEYS` 加上它，才會進靜態清單與結構化資料
 3. 插圖加在 `design/brand-exploration.html` 的 `art`，再同步到 `assets/woohop-art.js`
-4. `vercel.json` 的 `rewrites` 加該遊戲的代理規則：**列白名單、不要 `/xxx/:path*` 全收**，並排在語言萬用規則之前（理由見 `docs/ARCHITECTURE.md` 3.1）
+4. 遊戲只做了部分語言（例如竹筍目前只有 zh-TW）：`src/locales.mjs` 的 `GAME_LANGS` 列出有的語言，其他語言的首頁、找遊戲會標成「即將推出」、不連過去，靜態清單與結構化資料也不列
+5. `vercel.json` 的 `rewrites` 加該遊戲的代理規則：**列白名單、不要 `/xxx/:path*` 全收**，並排在語言萬用規則之前（理由見 `docs/ARCHITECTURE.md` 3.1）
 
 ## 語言判斷
 

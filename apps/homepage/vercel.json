@@ -335,6 +335,46 @@
       "destination": "https://web100-05-time-bomb.shiki0akira.workers.dev/bomb/og/:file"
     },
     {
+      "source": "/bamboo-sitemap.xml",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/sitemap.xml"
+    },
+    {
+      "source": "/bamboo",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo"
+    },
+    {
+      "source": "/bamboo/",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/"
+    },
+    {
+      "source": "/bamboo/:lang(zh-TW)",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang"
+    },
+    {
+      "source": "/bamboo/:lang(zh-TW)/",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang/"
+    },
+    {
+      "source": "/bamboo/:lang(zh-TW)/:page(rules)",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang/:page"
+    },
+    {
+      "source": "/bamboo/:lang(zh-TW)/:page(rules)/",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:lang/:page/"
+    },
+    {
+      "source": "/bamboo/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/:file"
+    },
+    {
+      "source": "/bamboo/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/woohop/:file"
+    },
+    {
+      "source": "/bamboo/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://web100-bamboo.shiki0akira.workers.dev/bamboo/og/:file"
+    },
+    {
       "source": "/happiness-sitemap.xml",
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/sitemap.xml"
     },

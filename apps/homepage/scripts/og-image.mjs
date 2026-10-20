@@ -71,6 +71,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.bingo()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 竹筍竹筍蹦蹦出：目前只有 zh-TW（apps/bamboo/app/strings.js 的 LANGS），只產生有的語言
+  bamboo: async () => {
+    const { STRINGS: Bm, LANGS: BL } = await import(pathToFileURL(path.join(ROOT, '..', 'bamboo', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'bamboo', 'public', 'og'),
+      langs: BL,
+      title: (lang) => splitTitle(Bm[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.bamboo()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
 };
 const which = process.argv[2] || 'home';
 if (!TARGETS[which]) throw new Error('不認得的對象：' + which + '（可用：' + Object.keys(TARGETS).join('、') + '）');
@@ -144,7 +154,7 @@ ${T.scripts.map((f) => `<script src="${asset(f)}"></script>`).join('')}
 mkdirSync(OUT, { recursive: true });
 const tmp = path.join(os.tmpdir(), 'woohop-og');
 mkdirSync(tmp, { recursive: true });
-for (const lang of LANGS) {
+for (const lang of T.langs || LANGS) {
   const html = path.join(tmp, `${lang}.html`);
   writeFileSync(html, page(lang, T.title(lang)));
   execFileSync(browser, [

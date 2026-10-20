@@ -21,7 +21,7 @@
   // 這一局的名單放 sessionStorage：不小心重新整理不會白取，關掉分頁就沒了（產品決定：不記使用者玩過什麼）
   var GAME_KEY = 'web100-bamboo-game';
 
-  var MIN_PLAYERS = 3;
+  var MIN_PLAYERS = 4;
 
   // ---------- 狀態 ----------
 
@@ -472,9 +472,12 @@
     if (el.musicToggle) el.musicToggle.setAttribute('aria-pressed', String(on));
   }
 
+  var roundStartedAt = 0;
+
   function startRound() {
     running = true;
     roundNumber += 1;
+    roundStartedAt = Date.now();
     requestWakeLock();
     if (settings.music) startMusic(true);
     syncRound();
@@ -933,6 +936,8 @@
       setStage('choose');
     }
     pushGameState();
+    // 按下「開始遊戲」：有多少人打開頁面之後真的開始玩、選了哪個主題
+    track('bamboo_game_started', { theme: game.theme, random: game.random });
     showScreen(theme === 'realname' ? 'rules' : 'name');
   }
 
@@ -1087,7 +1092,14 @@
 
   function endRound() {
     cancelHold();
+    var hadMusic = music.playing; // stopRound 會把它關掉，先記下來
     stopRound();
+    // 一輪玩多久：看大家是不是真的玩起來了（幾秒就結束通常是按錯或還沒搞懂）
+    track('bamboo_round_ended', {
+      round_number: roundNumber,
+      duration_seconds: Math.round((Date.now() - roundStartedAt) / 1000),
+      music: hadMusic,
+    });
     showScreen('end');
   }
 
