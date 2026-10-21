@@ -186,9 +186,12 @@
         prompts: window.STAIRS.slot.prompts,
         actions: window.STAIRS.slot.actions,
         sound: function () { return settings.sound; },
+        // 拉霸轉的時候配樂再壓低，停下來回到背景音量（使用者要求）
         onPull: function (info) {
+          if (metro) metro.duck(true);
           track('stairs_slot_pulled', { round_number: roundNumber, kind: info.kind, mode: info.mode });
         },
+        onLand: function () { if (metro) metro.duck(false); },
       });
     }
     slotTool.reset();

@@ -80,7 +80,7 @@
  *       say 可以是字串，或 function (node) {…} 自己往 node 裡加節點（例如名稱用 <mark> 標起來）
  *   Leader.hideSay(bool)    把照著念收起來（例如取名開始後就不需要）
  *   Leader.ruleCards(listEl, cards, arts)   說明規則的插圖卡：cards 是 [[標題, 說明]]，arts 是回傳 SVG 內容的函式
- *   Leader.slot(rootEl, { prompts, actions, onPull, sound })  真心話大冒險拉霸，回傳 { reset() }
+ *   Leader.slot(rootEl, { prompts, actions, onPull, onLand, sound })  真心話大冒險拉霸，回傳 { reset() }。onPull 開始轉、onLand 停下來
  *       sound：可選，回傳 true／false 的函式，遊戲的聲音開關關著時拉霸也不出聲
  */
 (function () {
@@ -354,12 +354,14 @@
         st.spinning = false;
         var c = soundOn() && ctx();
         if (c) land(c);
+        if (opts.onLand) opts.onLand();
       }, SLOT_MS + 50);
       if (opts.onPull) opts.onPull({ kind: st.items[chosen].kind, mode: st.mode });
     });
 
     function reset() {
       clearTimeout(st.id);
+      if (st.spinning && opts.onLand) opts.onLand();
       st.spinning = false;
       pull.disabled = false;
       pull.textContent = t.slotPull;
@@ -748,7 +750,7 @@
  *       sound：可選，回傳 true／false，關著就不出聲（燈照樣亮）
  *       groove：true 時多一層配樂（貝斯、鼓、小旋律）。配樂跟拍子分開開關，但踩同一個時鐘、同一個速度，永遠對得上拍
  *       回傳 { start(), stop(), running() } 管拍子；{ music(on), playing() } 管配樂；
- *       background(on)：配樂音量調小當背景（上樓下樓的拉霸那步）
+ *       配樂音量自動調：打拍子時壓低、停了拉回；background(on) 小聲當背景（上樓下樓的拉霸那步）；duck(on) 再壓低（拉霸在轉）
  *
  * 排程用「音訊時鐘＋往前看」：setInterval 每 25ms 把接下來 0.12 秒的拍子排進音訊時鐘，
  * 主執行緒忙也不會歪拍；燈號用 setTimeout 對齊（差幾十毫秒眼睛看不出來）。
@@ -901,14 +903,27 @@
      * 時鐘（clock）只有一個，上面兩層：拍子（running：拍子聲＋燈，按「開始打拍子」才有）和配樂（music：遊戲自己開關）。
      * 兩層分開開關，但踩同一個時鐘、同一個速度，所以永遠對得上拍。兩層都關了時鐘才停。
      */
-    var st = { clock: false, running: false, music: false, bg: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
+    var st = { clock: false, running: false, music: false, bg: false, duck: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
     var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
     var musicBus = null;
-    // 音量：拍子要比配樂大聲，大家才跟得到拍（使用者要求）；誰輸了那步配樂再小一點當背景
+    /*
+     * 音量（使用者要求）：配樂平常正常大聲；一打拍子就壓低，讓拍子聲聽得清楚，停了再拉回來。
+     * 「誰輸了？」那步配樂小聲當背景，拉霸轉的時候再壓低一點（duck），停下來回到背景音量。
+     */
     var CLICK_VOL = 1.4;
-    var MUSIC_VOL = 0.5;
-    var MUSIC_BG = 0.25;
+    var MUSIC_VOL = 0.8;
+    var MUSIC_UNDER_CLICK = 0.3;
+    var MUSIC_BG = 0.3;
+    var MUSIC_DUCK = 0.1;
+    function musicLevel() {
+      if (st.duck) return MUSIC_DUCK;
+      if (st.bg) return MUSIC_BG;
+      return st.running ? MUSIC_UNDER_CLICK : MUSIC_VOL;
+    }
+    function applyMusicLevel() {
+      if (st.music) setGain(musicBus, musicLevel(), 0.3);
+    }
 
     rootEl.textContent = '';
     rootEl.classList.add('metro');
@@ -1027,6 +1042,7 @@
       if (!c) return;
       st.running = true;
       setGain(clickBus, CLICK_VOL);
+      applyMusicLevel();
       st.beat = 0;
       st.bars = 0;
       tick();
@@ -1040,6 +1056,7 @@
       st.visual.forEach(clearTimeout);
       st.visual = [];
       setGain(clickBus, 0);
+      applyMusicLevel();
       light(-1);
       stopClockIfIdle();
       sync();
@@ -1052,7 +1069,7 @@
       if (on) {
         if (!startClock()) return;
         st.music = true;
-        setGain(musicBus, st.bg ? MUSIC_BG : MUSIC_VOL);
+        setGain(musicBus, musicLevel());
         tick();
       } else {
         st.music = false;
@@ -1061,10 +1078,16 @@
       }
     }
 
-    // 背景模式：配樂音量壓低到 MUSIC_BG（給下一步當背景，例如上樓下樓的拉霸），false 回到正常
+    // 背景模式：配樂小聲當背景（例如上樓下樓的拉霸那步），false 回到正常
     function background(on) {
       st.bg = on;
-      if (st.music) setGain(musicBus, on ? MUSIC_BG : MUSIC_VOL, 0.4);
+      if (!on) st.duck = false;
+      applyMusicLevel();
+    }
+    // 再壓低一點（例如拉霸在轉），false 回到原本的音量
+    function duck(on) {
+      st.duck = on;
+      applyMusicLevel();
     }
 
     toggle.addEventListener('click', function () {
@@ -1092,7 +1115,7 @@
 
     sync();
     return {
-      start: start, stop: stop, music: music, background: background,
+      start: start, stop: stop, music: music, background: background, duck: duck,
       running: function () { return st.running; },
       playing: function () { return st.music; },
     };
