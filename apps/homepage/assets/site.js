@@ -45,11 +45,11 @@
     { key: 'bingo',   players: [8, 30], time: [1, 2], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
     { key: 'bomb',    players: [4, 15], time: [0, 1], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
     { key: 'buzzer',  players: [5, 30], time: [0, 1], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
-    { key: 'bamboo',  players: [4, 20], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
+    { key: 'bamboo',  players: [4, 20], time: [0, 1], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
     { key: 'avalon',  players: [5, 10], time: [2],    minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
     { key: 'orchard', players: [5, 20], time: [0, 1], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
-    { key: 'stairs',  players: [4, 30], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
+    { key: 'stairs',  players: [4, 30], time: [0, 1], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
