@@ -1,6 +1,6 @@
 # 上樓下樓——小組破冰遊戲設計文件
 
-> 狀態：**開發中**（2026-10-21）。程式在 app/，本機 `npm run dev`（launch.json 的 stairs-dev，port 8792）。
+> 狀態：**已上線 zh-TW**（2026-10-21），其他 7 種語言還沒做。程式在 app/，本機 `npm run dev`（launch.json 的 stairs-dev，port 8792）。
 > 跟竹筍竹筍蹦蹦出同一套：不用手機的團康，手機只在主持人手上帶領。步驟頭、規則卡、拉霸、節拍器都是全站共用的 `window.Leader`（apps/homepage/assets/game.js）。
 
 ## 一、遊戲簡介
