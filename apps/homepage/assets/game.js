@@ -903,22 +903,23 @@
      * 時鐘（clock）只有一個，上面兩層：拍子（running：拍子聲＋燈，按「開始打拍子」才有）和配樂（music：遊戲自己開關）。
      * 兩層分開開關，但踩同一個時鐘、同一個速度，所以永遠對得上拍。兩層都關了時鐘才停。
      */
-    var st = { clock: false, running: false, music: false, bg: false, duck: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
+    var st = { clock: false, running: false, music: false, bg: false, duck: false, ducked: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
     var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
     var musicBus = null;
     /*
      * 音量（使用者要求）：配樂平常正常大聲；一打拍子就壓低，讓拍子聲聽得清楚，停了再拉回來。
-     * 「誰輸了？」那步配樂小聲當背景，拉霸轉的時候再壓低一點（duck），停下來回到背景音量。
+     * 「誰輸了？」那步一進來正常大聲，拉霸轉的時候壓低（duck），停下來之後維持中等音量當背景。
      */
     var CLICK_VOL = 1.4;
     var MUSIC_VOL = 0.8;
     var MUSIC_UNDER_CLICK = 0.3;
-    var MUSIC_BG = 0.3;
-    var MUSIC_DUCK = 0.1;
+    var MUSIC_BG = 0.8;
+    var MUSIC_DUCK = 0.3;
+    var MUSIC_AFTER_DUCK = 0.5;
     function musicLevel() {
       if (st.duck) return MUSIC_DUCK;
-      if (st.bg) return MUSIC_BG;
+      if (st.bg) return st.ducked ? MUSIC_AFTER_DUCK : MUSIC_BG;
       return st.running ? MUSIC_UNDER_CLICK : MUSIC_VOL;
     }
     function applyMusicLevel() {
@@ -1081,11 +1082,13 @@
     // 背景模式：配樂小聲當背景（例如上樓下樓的拉霸那步），false 回到正常
     function background(on) {
       st.bg = on;
-      if (!on) st.duck = false;
+      st.duck = false;
+      st.ducked = false;
       applyMusicLevel();
     }
     // 再壓低一點（例如拉霸在轉），false 回到原本的音量
     function duck(on) {
+      if (st.duck && !on) st.ducked = true;
       st.duck = on;
       applyMusicLevel();
     }
