@@ -36,20 +36,20 @@
   if (!window.WOOHOP.ownPageView) track('page_view', { page_title: document.title, page_location: location.origin + location.pathname, page_path: location.pathname });
 
   /* ================= 遊戲資料 =================
-   * players：最少～最多人；time：0=5 分內／1=5–15 分／2=15 分以上；minutes：排破冰組合用的大約長度
+   * players：最少～最多人；minutes：一局大約幾分鐘（卡片標「3 分一局」、「有多少時間」篩選、排破冰組合都用它）
    * phones：none / one / each；purpose：warmup / know（桌遊助手不是破冰遊戲，留空，選了目的就不會出現）
    * 幸福模擬器不是遊戲（獨立專案），不在這裡，只在首頁專區與頁尾。
    */
   const GAMES = [
-    { key: 'match',   players: [5, 30], time: [1],    minutes: 8,  phones: 'each', purpose: ['know'],           color: '#F3A4FB' },
-    { key: 'bingo',   players: [8, 30], time: [1, 2], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
-    { key: 'bomb',    players: [4, 15], time: [0, 1], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
-    { key: 'buzzer',  players: [5, 30], time: [0, 1], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
-    { key: 'bamboo',  players: [4, 20], time: [0, 1], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
-    { key: 'avalon',  players: [5, 10], time: [2],    minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
+    { key: 'match',   players: [5, 30], minutes: 8,  phones: 'each', purpose: ['know'],           color: '#F3A4FB' },
+    { key: 'bingo',   players: [8, 30], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
+    { key: 'bomb',    players: [4, 15], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
+    { key: 'buzzer',  players: [5, 30], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
+    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
+    { key: 'avalon',  players: [5, 10], minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
-    { key: 'orchard', players: [5, 20], time: [0, 1], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
-    { key: 'stairs',  players: [4, 30], time: [0, 1], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
+    { key: 'orchard', players: [5, 20], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
+    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
@@ -63,6 +63,8 @@
   const artSvg = key => `<svg viewBox="0 0 160 126" aria-hidden="true">${art[key]()}</svg>`;
 
   /* ================= 遊戲卡片 ================= */
+  // 標籤一律一行（長語言也不會折成兩排、把卡片撐高）：人數用人形圖示代替「人／personas」，其他兩個只放字（圖示一個要 16px，放三個反而塞不下）
+  const tagChip = (icon, text) => `<span><svg aria-hidden="true"><use href="#${icon}"/></svg>${esc(text)}</span>`;
   const card = (g, purposes = new Set()) => {
     const tag = g.soon ? 'div' : 'a';
     const badge = g.soon ? ['b-soon', t.soon] : g.boardgame ? ['b-info', t.badgeBoard] : (g.purpose.find(p => purposes.has(p)) || g.purpose[0]) === 'know' ? ['b-info', t.badgeKnow] : ['b-new', t.badgeWarm];
@@ -71,7 +73,7 @@
       <div class="art">${artSvg(g.key)}</div>
       <h3>${esc(g.name)}</h3>
       <p>${esc(g.desc)}</p>
-      <div class="tags"><span>${esc(fmt(t.tagPlayers, { a: g.players[0], b: g.players[1] }))}</span><span>${esc(t.tagTime[g.time[0]])}</span><span>${esc(t.tagPhones[g.phones])}</span></div>
+      <div class="tags">${tagChip("i-users", fmt(t.tagPlayers, { a: g.players[0], b: g.players[1] }))}<span>${esc(fmt(t.tagRound, { n: g.minutes }))}</span><span>${esc(t.tagPhones[g.phones])}</span></div>
       <svg class="w-row" viewBox="0 0 177 48" aria-hidden="true">${[0, 1, 2].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${g.color}"/>`).join('')}</svg>
     </${tag}>`;
   };
@@ -82,7 +84,8 @@
    */
   const FILTERS = {
     people:  { label: t.fPeople,  type: 'one',  values: ['2-4', '5-15', '15-30', '31-99'], labels: t.oPeople },
-    time:    { label: t.fTime,    type: 'one',  values: ['0', '1', '2'],                  labels: t.oTime },
+    // 主持人有多少時間＝上限：一局在這之內的都列出來（5 分鐘、15 分鐘、15 分以上＝不限）
+    time:    { label: t.fTime,    type: 'one',  values: ['0', '1', '2'],                  labels: t.oTime, max: [5, 15, Infinity] },
     phones:  { label: t.fPhones,  type: 'many', values: ['none', 'one', 'each'],          labels: t.oPhones },
     purpose: { label: t.fPurpose, type: 'many', values: ['warmup', 'know'],               labels: t.oPurpose },
   };
@@ -127,7 +130,7 @@
 
     const match = g => {
       if (state.people) { const [a, b] = state.people.split('-').map(Number); if (g.players[1] < a || g.players[0] > b) return false; }
-      if (state.time !== null && !g.time.includes(Number(state.time))) return false;
+      if (state.time !== null && g.minutes > FILTERS.time.max[Number(state.time)]) return false;
       if (state.phones.size && !state.phones.has(g.phones)) return false;
       if (state.purpose.size && !g.purpose.some(p => state.purpose.has(p))) return false;
       return true;
@@ -144,7 +147,10 @@
     const render = flashKey => {
       // 選了任何條件就只列能玩的；即將推出的只在沒篩選時排在最後
       const filtered = !!query();
-      const all = GAMES.filter(g => match(g) && !(filtered && g.soon)).sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0));
+      // 選了 5 分鐘、15 分鐘：一局最接近那個時間的排前面，比較能把時間用滿（15 分以上不排，不然阿瓦隆永遠第一）
+      const byTime = state.time === '0' || state.time === '1';
+      const all = GAMES.filter(g => match(g) && !(filtered && g.soon))
+        .sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0) || (byTime ? b.minutes - a.minutes : 0));
       $('[data-results]').innerHTML = all.slice(0, limit).map(g => card(g, state.purpose)).join('');
       const n = all.filter(g => !g.soon).length, soon = all.filter(g => g.soon).length;
       $('[data-count]').innerHTML = fmt(esc(t.found), { n: `<em>${n}</em>` }) + (soon ? `<span class="t-small">${esc(fmt(t.soonCount, { n: soon }))}</span>` : '');

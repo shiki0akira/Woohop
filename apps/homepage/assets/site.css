@@ -73,7 +73,8 @@
   .finder-row .row { gap: 8px; }
   /* 手機上分段控制改成等寬格子，不會剩一顆掉到第二行 */
   .finder .segmented, .plan .segmented { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); width: 100%; max-width: 560px; }
-  .finder .segmented button, .plan .segmented button { padding: 0 6px; } /* 窄螢幕時按鈕本身不能比格子寬，不然會把整頁撐寬 */
+  /* 窄螢幕時按鈕本身不能比格子寬，不然會把整頁撐寬（左右只留 6px）；長語言折成兩行時高度跟著字長，上下留內距 */
+  .finder .segmented button, .plan .segmented button { height: auto; min-height: 40px; padding: 6px; line-height: 1.25; }
   .finder-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; border-top: 2px solid var(--line); padding-top: 16px; }
   .result-count { font-weight: 800; }
   .result-count em { font-style: normal; color: var(--blue-text); font-size: 22px; font-variant-numeric: tabular-nums; }

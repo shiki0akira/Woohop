@@ -341,7 +341,7 @@
   .game {
     position: relative; overflow: hidden;
     border: 2px solid var(--edge-n); border-radius: var(--radius);
-    padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; min-height: 300px; isolation: isolate;
+    padding: 18px 16px 20px; display: flex; flex-direction: column; gap: 8px; isolation: isolate;
     background-color: var(--surface);
     background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 32px 32px; background-position: -1px -1px;
@@ -349,14 +349,21 @@
     transition: transform .15s, box-shadow .15s; cursor: pointer;
   }
   .game:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--edge-n), var(--shadow); }
-  .game .art { position: relative; z-index: 1; height: 128px; display: grid; place-items: center start; }
-  .game .art svg { height: 120px; width: auto; }
+  .game .art { position: relative; z-index: 1; height: 104px; display: grid; place-items: center start; }
+  .game .art svg { height: 100px; width: auto; }
   /* 底部一整排相連的淡 W 當底圖：viewBox 剛好 3 顆寬，等比縮放，左右不會被切掉；文字直接疊在上面 */
   .game .w-row { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: auto; display: block; opacity: .13; pointer-events: none; z-index: -1; }
   .game h4 { margin: 0; font-size: 20px; position: relative; }
   .game p { margin: 0; font-size: 14px; color: var(--muted); position: relative; }
-  .game .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; position: relative; }
-  .game .tags span { font-size: 12px; padding: 2px 10px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
+  /* 卡片高度不跟著語言長短跑：標題最多 2 行、說明最多 2 行，超過用刪節號（完整說明在遊戲頁） */
+  .game h3, .game h4, .game p { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .game h3, .game h4 { -webkit-line-clamp: 2; line-clamp: 2; line-height: 1.25; }
+  .game p { -webkit-line-clamp: 2; line-clamp: 2; }
+  /* 標籤固定一行：人數（人形圖示＋數字）、一局幾分鐘、手機；太窄時最後一個用刪節號，不折成兩排 */
+  .game .tags { display: flex; flex-wrap: nowrap; gap: 5px; margin-top: auto; padding-top: 4px; position: relative; min-width: 0; }
+  .game .tags span { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; white-space: nowrap; font-size: 12px; padding: 2px 6px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
+  .game .tags span:last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .game .tags svg { width: 12px; height: 12px; flex: none; color: var(--text-2); vertical-align: -2px; }
 
   /* ============================================================
      logo 陣列：W 彼此相連、淺色同色系、白底
@@ -744,6 +751,9 @@
     <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/><circle cx="15" cy="15" r="1.6" fill="currentColor"/><circle cx="15" cy="9" r="1.6" fill="currentColor"/><circle cx="9" cy="15" r="1.6" fill="currentColor"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 11v6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 19.5c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6M18 14.4c1.8.7 3 2.5 3 5.1" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 7v5.5l3.5 2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M10.5 18h3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
     <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="m7.5 12.5 3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5 2.8 19.5h18.4z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 10v4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1.4" fill="currentColor"/></symbol>
     <symbol id="i-error" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
