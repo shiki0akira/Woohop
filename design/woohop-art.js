@@ -149,6 +149,15 @@
       ${makeFace('happy', 80, 86, 1.6)}
       ${body('<path d="M26 66l12-16 12 16z"/>', '#4FB59A', '', false)}
       ${body('<path d="M110 74l12 16 12-16z"/>', '#EE7B6A', '', false)}`,
+    // 果園菜園動物園：笑咪咪的蘋果，葉子旁邊一根小紅蘿蔔
+    orchard: () => `
+      ${ground}${burst(140, 22, '#FFC628')}${ring(22, 30, '#7489E6')}${dot(150, 96, '#4FB59A', 4)}
+      ${body('<path d="M118 112l14-34 10 6z"/>', '#FF9419', '', false)}
+      <path d="M137 80l6-10M141 83l9-5" stroke="#4FB59A" stroke-width="5" stroke-linecap="round"/>
+      ${body('<path d="M78 46c-14-11-44-6-44 24 0 28 22 50 44 44 22 6 44-16 44-44 0-30-30-35-44-24z"/>', '#EE7B6A', '<path d="M104 46c18 12 16 50-10 64h28V46z" fill="#d4604f"/>')}
+      <path d="M78 46c0-10 3-17 8-21" fill="none" ${K}/>
+      ${body('<path d="M86 30c6-12 22-14 28-8-6 10-18 14-28 8z"/>', '#4FB59A', '', false)}
+      ${makeFace('grin', 78, 80, 1.6)}`,
     // 幸福模擬器：戴墨鏡的大螢幕＋愛心
     happiness: () => `
       ${ground}${burst(140, 20, '#F3A4FB')}${ring(22, 26, '#FFC628')}${plus(150, 70, '#FF9419')}${dot(16, 76, '#7489E6')}

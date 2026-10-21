@@ -1,0 +1,8 @@
+{{woohopFooter}}
+    <!-- 導覽列的互動（語言選單、「更多」、手機選單）用全站同一份 site.js -->
+    <script>window.WOOHOP = {{woohopJson}};</script>
+    <script src="{{base}}/woohop/woohop-art.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/woohop/site.js?v={{assetVersion}}"></script>
+    <script>window.Site.nav();</script>
+    <!-- 遊戲內頂欄的行為（返回、設定、選單面板），各遊戲共用 -->
+    <script src="{{base}}/woohop/game.js?v={{assetVersion}}"></script>
