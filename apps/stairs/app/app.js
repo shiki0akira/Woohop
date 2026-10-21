@@ -145,8 +145,9 @@
     metro = Leader.metronome(el.metroRoot, {
       // 四拍一組「1、樓、上、4 樓」：一拍一個字，最後一拍（要去幾樓）是重拍（2026-10-21 使用者確認，原本誤寫成前兩拍拍手）
       bpm: 90, min: 60, max: 180, step: 5, beats: 4, accents: [3],
-      groove: true, // 開始打拍子就有趣味配樂（跟竹筍一樣，使用者要求），跟節拍同速度
-      sound: function () { return settings.sound; },
+      auto: true, // 自動加速預設開著（使用者要求）
+      // 配樂跟拍子分開（使用者要求）：一進「開始！」就放配樂，頂欄音符鍵只管配樂；拍子聲由「開始打拍子」管。兩個踩同一個時鐘，不會對不上
+      groove: true,
       onStart: function () {
         requestWakeLock();
         if (!startedAt) startedAt = Date.now();
@@ -155,15 +156,26 @@
     });
   }
 
+  // 有配樂的畫面：開始玩、誰輸了（這一步音量調小當背景，使用者要求）
+  var withMusic = function () { return screen === 'play' || screen === 'end'; };
+
+  // 頂欄的音符鍵：在有配樂的畫面顯示「現在有沒有在放」（切到背景會自動停），其他畫面顯示記住的偏好
   function syncSound() {
-    if (el.sound) el.sound.setAttribute('aria-pressed', String(settings.sound));
+    var on = metro && withMusic() ? metro.playing() : settings.sound;
+    if (el.sound) el.sound.setAttribute('aria-pressed', String(on));
   }
-  // 頂欄的音符鍵（chrome.mjs gameBar 的 musicLabel，game.js 按下去呼叫這個）：管配樂、節拍器和拉霸的聲音
+  // 頂欄的音符鍵（chrome.mjs gameBar 的 musicLabel，game.js 按下去呼叫這個）：管配樂和拉霸的聲音，拍子聲不歸它管
   window.toggleMusic = function () {
-    settings.sound = !settings.sound;
+    if (metro && withMusic()) {
+      settings.sound = !metro.playing();
+      metro.music(settings.sound);
+    } else {
+      settings.sound = !settings.sound;
+    }
     saveSettings();
     syncSound();
   };
+  document.addEventListener('visibilitychange', syncSound);
 
   // ---------- 拉霸（Leader.slot） ----------
 
@@ -198,7 +210,6 @@
   // ---------- 畫面切換 ----------
 
   function showScreen(next) {
-    if (screen === 'play' && next !== 'play' && metro) metro.stop();
     screen = next;
     Object.keys(views).forEach(function (key) { views[key].hidden = key !== next; });
     document.body.setAttribute('data-screen', next);
@@ -209,6 +220,13 @@
     renderLead();
     if (next === 'play') renderBuildings();
     if (next === 'play') ensureMetro();
+    // 拍子只在「開始！」那步打；配樂在「開始！」正常音量、到「誰輸了？」調小當背景，其他畫面停
+    if (metro) {
+      if (next !== 'play') metro.stop();
+      metro.background(next === 'end');
+      metro.music(withMusic() && settings.sound);
+    }
+    syncSound();
     if (next === 'end') resetSlot();
 
     window.scrollTo(0, 0);

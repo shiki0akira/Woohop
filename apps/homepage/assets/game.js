@@ -742,14 +742,17 @@
  * 帶領元件之三：節拍器（Leader.metronome）。2026-10-21 為上樓下樓做的，之後果園菜園動物園也會用。
  * beats 拍一組，accents 是重拍（喊的那幾拍）。可調快慢，可開自動加速。
  *
- *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, sound, groove, onStart, onStop })
+ *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, auto, sound, groove, onStart, onStop })
  *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「1、樓、上、4 樓」，最後一拍是重拍
- *       回傳 { start(), stop(), running() }。sound：可選，回傳 true／false，遊戲的聲音開關關著就不出聲（燈照樣亮）
- *       groove：true 時拍子底下多一段配樂（貝斯、鼓、小旋律），跟著同一個速度走，開始打拍子就有
+ *       auto：自動加速一開始就開著（使用者還是可以關）
+ *       sound：可選，回傳 true／false，關著就不出聲（燈照樣亮）
+ *       groove：true 時多一層配樂（貝斯、鼓、小旋律）。配樂跟拍子分開開關，但踩同一個時鐘、同一個速度，永遠對得上拍
+ *       回傳 { start(), stop(), running() } 管拍子；{ music(on), playing() } 管配樂；
+ *       background(on)：配樂音量調小當背景（上樓下樓的拉霸那步）
  *
  * 排程用「音訊時鐘＋往前看」：setInterval 每 25ms 把接下來 0.12 秒的拍子排進音訊時鐘，
  * 主執行緒忙也不會歪拍；燈號用 setTimeout 對齊（差幾十毫秒眼睛看不出來）。
- * 切到背景會自動停（背景的計時器會被節流，拍子會亂掉），回來不自動接著打。
+ * 切到背景拍子和配樂都會停（背景的計時器會被節流，拍子會亂掉），回來不自動接著放。
  */
 (function () {
   'use strict';
@@ -894,9 +897,14 @@
     };
     o.accents = opts.accents || [o.beats - 1];
     var isAccent = function (i) { return o.accents.indexOf(i) !== -1; };
-    var st = { bpm: o.bpm, running: false, timer: 0, next: 0, beat: 0, bars: 0, auto: false, visual: [] };
+    /*
+     * 時鐘（clock）只有一個，上面兩層：拍子（running：拍子聲＋燈，按「開始打拍子」才有）和配樂（music：遊戲自己開關）。
+     * 兩層分開開關，但踩同一個時鐘、同一個速度，所以永遠對得上拍。兩層都關了時鐘才停。
+     */
+    var st = { clock: false, running: false, music: false, bg: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
-    var bus = null; // 這個節拍器的總音量：停下來時一口氣壓到 0，已經排進去的音就不會拖尾
+    var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
+    var musicBus = null;
 
     rootEl.textContent = '';
     rootEl.classList.add('metro');
@@ -943,6 +951,18 @@
       });
     }
 
+    function setGain(bus, value, ramp) {
+      if (!bus) return;
+      var now = audio.currentTime;
+      bus.gain.cancelScheduledValues(now);
+      if (ramp) {
+        bus.gain.setValueAtTime(bus.gain.value, now);
+        bus.gain.linearRampToValueAtTime(value, now + ramp);
+      } else {
+        bus.gain.setValueAtTime(value, now);
+      }
+    }
+
     function tick() {
       var c = audio;
       while (st.next < c.currentTime + 0.12) {
@@ -950,18 +970,20 @@
         var b = st.beat;
         var accent = isAccent(b);
         if (soundOn()) {
-          click(c, at, accent, bus);
-          if (opts.groove) groove(c, bus, at, b, o.beats, st.bars, accent, 30 / st.bpm);
+          if (st.running) click(c, at, accent, clickBus);
+          if (st.music) groove(c, musicBus, at, b, o.beats, st.bars, accent, 30 / st.bpm);
         }
-        (function (index, when) {
-          st.visual.push(setTimeout(function () { light(index); }, Math.max(0, (when - c.currentTime) * 1000)));
-        })(b, at);
+        if (st.running) {
+          (function (index, when) {
+            st.visual.push(setTimeout(function () { light(index); }, Math.max(0, (when - c.currentTime) * 1000)));
+          })(b, at);
+        }
         st.next += 60 / st.bpm;
         st.beat = (b + 1) % o.beats;
         if (st.beat === 0) {
           st.bars += 1;
-          // 自動加速：每 4 組快一點，到上限就停
-          if (st.auto && st.bars % 4 === 0 && st.bpm < o.max) {
+          // 自動加速：打拍子的時候每 4 組快一點，到上限就停（只有配樂在放時不加速）
+          if (st.running && st.auto && st.bars % 4 === 0 && st.bpm < o.max) {
             st.bpm = Math.min(o.max, st.bpm + o.step);
             sync();
           }
@@ -970,20 +992,39 @@
       if (st.visual.length > 32) st.visual.splice(0, 16);
     }
 
-    function start() {
+    function startClock() {
       var c = ctx();
-      if (!c || st.running) return;
-      if (!bus) {
-        bus = c.createGain();
-        bus.connect(c.destination);
+      if (!c) return null;
+      if (!clickBus) {
+        clickBus = c.createGain();
+        clickBus.connect(c.destination);
+        musicBus = c.createGain();
+        musicBus.connect(c.destination);
       }
-      bus.gain.cancelScheduledValues(c.currentTime);
-      bus.gain.setValueAtTime(1, c.currentTime);
+      if (!st.clock) {
+        st.clock = true;
+        st.next = c.currentTime + 0.08;
+        st.beat = 0;
+        st.bars = 0;
+        st.timer = setInterval(tick, 25);
+      }
+      return c;
+    }
+    function stopClockIfIdle() {
+      if (st.running || st.music || !st.clock) return;
+      st.clock = false;
+      clearInterval(st.timer);
+    }
+
+    // 拍子：從下一拍重新算第 1 拍（「1 樓」先開口），配樂照著同一個時鐘接下去
+    function start() {
+      if (st.running) return;
+      var c = startClock();
+      if (!c) return;
       st.running = true;
-      st.next = c.currentTime + 0.08;
+      setGain(clickBus, 1);
       st.beat = 0;
       st.bars = 0;
-      st.timer = setInterval(tick, 25);
       tick();
       sync();
       if (opts.onStart) opts.onStart();
@@ -992,16 +1033,34 @@
     function stop() {
       if (!st.running) return;
       st.running = false;
-      clearInterval(st.timer);
       st.visual.forEach(clearTimeout);
       st.visual = [];
-      if (bus && audio) {
-        bus.gain.cancelScheduledValues(audio.currentTime);
-        bus.gain.setValueAtTime(0, audio.currentTime);
-      }
+      setGain(clickBus, 0);
       light(-1);
+      stopClockIfIdle();
       sync();
       if (opts.onStop) opts.onStop();
+    }
+
+    // 配樂（opts.groove）開關，跟拍子分開
+    function music(on) {
+      if (!opts.groove || st.music === on) return;
+      if (on) {
+        if (!startClock()) return;
+        st.music = true;
+        setGain(musicBus, st.bg ? 0.35 : 1);
+        tick();
+      } else {
+        st.music = false;
+        setGain(musicBus, 0);
+        stopClockIfIdle();
+      }
+    }
+
+    // 背景模式：配樂音量壓低到 0.35（給下一步當背景，例如上樓下樓的拉霸），false 回到正常
+    function background(on) {
+      st.bg = on;
+      if (st.music) setGain(musicBus, on ? 0.35 : 1, 0.4);
     }
 
     toggle.addEventListener('click', function () {
@@ -1020,12 +1079,19 @@
       st.auto = !st.auto;
       sync();
     });
+    // 切到背景兩層都停（背景的計時器會被節流，拍子會亂掉），回來不自動接著放
     document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'hidden') stop();
+      if (document.visibilityState !== 'hidden') return;
+      stop();
+      music(false);
     });
 
     sync();
-    return { start: start, stop: stop, running: function () { return st.running; } };
+    return {
+      start: start, stop: stop, music: music, background: background,
+      running: function () { return st.running; },
+      playing: function () { return st.music; },
+    };
   }
 
   window.Leader.metronome = metronome;
