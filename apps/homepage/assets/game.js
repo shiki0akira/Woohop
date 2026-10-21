@@ -743,7 +743,7 @@
  * beats 拍一組，accents 是重拍（喊的那幾拍）。可調快慢，可開自動加速。
  *
  *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, sound, groove, onStart, onStop })
- *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「拍、拍、上、4 樓」，後兩拍都是重拍
+ *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「1、樓、上、4 樓」，最後一拍是重拍
  *       回傳 { start(), stop(), running() }。sound：可選，回傳 true／false，遊戲的聲音開關關著就不出聲（燈照樣亮）
  *       groove：true 時拍子底下多一段配樂（貝斯、鼓、小旋律），跟著同一個速度走，開始打拍子就有
  *
