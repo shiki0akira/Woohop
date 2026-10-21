@@ -742,9 +742,10 @@
  * 帶領元件之三：節拍器（Leader.metronome）。2026-10-21 為上樓下樓做的，之後果園菜園動物園也會用。
  * beats 拍一組，accents 是重拍（喊的那幾拍）。可調快慢，可開自動加速。
  *
- *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, sound, onStart, onStop })
+ *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, sound, groove, onStart, onStop })
  *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「拍、拍、上、4 樓」，後兩拍都是重拍
  *       回傳 { start(), stop(), running() }。sound：可選，回傳 true／false，遊戲的聲音開關關著就不出聲（燈照樣亮）
+ *       groove：true 時拍子底下多一段配樂（貝斯、鼓、小旋律），跟著同一個速度走，開始打拍子就有
  *
  * 排程用「音訊時鐘＋往前看」：setInterval 每 25ms 把接下來 0.12 秒的拍子排進音訊時鐘，
  * 主執行緒忙也不會歪拍；燈號用 setTimeout 對齊（差幾十毫秒眼睛看不出來）。
@@ -780,7 +781,7 @@
   }
 
   // 一般拍是木魚聲；重拍低一點、厚一點，加一點拍手的噪音
-  function click(c, at, accent) {
+  function click(c, at, accent, out) {
     var osc = c.createOscillator();
     var gain = c.createGain();
     osc.type = 'sine';
@@ -789,7 +790,7 @@
     gain.gain.exponentialRampToValueAtTime(accent ? 0.55 : 0.35, at + 0.004);
     gain.gain.exponentialRampToValueAtTime(0.0001, at + (accent ? 0.16 : 0.08));
     osc.connect(gain);
-    gain.connect(c.destination);
+    gain.connect(out);
     osc.start(at);
     osc.stop(at + 0.2);
     if (!accent) return;
@@ -806,8 +807,85 @@
     g2.gain.value = 0.35;
     src.connect(hp);
     hp.connect(g2);
-    g2.connect(c.destination);
+    g2.connect(out);
     src.start(at);
+  }
+
+  /*
+   * 配樂（opts.groove）：跟著節拍器同一個時鐘、同一個速度排，調快調慢、自動加速都會一起變，不會兩個聲音打架。
+   * 貝斯一小節往上走、下一小節往下走（上樓下樓），八分音符的 hi-hat、第一拍大鼓、重拍拍手，
+   * 上面再一段兩小節的小旋律（C 大調五聲音階，輕快不刺耳）。
+   */
+  var G = { C3: 130.81, D3: 146.83, E3: 164.81, G3: 196, A3: 220, C4: 261.63, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880 };
+  var GROOVE_UP = ['C3', 'E3', 'G3', 'A3', 'C4', 'A3'];
+  var GROOVE_MELODY = [
+    ['E5', null, 'G5', 'A5', null, 'G5', 'E5', null, 'D5', 'E5', null, 'G5'],
+    ['A5', null, 'G5', 'E5', null, 'D5', 'C5', null, 'D5', 'E5', null, null],
+  ];
+  var grooveNoise = null;
+
+  function grooveTone(c, out, type, freq, at, peak, decay) {
+    var osc = c.createOscillator();
+    var gain = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, at);
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(peak, at + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + decay);
+    osc.connect(gain);
+    gain.connect(out);
+    osc.start(at);
+    osc.stop(at + decay + 0.05);
+  }
+  function grooveHat(c, out, at, peak, decay, hp) {
+    if (!grooveNoise) {
+      grooveNoise = c.createBuffer(1, Math.floor(c.sampleRate * 0.3), c.sampleRate);
+      var data = grooveNoise.getChannelData(0);
+      for (var i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+    }
+    var src = c.createBufferSource();
+    src.buffer = grooveNoise;
+    var filter = c.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = hp;
+    var gain = c.createGain();
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(peak, at + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + decay);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(out);
+    src.start(at);
+    src.stop(at + decay + 0.05);
+  }
+  function grooveKick(c, out, at) {
+    var osc = c.createOscillator();
+    var gain = c.createGain();
+    osc.frequency.setValueAtTime(150, at);
+    osc.frequency.exponentialRampToValueAtTime(45, at + 0.14);
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(0.8, at + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.22);
+    osc.connect(gain);
+    gain.connect(out);
+    osc.start(at);
+    osc.stop(at + 0.3);
+  }
+
+  // 一拍（含後半拍）的配樂。beat 是這一小節第幾拍，bar 是第幾小節，half 是半拍的秒數
+  function groove(c, out, at, beat, beats, bar, accent, half) {
+    if (beat === 0) grooveKick(c, out, at);
+    if (accent) grooveHat(c, out, at, 0.22, 0.1, 1500);
+    grooveHat(c, out, at, 0.08, 0.03, 7000);
+    grooveHat(c, out, at + half, 0.12, 0.03, 7000);
+    var step = beat % GROOVE_UP.length;
+    var bass = GROOVE_UP[bar % 2 === 0 ? step : GROOVE_UP.length - 1 - step];
+    grooveTone(c, out, 'triangle', G[bass], at, 0.32, Math.min(0.3, half * 1.6));
+    var line = GROOVE_MELODY[bar % 2];
+    for (var k = 0; k < 2; k += 1) {
+      var note = line[(beat * 2 + k) % line.length];
+      if (note) grooveTone(c, out, 'square', G[note], at + k * half, 0.045, Math.min(0.18, half * 0.9));
+    }
   }
 
   function metronome(rootEl, opts) {
@@ -818,6 +896,7 @@
     var isAccent = function (i) { return o.accents.indexOf(i) !== -1; };
     var st = { bpm: o.bpm, running: false, timer: 0, next: 0, beat: 0, bars: 0, auto: false, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
+    var bus = null; // 這個節拍器的總音量：停下來時一口氣壓到 0，已經排進去的音就不會拖尾
 
     rootEl.textContent = '';
     rootEl.classList.add('metro');
@@ -870,7 +949,10 @@
         var at = st.next;
         var b = st.beat;
         var accent = isAccent(b);
-        if (soundOn()) click(c, at, accent);
+        if (soundOn()) {
+          click(c, at, accent, bus);
+          if (opts.groove) groove(c, bus, at, b, o.beats, st.bars, accent, 30 / st.bpm);
+        }
         (function (index, when) {
           st.visual.push(setTimeout(function () { light(index); }, Math.max(0, (when - c.currentTime) * 1000)));
         })(b, at);
@@ -891,6 +973,12 @@
     function start() {
       var c = ctx();
       if (!c || st.running) return;
+      if (!bus) {
+        bus = c.createGain();
+        bus.connect(c.destination);
+      }
+      bus.gain.cancelScheduledValues(c.currentTime);
+      bus.gain.setValueAtTime(1, c.currentTime);
       st.running = true;
       st.next = c.currentTime + 0.08;
       st.beat = 0;
@@ -907,6 +995,10 @@
       clearInterval(st.timer);
       st.visual.forEach(clearTimeout);
       st.visual = [];
+      if (bus && audio) {
+        bus.gain.cancelScheduledValues(audio.currentTime);
+        bus.gain.setValueAtTime(0, audio.currentTime);
+      }
       light(-1);
       sync();
       if (opts.onStop) opts.onStop();
