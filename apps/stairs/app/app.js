@@ -16,9 +16,9 @@
 
   var SETTINGS_KEY = 'web100-stairs-settings';
   var COUNT_MIN = 4;
-  var COUNT_MAX = 20;
+  var COUNT_MAX = 30;
 
-  var settings = { count: 8, expansion: false, sound: true };
+  var settings = { count: 6, expansion: false, sound: true };
   var screen = 'setup';
   var roundNumber = 0;
   var startedAt = 0;
