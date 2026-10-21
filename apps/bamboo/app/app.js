@@ -54,11 +54,6 @@
   var views = { setup: $('view-setup'), name: $('view-name'), rules: $('view-rules'), play: $('view-play'), end: $('view-end') };
 
   var el = {
-    leadHead: $('lead-head'),
-    stepDots: $('step-dots'),
-    stepNo: $('step-no'),
-    leadTitle: $('lead-title'),
-    leadSay: $('lead-say'),
     ruleCards: $('rule-cards'),
     rulesNext: $('rules-next'),
     themeGrid: $('theme-grid'),
@@ -85,11 +80,7 @@
     // 頂欄的音樂開關（chrome.mjs 的 gameBar，按下去 game.js 會呼叫 window.toggleMusic）
     musicToggle: $('game-music'),
     playHint: $('play-hint'),
-    slot: $('slot'),
-    slotMode: $('slot-mode'),
-    slotReel: $('slot-reel'),
-    slotResult: $('slot-result'),
-    spin: $('spin'),
+    slotRoot: $('slot-root'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -226,29 +217,19 @@
     return real ? ['setup', 'rules', 'play', 'end'] : ['setup', 'name', 'rules', 'play', 'end'];
   }
 
-  /*
-   * 步驟頭只有一份（template 的 #lead-head），搬進目前畫面的 .lead-slot，再填上這一步的標題和「照著念」。
-   * 不在每個畫面各放一份：步驟點、標題、照著念的排版要改的時候只改一個地方。
-   */
+  // 步驟頭（全站共用的 Leader.lead，game.js）：步驟點、STEP n / total、標題、照著念
   function renderLead() {
     var list = stepList();
-    var index = list.indexOf(screen);
     var slot = views[screen] && views[screen].querySelector('.lead-slot');
-    if (slot && el.leadHead.parentNode !== slot) slot.appendChild(el.leadHead);
-
-    el.stepDots.textContent = '';
-    list.forEach(function (key, i) {
-      var dot = document.createElement('i');
-      if (i === index) dot.className = 'on';
-      else if (i < index) dot.className = 'done';
-      el.stepDots.appendChild(dot);
+    Leader.lead(slot, {
+      index: list.indexOf(screen),
+      total: list.length,
+      title: T.lead[screen][0],
+      say: function (node) {
+        if (screen === 'play' && game && game.names.length) appendNames(node);
+        node.appendChild(document.createTextNode(T.lead[screen][1]));
+      },
     });
-    el.stepNo.textContent = fill(T.stepLabel, { n: index + 1, total: list.length });
-    el.leadTitle.textContent = T.lead[screen][0];
-    el.leadHead.classList.remove('no-say');
-    el.leadSay.textContent = '';
-    if (screen === 'play' && game && game.names.length) appendNames(el.leadSay);
-    el.leadSay.appendChild(document.createTextNode(T.lead[screen][1]));
   }
 
   /*
@@ -267,24 +248,9 @@
     node.appendChild(document.createTextNode((parts[1] || '') + ' '));
   }
 
-  // 「說明規則」那一步的三張插圖卡，插圖是 STEP_ART 後三張
+  // 「說明規則」那一步的三張插圖卡（全站共用的 Leader.ruleCards），插圖是 STEP_ART 後三張
   function buildRuleCards() {
-    el.ruleCards.textContent = '';
-    T.ruleCards.forEach(function (card, i) {
-      var li = document.createElement('li');
-      li.className = 'rule-card';
-      var art = STEP_ART[i + 2];
-      li.innerHTML = '<svg class="illo" viewBox="0 0 160 126" aria-hidden="true">' + (art ? art() : '') + '</svg>';
-      var body = document.createElement('div');
-      var h = document.createElement('h3');
-      h.textContent = card[0];
-      var p = document.createElement('p');
-      p.textContent = card[1];
-      body.appendChild(h);
-      body.appendChild(p);
-      li.appendChild(body);
-      el.ruleCards.appendChild(li);
-    });
+    Leader.ruleCards(el.ruleCards, T.ruleCards, STEP_ART.slice(2));
   }
 
   // ---------- 主題 ----------
@@ -371,7 +337,7 @@
 
   function renderName() {
     // 主持人的「照著念」只在一開始要：第一個人按下去之後手機就在大家手上傳，那張卡只是把抽牌往下推
-    el.leadHead.classList.toggle('no-say', game.names.length > 0 || stage !== 'choose');
+    Leader.hideSay(game.names.length > 0 || stage !== 'choose');
     el.nameTurn.textContent = fill(T.nameTurn, { n: game.names.length + 1 });
     el.nameTheme.textContent = fill(T.nameTheme, { theme: themeLabel(game.theme) });
     // 「換一個主題」只在隨機、而且還沒有人取名的時候：有人取了再換，前面那些人的名稱就跟主題對不上了
@@ -715,175 +681,20 @@
 
   // ---------- 分享拉霸 ----------
 
-  /*
-   * 題目在窗格裡往上滾，越滾越慢，停在中間那一格。
-   *
-   * 捲軸是「題目清單重複 LOOPS 遍」排成一長條，每次拉都先瞬間跳回第一遍裡跟現在同一題的位置
-   * （看起來沒動），再用一次 transition 滾到後面那幾遍裡選中的題目。只動 transform，手機上也順。
-   * 收尾用計時器、不用 transitionend：內嵌瀏覽器可能把 transition 凍住，事件永遠不來。
-   */
-  /*
-   * 拉霸的內容：問題（slotPrompts）和小動作（slotActions）混在一起。每次打開頁面洗一次牌，
-   * 兩種會穿插著出現，不會一整段都是問題。每一格帶著 kind，停下來時上面標「回答」或「動作」。
-   */
-  var SLOT_ALL = shuffleList(
-    T.slotPrompts.map(function (text) { return { kind: 'ask', text: text }; })
-      .concat(T.slotActions.map(function (text) { return { kind: 'do', text: text }; })),
-  );
-
-  function shuffleList(list) {
-    for (var i = list.length - 1; i > 0; i -= 1) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = list[i];
-      list[i] = list[j];
-      list[j] = tmp;
-    }
-    return list;
-  }
-
-  /*
-   * 拉之前先選：真心話（只滾問題）／隨機（兩種都有）／大冒險（只滾動作），像真心話大冒險。
-   * 每一輪回到「隨機」：選的是輸的那個人，每次都該由他自己決定（resetSlot）。
-   * 換模式就重建捲軸，SLOT_ITEMS 永遠是「目前這個模式」滾得到的那幾格。
-   */
-  var SLOT_MODES = ['ask', 'mix', 'do'];
-  var slotMode = 'mix';
-  var SLOT_ITEMS = SLOT_ALL;
-  var SLOT_LOOPS = 3;
-  var modeInputs = {};
-
-  function buildSlotModes() {
-    var labels = { ask: T.slotAsk, mix: T.slotMix, do: T.slotDo };
-    el.slotMode.textContent = '';
-    SLOT_MODES.forEach(function (mode) {
-      var label = document.createElement('label');
-      label.className = 'seg-item';
-      var input = document.createElement('input');
-      input.type = 'radio';
-      input.name = 'slot-mode';
-      input.value = mode;
-      input.addEventListener('change', function () {
-        if (slot.spinning) return;
-        setSlotMode(mode);
-      });
-      var span = document.createElement('span');
-      span.textContent = labels[mode];
-      label.appendChild(input);
-      label.appendChild(span);
-      el.slotMode.appendChild(label);
-      modeInputs[mode] = input;
-    });
-  }
-
-  function setSlotMode(mode) {
-    slotMode = mode;
-    modeInputs[mode].checked = true;
-    SLOT_ITEMS = mode === 'mix' ? SLOT_ALL : SLOT_ALL.filter(function (item) { return item.kind === mode; });
-    // 捲軸要重複幾遍：至少滾過 40 格才有拉霸的感覺，格子少就多重複幾遍
-    SLOT_LOOPS = Math.max(3, Math.ceil(40 / SLOT_ITEMS.length) + 2);
-    buildSlot();
-  }
-
-  var SLOT_MS = 2600;
-  var slot = { index: 0, spinning: false, id: 0, row: 0 };
-
-  function buildSlot() {
-    el.slotReel.textContent = '';
-    for (var loop = 0; loop < SLOT_LOOPS; loop += 1) {
-      SLOT_ITEMS.forEach(function (item) {
-        var li = document.createElement('li');
-        li.className = 'slot-' + item.kind;
-        var kind = document.createElement('span');
-        kind.className = 'slot-kind';
-        kind.textContent = item.kind === 'do' ? T.slotDo : T.slotAsk;
-        var text = document.createElement('span');
-        text.className = 'slot-text';
-        text.textContent = item.text;
-        li.appendChild(kind);
-        li.appendChild(text);
-        el.slotReel.appendChild(li);
-      });
-    }
-    slot.index = Math.floor(Math.random() * SLOT_ITEMS.length);
-    placeSlot(restRow(slot.index), false);
-  }
-
-  // 停著的時候用第二遍裡的那一列：上下都有鄰居，窗格不會露出空白
-  function restRow(index) {
-    return SLOT_ITEMS.length + index;
-  }
-
-  // 第 row 列放到窗格正中間。列高從畫面量，字級或語言改了也不用跟著改數字
-  function placeSlot(row, animate) {
-    var first = el.slotReel.children[0];
-    slot.row = first ? first.offsetHeight : slot.row;
-    el.slotReel.style.transition = animate ? 'transform ' + SLOT_MS + 'ms cubic-bezier(.12,.75,.2,1)' : 'none';
-    el.slotReel.style.transform = 'translateY(' + -(row - 1) * slot.row + 'px)';
-    Array.prototype.forEach.call(el.slotReel.children, function (li, i) {
-      li.classList.toggle('on', !animate && i === row);
-    });
-  }
-
-  function spinSlot() {
-    if (slot.spinning) return;
-    slot.spinning = true;
-    el.spin.disabled = true;
-    el.slot.classList.add('is-spinning');
-    el.slotMode.classList.add('is-locked');
-
-    var len = SLOT_ITEMS.length;
-    var chosen = Math.floor(Math.random() * len);
-    // 不要停在跟上一次同一題：拉了卻好像沒動，會以為壞掉
-    if (len > 1 && chosen === slot.index) chosen = (chosen + 1 + Math.floor(Math.random() * (len - 1))) % len;
-
-    placeSlot(restRow(slot.index), false);
-    void el.slotReel.offsetHeight; // 先讓瀏覽器畫好起點，下面那次才會有動畫
-    var target = (SLOT_LOOPS - 1) * len + chosen;
-    placeSlot(target, true);
-    slotTicks(target - restRow(slot.index));
-    el.slotResult.textContent = '';
-
-    slot.id = setTimeout(function () {
-      slot.index = chosen;
-      placeSlot(restRow(chosen), false);
-      el.slot.classList.remove('is-spinning');
-      el.slotMode.classList.remove('is-locked');
-      var item = SLOT_ITEMS[chosen];
-      el.slotResult.textContent = (item.kind === 'do' ? T.slotDo : T.slotAsk) + '：' + item.text;
-      el.spin.textContent = T.spinAgain;
-      el.spin.disabled = false;
-      slot.spinning = false;
-      if (ensureAudio()) popHit(music.ctx.currentTime + 0.01);
-    }, SLOT_MS + 50);
-    track('bamboo_slot_pulled', { round_number: roundNumber, kind: SLOT_ITEMS[chosen].kind, mode: slotMode });
-  }
-
-  /*
-   * 每經過一題「喀」一聲，跟著減速變稀。時間點用跟 CSS 同一條 ease-out 曲線的反函數算不划算，
-   * 用 1-(1-p)^3 近似就夠了：耳朵聽得出越來越慢，聽不出曲線差一點。
-   */
-  function slotTicks(rows) {
-    var ctx = ensureAudio();
-    if (!ctx) return;
-    var start = ctx.currentTime + 0.02;
-    var seconds = SLOT_MS / 1000;
-    // 題目多的時候不是每題都喀一聲：最多 30 聲，再密就變成嗡嗡聲了
-    var every = Math.max(1, Math.ceil(rows / 30));
-    for (var k = every; k <= rows; k += every) {
-      var p = 1 - Math.cbrt(1 - k / rows); // 第 k 題經過的時間比例
-      woodblock(start + p * seconds * 0.95, (k / every) % 2 === 0);
-    }
-  }
+  // 真心話大冒險拉霸：全站共用的 Leader.slot（game.js），題目在 apps/homepage/src/slot-prompts.mjs
+  var slotTool = null;
 
   function resetSlot() {
-    clearTimeout(slot.id);
-    slot.spinning = false;
-    el.spin.disabled = false;
-    el.spin.textContent = T.spin;
-    el.slot.classList.remove('is-spinning');
-    el.slotMode.classList.remove('is-locked');
-    el.slotResult.textContent = '';
-    setSlotMode('mix');
+    if (!slotTool) {
+      slotTool = Leader.slot(el.slotRoot, {
+        prompts: window.BAMBOO.slot.prompts,
+        actions: window.BAMBOO.slot.actions,
+        onPull: function (info) {
+          track('bamboo_slot_pulled', { round_number: roundNumber, kind: info.kind, mode: info.mode });
+        },
+      });
+    }
+    slotTool.reset();
   }
 
   // ---------- 螢幕保持亮著 ----------
@@ -1148,7 +959,6 @@
     syncMusicToggle();
   };
 
-  el.spin.addEventListener('click', spinSlot);
   el.again.addEventListener('click', function () {
     showScreen('play');
   });
@@ -1181,8 +991,6 @@
   el.deck.innerHTML = DECK_ART();
   buildThemes();
   buildChant();
-  buildSlotModes();
-  setSlotMode('mix');
   syncMusicToggle(); // 頂欄那顆一載入就要對上記住的偏好（HTML 預設是開）
 
   /*

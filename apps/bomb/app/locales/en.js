@@ -51,7 +51,22 @@ export default {
   customRemoveLabel: 'Delete this one',
   customHint: 'Your own tasks stay on this device and will still be here next time.',
 
-  startButton: 'Start',
+  // ---------- 帶領的步驟（全站共用的 Leader，跟竹筍竹筍蹦蹦出同一套）----------
+  // 每個畫面就是一步：[標題, 照著念]。進行中那一步手機在大家手上傳，不放步驟頭
+  lead: {
+    setup: ["Pick the tasks","Let’s play Time Bomb! First choose: questions to answer, actions to do, or both."],
+    rules: ["The rules","This phone is the bomb. A task pops up — whoever holds it does it right away, taps “Done” and passes it on. Nobody knows when it goes off. Whoever is holding it when it explodes loses!"],
+    boom: ["Who lost?","Who was holding the bomb? The loser picks truth, dare or random, then pulls the slot machine!"],
+  },
+  // 「說明規則」那一步的三張插圖卡：[標題, 說明]
+  ruleCards: [
+    ["Do it right away","A task appears: answer the question or do the action, on the spot."],
+    ["Pass it on","Tap “Done” and hand the phone to the next person. Stuck? You can switch tasks."],
+    ["Boom means you lose","Nobody knows when it blows. Whoever holds the phone at that moment loses."],
+  ],
+  rulesNext: "Next: let’s play",
+
+  startButton: "Start the game",
 
   // ---------- play ----------
   passButton: 'Done! Pass it on',
@@ -67,7 +82,6 @@ export default {
   durationMinSec: '{m} min {s} sec',
   durationSec: '{s} sec',
   againButton: 'Play again',
-  backToSetupButton: 'Change settings',
 
   // ---------- leaving mid-round ----------
   // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）

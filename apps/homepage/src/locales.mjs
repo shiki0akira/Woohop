@@ -105,6 +105,8 @@ export const STRINGS = {
     comboSeoDesc: '選 10、15 或 20 分鐘，自動搭一組「先暖場、再認識彼此」的破冰遊戲，連開場、轉場、收尾要說的話都寫好了，照著念就能帶。',
     comboH1: '破冰組合', comboPageLead: '破冰只是聚會的開頭。選好想花多久，幫你搭一組「先暖場、再認識彼此」，連每一段要說什麼都寫好了。',
     flowKicker: '照著帶就好', flowTitle: '這一組怎麼帶', flowLead: '框起來的部分可以直接念出來。', sayLabel: '照著念',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "STEP {n} / {total}", slotPull: "拉一下！", slotPullAgain: "再拉一次", slotModeLabel: "要回答還是做動作", slotAsk: "真心話", slotMix: "隨機", slotDo: "大冒險",
     flowOpen: '開場', flowOpenTitle: '先讓大家放鬆', flowOpenDesc: '不用自我介紹，直接說等一下要做什麼，大家會比較安心。',
     flowOpenSay: '我們先玩兩個小遊戲，大概十幾分鐘，不用準備、不會很尷尬，玩完就開始今天的聚會。',
     flowWarmTitle: '暖場：{name}', flowWarmDesc: '這一段的目的是讓大家笑出來、動起來，輸贏不重要。',
@@ -191,6 +193,8 @@ export const STRINGS = {
     comboSeoDesc: 'Pick 10, 15 or 20 minutes and get a warm-up game plus a get-to-know game, with the opening, transition and closing lines written out for you.',
     comboH1: 'Icebreaker combo', comboPageLead: 'The icebreaker is just the opening. Choose how long you have and we’ll pair a warm-up with a get-to-know game — including what to say at each step.',
     flowKicker: 'Just follow along', flowTitle: 'How to lead this combo', flowLead: 'The boxed lines can be read out as they are.', sayLabel: 'Say this',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "STEP {n} / {total}", slotPull: "Pull!", slotPullAgain: "Pull again", slotModeLabel: "Truth or dare", slotAsk: "Truth", slotMix: "Random", slotDo: "Dare",
     flowOpen: 'Open', flowOpenTitle: 'Help everyone relax', flowOpenDesc: 'Skip the self-introductions. Just say what’s about to happen — people feel safer knowing.',
     flowOpenSay: 'We’re going to play two quick games — about ten minutes, nothing to prepare and nothing awkward. Then we’ll start.',
     flowWarmTitle: 'Warm up: {name}', flowWarmDesc: 'The point here is laughter and movement. Winning doesn’t matter.',
@@ -277,6 +281,8 @@ export const STRINGS = {
     comboSeoDesc: 'Wähle 10, 15 oder 20 Minuten und bekomme ein Aufwärm- und ein Kennenlern-Spiel – inklusive der Sätze für Einstieg, Übergang und Abschluss.',
     comboH1: 'Eisbrecher-Kombi', comboPageLead: 'Der Eisbrecher ist nur der Anfang. Wähle die Zeit, wir stellen ein Aufwärm- und ein Kennenlern-Spiel zusammen – samt allem, was du sagen kannst.',
     flowKicker: 'Einfach mitmachen', flowTitle: 'So leitest du die Kombi', flowLead: 'Die eingerahmten Sätze kannst du direkt vorlesen.', sayLabel: 'Vorlesen',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "SCHRITT {n} / {total}", slotPull: "Ziehen!", slotPullAgain: "Nochmal ziehen", slotModeLabel: "Wahrheit oder Pflicht", slotAsk: "Wahrheit", slotMix: "Zufall", slotDo: "Pflicht",
     flowOpen: 'Start', flowOpenTitle: 'Für Entspannung sorgen', flowOpenDesc: 'Keine Vorstellungsrunde. Sag einfach, was gleich passiert – das gibt Sicherheit.',
     flowOpenSay: 'Wir spielen zuerst zwei kurze Spiele, etwa zehn Minuten – ohne Vorbereitung und ohne Peinlichkeit. Danach legen wir los.',
     flowWarmTitle: 'Aufwärmen: {name}', flowWarmDesc: 'Hier geht es ums Lachen und Bewegen, nicht ums Gewinnen.',
@@ -363,6 +369,8 @@ export const STRINGS = {
     comboSeoDesc: 'Choisissez 10, 15 ou 20 minutes et obtenez un jeu d’échauffement et un jeu pour faire connaissance, avec les phrases d’ouverture, de transition et de conclusion.',
     comboH1: 'Combo brise-glace', comboPageLead: 'Le brise-glace n’est que l’ouverture. Indiquez votre temps et on associe un échauffement à un jeu pour faire connaissance – avec quoi dire à chaque étape.',
     flowKicker: 'Il suffit de suivre', flowTitle: 'Comment animer ce combo', flowLead: 'Les phrases encadrées peuvent être lues telles quelles.', sayLabel: 'À lire',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "ÉTAPE {n} / {total}", slotPull: "Tirer !", slotPullAgain: "Encore une fois", slotModeLabel: "Action ou vérité", slotAsk: "Vérité", slotMix: "Hasard", slotDo: "Action",
     flowOpen: 'Ouverture', flowOpenTitle: 'Mettre tout le monde à l’aise', flowOpenDesc: 'Pas de tour de présentation. Dites simplement ce qui va se passer, c’est rassurant.',
     flowOpenSay: 'On commence par deux petits jeux, une dizaine de minutes, rien à préparer et rien de gênant. Ensuite, on attaque.',
     flowWarmTitle: 'Échauffement : {name}', flowWarmDesc: 'Le but : rire et bouger. Gagner n’a aucune importance.',
@@ -449,6 +457,8 @@ export const STRINGS = {
     comboSeoDesc: '10・15・20分から選ぶと、場を温めるゲームとお互いを知るゲームを自動で組み合わせ。始め方・つなぎ方・締め方のセリフ付き。',
     comboH1: 'アイスブレイクセット', comboPageLead: 'アイスブレイクは集まりの入口。時間を選ぶと「場を温める→お互いを知る」の組み合わせを作り、各場面で話すことまで用意します。',
     flowKicker: 'そのまま進めるだけ', flowTitle: 'このセットの進め方', flowLead: '枠の中はそのまま読み上げて大丈夫です。', sayLabel: '読み上げ',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "STEP {n} / {total}", slotPull: "回す！", slotPullAgain: "もう一回", slotModeLabel: "本音か罰ゲームか", slotAsk: "本音", slotMix: "ランダム", slotDo: "罰ゲーム",
     flowOpen: 'はじめ', flowOpenTitle: 'まずは安心してもらう', flowOpenDesc: '自己紹介はなし。これから何をするかを伝えるだけで、みんな安心します。',
     flowOpenSay: 'まずは小さなゲームを2つやります。10分くらいで、準備もいらないし気まずくもありません。終わったら今日の集まりを始めましょう。',
     flowWarmTitle: '場を温める：{name}', flowWarmDesc: '目的は笑って体を動かすこと。勝ち負けは気にしなくて大丈夫。',
@@ -535,6 +545,8 @@ export const STRINGS = {
     comboSeoDesc: '10·15·20분 중에 고르면 분위기를 띄우는 게임과 서로 알아가는 게임을 짝지어 드립니다. 시작·전환·마무리 멘트까지 포함.',
     comboH1: '아이스브레이킹 세트', comboPageLead: '아이스브레이킹은 모임의 시작일 뿐. 시간을 고르면 ‘분위기 띄우기 → 서로 알아가기’ 조합과 단계별로 할 말까지 준비해 드려요.',
     flowKicker: '그대로 따라 하기', flowTitle: '이 세트 진행 방법', flowLead: '상자 안의 문장은 그대로 읽으면 됩니다.', sayLabel: '읽어 주기',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "STEP {n} / {total}", slotPull: "당기기!", slotPullAgain: "한 번 더", slotModeLabel: "진실 혹은 도전", slotAsk: "진실", slotMix: "랜덤", slotDo: "도전",
     flowOpen: '시작', flowOpenTitle: '먼저 편하게 해 주기', flowOpenDesc: '자기소개는 생략. 이제 무엇을 할지만 말해 주면 다들 안심합니다.',
     flowOpenSay: '먼저 짧은 게임 두 개를 할게요. 10분 정도고, 준비할 것도 어색할 것도 없어요. 끝나면 오늘 모임을 시작해요.',
     flowWarmTitle: '분위기 띄우기: {name}', flowWarmDesc: '목표는 웃고 움직이는 것. 이기고 지는 건 중요하지 않아요.',
@@ -621,6 +633,8 @@ export const STRINGS = {
     comboSeoDesc: 'Elige 10, 15 o 20 minutos y obtén un juego para entrar en calor y otro para conocerse, con las frases de inicio, transición y cierre ya escritas.',
     comboH1: 'Combo rompehielos', comboPageLead: 'El rompehielos es solo el comienzo. Elige el tiempo y te armamos un juego para entrar en calor y otro para conocerse, con lo que puedes decir en cada paso.',
     flowKicker: 'Solo tienes que seguirlo', flowTitle: 'Cómo dirigir este combo', flowLead: 'Las frases recuadradas se pueden leer tal cual.', sayLabel: 'Leer en voz alta',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "PASO {n} / {total}", slotPull: "¡Tira!", slotPullAgain: "Otra vez", slotModeLabel: "Verdad o reto", slotAsk: "Verdad", slotMix: "Al azar", slotDo: "Reto",
     flowOpen: 'Inicio', flowOpenTitle: 'Que todos se relajen', flowOpenDesc: 'Sin ronda de presentaciones. Di qué va a pasar: eso da tranquilidad.',
     flowOpenSay: 'Vamos a empezar con dos juegos cortos, unos diez minutos, sin preparar nada y sin momentos incómodos. Después empezamos.',
     flowWarmTitle: 'Entrar en calor: {name}', flowWarmDesc: 'Aquí se trata de reír y moverse; ganar no importa.',
@@ -707,6 +721,8 @@ export const STRINGS = {
     comboSeoDesc: '选 10、15 或 20 分钟，自动搭一组「先暖场、再认识彼此」的破冰游戏，连开场、转场、收尾要说的话都写好了，照着念就能带。',
     comboH1: '破冰组合', comboPageLead: '破冰只是聚会的开头。选好想花多久，帮你搭一组「先暖场、再认识彼此」，连每一段要说什么都写好了。',
     flowKicker: '照着带就好', flowTitle: '这一组怎么带', flowLead: '框起来的部分可以直接念出来。', sayLabel: '照着念',
+    // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
+    leadStep: "STEP {n} / {total}", slotPull: "拉一下！", slotPullAgain: "再拉一次", slotModeLabel: "要回答还是做动作", slotAsk: "真心话", slotMix: "随机", slotDo: "大冒险",
     flowOpen: '开场', flowOpenTitle: '先让大家放松', flowOpenDesc: '不用自我介绍，直接说等一下要做什么，大家会比较安心。',
     flowOpenSay: '我们先玩两个小游戏，大概十几分钟，不用准备、不会很尴尬，玩完就开始今天的聚会。',
     flowWarmTitle: '暖场：{name}', flowWarmDesc: '这一段的目的是让大家笑出来、动起来，输赢不重要。',

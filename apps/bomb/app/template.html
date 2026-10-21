@@ -40,6 +40,9 @@
           <p>{{heroDesc}}</p>
         </div>
 
+        <!-- 第 1 步的步驟頭（全站共用的 Leader.lead，game.js）：步驟點、標題、照著念 -->
+        <div class="lead-slot"></div>
+
         <div class="panel">
           <h2>{{timerHeading}}</h2>
 
@@ -98,6 +101,13 @@
         <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
       </div>
 
+      <!-- 第 2 步：說明規則。主持人照著念，三張插圖卡給大家看（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
       <!--
         遊戲進行中。畫面上只有三件東西：這一題屬於哪一型、這一題，以及一條佔滿寬度的「完成」。
         刻意不放剩餘時間、不放已抽題數、不放任何進度——看得到倒數的話，
@@ -132,8 +142,12 @@
         <p class="hint play-hint" id="play-hint">{{playHint}}</p>
       </div>
 
-      <!-- 爆炸。輸家是誰現場都看得到，所以這裡不記名、不記分（CONCEPT.md 六） -->
+      <!--
+        第 4 步：爆炸、誰輸了。輸家是誰現場都看得到，所以這裡不記名、不記分（CONCEPT.md 六）。
+        輸的人拉真心話大冒險拉霸（全站共用的 Leader.slot），題目在 apps/homepage/src/slot-prompts.mjs
+      -->
       <div class="view" id="view-boom" hidden>
+        <div class="lead-slot"></div>
         <div class="panel boom-card">
           <div class="boom-mark" aria-hidden="true">
             <svg viewBox="0 0 64 64">
@@ -145,11 +159,10 @@
           <h1>{{boomTitle}}</h1>
           <p class="boom-stats" id="boom-stats"></p>
 
-          <div class="boom-actions">
-            <button class="btn btn-lg btn-solid btn-block" id="play-again" type="button">{{againButton}}</button>
-            <button class="btn btn-lg btn-secondary btn-block" id="back-to-setup" type="button">{{backToSetupButton}}</button>
-          </div>
+          <div id="slot-root"></div>
         </div>
+        <!-- 沒有「改設定」：返回鍵就是回到第一頁（跟竹筍同一套） -->
+        <button class="btn btn-lg btn-solid btn-block" id="play-again" type="button">{{againButton}}</button>
       </div>
     </main>
 
@@ -211,6 +224,7 @@
         T: {{stringsJson}},
         questions: {{questionsJson}},
         timer: {{timerJson}},
+        slot: {{slotJson}},
       };
     </script>
     <script src="{{base}}/header.js?v={{assetVersion}}"></script>

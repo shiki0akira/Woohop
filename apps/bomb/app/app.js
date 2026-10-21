@@ -63,6 +63,7 @@
 
   var views = {
     setup: document.getElementById('view-setup'),
+    rules: document.getElementById('view-rules'),
     play: document.getElementById('view-play'),
     boom: document.getElementById('view-boom'),
   };
@@ -93,7 +94,9 @@
     playHint: document.getElementById('play-hint'),
     boomStats: document.getElementById('boom-stats'),
     playAgain: document.getElementById('play-again'),
-    backToSetup: document.getElementById('back-to-setup'),
+    ruleCards: document.getElementById('rule-cards'),
+    rulesNext: document.getElementById('rules-next'),
+    slotRoot: document.getElementById('slot-root'),
     leaveModal: document.getElementById('leave-modal'),
     leaveCancel: document.getElementById('leave-cancel'),
     leaveConfirm: document.getElementById('leave-confirm'),
@@ -692,6 +695,60 @@
     lock.release().catch(function () {});
   }
 
+  // ---------- 帶領的步驟（全站共用的 Leader，game.js；跟竹筍竹筍蹦蹦出同一套） ----------
+
+  /*
+   * 一步一步帶：setup 選題目 → rules 說明規則 → play 開始（手機在大家手上傳）→ boom 誰輸了（拉霸）→ 再玩一輪回 play。
+   * play 那一步手機在傳，不放步驟頭，畫面只留題目和「完成」。
+   */
+  var STEPS = ['setup', 'rules', 'play', 'boom'];
+
+  function renderLead() {
+    if (!window.Leader || !T.lead[screen]) return;
+    window.Leader.lead(views[screen].querySelector('.lead-slot'), {
+      index: STEPS.indexOf(screen),
+      total: STEPS.length,
+      title: T.lead[screen][0],
+      say: T.lead[screen][1],
+    });
+  }
+
+  /*
+   * 「說明規則」三張插圖卡的插圖：拿到就做（炸彈本人）、做完傳下去（炸彈＋箭頭）、爆了就輸（爆炸）。
+   * 都用 woohop-art.js 的畫法（粗描邊留缺口、色塊錯開露出白邊），跟網站其他插圖一致
+   */
+  var W = window.Woohop;
+  var RULE_ART = [
+    function () { return W.art.bomb(); },
+    function () {
+      return W.ground + W.plus(146, 92, '#4FB59A') +
+        W.body('<circle cx="62" cy="80" r="26"/>', '#EE7B6A') + W.makeFace('smile', 62, 80, 1.6) +
+        '<path d="M96 52q22-10 38 8" fill="none" ' + W.K + '/><path d="M126 50l9 10-13 2" fill="none" ' + W.K + '/>' +
+        W.ring(134, 96, '#7489E6', 9);
+    },
+    function () {
+      return W.ground + W.burst(30, 30, '#FFC628') + W.dot(140, 30, '#7489E6', 4) +
+        W.body('<path d="m80 18 8 17 18-8-4 19 19 2-14 13 14 13-19 2 4 19-18-8-8 17-8-17-18 8 4-19-19-2 14-13-14-13 19-2-4-19 18 8z"/>', '#EE7B6A') +
+        W.makeFace('worry', 80, 66, 1.8);
+    },
+  ];
+
+  // 真心話大冒險拉霸（Leader.slot），題目在 apps/homepage/src/slot-prompts.mjs
+  var slotTool = null;
+  function resetSlot() {
+    if (!window.Leader) return;
+    if (!slotTool) {
+      slotTool = window.Leader.slot(el.slotRoot, {
+        prompts: window.BOMB.slot.prompts,
+        actions: window.BOMB.slot.actions,
+        onPull: function (info) {
+          track('bomb_slot_pulled', { round_number: roundNumber, kind: info.kind, mode: info.mode });
+        },
+      });
+    }
+    slotTool.reset();
+  }
+
   // ---------- 畫面切換 ----------
 
   function showScreen(next) {
@@ -701,6 +758,8 @@
     });
     // 頂欄跟著畫面換：設定畫面是網站導覽列，進行中／爆炸是遊戲內頂欄（app.css 看這個屬性）
     document.body.setAttribute('data-screen', next);
+    renderLead();
+    if (next === 'boom') resetSlot();
     // 遊戲內頂欄（game.css）：設定畫面是 browse（有玩法、設定分頁與選單），進行中、爆炸是 play（只剩返回＋遊戲名，不能點出去）
     document.body.setAttribute('data-game-mode', next === 'setup' ? 'browse' : 'play');
     // 頂欄的遊戲名是回主頁的連結，玩的時候不能點（CSS），鍵盤也不要停在它上面
@@ -900,7 +959,8 @@
 
     if (screen === 'setup') return;
 
-    if (screen === 'boom') {
+    // 說明規則、誰輸了：沒有東西會不見，直接回第一頁（推的那一格剛好被這次吃掉）
+    if (screen === 'boom' || screen === 'rules') {
       backToSetup();
       return;
     }
@@ -945,8 +1005,13 @@
     addCustom();
   });
 
+  // 「開始遊戲」先到第 2 步說明規則；history 在這裡推一格，之後返回鍵一律回第一頁
   el.startGame.addEventListener('click', function () {
     pushPlayState();
+    showScreen('rules');
+  });
+
+  el.rulesNext.addEventListener('click', function () {
     startRound(true);
   });
 
@@ -963,17 +1028,14 @@
     startRound(false);
   });
 
-  el.backToSetup.addEventListener('click', function () {
-    backToSetup();
-    // 開始遊戲時推的那一格還在，這裡把它收掉，返回鍵才不會又回到爆炸畫面
-    history.back();
-  });
 
   // 遊戲內頂欄的返回鍵（game.js 會呼叫這個）：設定畫面回「找遊戲」；進行中先跳確認（確認後回設定畫面）；爆炸畫面等於「改設定」。
   // 進行中直接開確認框，不經過 history.back()：開始遊戲時推的那一格要留給「結束這輪」去收
   window.gameBack = function () {
-    if (screen === 'boom') el.backToSetup.click();
-    else if (screen === 'play') openLeaveModal();
+    if (screen === 'boom' || screen === 'rules') {
+      backToSetup();
+      history.back(); // 收掉「開始遊戲」推的那一格
+    } else if (screen === 'play') openLeaveModal();
     else location.href = '/' + LANG + '/games/';
   };
 
@@ -1020,5 +1082,7 @@
   renderPicks();
   renderCustom();
   refreshDeckInfo();
+  // 「說明規則」那一步的插圖卡（全站共用的 Leader.ruleCards）
+  if (window.Leader) window.Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);
   showScreen('setup');
 })();

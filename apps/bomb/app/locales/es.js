@@ -52,7 +52,22 @@ export default {
   customRemoveLabel: 'Borrar esta prueba',
   customHint: 'Tus pruebas se quedan en este dispositivo y seguirán aquí la próxima vez.',
 
-  startButton: 'Empezar',
+  // ---------- 帶領的步驟（全站共用的 Leader，跟竹筍竹筍蹦蹦出同一套）----------
+  // 每個畫面就是一步：[標題, 照著念]。進行中那一步手機在大家手上傳，不放步驟頭
+  lead: {
+    setup: ["Elige las pruebas","¡Vamos a jugar a la bomba de tiempo! Primero elegid: preguntas, acciones o las dos cosas."],
+    rules: ["Las reglas","Este móvil es la bomba. Aparece una prueba: quien lo tiene la hace en el momento, pulsa «Hecho» y lo pasa al de al lado. Nadie sabe cuándo explota. ¡Quien lo tenga en la mano cuando explote, pierde!"],
+    boom: ["¿Quién perdió?","¿En qué manos explotó? Quien pierde elige verdad, reto o al azar, ¡y tira de la tragaperras!"],
+  },
+  // 「說明規則」那一步的三張插圖卡：[標題, 說明]
+  ruleCards: [
+    ["Hazlo ya","Aparece una prueba: responde la pregunta o haz la acción en el momento."],
+    ["Pásalo","Pulsa «Hecho» y pasa el móvil al de al lado. ¿Te atascas? Cambia de prueba."],
+    ["Si explota, pierdes","Nadie sabe cuándo explota. Quien tenga el móvil en ese momento, pierde."],
+  ],
+  rulesNext: "Siguiente: a jugar",
+
+  startButton: "Empezar el juego",
 
   // ---------- en juego ----------
   passButton: '¡Hecho! Pásalo',
@@ -68,7 +83,6 @@ export default {
   durationMinSec: '{m} min {s} s',
   durationSec: '{s} s',
   againButton: 'Otra ronda',
-  backToSetupButton: 'Cambiar ajustes',
 
   // ---------- salir a medias ----------
   // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）

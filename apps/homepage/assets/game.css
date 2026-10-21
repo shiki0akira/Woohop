@@ -162,3 +162,92 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 /* 主持人怎麼帶：開場一句是「照著念」卡片（woohop.css 的 .prompt-card），底下是小提醒 */
 .rules-lead .prompt-card { margin: 18px 0; max-width: none; font-size: 18px; }
 .rules-back { margin: 8px 0 0; text-align: center; }
+
+/* ============================================================
+   帶領元件（game.js 的 Leader）：步驟頭、說明規則的插圖卡、真心話大冒險拉霸。
+   不用手機的遊戲（竹筍）和傳手機的遊戲（定時炸彈）共用，2026-10-21 從竹筍搬過來。
+   之後也打算拆成獨立的小工具（取名、拉霸），見 memory 的「小工具分頁」。
+   ============================================================ */
+/* ---------- 帶領的步驟頭（每個畫面上方，game.js 的 Leader.lead） ----------
+ * 步驟點＋「STEP 2 / 5」＋這一步的標題＋照著念。主持人一看就知道現在到哪、要說什麼。
+ */
+.lead-head { display: grid; gap: 6px; justify-items: center; text-align: center; margin: 20px 0 0; } /* 跟下面卡片的間距交給 .view 的 gap（16px），這裡不再加 */
+.lead-head .step-dots i.done { background: var(--indigo); opacity: .45; }
+.lead-head .step-no { font-size: 12px; font-weight: 900; letter-spacing: .12em; color: var(--muted); margin-top: 4px; }
+.lead-title { margin: 0; font-size: 26px; font-weight: 900; }
+.lead-head .lead-say mark { font-weight: 900; }
+.lead-head.no-say .lead-say { display: none; }
+.lead-head .lead-say { max-width: none; width: 100%; margin-top: 12px; text-align: left; font-size: 18px; }
+/* 第一個畫面上面已經有大標題，步驟頭不用再留那麼多空 */
+#view-setup .lead-head { margin-top: 8px; }
+
+/* ---------- 說明規則：三張插圖卡 ---------- */
+.rule-cards { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 12px; }
+.rule-card { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: center; padding: 12px 16px 12px 8px; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); }
+.rule-card .illo { width: 112px; height: auto; overflow: visible; }
+.rule-card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 900; }
+.rule-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+
+/* ---------- 真心話大冒險拉霸（Leader.slot） ---------- */
+.leader-slot { display: grid; gap: 14px; justify-items: center; width: 100%; }
+.leader-slot > .btn { width: 100%; max-width: 420px; }
+/*
+ * 拉霸機：粗外框＋底部厚度（設計系統的按鈕語言），窗格一次看得到三列，中間那列是停下來的位置。
+ * 列高 --row 是唯一要調的數字，app.js 從畫面量，不用跟著改。
+ */
+.slot {
+  --row: 84px;
+  position: relative; width: 100%; max-width: 420px; margin-top: 6px; padding: 10px;
+  border: 2px solid var(--outline); border-radius: var(--r-lg); background: var(--yellow);
+  box-shadow: 0 6px 0 var(--outline);
+}
+.slot-window {
+  position: relative; height: calc(var(--row) * 3); overflow: hidden;
+  border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface);
+}
+/* 上下兩列蓋一層漸層淡出、中間那列墊一條淡黃：視線自然落在中間。
+   用疊上去的漸層、不用 mask：mask 會讓外框的黃色透進來，字變得髒髒的 */
+.slot-window::before, .slot-window::after { content: ""; position: absolute; left: 0; right: 0; pointer-events: none; }
+.slot-window::before { z-index: 0; top: var(--row); height: var(--row); background: var(--yellow-face); border-block: 2px dashed var(--yellow-edge); }
+.slot-window::after { z-index: 2; inset: 0; background: linear-gradient(var(--surface), transparent 34%, transparent 66%, var(--surface)); }
+/* 中間那條：停下來的位置，左右各一個三角形指著 */
+.slot::before, .slot::after {
+  content: ""; position: absolute; z-index: 2; top: 50%; width: 0; height: 0;
+  border: 10px solid transparent; transform: translateY(-50%);
+}
+.slot::before { left: -2px; border-left: 14px solid var(--outline); }
+.slot::after { right: -2px; border-right: 14px solid var(--outline); }
+.slot-reel { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; will-change: transform; }
+.slot-reel li {
+  height: var(--row); display: grid; place-content: center; justify-items: center; gap: 2px; padding: 0 18px;
+  font-size: 18px; font-weight: 800; line-height: 1.3; color: var(--muted); text-wrap: balance;
+}
+.slot-reel li.on { color: var(--ink); font-size: 21px; font-weight: 900; }
+/* 「回答」「動作」小標籤：問題是藍、動作是珊瑚，停下來一眼就知道要說還是要做 */
+.slot-kind { font-size: 12px; font-weight: 900; line-height: 1; padding: 3px 10px; border-radius: var(--r-pill); border: 2px solid var(--blue-edge); background: var(--blue-face); color: var(--blue-text); }
+.slot-do .slot-kind { border-color: var(--coral-edge); background: var(--coral-face); color: var(--coral-text); }
+.slot-text { display: block; }
+.slot.is-spinning .slot-reel li { filter: blur(.5px); }
+@media (prefers-reduced-motion: reduce) { .slot-reel { transition: none !important; } }
+:root[data-theme="dark"] .slot { background: #a8861c; }
+
+/* 真心話／隨機／大冒險（一排單選本體在 game.css 的 .seg）。拉霸在轉的時候不能換 */
+.slot-mode { width: 100%; max-width: 420px; }
+.slot-mode.is-locked { opacity: .55; pointer-events: none; }
+
+.slot-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/*
+ * 手機版拉霸：窄螢幕上長題目一定會折成兩行，加上上面的「真心話／大冒險」標籤，84px 放不下，
+ * 會超出中間那條框。列高加到 104px、字縮一點、左右內距收窄。列高是 app.js 從畫面量的，不用跟著改程式。
+ */
+@media (max-width: 480px) {
+  .slot { --row: 104px; padding: 8px; }
+  .slot-reel li { padding: 0 10px; font-size: 16px; }
+  .slot-reel li.on { font-size: 19px; }
+}
+/*
+ * 確認框兩顆按鈕：woohop.css 是 1fr 1fr（全站的確認框都適用），但 1fr 的最小寬度是字的寬度，外語長一點就把右邊那顆擠出框外
+ * （法文「Revenir au début」）。改成 minmax(0, 1fr)，字太長就換行，不撐破框
+ */
+dialog.modal .m-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1.2; text-wrap: balance; }

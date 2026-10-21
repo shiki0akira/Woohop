@@ -23,6 +23,8 @@ import { QUESTIONS, CATEGORY_GROUPS, checkQuestions } from '../app/questions.js'
 // 改首頁那份就是全站一起改。樣式與程式複製進 dist/bomb/woohop/，跟這個遊戲一起部署（不跨網域引用）
 import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
 import { navbar, footer, gameBar, THEME_HEAD } from '../../homepage/src/chrome.mjs';
+// 真心話大冒險拉霸的題目（全站共用，竹筍也用同一份）
+import { SLOT, checkSlot } from '../../homepage/src/slot-prompts.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const siteAssets = join(root, '..', 'homepage', 'assets');
@@ -73,6 +75,7 @@ const RAW_TOKENS = new Set([
   'stringsJson',
   'questionsJson',
   'timerJson',
+  'slotJson',
   'langsJson',
   'langOptions',
   'rulesFactsList',
@@ -109,6 +112,7 @@ async function main() {
   checkTimer();
   checkStrings();
   checkQuestions(LANGS);
+  checkSlot(LANGS);
 
   /*
    * 靜態資源帶上版本號（app.js?v=xxxx）。部署完瀏覽器（尤其是行動裝置與內嵌
@@ -266,7 +270,7 @@ function checkStrings() {
   }
 
   // 規則頁的三份清單長度要一致，否則某個語言會少一步驟而沒人發現
-  for (const key of ['rulesFacts', 'rulesTimeGuide', 'rulesHowSteps', 'rulesLeadSteps']) {
+  for (const key of ['rulesFacts', 'rulesTimeGuide', 'rulesHowSteps', 'rulesLeadSteps', 'ruleCards']) {
     const size = STRINGS[DEFAULT_LANG][key].length;
     for (const lang of LANGS) {
       if (STRINGS[lang][key].length !== size) {
@@ -324,6 +328,7 @@ function tokensFor(lang, page, assetVersion) {
     // 一份頁面只有一種語言，帶進全部會讓每頁多背用不到的題庫
     questionsJson: toScriptJson(questionsFor(lang)),
     timerJson: toScriptJson(TIMER),
+    slotJson: toScriptJson(SLOT[lang]),
 
     jsonLd: jsonLdFor(lang, page, strings),
     // 玩法頁刻意精簡（2026-10-17）：人數／時間／準備、4 步流程、主持人怎麼帶。長文與常見問題拿掉了

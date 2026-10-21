@@ -33,9 +33,11 @@
 
 ## 返回鍵
 
-照系列規則：設定畫面直接退出；**遊戲進行中**按返回先跳確認。爆炸畫面例外，直接回設定——那時候這一輪已經結束，返回鍵不會讓任何東西消失。
+照系列規則：設定畫面直接退出；**遊戲進行中**按返回先跳確認。說明規則、爆炸畫面直接回第一頁——沒有東西會不見。
 
-做法是開始遊戲時 `pushState` 一格，返回鍵先吃掉它；`onPopState` 判斷當前畫面決定要攔還是放行。要離開時**先切回設定畫面再 `history.back()`**，`onPopState` 才會走 `'setup'` 那條直接 return，不會又推一格回去。`history.length` 不會隨著反覆按返回而增長（測過）。
+畫面是一步一步帶（2026-10-21，跟竹筍同一套）：`setup → rules → play → boom`。步驟頭、規則卡、拉霸用全站共用的 `window.Leader`（apps/homepage/assets/game.js），`renderLead()` 在 `showScreen()` 裡呼叫；play 那一步不放步驟頭。
+
+做法是按「開始遊戲」（進到說明規則）時 `pushState` 一格，返回鍵先吃掉它；`onPopState` 判斷當前畫面決定要攔還是放行。要離開時**先切回設定畫面再 `history.back()`**，`onPopState` 才會走 `'setup'` 那條直接 return，不會又推一格回去。`history.length` 不會隨著反覆按返回而增長（測過）。
 
 **自訂題目彈窗也吃一格 history**：開的時候 `pushState`，返回鍵就是「關掉彈窗」而不是離開網站（設定畫面的返回鍵本來就是直接退出，少了這條，在彈窗裡按返回會連整個遊戲一起關掉）。`onPopState` 的第一件事就是判斷彈窗開著沒有，開著就只關彈窗。
 
@@ -96,9 +98,10 @@
 
 測量 ID `G-S7PE5687BG`，跟首頁與系列其他專案共用同一個資源。
 
-- `send_page_view: false`，改由 `app.js` 在**畫面切換**時手動送。三個畫面共用同一個網址，靠自動送只會記到一筆。路徑是 `/bomb/{lang}/{setup|play|boom}`，規則頁是 `/bomb/{lang}/rules/`
+- `send_page_view: false`，改由 `app.js` 在**畫面切換**時手動送。四個畫面共用同一個網址，靠自動送只會記到一筆。路徑是 `/bomb/{lang}/{setup|rules|play|boom}`，規則頁是 `/bomb/{lang}/rules/`
 - 自訂事件一律加 **`bomb_` 前綴**（阿瓦隆是 `avalon_`、搶答是 `buzzer_`）——整個系列共用一個 GA4 資源，沒有前綴就分不出是哪個遊戲的
-- 事件清單：`bomb_game_started`（`groups` / `deck_size` / `min_seconds` / `max_seconds`）、`bomb_round_ended`（`duration_seconds` / `tasks_done` / `tasks_skipped`）、`bomb_custom_added`（`group`）
+- 事件清單：`bomb_game_started`（`groups` / `deck_size` / `min_seconds` / `max_seconds`）、`bomb_round_ended`（`duration_seconds` / `tasks_done` / `tasks_skipped`）、`bomb_custom_added`（`group`）、`bomb_slot_pulled`（`round_number` / `kind` ask｜do / `mode` ask｜mix｜do）
+- page_view 路徑多了 `/bomb/{lang}/rules`（說明規則那一步，跟玩法頁 `/rules/` 有斜線那個不同）
 - **刻意不送每一題的事件**：一輪抽幾十題，每題送一次會把整個資源洗掉，而且「抽了幾題」已經在 `bomb_round_ended` 裡了
 
 ## SEO

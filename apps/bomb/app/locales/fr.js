@@ -52,7 +52,22 @@ export default {
   customRemoveLabel: 'Supprimer ce défi',
   customHint: 'Tes défis restent sur cet appareil et seront encore là la prochaine fois.',
 
-  startButton: 'C’est parti',
+  // ---------- 帶領的步驟（全站共用的 Leader，跟竹筍竹筍蹦蹦出同一套）----------
+  // 每個畫面就是一步：[標題, 照著念]。進行中那一步手機在大家手上傳，不放步驟頭
+  lead: {
+    setup: ["Choisir les défis","On joue à la bombe à retardement ! Choisissez d’abord : des questions, des actions, ou les deux."],
+    rules: ["Les règles","Ce téléphone, c’est la bombe. Un défi s’affiche : celui qui l’a le fait tout de suite, appuie sur « Terminé » et le passe au voisin. Personne ne sait quand elle explose. Celui qui l’a en main au moment du boum a perdu !"],
+    boom: ["Qui a perdu ?","Qui tenait la bombe ? Le perdant choisit vérité, action ou hasard, puis tire la machine à sous !"],
+  },
+  // 「說明規則」那一步的三張插圖卡：[標題, 說明]
+  ruleCards: [
+    ["On le fait tout de suite","Un défi s’affiche : on répond ou on fait l’action, sur-le-champ."],
+    ["On passe au suivant","Appuie sur « Terminé » et donne le téléphone à ton voisin. Bloqué ? Change de défi."],
+    ["Boum, c’est perdu","Personne ne sait quand ça explose. Celui qui tient le téléphone à ce moment-là a perdu."],
+  ],
+  rulesNext: "Suivant : on joue",
+
+  startButton: "Lancer la partie",
 
   // ---------- en jeu ----------
   passButton: 'Terminé ! Au suivant',
@@ -68,7 +83,6 @@ export default {
   durationMinSec: '{m} min {s} s',
   durationSec: '{s} s',
   againButton: 'On rejoue',
-  backToSetupButton: 'Changer les réglages',
 
   // ---------- quitter en cours ----------
   // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）

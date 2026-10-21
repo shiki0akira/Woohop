@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 
 import { LANGS, DEFAULT_LANG, STRINGS, ORIGIN, BASE_PATH } from '../app/strings.js';
 import { THEMES, groupsFor, checkNames } from '../app/names.js';
+import { SLOT, checkSlot } from '../../homepage/src/slot-prompts.mjs';
 // Woohop 全站共用的導覽列、頁尾與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
 // 改首頁那份就是全站一起改。樣式與程式複製進 dist/bamboo/woohop/，跟這個遊戲一起部署（不跨網域引用）
 import { STRINGS as SITE_STRINGS } from '../../homepage/src/locales.mjs';
@@ -40,6 +41,7 @@ const RAW_TOKENS = new Set([
   'hreflang',
   'stringsJson',
   'namesJson',
+  'slotJson',
   'langsJson',
   'rulesFactsList',
   'rulesHowList',
@@ -73,6 +75,7 @@ await main();
 async function main() {
   checkStrings();
   checkNames(LANGS);
+  checkSlot(LANGS);
 
   /*
    * 靜態資源帶上版本號（app.js?v=xxxx）。部署完瀏覽器（尤其是行動裝置與內嵌
@@ -192,14 +195,6 @@ function checkStrings() {
       }
     }
   }
-  /*
-   * 拉霸的題目和動作是各語言自己寫的內容（例如日文問「カップ麺は何味」），不要求每種語言一樣多，
-   * 只要求夠多：太少的話拉幾次就重複了
-   */
-  for (const lang of LANGS) {
-    if (STRINGS[lang].slotPrompts.length < 30) throw new Error(`${lang} 的 slotPrompts 只有 ${STRINGS[lang].slotPrompts.length} 題，至少要 30 題`);
-    if (STRINGS[lang].slotActions.length < 15) throw new Error(`${lang} 的 slotActions 只有 ${STRINGS[lang].slotActions.length} 個，至少要 15 個`);
-  }
 
 }
 
@@ -248,6 +243,8 @@ function tokensFor(lang, page, assetVersion) {
     hreflang: hreflangTags(page),
     stringsJson: toScriptJson(strings),
     // 名稱庫只內嵌這個語言的：一份頁面只有一種語言
+    // 真心話大冒險拉霸的題目（全站共用，只嵌這個語言的）
+    slotJson: toScriptJson(SLOT[lang]),
     namesJson: toScriptJson({
       themes: THEMES,
       groups: Object.fromEntries(THEMES.map((theme) => [theme, groupsFor(theme, lang)])),

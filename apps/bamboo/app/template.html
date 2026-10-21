@@ -9,17 +9,6 @@
     {{header}}
 
     <main id="main" class="bamboo-main game-main">
-      <!--
-        帶領的步驟頭（CONCEPT.md 3.2）：整個遊戲就是一步一步帶，每個畫面都是其中一步。
-        只有一份，app.js 的 renderLead 會把它搬進目前畫面的 .lead-slot，填上這一步的標題和「照著念」。
-      -->
-      <section class="lead-head" id="lead-head">
-        <div class="step-dots" id="step-dots" aria-hidden="true"></div>
-        <span class="step-no" id="step-no"></span>
-        <h2 class="lead-title" id="lead-title"></h2>
-        <div class="prompt-card lead-say"><span class="say">{{sayLabel}}</span><span id="lead-say"></span></div>
-      </section>
-
       <!-- 第 1 步：選主題 -->
       <div class="view" id="view-setup">
         <div class="page-head">
@@ -127,13 +116,8 @@
             拉霸：題目在窗格裡往上滾，越滾越慢，停在中間那一格（app.js 的 spinSlot）。
             停下來的題目另外寫進 #slot-result 給螢幕閱讀器念，滾動中的那一長串藏起來。
           -->
-          <!-- 拉之前先選：真心話／隨機／大冒險（app.js 的 buildSlotModes），每輪回到隨機 -->
-          <div class="seg seg-3 slot-mode" id="slot-mode" role="radiogroup" aria-label="{{slotModeLabel}}"></div>
-          <div class="slot" id="slot">
-            <div class="slot-window" aria-hidden="true"><ul class="slot-reel" id="slot-reel"></ul></div>
-          </div>
-          <p class="slot-sr" id="slot-result" aria-live="polite"></p>
-          <button class="btn btn-lg btn-solid btn-block" id="spin" type="button">{{spin}}</button>
+          <!-- 真心話大冒險拉霸：全站共用的 Leader.slot（game.js）畫在這裡 -->
+          <div id="slot-root"></div>
         </section>
         <!-- 「再一輪」放在拉霸卡片外面（使用者要求）。不黏底：這一頁比手機畫面高，黏著的話會蓋住「拉一下！」 -->
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
@@ -160,6 +144,7 @@
         base: '{{base}}',
         T: {{stringsJson}},
         names: {{namesJson}},
+        slot: {{slotJson}},
       };
     </script>
     <script src="{{base}}/header.js?v={{assetVersion}}"></script>

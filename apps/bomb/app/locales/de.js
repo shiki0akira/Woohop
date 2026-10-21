@@ -52,7 +52,22 @@ export default {
   customRemoveLabel: 'Diese Aufgabe löschen',
   customHint: 'Eigene Aufgaben bleiben auf diesem Gerät und sind beim nächsten Mal wieder da.',
 
-  startButton: 'Los geht es',
+  // ---------- 帶領的步驟（全站共用的 Leader，跟竹筍竹筍蹦蹦出同一套）----------
+  // 每個畫面就是一步：[標題, 照著念]。進行中那一步手機在大家手上傳，不放步驟頭
+  lead: {
+    setup: ["Aufgaben wählen","Wir spielen Zeitbombe! Wählt zuerst: Fragen beantworten, Aktionen machen oder beides."],
+    rules: ["Die Regeln","Dieses Handy ist die Bombe. Eine Aufgabe erscheint – wer das Handy hat, erledigt sie sofort, tippt auf „Fertig“ und gibt weiter. Niemand weiß, wann sie hochgeht. Wer sie beim Knall in der Hand hat, verliert!"],
+    boom: ["Wer hat verloren?","Bei wem ist die Bombe hochgegangen? Wer verliert, wählt Wahrheit, Pflicht oder Zufall und zieht dann am Automaten!"],
+  },
+  // 「說明規則」那一步的三張插圖卡：[標題, 說明]
+  ruleCards: [
+    ["Sofort erledigen","Eine Aufgabe erscheint: Frage beantworten oder Aktion machen, und zwar gleich."],
+    ["Weitergeben","Auf „Fertig“ tippen und das Handy weiterreichen. Hängst du fest? Aufgabe wechseln."],
+    ["Knall = verloren","Niemand weiß, wann es knallt. Wer das Handy dann hält, verliert."],
+  ],
+  rulesNext: "Weiter: los geht’s",
+
+  startButton: "Spiel starten",
 
   // ---------- im Spiel ----------
   passButton: 'Fertig! Weitergeben',
@@ -68,7 +83,6 @@ export default {
   durationMinSec: '{m} Min. {s} Sek.',
   durationSec: '{s} Sek.',
   againButton: 'Noch eine Runde',
-  backToSetupButton: 'Einstellungen ändern',
 
   // ---------- Runde vorzeitig verlassen ----------
   // 遊戲內頂欄左上角的返回鍵（只給螢幕閱讀器念，畫面上是箭頭）
