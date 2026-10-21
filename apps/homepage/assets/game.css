@@ -329,3 +329,18 @@ dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1
 @media (min-width: 760px) {
   .namer .name-card { padding: 28px 36px; }
 }
+
+/* ============================================================
+   帶領元件之三：節拍器（Leader.metronome）。三個大燈，最後一拍（重拍）是珊瑚色；
+   燈的本體（.beats i）在 woohop.css 的設計系統，這裡只放大、排版
+   ============================================================ */
+.metro { display: grid; gap: 16px; justify-items: center; width: 100%; }
+.metro-beats { gap: 14px; }
+.metro-beats i { width: 44px; height: 44px; transition: transform .06s, background .06s; }
+.metro-beats i.on { background: var(--orange); transform: scale(1.18); }
+.metro-beats i.accent.on { background: var(--coral); }
+.metro-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+.metro-tempo output { min-width: 96px; font-size: 18px; }
+.metro-auto { min-height: 44px; }
+.metro-toggle { max-width: 420px; }
+@media (prefers-reduced-motion: reduce) { .metro-beats i { transition: none; } .metro-beats i.on { transform: none; } }

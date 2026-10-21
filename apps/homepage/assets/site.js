@@ -60,7 +60,6 @@
   const placeholderArt = (color, face) => () => `${ground}${burst(132, 28, '#FFC628')}${ring(28, 34, color)}${plus(146, 80, color)}
     ${body('<circle cx="80" cy="74" r="36"/>', color)}${makeFace(face, 80, 72, 2.2)}`;
   art.orchard = art.orchard || placeholderArt('#FFC628', 'grin');
-  art.stairs = art.stairs || placeholderArt('#aebcf3', 'wow');
   const artSvg = key => `<svg viewBox="0 0 160 126" aria-hidden="true">${art[key]()}</svg>`;
 
   /* ================= 遊戲卡片 ================= */

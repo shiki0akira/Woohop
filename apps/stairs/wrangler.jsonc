@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "web100-stairs",
+  "compatibility_date": "2025-11-01",
+
+  /*
+   * 跟定時炸彈（apps/bomb）一樣是**只有靜態資源的 Worker，沒有 `main`**：
+   * 這個遊戲沒有房間、沒有後端，手機只在主持人手上（CONCEPT.md 2.2）。
+   * `dist` 是 scripts/build.js 產生的，不進版控。
+   */
+  "assets": {
+    "directory": "./dist",
+    // /stairs/ → dist/stairs/index.html（語言轉址頁）、/stairs/zh-TW/ → dist/stairs/zh-TW/index.html
+    "html_handling": "auto-trailing-slash",
+    // 找不到回真 404，不回 index.html（ARCHITECTURE.md 3.1：整個網域只有首頁那張 404）
+    "not_found_handling": "none"
+  },
+
+  "observability": { "enabled": true }
+}

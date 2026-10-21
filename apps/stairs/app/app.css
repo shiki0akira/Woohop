@@ -1,0 +1,40 @@
+/*
+ * 上樓下樓自己的樣式。步驟頭、規則卡、拉霸、節拍器、按鈕、選項卡都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：藍（首頁 site.js 的 GAMES 也是 #7489E6） */
+.stairs-app { --game-edge: var(--blue-edge); }
+.stairs-app .panel { padding: 20px; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 設定 ---------- */
+.count-panel { display: grid; gap: 14px; justify-items: start; }
+.count-panel h2 { margin: 0; }
+.expansion { width: 100%; min-height: 0; padding: 16px 44px 16px 16px; align-items: flex-start; text-align: left; }
+.expansion .choice-name, .expansion .choice-sub { text-align: left; }
+
+/* ---------- 大樓圖：由上往下的樓層，頂樓、1 樓、地下室各有顏色 ---------- */
+.building-panel h2 { margin: 0 0 12px; }
+.building { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; }
+.building li { padding: 10px 6px; border-radius: var(--r-md); border: 2px solid var(--blue-edge); background: var(--blue-face); color: var(--blue-text); font-weight: 900; text-align: center; }
+.building .floor-top { border-color: var(--yellow-edge); background: var(--yellow-face); color: var(--yellow-text); }
+.building .floor-first { border-color: var(--mint-edge); background: var(--mint-face); color: var(--mint-text); }
+.building .floor-basement { border-color: var(--edge-strong); background: var(--sunken); color: var(--text-2); }
+.building-panel .hint { margin: 12px 0 0; }
+
+/* ---------- 開始玩 ---------- */
+/* 結束鍵：紅色、要按住 0.8 秒（跟竹筍的 .round-btn 同一個做法），按住時從左到右填滿 */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
+
+/* 頂欄的聲音開關在第 1 步藏起來：還沒有聲音（跟竹筍、定時炸彈一樣） */
+.stairs-app[data-screen="setup"] .game-music { display: none; }

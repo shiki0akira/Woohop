@@ -737,3 +737,201 @@
   window.Leader.themeLabel = themeLabel;
   window.Leader.namer = namer;
 })();
+
+/*
+ * 帶領元件之三：節拍器（Leader.metronome）。2026-10-21 為上樓下樓做的，之後果園菜園動物園也會用。
+ * 「拍、拍、喊」：beats 拍一組，最後一拍是重拍（主持人在這一拍喊「上 4 樓」）。可調快慢，可開自動加速。
+ *
+ *   Leader.metronome(rootEl, { bpm, min, max, step, beats, sound, onStart, onStop })
+ *       回傳 { start(), stop(), running() }。sound：可選，回傳 true／false，遊戲的聲音開關關著就不出聲（燈照樣亮）
+ *
+ * 排程用「音訊時鐘＋往前看」：setInterval 每 25ms 把接下來 0.12 秒的拍子排進音訊時鐘，
+ * 主執行緒忙也不會歪拍；燈號用 setTimeout 對齊（差幾十毫秒眼睛看不出來）。
+ * 切到背景會自動停（背景的計時器會被節流，拍子會亂掉），回來不自動接著打。
+ */
+(function () {
+  'use strict';
+
+  var t = (window.WOOHOP && window.WOOHOP.t) || {};
+  var fill = function (s, v) {
+    return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in v ? v[k] : m; });
+  };
+  var make = function (tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  };
+
+  var audio = null;
+  function ctx() {
+    try {
+      if (!audio) {
+        var C = window.AudioContext || window.webkitAudioContext;
+        if (!C) return null;
+        audio = new C();
+      }
+      if (audio.state === 'suspended') audio.resume();
+      return audio;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 一般拍是木魚聲；重拍低一點、厚一點，加一點拍手的噪音
+  function click(c, at, accent) {
+    var osc = c.createOscillator();
+    var gain = c.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(accent ? 620 : 980, at);
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(accent ? 0.55 : 0.35, at + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + (accent ? 0.16 : 0.08));
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start(at);
+    osc.stop(at + 0.2);
+    if (!accent) return;
+    var len = Math.floor(c.sampleRate * 0.12);
+    var buf = c.createBuffer(1, len, c.sampleRate);
+    var data = buf.getChannelData(0);
+    for (var i = 0; i < len; i += 1) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    var src = c.createBufferSource();
+    src.buffer = buf;
+    var hp = c.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 1400;
+    var g2 = c.createGain();
+    g2.gain.value = 0.35;
+    src.connect(hp);
+    hp.connect(g2);
+    g2.connect(c.destination);
+    src.start(at);
+  }
+
+  function metronome(rootEl, opts) {
+    var o = {
+      bpm: opts.bpm || 90, min: opts.min || 50, max: opts.max || 180, step: opts.step || 5, beats: opts.beats || 3,
+    };
+    var st = { bpm: o.bpm, running: false, timer: 0, next: 0, beat: 0, bars: 0, auto: false, visual: [] };
+    var soundOn = function () { return !opts.sound || opts.sound(); };
+
+    rootEl.textContent = '';
+    rootEl.classList.add('metro');
+    var lights = make('div', 'beats metro-beats');
+    lights.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < o.beats; i += 1) lights.appendChild(make('i', i === o.beats - 1 ? 'accent' : ''));
+    var row = make('div', 'metro-row');
+    var stepper = make('div', 'stepper metro-tempo');
+    var slower = make('button', '', '−');
+    slower.type = 'button';
+    slower.setAttribute('aria-label', t.metroSlower || '');
+    var bpmOut = make('output', 'metro-bpm');
+    bpmOut.setAttribute('aria-live', 'polite');
+    var faster = make('button', '', '+');
+    faster.type = 'button';
+    faster.setAttribute('aria-label', t.metroFaster || '');
+    stepper.appendChild(slower);
+    stepper.appendChild(bpmOut);
+    stepper.appendChild(faster);
+    var auto = make('button', 'chip metro-auto', t.metroAuto);
+    auto.type = 'button';
+    auto.setAttribute('aria-pressed', 'false');
+    row.appendChild(stepper);
+    row.appendChild(auto);
+    var toggle = make('button', 'btn btn-lg btn-solid btn-block metro-toggle', t.metroStart);
+    toggle.type = 'button';
+    rootEl.appendChild(lights);
+    rootEl.appendChild(row);
+    rootEl.appendChild(toggle);
+
+    function sync() {
+      bpmOut.textContent = fill(t.metroBpm || '{n} BPM', { n: Math.round(st.bpm) });
+      slower.disabled = st.bpm <= o.min;
+      faster.disabled = st.bpm >= o.max;
+      toggle.textContent = st.running ? t.metroStop : t.metroStart;
+      toggle.classList.toggle('btn-solid', !st.running);
+      toggle.classList.toggle('btn-secondary', st.running);
+      auto.setAttribute('aria-pressed', String(st.auto));
+    }
+
+    function light(index) {
+      Array.prototype.forEach.call(lights.children, function (dot, i) {
+        dot.classList.toggle('on', i === index);
+      });
+    }
+
+    function tick() {
+      var c = audio;
+      while (st.next < c.currentTime + 0.12) {
+        var at = st.next;
+        var b = st.beat;
+        var accent = b === o.beats - 1;
+        if (soundOn()) click(c, at, accent);
+        (function (index, when) {
+          st.visual.push(setTimeout(function () { light(index); }, Math.max(0, (when - c.currentTime) * 1000)));
+        })(b, at);
+        st.next += 60 / st.bpm;
+        st.beat = (b + 1) % o.beats;
+        if (st.beat === 0) {
+          st.bars += 1;
+          // 自動加速：每 4 組快一點，到上限就停
+          if (st.auto && st.bars % 4 === 0 && st.bpm < o.max) {
+            st.bpm = Math.min(o.max, st.bpm + o.step);
+            sync();
+          }
+        }
+      }
+      if (st.visual.length > 32) st.visual.splice(0, 16);
+    }
+
+    function start() {
+      var c = ctx();
+      if (!c || st.running) return;
+      st.running = true;
+      st.next = c.currentTime + 0.08;
+      st.beat = 0;
+      st.bars = 0;
+      st.timer = setInterval(tick, 25);
+      tick();
+      sync();
+      if (opts.onStart) opts.onStart();
+    }
+
+    function stop() {
+      if (!st.running) return;
+      st.running = false;
+      clearInterval(st.timer);
+      st.visual.forEach(clearTimeout);
+      st.visual = [];
+      light(-1);
+      sync();
+      if (opts.onStop) opts.onStop();
+    }
+
+    toggle.addEventListener('click', function () {
+      if (st.running) stop();
+      else start();
+    });
+    slower.addEventListener('click', function () {
+      st.bpm = Math.max(o.min, st.bpm - o.step);
+      sync();
+    });
+    faster.addEventListener('click', function () {
+      st.bpm = Math.min(o.max, st.bpm + o.step);
+      sync();
+    });
+    auto.addEventListener('click', function () {
+      st.auto = !st.auto;
+      sync();
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') stop();
+    });
+
+    sync();
+    return { start: start, stop: stop, running: function () { return st.running; } };
+  }
+
+  window.Leader.metronome = metronome;
+})();

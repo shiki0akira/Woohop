@@ -141,6 +141,14 @@
     bamboo: () => `
       ${ground}${burst(132, 24, '#FFC628')}${ring(24, 30, '#7489E6')}${plus(148, 84, '#FF9419')}
       ${shoot(36, 38, 'smile', '#a8dccb')}${shoot(124, 40, 'wow', '#a8dccb')}${shoot(80, 88, 'grin')}`,
+    // 上樓下樓：一棟笑臉大樓，旁邊一個往上、一個往下的箭頭
+    stairs: () => `
+      ${ground}${burst(136, 22, '#FFC628')}${ring(24, 30, '#EE7B6A')}${dot(146, 96, '#4FB59A', 4)}
+      ${body('<rect x="52" y="20" width="56" height="97" rx="8"/>', '#7489E6', '<rect x="52" y="20" width="56" height="12" fill="#5d72d0"/>')}
+      <path d="M62 44h10M88 44h10M62 60h10M88 60h10" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+      ${makeFace('happy', 80, 86, 1.6)}
+      ${body('<path d="M26 66l12-16 12 16z"/>', '#4FB59A', '', false)}
+      ${body('<path d="M110 74l12 16 12-16z"/>', '#EE7B6A', '', false)}`,
     // 幸福模擬器：戴墨鏡的大螢幕＋愛心
     happiness: () => `
       ${ground}${burst(140, 20, '#F3A4FB')}${ring(22, 26, '#FFC628')}${plus(150, 70, '#FF9419')}${dot(16, 76, '#7489E6')}
