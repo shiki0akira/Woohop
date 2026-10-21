@@ -740,9 +740,10 @@
 
 /*
  * 帶領元件之三：節拍器（Leader.metronome）。2026-10-21 為上樓下樓做的，之後果園菜園動物園也會用。
- * 「拍、拍、喊」：beats 拍一組，最後一拍是重拍（主持人在這一拍喊「上 4 樓」）。可調快慢，可開自動加速。
+ * beats 拍一組，accents 是重拍（喊的那幾拍）。可調快慢，可開自動加速。
  *
- *   Leader.metronome(rootEl, { bpm, min, max, step, beats, sound, onStart, onStop })
+ *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, sound, onStart, onStop })
+ *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「拍、拍、上、4 樓」，後兩拍都是重拍
  *       回傳 { start(), stop(), running() }。sound：可選，回傳 true／false，遊戲的聲音開關關著就不出聲（燈照樣亮）
  *
  * 排程用「音訊時鐘＋往前看」：setInterval 每 25ms 把接下來 0.12 秒的拍子排進音訊時鐘，
@@ -813,6 +814,8 @@
     var o = {
       bpm: opts.bpm || 90, min: opts.min || 50, max: opts.max || 180, step: opts.step || 5, beats: opts.beats || 3,
     };
+    o.accents = opts.accents || [o.beats - 1];
+    var isAccent = function (i) { return o.accents.indexOf(i) !== -1; };
     var st = { bpm: o.bpm, running: false, timer: 0, next: 0, beat: 0, bars: 0, auto: false, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
 
@@ -820,7 +823,7 @@
     rootEl.classList.add('metro');
     var lights = make('div', 'beats metro-beats');
     lights.setAttribute('aria-hidden', 'true');
-    for (var i = 0; i < o.beats; i += 1) lights.appendChild(make('i', i === o.beats - 1 ? 'accent' : ''));
+    for (var i = 0; i < o.beats; i += 1) lights.appendChild(make('i', isAccent(i) ? 'accent' : ''));
     var row = make('div', 'metro-row');
     var stepper = make('div', 'stepper metro-tempo');
     var slower = make('button', '', '−');
@@ -866,7 +869,7 @@
       while (st.next < c.currentTime + 0.12) {
         var at = st.next;
         var b = st.beat;
-        var accent = b === o.beats - 1;
+        var accent = isAccent(b);
         if (soundOn()) click(c, at, accent);
         (function (index, when) {
           st.visual.push(setTimeout(function () { light(index); }, Math.max(0, (when - c.currentTime) * 1000)));
