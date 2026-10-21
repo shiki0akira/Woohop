@@ -143,7 +143,7 @@
   function ensureMetro() {
     if (metro) return;
     metro = Leader.metronome(el.metroRoot, {
-      // 四拍一組「拍、拍、上、4 樓」：前兩拍拍手，後兩拍喊樓層（2026-10-21 使用者確認）
+      // 四拍一組「拍、拍、1 樓上、4 樓」：前兩拍拍手，後兩拍先講自己幾樓、再講要去幾樓（2026-10-21 使用者確認）
       bpm: 100, min: 60, max: 180, step: 5, beats: 4, accents: [2, 3],
       sound: function () { return settings.sound; },
       onStart: function () {
