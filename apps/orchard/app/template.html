@@ -41,7 +41,7 @@
         <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
       </div>
 
-      <!-- 第 3 步：開始。先出主題（隨機），下面是節拍器，再下面是自己選主題；手機不當裁判，主持人決定什麼時候結束 -->
+      <!-- 第 3 步：開始。先出主題（隨機，或展開自己選），下面是節拍器；手機不當裁判，主持人決定什麼時候結束 -->
       <div class="view" id="view-play" hidden>
         <div class="lead-slot"></div>
         <section class="panel topic-panel">
@@ -51,15 +51,13 @@
             <span id="topic-say"></span>
           </div>
           <button class="btn btn-secondary btn-block topic-shuffle" id="topic-shuffle" type="button">{{topicShuffle}}</button>
+          <!-- 自己選主題預設收起來（跟定時炸彈的「自訂區間」同一個樣子）：進行中最常按的是「隨機換一個」和節拍器 -->
+          <button class="topic-toggle" id="topic-toggle" type="button" aria-expanded="false" aria-controls="topic-chips">{{topicPick}}</button>
+          <div class="topic-chips" id="topic-chips" hidden></div>
           <p class="hint">{{playHint}}</p>
         </section>
         <section class="panel metro-panel">
           <div id="metro-root"></div>
-        </section>
-        <!-- 自己選主題放在節拍器下面：進行中主持人最常按的是「隨機換一個」和節拍器，清單很長不要擋在中間 -->
-        <section class="panel topic-pick-panel">
-          <h2>{{topicPick}}</h2>
-          <div class="topic-chips" id="topic-chips"></div>
         </section>
         <!-- 結束要按住，防手滑（跟竹筍同一個做法，app.js 的 HOLD_MS） -->
         <button class="btn btn-lg btn-block end-btn" id="end-btn" type="button">{{endGame}}</button>

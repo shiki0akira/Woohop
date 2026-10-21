@@ -25,8 +25,15 @@
 }
 .topic-card strong { font-size: 34px; line-height: 1.2; font-weight: 900; color: var(--ink); text-wrap: balance; }
 .topic-card span { font-size: 16px; font-weight: 700; }
-.topic-pick-panel { display: grid; gap: 12px; }
-.topic-pick-panel h2 { margin: 0; }
+/* 「自己選主題」收合鍵：跟定時炸彈的「自訂區間」（apps/bomb/app/app.css .timer-toggle）同一個樣子 */
+.topic-toggle {
+  justify-self: start; display: inline-flex; align-items: center; gap: 4px; padding: 4px 0;
+  border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 14px; font-weight: 800; color: var(--blue-text);
+}
+.topic-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.topic-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
+.topic-toggle:hover { color: var(--indigo); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
 .topic-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .topic-panel .hint { margin: 0; }
 

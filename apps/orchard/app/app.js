@@ -38,6 +38,7 @@
     topicSay: $('topic-say'),
     topicShuffle: $('topic-shuffle'),
     topicChips: $('topic-chips'),
+    topicToggle: $('topic-toggle'),
     metroRoot: $('metro-root'),
     endBtn: $('end-btn'),
     slotRoot: $('slot-root'),
@@ -325,6 +326,11 @@
     syncSetup();
   });
   el.topicShuffle.addEventListener('click', function () { setTopic(randomTopic(), true); });
+  el.topicToggle.addEventListener('click', function () {
+    var open = el.topicChips.hidden;
+    el.topicChips.hidden = !open;
+    el.topicToggle.setAttribute('aria-expanded', String(open));
+  });
 
   el.start.addEventListener('click', function () {
     pushGameState();
