@@ -18,6 +18,7 @@ export const DEFAULT_LANG = 'zh-TW';
  */
 export const GAME_LANGS = {
   // 竹筍竹筍蹦蹦出 2026-10-20 補齊 8 種語言，已拿掉
+  stairs: ['zh-TW'], // 上樓下樓 2026-10-21 先上 zh-TW
 };
 export const gameInLang = (key, lang) => !GAME_LANGS[key] || GAME_LANGS[key].includes(lang);
 export const LANG_NAMES = {
@@ -147,7 +148,7 @@ export const STRINGS = {
       buzzer: ["搶答遊戲", "多人現場搶答工具，掃 QR code 加入房間即可遊玩。"],
       avalon: ["阿瓦隆語音主持", "設定人數與角色，自動唸出主持人旁白台詞，不用自己背稿，直接開局。"],
       orchard: ['果園菜園動物園', '跟著拍子輪流說出水果、蔬菜或動物，卡住或重複就輸。'],
-      stairs: ['上樓下樓', '聽口令做相反的動作，反應慢的就輸。'],
+      stairs: ['上樓下樓', '圍成一圈當樓層，跟著拍子喊「1 樓上 4 樓」，喊錯或沒接上就輸。'],
       bamboo: ['竹筍竹筍蹦蹦出', '輪流站起來喊數字，撞到就搶著喊對方的名字，最後還蹲著的輸。'],
       happy: ["幸福模擬器", "七關互動信息，主持人用大螢幕帶，全場拿手機一起參與。"],
     },

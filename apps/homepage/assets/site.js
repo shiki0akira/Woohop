@@ -49,7 +49,7 @@
     { key: 'avalon',  players: [5, 10], time: [2],    minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
     { key: 'orchard', players: [5, 20], time: [0, 1], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
-    { key: 'stairs',  players: [4, 30], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', soon: true },
+    { key: 'stairs',  players: [4, 30], time: [0],    minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」

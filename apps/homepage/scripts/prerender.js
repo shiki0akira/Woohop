@@ -22,7 +22,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-21a';
+const ASSET_VERSION = '2026-10-21b';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -91,7 +91,7 @@ ${extra.map((f) => `    <script src="/assets/${f}${v}"></script>`).join('\n')}`;
 
 /* ---------- 遊戲清單（靜態版，給爬蟲與沒開 JS 的人；JS 會換成有插圖、能篩選的版本） ---------- */
 
-const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'avalon'];
+const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'avalon'];
 // 這個語言真的玩得到的遊戲（竹筍目前只有 zh-TW，見 locales.mjs 的 GAME_LANGS）
 const gameKeysFor = (lang) => GAME_KEYS.filter((k) => gameInLang(k, lang));
 function staticGames(s, lang, keys = gameKeysFor(lang)) {

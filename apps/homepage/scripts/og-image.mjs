@@ -81,6 +81,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.bamboo()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 上樓下樓：目前只有 zh-TW（apps/stairs/app/strings.js 的 LANGS），只產生有的語言
+  stairs: async () => {
+    const { STRINGS: Sm, LANGS: SL } = await import(pathToFileURL(path.join(ROOT, '..', 'stairs', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'stairs', 'public', 'og'),
+      langs: SL,
+      title: (lang) => splitTitle(Sm[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.stairs()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
 };
 const which = process.argv[2] || 'home';
 if (!TARGETS[which]) throw new Error('不認得的對象：' + which + '（可用：' + Object.keys(TARGETS).join('、') + '）');
