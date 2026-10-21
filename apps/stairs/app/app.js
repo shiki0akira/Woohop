@@ -206,7 +206,7 @@
     if (title) title.tabIndex = next === 'setup' ? 0 : -1;
 
     renderLead();
-    if (next === 'rules' || next === 'play') renderBuildings();
+    if (next === 'play') renderBuildings();
     if (next === 'play') ensureMetro();
     if (next === 'end') resetSlot();
 

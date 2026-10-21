@@ -39,13 +39,9 @@
         <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
       </div>
 
-      <!-- 第 2 步：說明規則。大樓圖給大家看有哪些樓層，三張插圖卡講規則（Leader.ruleCards） -->
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards）；樓層圖只在第 3 步放，不重複（使用者要求） -->
       <div class="view" id="view-rules" hidden>
         <div class="lead-slot"></div>
-        <section class="panel building-panel">
-          <h2>{{buildingHeading}}</h2>
-          <ol class="building" data-building></ol>
-        </section>
         <ol class="rule-cards" id="rule-cards"></ol>
         <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
       </div>
