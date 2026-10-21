@@ -46,16 +46,16 @@
         <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
       </div>
 
-      <!-- 第 3 步：開始。手機不當裁判（CONCEPT.md 2.1），只打節拍、給大家看樓層；主持人決定什麼時候結束 -->
+      <!-- 第 3 步：開始。先給大家看這次的樓層，下面是節拍器（使用者要求的順序）；手機不當裁判，主持人決定什麼時候結束 -->
       <div class="view" id="view-play" hidden>
         <div class="lead-slot"></div>
-        <section class="panel metro-panel">
-          <div id="metro-root"></div>
-        </section>
         <section class="panel building-panel">
           <h2>{{buildingHeading}}</h2>
           <ol class="building" data-building></ol>
           <p class="hint">{{playHint}}</p>
+        </section>
+        <section class="panel metro-panel">
+          <div id="metro-root"></div>
         </section>
         <!-- 結束要按住，防手滑（跟竹筍同一個做法，app.js 的 HOLD_MS） -->
         <button class="btn btn-lg btn-block end-btn" id="end-btn" type="button">{{endGame}}</button>
