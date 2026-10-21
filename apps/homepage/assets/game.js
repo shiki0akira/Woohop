@@ -80,7 +80,8 @@
  *       say 可以是字串，或 function (node) {…} 自己往 node 裡加節點（例如名稱用 <mark> 標起來）
  *   Leader.hideSay(bool)    把照著念收起來（例如取名開始後就不需要）
  *   Leader.ruleCards(listEl, cards, arts)   說明規則的插圖卡：cards 是 [[標題, 說明]]，arts 是回傳 SVG 內容的函式
- *   Leader.slot(rootEl, { prompts, actions, onPull })  真心話大冒險拉霸，回傳 { reset() }
+ *   Leader.slot(rootEl, { prompts, actions, onPull, sound })  真心話大冒險拉霸，回傳 { reset() }
+ *       sound：可選，回傳 true／false 的函式，遊戲的聲音開關關著時拉霸也不出聲
  */
 (function () {
   'use strict';
@@ -307,7 +308,11 @@
     }
 
     // 每經過一題「喀」一聲，跟著減速變稀（1-(1-p)^3 近似 CSS 的 ease-out），最多 30 聲
+    // opts.sound()：遊戲自己的聲音開關（例如定時炸彈頂欄的音符鍵），關著就不出聲
+    var soundOn = function () { return !opts.sound || opts.sound(); };
+
     function ticks(rows) {
+      if (!soundOn()) return;
       var c = ctx();
       if (!c) return;
       var start = c.currentTime + 0.02;
@@ -347,7 +352,7 @@
         pull.textContent = t.slotPullAgain;
         pull.disabled = false;
         st.spinning = false;
-        var c = ctx();
+        var c = soundOn() && ctx();
         if (c) land(c);
       }, SLOT_MS + 50);
       if (opts.onPull) opts.onPull({ kind: st.items[chosen].kind, mode: st.mode });

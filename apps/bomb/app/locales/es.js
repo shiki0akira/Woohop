@@ -67,6 +67,8 @@ export default {
   ],
   rulesNext: "Siguiente: a jugar",
 
+  // 頂欄音符鍵的名稱（給螢幕閱讀器念）：管全部聲音——滴答、爆炸、配樂、拉霸
+  soundLabel: "Sonido",
   startButton: "Empezar el juego",
 
   // ---------- en juego ----------

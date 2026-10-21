@@ -311,6 +311,8 @@ function tokensFor(lang, page, assetVersion) {
       rulesLabel: strings.navRules,
       isRules: page.dir === 'rules',
       settingsLabel: strings.settingsTab,
+      // 聲音開關（頂欄音符鍵）只在遊戲頁：玩法頁沒有聲音
+      musicLabel: page.dir === 'rules' ? '' : strings.soundLabel,
       // 設定畫面的返回鍵回「找遊戲」；玩法頁回遊戲頁（遊戲頁的返回鍵依畫面而定，見 app.js 的 window.gameBack）
       backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
     }),

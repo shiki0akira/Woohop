@@ -150,3 +150,6 @@ dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 /* 設定框：標題「設定」底下一節「自訂題目」 */
 dialog.modal.modal-custom h3 { margin: 16px 0 2px; font-size: 16px; font-weight: 900; }
 
+
+/* 頂欄的聲音開關在選題目那一步藏起來：還沒有聲音，放一顆開關只會讓人以為少了什麼（跟竹筍一樣） */
+.bomb-app[data-screen="setup"] .game-music { display: none; }
