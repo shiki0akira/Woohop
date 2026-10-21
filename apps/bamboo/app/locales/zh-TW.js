@@ -41,48 +41,13 @@ export default {
   ],
   rulesNext: '下一步：開始玩',
 
-  // ---------- 主題 ----------
-  themeHeading: '取名主題',
-  themeRandom: '隨機',
-  themeRandomSub: '手機幫你挑',
-  themeFood: '食物',
-  themeDrink: '飲料',
-  themeAnimal: '動物',
-  themeFruit: '水果',
-  themeDessert: '甜點',
-  themeCartoon: '卡通角色',
-  themeRealname: '用本名',
-  themeRealnameSub: '不用取名',
-  // 主題按鈕底下的小字，舉兩個名稱當例子
-  themeExample: '{a}、{b}⋯',
   startNaming: '開始遊戲',
   startRealname: '開始遊戲',
 
-  // ---------- 取名（手機傳一圈） ----------
-  nameTurn: '第 {n} 位',
-  nameTheme: '主題：{theme}',
-  rerollTheme: '換一個主題',
-  drawButton: '抽一個',
-  ownButton: '自己取一個',
-  // 自己取不用打字：想好就大聲說，名單上記成「自己取 1」
-  ownSay: '想一個名稱，大聲跟大家說：「我是＿＿＿！」說完就傳給下一個人。',
-  ownCancel: '改用抽的',
-  ownSlot: '自己取 {n}',
-  youAre: '你是⋯⋯',
-  redraw: '換一個',
-  passNext: '傳給下一個人',
-  revealHint: '記好了，就按「傳給下一個人」交出手機 👇',
-  poolEmpty: '這個主題抽完了，自己取一個吧。',
-  namedHeading: '已經取好的',
-  removeName: '刪掉「{name}」',
-  allDone: '大家都取好了，下一步',
-  allDoneNeed: '至少要 {n} 個人才能開始。',
 
   // ---------- 開始玩 ----------
   // 「開始！」那一步的照著念，前面先把大家的名稱照順序念一遍（{names} 會換成一個一個標起來的名稱）
   playNames: '先來認識一下今天的竹筍：{names}！',
-  // 照著念裡名稱之間的分隔（中日用頓號，其他語言用逗號）
-  listSep: '、',
   startRound: '開始這一輪',
   // 玩的時候這顆變紅、要按住才會結束：同一顆鍵剛按過「開始」，連點兩下或手滑就整輪沒了
   endRound: '按住，結束這一輪',

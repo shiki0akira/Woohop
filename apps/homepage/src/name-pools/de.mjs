@@ -1,5 +1,5 @@
 /*
- * Deutsche Namensliste: Sachen, die man in Deutschland sofort kennt. Regeln in ../names.js.
+ * Deutsche Namensliste: Sachen, die man in Deutschland sofort kennt. Regeln in ../name-pools.mjs.
  */
 export default {
   food: [

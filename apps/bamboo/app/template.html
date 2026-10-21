@@ -23,7 +23,7 @@
 
         <section class="panel">
           <h2>{{themeHeading}}</h2>
-          <!-- 「隨機」＋六個主題＋「用本名」，由 app.js 依名稱庫產生（woohop.css 的 .choice） -->
+          <!-- 「隨機」＋六個主題＋「用本名」：全站共用的 Leader.themes（game.js）依名稱庫產生 -->
           <div class="theme-grid" id="theme-grid" role="group" aria-label="{{themeHeading}}"></div>
         </section>
 
@@ -32,62 +32,12 @@
       </div>
 
       <!--
-        取名。手機傳一圈，每個人抽一個或自己取，取完按「傳給下一個人」（CONCEPT.md 3.1）。
-        同一張卡片有三個狀態（data-stage）：choose 選抽或自己取 → own 自己取 → reveal 翻出名稱。
+        第 2 步：大家取名。手機傳一圈，每個人抽一個或自己大聲說（CONCEPT.md 3.1）。
+        抽卡、自己取、名單、「大家都取好了」都是全站共用的 Leader.namer（game.js）畫在 #namer-root
       -->
       <div class="view" id="view-name" hidden>
         <div class="lead-slot"></div>
-        <div class="panel name-card" id="name-card" data-stage="choose">
-          <div class="name-top">
-            <span class="name-turn" id="name-turn"></span>
-            <span class="badge b-live name-theme" id="name-theme"></span>
-          </div>
-          <button class="btn btn-sm btn-secondary reroll" id="reroll-theme" type="button" hidden>{{rerollTheme}}</button>
-
-          <div class="name-stage stage-choose">
-            <!-- 一疊名稱卡（網站插圖的畫法，app.js 的 DECK_ART），平常輕輕上下浮；按「抽一個」時最上面那張往上飛 -->
-            <svg class="illo deck" id="deck" viewBox="0 0 160 126" aria-hidden="true"></svg>
-            <button class="btn btn-lg btn-solid btn-block draw-btn" id="draw" type="button">{{drawButton}}</button>
-            <p class="hint pool-empty" id="pool-empty" hidden>{{poolEmpty}}</p>
-            <button class="btn btn-secondary btn-block" id="own-open" type="button">{{ownButton}}</button>
-          </div>
-
-          <!--
-            自己取：不打字（打字會讓整圈卡住），想好一個名稱直接大聲跟大家說。
-            手機只記「這裡有一個人自己取了」，名單上顯示成「自己取 1」（CONCEPT.md 3.1）
-          -->
-          <div class="name-stage stage-own">
-            <div class="prompt-card own-say"><span class="say">{{sayLabel}}</span>{{ownSay}}</div>
-            <div class="pass-row">
-              <button class="btn btn-lg btn-solid pass-bar" id="own-confirm" type="button">{{passNext}}</button>
-              <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="own-cancel" type="button">{{ownCancel}}</button>
-            </div>
-          </div>
-
-          <div class="name-stage stage-reveal">
-            <!-- 抽到的那張卡翻過來 -->
-            <div class="drawn-card">
-              <p class="you-are">{{youAre}}</p>
-              <p class="drawn-name" id="drawn-name" aria-live="polite"></p>
-            </div>
-            <!-- 手機要交出去：明講下一步，不然拿著手機的人會愣在那裡 -->
-            <p class="reveal-hint">{{revealHint}}</p>
-            <!-- 跟定時炸彈的「完成／換一題」同一個樣子：主要動作佔滿，「換一個」是右邊一顆白底按鈕 -->
-            <div class="pass-row">
-              <button class="btn btn-lg btn-solid pass-bar" id="pass-next" type="button">{{passNext}}</button>
-              <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="redraw" type="button">{{redraw}}</button>
-            </div>
-          </div>
-        </div>
-
-        <section class="named" id="named" hidden>
-          <h2 class="t-small">{{namedHeading}}</h2>
-          <ul class="named-list" id="named-list"></ul>
-        </section>
-
-        <p class="form-error" id="need-more" role="status" hidden></p>
-        <!-- 不黏底：手機傳來傳去時拇指很容易碰到畫面底部，誤按就直接進下一步了（使用者要求） -->
-        <button class="btn btn-lg btn-secondary btn-block all-done" id="all-done" type="button">{{allDone}}</button>
+        <div id="namer-root"></div>
       </div>
 
       <!-- 第 3 步：說明規則。主持人照著念，三張插圖卡給大家看（用本名時這是第 2 步） -->

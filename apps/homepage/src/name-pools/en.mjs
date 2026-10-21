@@ -1,5 +1,5 @@
 /*
- * English name pool: things English speakers know at a glance. Rules in ../names.js.
+ * English name pool: things English speakers know at a glance. Rules in ../name-pools.mjs.
  */
 export default {
   food: [

@@ -18,7 +18,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { LANGS, DEFAULT_LANG, STRINGS, ORIGIN, BASE_PATH } from '../app/strings.js';
-import { THEMES, groupsFor, checkNames } from '../app/names.js';
+// 抽卡取名的名稱庫（全站共用，game.js 的 Leader.namer 用）
+import { THEMES, groupsFor, checkNames } from '../../homepage/src/name-pools.mjs';
 import { SLOT, checkSlot } from '../../homepage/src/slot-prompts.mjs';
 // Woohop 全站共用的導覽列、頁尾與樣式：唯一來源在首頁（apps/homepage），build 時直接拿來用，
 // 改首頁那份就是全站一起改。樣式與程式複製進 dist/bamboo/woohop/，跟這個遊戲一起部署（不跨網域引用）
@@ -178,11 +179,11 @@ function checkStrings() {
     if (extra.length) throw new Error(`${lang} 多了 ${DEFAULT_LANG} 沒有的 key：${extra.join(', ')}`);
   }
 
-  // 主題名稱是「theme + 首字大寫」組出來的（themeFood⋯），漏一個設定畫面那顆按鈕就沒有標題
+  // 主題名稱是「theme + 首字大寫」組出來的（themeFood⋯），放在全站共用文字（src/locales.mjs）；漏一個設定畫面那顆按鈕就沒有標題
   for (const theme of THEMES) {
     const key = `theme${theme[0].toUpperCase()}${theme.slice(1)}`;
     for (const lang of LANGS) {
-      if (!STRINGS[lang][key]) throw new Error(`${lang} 少了主題名稱 ${key}`);
+      if (!SITE_STRINGS[lang][key]) throw new Error(`apps/homepage/src/locales.mjs 的 ${lang} 少了主題名稱 ${key}`);
     }
   }
 
@@ -232,6 +233,8 @@ function tokensFor(lang, page, assetVersion) {
       // 設定畫面的返回鍵回「找遊戲」；玩法頁回遊戲頁（遊戲頁的返回鍵依畫面而定，見 app.js 的 window.gameBack）
       backHref: page.dir === 'rules' ? pagePath(lang, PAGES[0]) : `/${lang}/games/`,
     }),
+    // 選主題的標題是全站共用文字（src/locales.mjs，Leader.themes 也用）
+    themeHeading: SITE_STRINGS[lang].themeHeading,
     crumbHome: SITE_STRINGS[lang].home,
     crumbGames: SITE_STRINGS[lang].navGames,
     siteOrigin: ORIGIN,

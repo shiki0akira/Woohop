@@ -1,5 +1,5 @@
 /*
- * Lista de nombres en español: cosas que se conocen en España y Latinoamérica. Reglas en ../names.js.
+ * Lista de nombres en español: cosas que se conocen en España y Latinoamérica. Reglas en ../name-pools.mjs.
  */
 export default {
   food: [

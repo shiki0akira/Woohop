@@ -375,3 +375,365 @@
 
   window.Leader = { lead: lead, hideSay: hideSay, ruleCards: ruleCards, slot: slot };
 })();
+
+/*
+ * 帶領元件的第二部分：選主題（Leader.themes）與抽卡取名（Leader.namer）。
+ * 2026-10-21 從竹筍竹筍蹦蹦出抽出來，之後的暖場遊戲都可以用。名稱庫在首頁 src/name-pools.mjs，
+ * 各遊戲 build 時把當頁語言的那一份嵌進頁面（{ themes, groups }）傳進來。文字在 window.WOOHOP.t。
+ *
+ *   Leader.themes(gridEl, { pool, value, realname, onChange })
+ *       「隨機」＋名稱庫的每個主題（＋「用本名」，realname 為 true 時）。回傳 { set(value) }
+ *   Leader.randomTheme(pool, except)   從名稱庫隨機挑一個主題
+ *   Leader.themeLabel(id)              主題的顯示名稱
+ *   Leader.namer(rootEl, { pool, session, minPlayers, onChange, onDone })
+ *       手機傳一圈，每個人抽一個名稱或自己大聲說。session 是遊戲自己存的這一局
+ *       { theme, random, names: [], own: [] }，namer 直接改它，改完呼叫 onChange（遊戲存檔）。
+ *       人數夠了按「大家都取好了」呼叫 onDone。回傳 { render(), reset(), stage() }
+ */
+(function () {
+  'use strict';
+
+  var t = (window.WOOHOP && window.WOOHOP.t) || {};
+  var W = window.Woohop;
+  var fill = function (s, v) {
+    return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in v ? v[k] : m; });
+  };
+  var make = function (tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  };
+  var button = function (cls, text) {
+    var b = make('button', 'btn ' + cls, text);
+    b.type = 'button';
+    return b;
+  };
+  var pick = function (list) {
+    return list[Math.floor(Math.random() * list.length)];
+  };
+
+  function themeLabel(id) {
+    return t['theme' + id.charAt(0).toUpperCase() + id.slice(1)] || id;
+  }
+
+  function randomTheme(pool, except) {
+    return pick(pool.themes.filter(function (id) { return id !== except; }));
+  }
+
+  // ---------- 選主題 ----------
+  // 按鈕只建一次，之後 set() 就地更新：焦點不會跟著被刪掉的節點消失
+  function themes(gridEl, opts) {
+    var items = [{ id: 'random', name: t.themeRandom, sub: t.themeRandomSub, color: 'c-yellow' }];
+    opts.pool.themes.forEach(function (id) {
+      var groups = opts.pool.groups[id];
+      items.push({ id: id, name: themeLabel(id), sub: fill(t.themeExample, { a: groups[0][0], b: groups[1][0] }), color: 'c-mint' });
+    });
+    if (opts.realname) items.push({ id: 'realname', name: t.themeRealname, sub: t.themeRealnameSub, color: 'c-blue' });
+
+    var buttons = {};
+    gridEl.textContent = '';
+    gridEl.classList.add('theme-grid');
+    items.forEach(function (item) {
+      var b = make('button', 'choice theme-choice ' + item.color);
+      b.type = 'button';
+      b.appendChild(make('span', 'choice-name', item.name));
+      b.appendChild(make('span', 'choice-sub', item.sub));
+      b.addEventListener('click', function () {
+        set(item.id);
+        if (opts.onChange) opts.onChange(item.id);
+      });
+      gridEl.appendChild(b);
+      buttons[item.id] = b;
+    });
+
+    function set(value) {
+      Object.keys(buttons).forEach(function (id) {
+        buttons[id].setAttribute('aria-pressed', String(id === value));
+      });
+    }
+    set(opts.value);
+    return { set: set };
+  }
+
+  // ---------- 一疊名稱卡的插圖 ----------
+  /*
+   * 三張卡疊著、左右兩張歪一點，最上面那張寫「?」。畫法照網站插圖（woohop-art.js 的 body）。
+   * 最上面那張包在 .deck-top 裡，抽的時候只有它飛走（game.css 的 .deck.is-drawing）。
+   */
+  function deckArt() {
+    var card = function (x, y, color, angle) {
+      return '<g transform="rotate(' + angle + ' ' + (x + 27) + ' ' + (y + 36) + ')">' +
+        W.body('<rect x="' + x + '" y="' + y + '" width="54" height="72" rx="9"/>', color) + '</g>';
+    };
+    return W.ground + W.burst(138, 24, '#FFC628') + W.ring(22, 34, '#7489E6') + W.plus(142, 92, '#EE7B6A') + W.dot(20, 92, '#4FB59A') +
+      card(36, 34, '#FFC628', -14) + card(70, 34, '#aebcf3', 12) +
+      '<g class="deck-top">' + card(53, 28, '#4FB59A', 0) +
+      '<path d="M72 54q0-11 8-11t8 9.5q0 6-8 9v6" fill="none" ' + W.K + '/>' +
+      '<circle cx="80" cy="80" r="3.4" fill="#22222c"/></g>';
+  }
+
+  // ---------- 抽卡取名 ----------
+  /*
+   * 同一張卡片有三個狀態（data-stage）：choose 選抽或自己取 → own 自己大聲說 → reveal 翻出名稱。
+   * - 名稱庫一項可以是一組聽起來很像的名稱，同一局只會抽到其中一個（freeGroups）
+   * - 自己取不打字（打字會讓整圈卡住），記成「自己取 N」
+   * - 「大家都取好了」不黏底：手機傳來傳去時拇指很容易碰到畫面底部
+   */
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function namer(rootEl, opts) {
+    var s = opts.session;
+    var stage = 'choose';
+    var draft = null;
+    var drawing = false;
+
+    // ---- DOM ----
+    rootEl.textContent = '';
+    rootEl.classList.add('namer');
+    var card = make('div', 'panel name-card');
+    var top = make('div', 'name-top');
+    var turn = make('span', 'name-turn');
+    var badge = make('span', 'badge b-live name-theme');
+    top.appendChild(turn);
+    top.appendChild(badge);
+    var reroll = button('btn-sm btn-secondary reroll', t.rerollTheme);
+
+    var choose = make('div', 'name-stage stage-choose');
+    var deck = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    deck.setAttribute('class', 'illo deck');
+    deck.setAttribute('viewBox', '0 0 160 126');
+    deck.setAttribute('aria-hidden', 'true');
+    deck.innerHTML = deckArt();
+    var draw = button('btn-lg btn-solid btn-block draw-btn', t.drawButton);
+    var empty = make('p', 'hint pool-empty', t.poolEmpty);
+    var ownOpen = button('btn-secondary btn-block', t.ownButton);
+    choose.appendChild(deck);
+    choose.appendChild(draw);
+    choose.appendChild(empty);
+    choose.appendChild(ownOpen);
+
+    var ownStage = make('div', 'name-stage stage-own');
+    var ownSay = make('div', 'prompt-card own-say');
+    ownSay.appendChild(make('span', 'say', t.sayLabel));
+    ownSay.appendChild(document.createTextNode(t.ownSay));
+    var ownRow = make('div', 'pass-row');
+    var ownConfirm = button('btn-lg btn-solid pass-bar', t.passNext);
+    var ownCancel = button('btn-lg btn-secondary pass-bar pass-redraw', t.ownCancel);
+    ownRow.appendChild(ownConfirm);
+    ownRow.appendChild(ownCancel);
+    ownStage.appendChild(ownSay);
+    ownStage.appendChild(ownRow);
+
+    var reveal = make('div', 'name-stage stage-reveal');
+    var drawn = make('div', 'drawn-card');
+    drawn.appendChild(make('p', 'you-are', t.youAre));
+    var drawnName = make('p', 'drawn-name');
+    drawnName.setAttribute('aria-live', 'polite');
+    drawn.appendChild(drawnName);
+    var revealRow = make('div', 'pass-row');
+    var passNext = button('btn-lg btn-solid pass-bar', t.passNext);
+    var redraw = button('btn-lg btn-secondary pass-bar pass-redraw', t.redraw);
+    revealRow.appendChild(passNext);
+    revealRow.appendChild(redraw);
+    reveal.appendChild(drawn);
+    // 手機要交出去：明講下一步，不然拿著手機的人會愣在那裡
+    reveal.appendChild(make('p', 'reveal-hint', t.revealHint));
+    reveal.appendChild(revealRow);
+
+    card.appendChild(top);
+    card.appendChild(reroll);
+    card.appendChild(choose);
+    card.appendChild(ownStage);
+    card.appendChild(reveal);
+
+    var named = make('section', 'named');
+    named.appendChild(make('h2', 't-small', t.namedHeading));
+    var namedList = make('ul', 'named-list');
+    named.appendChild(namedList);
+    var needMore = make('p', 'form-error need-more');
+    needMore.setAttribute('role', 'status');
+    var allDone = button('btn-lg btn-secondary btn-block all-done', t.allDone);
+
+    rootEl.appendChild(card);
+    rootEl.appendChild(named);
+    rootEl.appendChild(needMore);
+    rootEl.appendChild(allDone);
+
+    // ---- 狀態 ----
+    var norm = function (name) { return String(name).trim().toLowerCase(); };
+    var isTaken = function (name) {
+      var n = norm(name);
+      return s.names.some(function (other) { return norm(other) === n; });
+    };
+
+    // 還能抽的組：已經被取走的名稱所在的那一組整組不能再抽；現在翻開的那一組也排除，「換一個」才一定會換
+    function freeGroups() {
+      return (opts.pool.groups[s.theme] || []).filter(function (group) {
+        if (draft && group.indexOf(draft) !== -1) return false;
+        return !group.some(isTaken);
+      });
+    }
+
+    function drawName() {
+      var free = freeGroups();
+      return free.length ? pick(pick(free)) : null;
+    }
+
+    // 「自己取 N」：從 1 往上找第一個還沒用過的號碼，中間刪掉一個也不會撞號
+    function ownSlot() {
+      for (var n = 1; ; n += 1) {
+        var name = fill(t.ownSlot, { n: n });
+        if (s.own.indexOf(name) === -1) return name;
+      }
+    }
+
+    function setStage(next) {
+      stage = next;
+      card.setAttribute('data-stage', next);
+    }
+
+    function changed() {
+      if (opts.onChange) opts.onChange(stage);
+    }
+
+    function render() {
+      turn.textContent = fill(t.nameTurn, { n: s.names.length + 1 });
+      badge.textContent = fill(t.nameTheme, { theme: themeLabel(s.theme) });
+      // 「換一個主題」只在隨機、而且還沒有人取名的時候：有人取了再換，前面那些人的名稱就跟主題對不上了
+      reroll.hidden = !(s.random && s.names.length === 0 && stage === 'choose');
+
+      var none = stage === 'choose' && freeGroups().length === 0;
+      draw.hidden = none;
+      empty.hidden = !none;
+
+      namedList.textContent = '';
+      s.names.forEach(function (name) {
+        var li = make('li', 'named-chip');
+        li.appendChild(make('span', '', name));
+        var remove = make('button', 'chosen-remove', '✕');
+        remove.type = 'button';
+        remove.setAttribute('aria-label', fill(t.removeName, { name: name }));
+        remove.addEventListener('click', function () {
+          s.names = s.names.filter(function (other) { return other !== name; });
+          s.own = s.own.filter(function (other) { return other !== name; });
+          render();
+          changed();
+        });
+        li.appendChild(remove);
+        namedList.appendChild(li);
+      });
+      named.hidden = s.names.length === 0;
+
+      // 翻開還沒送出的那一個也算：最後一個人抽完直接按「大家都取好了」是很自然的動作
+      var count = s.names.length + (stage === 'reveal' || stage === 'own' ? 1 : 0);
+      var enough = count >= opts.minPlayers;
+      allDone.disabled = !enough;
+      allDone.classList.toggle('btn-solid', enough);
+      allDone.classList.toggle('btn-secondary', !enough);
+      needMore.hidden = enough;
+      needMore.textContent = fill(t.allDoneNeed, { n: opts.minPlayers });
+    }
+
+    function commit(name, own) {
+      s.names.push(name);
+      if (own) s.own.push(name);
+      draft = null;
+      setStage('choose');
+      render();
+      changed();
+      // 下一個人拿到手機時，看到的是「第 N 位」的開頭，不是上一個人捲到一半的地方
+      window.scrollTo(0, 0);
+    }
+
+    function show(name) {
+      draft = name;
+      drawnName.textContent = name;
+      setStage('reveal');
+      render();
+      changed();
+    }
+
+    // ---- 綁定 ----
+    reroll.addEventListener('click', function () {
+      s.theme = randomTheme(opts.pool, s.theme);
+      render();
+      changed();
+    });
+
+    // 抽：最上面那張卡先往上飛（約 0.38 秒），飛完才翻牌。動畫期間鎖住，連按不會抽兩張
+    draw.addEventListener('click', function () {
+      if (drawing) return;
+      var name = drawName();
+      if (!name) return render();
+      if (reduceMotion) return show(name);
+      drawing = true;
+      draw.disabled = true;
+      deck.classList.add('is-drawing');
+      // 用計時器而不是 animationend：內嵌瀏覽器可能把動畫凍住，事件永遠不來
+      setTimeout(function () {
+        drawing = false;
+        deck.classList.remove('is-drawing');
+        draw.disabled = false;
+        show(name);
+      }, 380);
+    });
+
+    redraw.addEventListener('click', function () {
+      var name = drawName();
+      if (!name) return; // 抽完了：留著現在這一個
+      draft = name;
+      drawnName.textContent = name;
+      // 換一張：卡片重新翻一次
+      drawn.classList.remove('pop');
+      drawn.style.animation = 'none';
+      void drawn.offsetWidth;
+      drawn.style.animation = '';
+      drawn.classList.add('pop');
+    });
+
+    passNext.addEventListener('click', function () {
+      if (draft) commit(draft, false);
+    });
+    ownOpen.addEventListener('click', function () {
+      setStage('own');
+      render();
+      changed();
+    });
+    ownConfirm.addEventListener('click', function () {
+      commit(ownSlot(), true);
+    });
+    ownCancel.addEventListener('click', function () {
+      setStage('choose');
+      render();
+      changed();
+    });
+
+    // 「大家都取好了」：翻開的、正在自己說的，都先算進去
+    allDone.addEventListener('click', function () {
+      if (stage === 'reveal' && draft) commit(draft, false);
+      else if (stage === 'own') commit(ownSlot(), true);
+      if (s.names.length < opts.minPlayers) return;
+      if (opts.onDone) opts.onDone();
+    });
+
+    function reset(session) {
+      if (session) s = session;
+      draft = null;
+      setStage('choose');
+      render();
+    }
+
+    reset();
+    return {
+      render: render,
+      reset: reset,
+      stage: function () { return stage; },
+    };
+  }
+
+  window.Leader.themes = themes;
+  window.Leader.randomTheme = randomTheme;
+  window.Leader.themeLabel = themeLabel;
+  window.Leader.namer = namer;
+})();

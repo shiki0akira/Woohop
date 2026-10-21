@@ -10,7 +10,7 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 | `scripts/prerender.js` | 建置：為 8 語言 × 4 頁產生 `dist/{lang}/`、`games/`、`combo/`、`guides/`，含 title、description、canonical、hreflang、og、結構化資料、sitemap |
 | `assets/woohop.css`、`assets/woohop-art.js`、`assets/hero-art.js` | 從 `design/` 複製的設計系統樣式與插圖（**兩邊要同步改**） |
 | `src/chrome.mjs` | **全站共用的導覽列與頁尾（HTML）**。首頁 prerender 與各遊戲的 build（已改版的 `apps/bomb`、`match`、`buzzer`、`bingo`）都 import 這一份；遊戲 build 也會把 `woohop.css`、`site.css`、`game.css`、`woohop-art.js`、`site.js`、`game.js` 複製進自己的 dist，所以**改這幾個檔案後，已改版的遊戲也要重新 build、部署**才會跟上 |
-| `assets/game.js`、`game.css` 的「帶領元件」 | **`window.Leader`：步驟頭、說明規則插圖卡、真心話大冒險拉霸**，竹筍與定時炸彈共用（2026-10-21 抽出）。共用文字在 `src/locales.mjs`（`leadStep`、`slot*`），拉霸題目在 `src/slot-prompts.mjs`（各遊戲 build 時嵌進頁面）。之後也打算做成獨立小工具 |
+| `assets/game.js`、`game.css` 的「帶領元件」 | **`window.Leader`：步驟頭、說明規則插圖卡、真心話大冒險拉霸、選主題、抽卡取名**，竹筍與定時炸彈共用（2026-10-21 抽出）。共用文字在 `src/locales.mjs`（`leadStep`、`slot*`、`theme*`、取名那批），拉霸題目在 `src/slot-prompts.mjs`、名稱庫在 `src/name-pools.mjs`（各遊戲 build 時嵌進當頁語言的那份）。抽卡取名的樣式都掛在 `.namer` 底下，不會跟定時炸彈的 `.pass-row` 打架。之後也打算做成桌遊助手類的獨立小工具 |
 | `assets/site.css`、`assets/site.js` | 三頁共用的頁面樣式與程式（導覽、語言選單、遊戲卡、推薦器、破冰組合、GA、深淺模式切換） |
 
 **深淺模式（全站）**：頁尾的 `.theme-switch`（chrome.mjs 的 footer）＋ `site.js` 的切換；`<head>` 一開始要放 `chrome.mjs` 的 `THEME_HEAD`（首頁 prerender 與四個遊戲的 build 都已接上，404 與阿瓦隆各有一份同樣的內嵌）。選擇記在 `localStorage web100-theme`。**顏色一律用 woohop.css 的變數**；JS 寫死在 SVG `fill` 屬性的顏色，用 `:root[data-theme="dark"] … use { fill }` 在 CSS 蓋過去（例：主視覺 W 陣列）。

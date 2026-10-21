@@ -1,5 +1,6 @@
 /*
- * 取名工具的名稱庫（CONCEPT.md 3.1）。每個語言一個檔：app/names/{lang}.js。
+ * 抽卡取名的名稱庫（全站共用：game.js 的 Leader.namer）。每個語言一個檔：src/name-pools/{lang}.mjs。
+ * 2026-10-21 從竹筍竹筍蹦蹦出（apps/bamboo）搬過來，之後的暖場遊戲都可以用。
  *
  * 每種語言**各自準備當地熟悉的名稱，不是翻譯**：日文放日本人熟的食物（たこやき），
  * 不放「珍珠奶茶」的直譯；卡通角色也挑當地大人小孩都認得的（ja アンパンマン、ko 뽀로로、fr Astérix）。
@@ -12,14 +13,14 @@
  * 原則：喊得快（中日韓 2～4 個字、拉丁文字 1～3 個音節）；不放政治人物、真實名人。
  * 規則由 checkNames()（build 時）守著：沒有重複、長度不超過上限、每個主題至少 MIN_GROUPS 組。
  */
-import zhTW from './names/zh-TW.js';
-import en from './names/en.js';
-import ja from './names/ja.js';
-import ko from './names/ko.js';
-import de from './names/de.js';
-import fr from './names/fr.js';
-import es from './names/es.js';
-import zhCN from './names/zh-CN.js';
+import zhTW from './name-pools/zh-TW.mjs';
+import en from './name-pools/en.mjs';
+import ja from './name-pools/ja.mjs';
+import ko from './name-pools/ko.mjs';
+import de from './name-pools/de.mjs';
+import fr from './name-pools/fr.mjs';
+import es from './name-pools/es.mjs';
+import zhCN from './name-pools/zh-CN.mjs';
 
 const BY_LANG = { 'zh-TW': zhTW, en, ja, ko, de, fr, es, 'zh-CN': zhCN };
 
@@ -46,22 +47,22 @@ export function groupsFor(theme, lang) {
  */
 export function checkNames(langs) {
   for (const lang of langs) {
-    if (!BY_LANG[lang]) throw new Error(`names/：少了 ${lang}.js`);
+    if (!BY_LANG[lang]) throw new Error(`name-pools/：少了 ${lang}.js`);
     for (const theme of THEMES) {
-      if (!BY_LANG[lang][theme]) throw new Error(`names/${lang}.js 少了主題 ${theme}`);
+      if (!BY_LANG[lang][theme]) throw new Error(`name-pools/${lang}.js 少了主題 ${theme}`);
 
       const groups = groupsFor(theme, lang);
       if (groups.length < MIN_GROUPS) {
-        throw new Error(`names/${lang}.js：${theme} 只有 ${groups.length} 組，至少要 ${MIN_GROUPS} 組`);
+        throw new Error(`name-pools/${lang}.js：${theme} 只有 ${groups.length} 組，至少要 ${MIN_GROUPS} 組`);
       }
 
       const seen = new Set();
       for (const name of groups.flat()) {
         const key = name.toLowerCase();
-        if (seen.has(key)) throw new Error(`names/${lang}.js：${theme} 的「${name}」重複了`);
+        if (seen.has(key)) throw new Error(`name-pools/${lang}.js：${theme} 的「${name}」重複了`);
         seen.add(key);
         if ([...name].length > nameMax(lang)) {
-          throw new Error(`names/${lang}.js：${theme} 的「${name}」超過 ${nameMax(lang)} 個字`);
+          throw new Error(`name-pools/${lang}.js：${theme} 的「${name}」超過 ${nameMax(lang)} 個字`);
         }
       }
     }

@@ -3,10 +3,10 @@
  *
  * 8 種語言（2026-10-20 先上 zh-TW，同一天補齊其他 7 種）。改文案或加語言時：
  *   - 遊戲名用**當地類似遊戲的名稱，不直譯**（CONCEPT.md 第五節：ja たけのこニョッキ、ko 눈치게임⋯）
- *   - 名稱庫（app/names.js）每種語言各自準備當地熟悉的名稱，不是翻譯
+ *   - 名稱庫（apps/homepage/src/name-pools/）每種語言各自準備當地熟悉的名稱，不是翻譯
  *   - 逐句照該語言的說法寫，不要丟翻譯 API（2026-08 被演算法降權的教訓，見 apps/bomb/app/strings.js）
  *
- * 加語言 = locales/ 加一個檔 + LANGS 加代碼 + names/ 加同名的名稱庫，
+ * 加語言 = locales/ 加一個檔 + LANGS 加代碼 + 全站共用的名稱庫（apps/homepage/src/name-pools/）、拉霸題目、共用文字也要有該語言，
  * 其他都自動（hreflang、sitemap、語言選單）。漏了 key 或名稱庫，build 會直接失敗。
  */
 

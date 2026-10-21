@@ -193,7 +193,7 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 .leader-slot > .btn { width: 100%; max-width: 420px; }
 /*
  * 拉霸機：粗外框＋底部厚度（設計系統的按鈕語言），窗格一次看得到三列，中間那列是停下來的位置。
- * 列高 --row 是唯一要調的數字，app.js 從畫面量，不用跟著改。
+ * 列高 --row 是唯一要調的數字，Leader.slot 從畫面量，不用跟著改。
  */
 .slot {
   --row: 84px;
@@ -238,7 +238,7 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 .slot-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /*
  * 手機版拉霸：窄螢幕上長題目一定會折成兩行，加上上面的「真心話／大冒險」標籤，84px 放不下，
- * 會超出中間那條框。列高加到 104px、字縮一點、左右內距收窄。列高是 app.js 從畫面量的，不用跟著改程式。
+ * 會超出中間那條框。列高加到 104px、字縮一點、左右內距收窄。列高是 Leader.slot 從畫面量的，不用跟著改程式。
  */
 @media (max-width: 480px) {
   .slot { --row: 104px; padding: 8px; }
@@ -251,3 +251,81 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
  */
 dialog.modal .m-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1.2; text-wrap: balance; }
+
+/* ============================================================
+   帶領元件之二：選主題（Leader.themes）與抽卡取名（Leader.namer），2026-10-21 從竹筍搬過來。
+   抽卡取名的選擇器都掛在 .namer 底下：定時炸彈也有自己的 .pass-row、.chosen-remove，不要互相影響
+   ============================================================ */
+/* ---------- 主題：兩欄選項卡 ---------- */
+.theme-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; } /* minmax(0,…)：不讓「Pas de nouveaux noms」這種長例子把格子撐出框 */
+/* 八顆卡要擠在一畫面裡：右上角的打勾圈縮小；上下內距對稱，字才會在卡片正中間 */
+.theme-grid .choice { min-width: 0; min-height: 92px; padding: 16px 8px; gap: 2px; }
+/* 只有標題要讓開右上角的打勾圈；例子那一行用全寬、只排一行，太長就「⋯」 */
+.theme-grid .choice-name { max-width: 100%; padding-inline: 16px; line-height: 1.25; overflow-wrap: break-word; }
+.theme-grid .choice-sub { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.theme-grid .choice::after { top: 6px; right: 6px; width: 18px; height: 18px; background-size: 11px; }
+@media (min-width: 560px) { .theme-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ---------- 取名 ---------- */
+.namer .name-card { display: grid; gap: 14px; padding: 20px; text-align: center; margin-top: 0; }
+.namer .name-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.namer .name-turn { font-size: 22px; font-weight: 900; }
+.namer .reroll { justify-self: end; margin-top: -6px; }
+
+/* 三個狀態一次只露一個（data-stage 由 Leader.namer 設）。不叫 .stage：首頁 site.css 用過那個名字 */
+.namer .name-card .name-stage { display: none; gap: 12px; }
+.namer .name-card[data-stage="choose"] .stage-choose,
+.namer .name-card[data-stage="own"] .stage-own,
+.namer .name-card[data-stage="reveal"] .stage-reveal { display: grid; }
+
+.namer .draw-btn { --h: 80px; font-size: 24px; border-radius: var(--r-lg); }
+
+/* ---------- 一疊名稱卡（抽牌） ----------
+ * 插圖本體在 game.js 的 Leader.namer（deckArt，跟網站其他插圖同一套畫法：粗描邊留缺口、色塊錯開露出白邊）。
+ * 這裡只管動態：平常整疊輕輕浮動，提示「這裡可以抽」；按下「抽一個」時加上 .is-drawing，
+ * 最上面那張（.deck-top）往上飛走，Leader.namer 等動畫跑完才翻出名稱。
+ */
+.namer .deck { display: block; width: 190px; height: auto; margin: 0 auto 4px; overflow: visible; animation: deck-float 2.4s ease-in-out infinite; }
+.namer .deck .deck-top { transform-box: fill-box; transform-origin: center; }
+.namer .deck.is-drawing { animation: none; }
+.namer .deck.is-drawing .deck-top { animation: card-fly .38s cubic-bezier(.5, 0, .7, .4) forwards; }
+@keyframes deck-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes card-fly { to { transform: translateY(-90px) rotate(14deg) scale(1.08); opacity: 0; } }
+
+/* 翻過來的那張卡：從側面轉正（rotateY），名稱在卡上 */
+.namer .drawn-card {
+  padding: 18px 14px 20px; border: 2px solid var(--mint-edge); border-radius: var(--r-lg);
+  background: var(--mint-face); box-shadow: 0 5px 0 var(--mint-edge);
+  animation: card-flip .5s cubic-bezier(.2, 1.3, .4, 1) 1;
+}
+.namer .drawn-card.pop { animation: card-flip .5s cubic-bezier(.2, 1.3, .4, 1) 1; }
+@keyframes card-flip { from { transform: perspective(600px) rotateY(90deg) scale(.85); } to { transform: none; } }
+.namer .reveal-hint { margin: 0; color: var(--muted); font-size: 15px; font-weight: 700; text-wrap: balance; }
+@media (prefers-reduced-motion: reduce) { .namer .deck, .namer .deck .deck-top, .namer .drawn-card { animation: none !important; } }
+.namer .pool-empty { margin: 0; }
+
+/* 「傳給下一個人」＋「換一個」：照定時炸彈的 .pass-row（apps/bomb/app/app.css），只是「換一個」一直都在，不用滑進來 */
+.namer .pass-row { display: flex; align-items: stretch; gap: 10px; margin-top: 4px; }
+.namer .pass-row .pass-bar:not(.pass-redraw) { flex: 1; min-width: 0; }
+.namer .pass-bar { --h: 72px; font-size: 19px; padding-inline: 14px; border-radius: var(--r-lg); white-space: normal; line-height: 1.3; }
+.namer .pass-redraw { flex: none; padding: 0 18px; font-size: 16px; white-space: nowrap; }
+
+.namer .own-say { max-width: none; margin-top: 12px; text-align: left; font-size: 18px; }
+
+.namer .you-are { margin: 0; color: var(--mint-text); font-weight: 800; opacity: .8; }
+/* 翻出來的名稱：全場要看得到，字越大越好；長名稱（大腸包小腸）自己縮 */
+.namer .drawn-name { margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; word-break: keep-all; overflow-wrap: anywhere; color: var(--mint-text); }
+
+
+.namer .named { margin-top: 20px; }
+.namer .named h2 { margin: 0 0 8px; color: var(--muted); font-weight: 800; }
+.namer .named-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.namer .named-chip { display: inline-flex; align-items: center; gap: 2px; padding: 4px 4px 4px 12px; border-radius: var(--r-pill); border: 2px solid var(--edge-n); background: var(--surface); font-weight: 800; }
+.namer .chosen-remove { flex: none; width: 28px; height: 28px; border: 0; border-radius: var(--r-pill); background: none; color: var(--muted); cursor: pointer; font-size: 13px; }
+.namer .chosen-remove:hover { background: var(--coral-face); color: var(--coral-text); }
+
+.namer .need-more { margin-top: 16px; text-align: center; background: none; border: 0; padding: 0; color: var(--muted); font-weight: 700; }
+.namer .all-done { margin-top: 8px; }
+@media (min-width: 760px) {
+  .namer .name-card { padding: 28px 36px; }
+}

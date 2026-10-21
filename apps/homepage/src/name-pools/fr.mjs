@@ -1,5 +1,5 @@
 /*
- * Liste de noms en français : des choses que tout le monde connaît en France. Règles dans ../names.js.
+ * Liste de noms en français : des choses que tout le monde connaît en France. Règles dans ../name-pools.mjs.
  */
 export default {
   food: [
