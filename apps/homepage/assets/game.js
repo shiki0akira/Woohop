@@ -905,6 +905,10 @@
     var soundOn = function () { return !opts.sound || opts.sound(); };
     var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
     var musicBus = null;
+    // 音量：拍子要比配樂大聲，大家才跟得到拍（使用者要求）；誰輸了那步配樂再小一點當背景
+    var CLICK_VOL = 1.4;
+    var MUSIC_VOL = 0.5;
+    var MUSIC_BG = 0.25;
 
     rootEl.textContent = '';
     rootEl.classList.add('metro');
@@ -1022,7 +1026,7 @@
       var c = startClock();
       if (!c) return;
       st.running = true;
-      setGain(clickBus, 1);
+      setGain(clickBus, CLICK_VOL);
       st.beat = 0;
       st.bars = 0;
       tick();
@@ -1048,7 +1052,7 @@
       if (on) {
         if (!startClock()) return;
         st.music = true;
-        setGain(musicBus, st.bg ? 0.35 : 1);
+        setGain(musicBus, st.bg ? MUSIC_BG : MUSIC_VOL);
         tick();
       } else {
         st.music = false;
@@ -1057,10 +1061,10 @@
       }
     }
 
-    // 背景模式：配樂音量壓低到 0.35（給下一步當背景，例如上樓下樓的拉霸），false 回到正常
+    // 背景模式：配樂音量壓低到 MUSIC_BG（給下一步當背景，例如上樓下樓的拉霸），false 回到正常
     function background(on) {
       st.bg = on;
-      if (st.music) setGain(musicBus, on ? 0.35 : 1, 0.4);
+      if (st.music) setGain(musicBus, on ? MUSIC_BG : MUSIC_VOL, 0.4);
     }
 
     toggle.addEventListener('click', function () {
