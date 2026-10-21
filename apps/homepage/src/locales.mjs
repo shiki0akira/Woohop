@@ -17,8 +17,7 @@ export const DEFAULT_LANG = 'zh-TW';
  * 那個遊戲加了語言之後，回來這裡補上；8 種都有了就整筆拿掉。
  */
 export const GAME_LANGS = {
-  // 竹筍竹筍蹦蹦出 2026-10-20 補齊 8 種語言，已拿掉
-  stairs: ['zh-TW'], // 上樓下樓 2026-10-21 先上 zh-TW
+  // 竹筍竹筍蹦蹦出 2026-10-20、上樓下樓 2026-10-21 補齊 8 種語言，已拿掉
 };
 export const gameInLang = (key, lang) => !GAME_LANGS[key] || GAME_LANGS[key].includes(lang);
 export const LANG_NAMES = {
@@ -240,7 +239,7 @@ export const STRINGS = {
       buzzer: ["Buzzer Game", "A live multiplayer buzzer tool — scan a QR code to join the room."],
       avalon: ["Avalon Voice Narrator", "Set your player count and roles, and the app narrates the host script for you — no memorizing required."],
       orchard: ['Fruit, Veg, Zoo', 'Clap to the beat and take turns naming a fruit, vegetable or animal — stall or repeat and you’re out.'],
-      stairs: ['Up and Down', 'Do the opposite of the command — the slowest to react is out.'],
+      stairs: ['Elevator', 'Stand in a circle as floors and chant "One up to four!" to the beat — wrong call or no answer and you’re out.'],
       bamboo: ['Pop-Up Count', 'Stand up and call the next number. Pop up at the same time as someone? Shout their name first. Last one down loses.'],
       happy: ["Happiness Simulator", "A seven-level interactive message: the host leads on a big screen, everyone joins by phone. Traditional Chinese only."],
     },
@@ -332,7 +331,7 @@ export const STRINGS = {
       buzzer: ["Buzzer-Spiel", "Ein Live-Buzzer-Tool für mehrere Spieler — per QR-Code dem Raum beitreten."],
       avalon: ["Avalon Sprachassistent", "Spieleranzahl und Rollen einstellen, und der Spielleiter-Text wird automatisch vorgelesen — kein Auswendiglernen nötig."],
       orchard: ['Obst, Gemüse, Zoo', 'Im Takt klatschen und reihum Obst, Gemüse oder Tiere nennen – wer stockt oder wiederholt, fliegt raus.'],
-      stairs: ['Rauf und runter', 'Mach das Gegenteil vom Kommando – wer am langsamsten reagiert, ist raus.'],
+      stairs: ['Fahrstuhl', 'Im Kreis als Etagen im Takt „Eins hoch auf vier!“ rufen – falsch gerufen oder verpasst, und du bist raus.'],
       bamboo: ['Bis 10 zählen', 'Aufstehen und die nächste Zahl rufen. Stehen zwei gleichzeitig auf, gewinnt, wer zuerst den Namen des anderen ruft. Wer zuletzt sitzt, verliert.'],
       happy: ["Glückssimulator", "Interaktive Botschaft in sieben Stufen: Die Leitung führt am großen Bildschirm, alle machen am Handy mit. Nur auf traditionellem Chinesisch."],
     },
@@ -424,7 +423,7 @@ export const STRINGS = {
       buzzer: ["Jeu de buzzer", "Un outil de buzzer multijoueur en direct — rejoignez la salle en scannant un QR code."],
       avalon: ["Narrateur vocal Avalon", "Réglez le nombre de joueurs et les rôles : le texte de l’animateur est lu automatiquement, sans rien apprendre par cœur."],
       orchard: ['Verger, potager, zoo', 'Tapez le rythme et citez à tour de rôle un fruit, un légume ou un animal – une hésitation ou une répétition et c’est perdu.'],
-      stairs: ['Monte, descends', 'Faites le contraire de la consigne – le plus lent à réagir est éliminé.'],
+      stairs: ['L’ascenseur', 'En cercle, chacun est un étage : « Un monte au quatre ! » en rythme. Mauvaise annonce ou pas de réponse : perdu.'],
       bamboo: ['Compter jusqu’à 10', 'Levez-vous en annonçant le nombre suivant. Deux debout en même temps ? Le premier qui crie le nom de l’autre reste. Le dernier assis perd.'],
       happy: ["Simulateur de bonheur", "Un message interactif en sept étapes : l’animateur guide sur grand écran, chacun participe depuis son téléphone. En chinois traditionnel uniquement."],
     },
@@ -516,7 +515,7 @@ export const STRINGS = {
       buzzer: ["早押しゲーム", "QRコードを読み取ってルームに参加する、複数人向けの早押しツール。"],
       avalon: ["アヴァロン音声進行", "人数とロールを選ぶだけで、進行役の台本を自動で読み上げます。"],
       orchard: ['果物・野菜・動物', 'リズムに合わせて果物・野菜・動物を順番に言う。詰まったり重なったりしたら負け。'],
-      stairs: ['上がって下がって', '号令と反対の動きをする。反応が遅れた人が負け。'],
+      stairs: ['エレベーターゲーム', '輪になって階になり、リズムで「1 階上 4 階！」。言い間違いや返せなかったら負け。'],
       bamboo: ['たけのこニョッキ', '立ち上がって次の数字を言う。誰かと重なったら、先に相手の名前を叫んだほうが勝ち。最後まで座っていた人の負け。'],
       happy: ["幸福シミュレーター", "全7回のインタラクティブなメッセージ。司会者が大画面で進行し、全員スマホで参加。繁体字中国語のみ。"],
     },
@@ -608,7 +607,7 @@ export const STRINGS = {
       buzzer: ["버저 게임", "QR 코드를 스캔해서 방에 입장하는 실시간 다인용 버저 도구."],
       avalon: ["아발론 음성 진행", "인원수와 역할만 설정하면 진행자 대사를 자동으로 읽어줍니다."],
       orchard: ['과일·채소·동물', '박자에 맞춰 돌아가며 과일, 채소, 동물을 말해요. 막히거나 겹치면 탈락.'],
-      stairs: ['올라가 내려가', '구령과 반대로 움직여요. 가장 늦게 반응한 사람이 탈락.'],
+      stairs: ['엘리베이터 게임', '둥글게 서서 층이 되고 박자에 맞춰 “1층 위로 4층!” 틀리거나 못 받으면 탈락.'],
       bamboo: ['눈치게임', '일어나면서 다음 숫자를 외쳐요. 누군가와 겹치면 상대 이름을 먼저 외친 사람이 살아남아요. 마지막까지 앉아 있는 사람이 벌칙!'],
       happy: ["행복 시뮬레이터", "7단계 인터랙티브 메시지. 진행자가 큰 화면으로 이끌고 모두 휴대폰으로 참여합니다. 번체 중국어만 지원."],
     },
@@ -700,7 +699,7 @@ export const STRINGS = {
       buzzer: ["Juego de timbre", "Una herramienta de timbre en vivo para varios jugadores — escanea un código QR para unirte a la sala."],
       avalon: ["Narrador de voz de Avalon", "Configura el número de jugadores y los roles, y el guion del anfitrión se lee en voz alta automáticamente, sin memorizar nada."],
       orchard: ['Huerto, jardín, zoo', 'Al ritmo de palmas, di por turnos una fruta, verdura o animal; si te trabas o repites, pierdes.'],
-      stairs: ['Arriba y abajo', 'Haz lo contrario de lo que se ordena; quien reaccione más lento queda fuera.'],
+      stairs: ['El ascensor', 'En círculo, cada uno es un piso: «¡Uno sube al cuatro!» al ritmo. Si fallas o no contestas, pierdes.'],
       bamboo: ['Contar hasta diez', 'Levántate diciendo el siguiente número. Si te levantas a la vez que alguien, gana quien grite antes el nombre del otro. El último sentado pierde.'],
       happy: ["Simulador de felicidad", "Un mensaje interactivo en siete niveles: quien dirige usa la pantalla grande y todos participan desde el móvil. Solo en chino tradicional."],
     },
@@ -792,7 +791,7 @@ export const STRINGS = {
       buzzer: ["抢答游戏", "多人现场抢答工具，扫 QR code 加入房间即可游玩。"],
       avalon: ["阿瓦隆语音主持", "设置人数与角色，自动念出主持人旁白台词，不用自己背稿，直接开局。"],
       orchard: ['果园菜园动物园', '跟着拍子轮流说出水果、蔬菜或动物，卡住或重复就输。'],
-      stairs: ['上楼下楼', '听口令做相反的动作，反应慢的就输。'],
+      stairs: ['上楼下楼', '围成一圈当楼层，跟着节拍喊“1 楼上 4 楼”，喊错或没接上就输。'],
       bamboo: ['竹笋竹笋蹦蹦出', '轮流站起来喊数字，撞到就抢着喊对方的名字，最后还蹲着的输。'],
       happy: ["幸福模拟器", "七关互动信息，主持人用大屏幕带，全场拿手机一起参与。仅提供繁体中文。"],
     },

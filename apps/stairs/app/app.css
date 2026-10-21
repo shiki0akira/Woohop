@@ -24,6 +24,8 @@
 .building .floor-top { border-color: var(--yellow-edge); background: var(--yellow-face); color: var(--yellow-text); }
 .building .floor-first { border-color: var(--mint-edge); background: var(--mint-face); color: var(--mint-text); }
 .building .floor-basement { border-color: var(--edge-strong); background: var(--sunken); color: var(--text-2); }
+/* 頂樓、地下室佔兩格：特別的樓層看起來不一樣，英文「Basement」這種長字也放得下 */
+.building .floor-top, .building .floor-basement { grid-column: span 2; }
 .building-panel .hint { margin: 12px 0 0; }
 
 /* ---------- 開始玩 ---------- */

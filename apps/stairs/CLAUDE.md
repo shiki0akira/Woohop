@@ -11,7 +11,7 @@
 
 返回鍵、`<dialog>`、AudioContext 的坑跟定時炸彈一樣，原因寫在 `apps/bomb/CLAUDE.md`。
 
-- **目前只有 zh-TW**（2026-10-21 上線）。`app/strings.js` 的 `LANGS` 只列這一種，首頁 `src/locales.mjs` 的 `GAME_LANGS.stairs` 也只有 zh-TW，其他語言顯示「即將推出」。補語言時這兩處都要改，另外跑 `node scripts/og-image.mjs stairs`（在 apps/homepage 下）重產縮圖。外語遊戲名用「電梯」，見 CONCEPT.md 第四節。
+- **8 種語言**（`app/strings.js` 的 `LANGS`；2026-10-21 先上 zh-TW，同一天補齊）。外語遊戲名用「電梯」（CONCEPT.md 第四節）。四拍口令各語言用自己順口的說法，一拍一個詞：en「One, up, to, four」、de「Eins, hoch, auf, vier」、fr「Un, monte, au, quatre」、es「Uno, sube, al, cuatro」、ja「1・階・上・4階」、ko「1·층·위로·4층」。改了 heroTitle 要在 apps/homepage 跑 `node scripts/og-image.mjs stairs` 重產縮圖。
 - 本機開發用 `.claude/launch.json` 的 `stairs-dev`（port 8792）。
 
 ## `app/app.js` 的結構
