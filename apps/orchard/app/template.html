@@ -9,7 +9,7 @@
     {{header}}
 
     <main id="main" class="orchard-main game-main">
-      <!-- 第 1 步：設定人數。上方的步驟頭是全站共用的 Leader.lead -->
+      <!-- 第 1 步：開場（不用設定人數）。上方的步驟頭是全站共用的 Leader.lead -->
       <div class="view" id="view-setup">
         <div class="page-head">
           <nav class="crumbs" aria-label="breadcrumb">
@@ -21,14 +21,6 @@
 
         <div class="lead-slot"></div>
 
-        <section class="panel count-panel">
-          <h2>{{countHeading}}</h2>
-          <div class="stepper">
-            <button type="button" id="count-less" aria-label="{{countLess}}">−</button>
-            <output id="count-value" aria-live="polite"></output>
-            <button type="button" id="count-more" aria-label="{{countMore}}">+</button>
-          </div>
-        </section>
 
         <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
         <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>

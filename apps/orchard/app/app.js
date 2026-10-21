@@ -2,7 +2,7 @@
  * 果園菜園動物園。手機不當裁判（CONCEPT.md 2.1），只做四件事：一步一步帶、出主題、打節拍、輸的人拉真心話大冒險拉霸。
  *
  * 一步一步帶（跟竹筍竹筍蹦蹦出、上樓下樓同一套，步驟頭、規則卡、拉霸、節拍器都是全站共用的 window.Leader）：
- *   setup 設定人數 → rules 說明規則 → play 開始（主題＋節拍器）→ end 誰輸了（拉霸）→ 再玩一次回 play
+ *   setup 開場 → rules 說明規則 → play 開始（主題＋節拍器）→ end 誰輸了（拉霸）→ 再玩一次回 play
  * 返回鍵一律回第一頁；進行中（節拍器在打）先確認。
  */
 (function () {
@@ -15,10 +15,9 @@
   var Leader = window.Leader;
 
   var SETTINGS_KEY = 'web100-orchard-settings';
-  var COUNT_MIN = 4;
-  var COUNT_MAX = 30;
 
-  var settings = { count: 6, sound: true };
+  // 不用設定人數（使用者決定拿掉）：這個遊戲用不到，大家圍成一圈直接開始
+  var settings = { sound: true };
   var screen = 'setup';
   var topicIndex = -1; // 這次的主題（T.topics 的第幾個），每次進「開始！」隨機抽
   var roundNumber = 0;
@@ -28,9 +27,6 @@
   var $ = function (id) { return document.getElementById(id); };
   var views = { setup: $('view-setup'), rules: $('view-rules'), play: $('view-play'), end: $('view-end') };
   var el = {
-    countLess: $('count-less'),
-    countMore: $('count-more'),
-    countValue: $('count-value'),
     start: $('start'),
     ruleCards: $('rule-cards'),
     rulesNext: $('rules-next'),
@@ -62,7 +58,6 @@
     try {
       var saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
       if (!saved || typeof saved !== 'object') return;
-      if (typeof saved.count === 'number' && saved.count >= COUNT_MIN && saved.count <= COUNT_MAX) settings.count = saved.count;
       if (typeof saved.sound === 'boolean') settings.sound = saved.sound;
     } catch (e) {
       /* 無痕模式或存檔壞了：照樣能玩，只是記不住 */
@@ -74,12 +69,6 @@
     } catch (e) {
       /* 同上 */
     }
-  }
-
-  function syncSetup() {
-    el.countValue.textContent = settings.count;
-    el.countLess.disabled = settings.count <= COUNT_MIN;
-    el.countMore.disabled = settings.count >= COUNT_MAX;
   }
 
   // ---------- 主題：隨機抽或自己選（CONCEPT.md 2.2） ----------
@@ -254,7 +243,7 @@
     startedAt = 0;
     setTopic(randomTopic());
     showScreen('play');
-    track('orchard_game_started', { round_number: roundNumber, players: settings.count, topic: T.topics[topicIndex][0] });
+    track('orchard_game_started', { round_number: roundNumber, topic: T.topics[topicIndex][0] });
   }
 
   // ---------- 返回鍵：一律回第一頁；節拍器在打的時候先確認 ----------
@@ -315,16 +304,6 @@
 
   // ---------- 綁定 ----------
 
-  el.countLess.addEventListener('click', function () {
-    settings.count = Math.max(COUNT_MIN, settings.count - 1);
-    saveSettings();
-    syncSetup();
-  });
-  el.countMore.addEventListener('click', function () {
-    settings.count = Math.min(COUNT_MAX, settings.count + 1);
-    saveSettings();
-    syncSetup();
-  });
   el.topicShuffle.addEventListener('click', function () { setTopic(randomTopic(), true); });
   el.topicToggle.addEventListener('click', function () {
     var open = el.topicChips.hidden;
@@ -362,7 +341,6 @@
   // ---------- 起手 ----------
 
   loadSettings();
-  syncSetup();
   syncSound();
   Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);
   renderTopicChips();
