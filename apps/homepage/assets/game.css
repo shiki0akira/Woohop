@@ -196,7 +196,7 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
  * 列高 --row 是唯一要調的數字，Leader.slot 從畫面量，不用跟著改。
  */
 .slot {
-  --row: 84px;
+  --row: 104px;
   position: relative; width: 100%; max-width: 420px; margin-top: 6px; padding: 10px;
   border: 2px solid var(--outline); border-radius: var(--r-lg); background: var(--yellow);
   box-shadow: 0 6px 0 var(--outline);
@@ -219,7 +219,7 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 .slot::after { right: -2px; border-right: 14px solid var(--outline); }
 .slot-reel { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; will-change: transform; }
 .slot-reel li {
-  height: var(--row); display: grid; place-content: center; justify-items: center; gap: 2px; padding: 0 18px;
+  height: var(--row); display: grid; place-content: center; justify-items: center; gap: 6px; padding: 0 18px; text-align: center;
   font-size: 18px; font-weight: 800; line-height: 1.3; color: var(--muted); text-wrap: balance;
 }
 .slot-reel li.on { color: var(--ink); font-size: 21px; font-weight: 900; }
@@ -238,10 +238,10 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 .slot-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /*
  * 手機版拉霸：窄螢幕上長題目一定會折成兩行，加上上面的「真心話／大冒險」標籤，84px 放不下，
- * 會超出中間那條框。列高加到 104px、字縮一點、左右內距收窄。列高是 Leader.slot 從畫面量的，不用跟著改程式。
+ * 會超出中間那條框。列高加到 120px、字縮一點、左右內距收窄。列高是 Leader.slot 從畫面量的，不用跟著改程式。
  */
 @media (max-width: 480px) {
-  .slot { --row: 104px; padding: 8px; }
+  .slot { --row: 120px; padding: 8px; }
   .slot-reel li { padding: 0 10px; font-size: 16px; }
   .slot-reel li.on { font-size: 19px; }
 }
