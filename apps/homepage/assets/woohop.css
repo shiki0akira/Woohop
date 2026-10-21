@@ -344,10 +344,10 @@
   .game .w-row { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: auto; display: block; opacity: .13; pointer-events: none; z-index: -1; }
   .game h4, .game h3 { margin: 0; font-size: 20px; position: relative; }
   .game p { margin: 0; font-size: 14px; color: var(--muted); position: relative; }
-  /* 卡片高度不跟著語言長短跑：標題最多 2 行、說明最多 2 行，超過用刪節號（完整說明在遊戲頁） */
+  /* 卡片高度不跟著語言長短跑：標題最多 2 行、說明最多 3 行，超過用刪節號（完整說明在遊戲頁） */
   .game h3, .game h4, .game p { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
   .game h3, .game h4 { -webkit-line-clamp: 2; line-clamp: 2; line-height: 1.25; }
-  .game p { -webkit-line-clamp: 2; line-clamp: 2; }
+  .game p { -webkit-line-clamp: 3; line-clamp: 3; }
   /* 標籤固定一行：人數（人形圖示＋數字）、一局幾分鐘、手機；太窄時最後一個用刪節號，不折成兩排 */
   .game .tags { display: flex; flex-wrap: nowrap; gap: 5px; margin-top: auto; padding-top: 4px; position: relative; min-width: 0; }
   .game .tags span { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; white-space: nowrap; font-size: 12px; padding: 2px 6px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
