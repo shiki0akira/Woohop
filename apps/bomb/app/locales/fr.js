@@ -67,7 +67,7 @@ export default {
   ],
   rulesNext: "Suivant : on joue",
 
-  // 頂欄音符鍵的名稱（給螢幕閱讀器念）：管全部聲音——滴答、爆炸、配樂、拉霸
+  // 頂欄音符鍵的名稱（給螢幕閱讀器念）：管全部聲音——滴答、爆炸、拉霸
   soundLabel: "Son",
   startButton: "Lancer la partie",
 

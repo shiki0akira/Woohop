@@ -34,7 +34,7 @@
     max: TIMER.defaultMax,
     // 「自訂」那兩排有沒有展開。跟著設定一起記住，調過一次的人下次打開還在
     timerCustom: false,
-    // 聲音（滴答、爆炸、背景配樂、拉霸）總開關，在頂欄的音符鍵（2026-10-21 使用者要求加上）
+    // 聲音（滴答、爆炸、拉霸）總開關，在頂欄的音符鍵（2026-10-21 使用者要求加上）
     sound: true,
   };
 
@@ -59,7 +59,7 @@
 
   var screen = 'setup';
   var wakeLock = null;
-  var audio = { ctx: null, tickId: 0, bgm: 0, next: 0, step: 0 };
+  var audio = { ctx: null, tickId: 0 };
 
   // ---------- DOM ----------
 
@@ -587,8 +587,8 @@
    * 滴答與爆炸都用 Web Audio 當場合成，不載音檔（CONCEPT.md 2.8）。
    * AudioContext 一定要在使用者手勢裡建立／resume，所以它綁在「開始遊戲」那一下。
    *
-   * 2026-10-21 起**有聲音開關**（頂欄的音符鍵，跟竹筍竹筍蹦蹦出同一顆）：原本認為關手機音量就好，
-   * 但加了背景配樂之後，主持人要講話時需要能一鍵關掉。開關管全部聲音：滴答、爆炸、配樂、拉霸。
+   * 2026-10-21 起**有聲音開關**（頂欄的音符鍵，跟竹筍竹筍蹦蹦出同一顆），管滴答、爆炸、拉霸。
+   * 試過加背景配樂，跟滴答聲混在一起反而亂，使用者決定拿掉：滴答聲本身就是這個遊戲的配樂。
    */
   function ensureAudio() {
     try {
@@ -678,78 +678,6 @@
     }, interval);
   }
 
-  /*
-   * 背景配樂：低音、大鼓、hi-hat 組成的緊張循環，越接近「最長時間」越快（96 → 148 BPM）。
-   * 跟滴答一樣用**最長時間**當分母，不洩漏實際引爆時刻（CONCEPT.md 2.2）。
-   * 排程用「音訊時鐘＋往前看」：setInterval 每 25ms 把接下來 0.12 秒的音符排好，主執行緒忙也不會歪拍。
-   */
-  var BGM_BASS = [110, 0, 110, 0, 130.81, 0, 110, 0, 82.41, 0, 98, 0, 110, 0, 123.47, 0];
-
-  function bgmVoice(t, freq, peak, decay, type, filterFreq) {
-    var ctx = audio.ctx;
-    var osc = ctx.createOscillator();
-    var gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t);
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(peak, t + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-    var filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = filterFreq;
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + decay + 0.05);
-  }
-
-  function bgmKick(t) {
-    var ctx = audio.ctx;
-    var osc = ctx.createOscillator();
-    var gain = ctx.createGain();
-    osc.frequency.setValueAtTime(140, t);
-    osc.frequency.exponentialRampToValueAtTime(42, t + 0.14);
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.exponentialRampToValueAtTime(0.5, t + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.3);
-  }
-
-  function bgmTick() {
-    var ctx = audio.ctx;
-    var progress = Math.min(1, (Date.now() - round.startedAt) / round.maxMs);
-    var bpm = 96 + 52 * progress;
-    while (audio.next < ctx.currentTime + 0.12) {
-      var t = audio.next;
-      var s = audio.step % 16;
-      if (s === 0 || s === 8 || (progress > 0.5 && (s === 6 || s === 14))) bgmKick(t);
-      if (BGM_BASS[s]) bgmVoice(t, BGM_BASS[s], 0.22, 0.18, 'sawtooth', 500 + 900 * progress);
-      if (s % 2 === 1) bgmVoice(t, 6000, 0.025, 0.03, 'square', 9000);
-      audio.next += 60 / bpm / 4;
-      audio.step += 1;
-    }
-  }
-
-  function startBgm() {
-    stopBgm();
-    if (!settings.sound || screen !== 'play') return;
-    var ctx = ensureAudio();
-    if (!ctx) return;
-    audio.next = ctx.currentTime + 0.05;
-    audio.step = 0;
-    audio.bgm = setInterval(bgmTick, 25);
-    bgmTick();
-  }
-
-  function stopBgm() {
-    clearInterval(audio.bgm);
-    audio.bgm = 0;
-  }
-
   // 頂欄的音符鍵（chrome.mjs gameBar 的 musicLabel，game.js 按下去呼叫 window.toggleMusic）
   var soundButton = document.getElementById('game-music');
   function syncSoundButton() {
@@ -759,8 +687,6 @@
     settings.sound = !settings.sound;
     saveSettings();
     syncSoundButton();
-    if (settings.sound) startBgm();
-    else stopBgm();
   };
 
   // ---------- 螢幕保持亮著 ----------
@@ -892,7 +818,6 @@
     requestWakeLock();
     ensureAudio();
     scheduleTick();
-    startBgm();
 
     /*
      * 事件送在這裡，不是綁在「開始遊戲」那顆按鈕上——「再玩一輪」走的是同一個
@@ -916,7 +841,6 @@
     clearInterval(round.checkId);
     round.checkId = 0;
     clearTimeout(audio.tickId);
-    stopBgm();
     clearTimeout(stuckId);
     releaseWakeLock();
   }
@@ -1157,18 +1081,13 @@
    * 如果引爆時刻在那段時間裡就已經過了，這裡要當場爆給他看（CONCEPT.md 2.9）。
    */
   document.addEventListener('visibilitychange', function () {
-    // 切到背景時先停配樂（背景的計時器會被節流，拍子會亂掉）；回來再接著放
-    if (document.visibilityState !== 'visible') {
-      stopBgm();
-      return;
-    }
+    if (document.visibilityState !== 'visible') return;
     if (screen !== 'play') return;
     checkFuse();
     if (screen !== 'play') return;
     // wake lock 在切到背景時會被系統收回，回來要自己再要一次
     requestWakeLock();
     scheduleTick();
-    startBgm();
   });
 
   // ---------- 起手 ----------
