@@ -255,6 +255,8 @@
     border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); color: var(--ink);
     font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
   }
+  /* 滑過：外框與底線換藍紫、背景帶一點淡藍（跟問答框 hover 同一個感覺）；選中的維持選中色 */
+  .chip:hover:not(:disabled):not([aria-pressed="true"]) { border-color: var(--blue-edge); box-shadow: 0 3px 0 var(--blue-edge); background: var(--hover-faint); }
   .chip[aria-pressed="true"] { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); box-shadow: 0 3px 0 var(--blue-edge); }
   .chip svg { width: 16px; height: 16px; }
 
