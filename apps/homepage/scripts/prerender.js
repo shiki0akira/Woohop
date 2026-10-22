@@ -34,7 +34,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22q';
+const ASSET_VERSION = '2026-10-22r';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -496,11 +496,8 @@ function aboutPage(lang) {
           <div class="panel prose">
             <h2>${esc(A.storyHeading)}</h2>
             ${A.story.map((p) => `<p>${esc(p)}</p>`).join('')}
+            <ul class="about-promises">${A.promises.map(([t, d]) => `<li><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>${esc(t)}</b>${esc(d)}</span></li>`).join('')}</ul>
           </div>
-        </section>
-        <section>
-          <div class="section-head"><div><h2>${esc(A.promisesHeading)}</h2></div></div>
-          <div class="about-promises">${A.promises.map(([t, d]) => `<div class="panel"><svg aria-hidden="true"><use href="#i-ok"/></svg><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div>
         </section>
         <section id="contact" class="about-contact">
           <div class="section-head"><div><h2>${esc(A.contactHeading)}</h2><p>${esc(A.contactLead)}</p></div></div>

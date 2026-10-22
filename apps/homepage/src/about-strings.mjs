@@ -26,7 +26,6 @@ export const ABOUT = {
       '不用下載 App、不用註冊。有的遊戲大家用自己的手機加入房間，有的只要一支手機傳著玩，也有完全不用手機、照著帶領說明就能玩的。',
       '每個遊戲都附上玩法和帶領時可以怎麼說，第一次帶活動的人也能上手。網站目前有 8 種語言，遊戲會持續增加。',
     ],
-    promisesHeading: '我們的原則',
     promises: [
       ['完全免費', '所有遊戲和小工具都可以免費使用。'],
       ['不用註冊', '不用帳號，也不會要你留下姓名或電話。'],
@@ -116,7 +115,6 @@ export const ABOUT = {
       'Nothing to download and no sign-up. In some games everyone joins a room on their own phone, some are played by passing one phone around, and some need no phone at all — just follow the host guide.',
       'Every game comes with rules and tips on what to say when you lead it, so it works even if it’s your first time hosting. The site is available in 8 languages, and new games keep coming.',
     ],
-    promisesHeading: 'What we stand for',
     promises: [
       ['Free', 'Every game and tool is free to use.'],
       ['No sign-up', 'No account, and we never ask for your name or phone number.'],
@@ -206,7 +204,6 @@ export const ABOUT = {
       'Nichts herunterladen, keine Anmeldung. Bei manchen Spielen tritt jeder mit dem eigenen Handy einem Raum bei, andere spielt ihr mit einem Handy, das herumgereicht wird, und manche brauchen gar kein Handy – einfach der Anleitung folgen.',
       'Zu jedem Spiel gibt es Regeln und Tipps, was du beim Anleiten sagen kannst – so klappt es auch beim ersten Mal. Die Seite gibt es in 8 Sprachen, und es kommen laufend neue Spiele dazu.',
     ],
-    promisesHeading: 'Wofür wir stehen',
     promises: [
       ['Kostenlos', 'Alle Spiele und Tools sind kostenlos.'],
       ['Ohne Anmeldung', 'Kein Konto – wir fragen nie nach Name oder Telefonnummer.'],
@@ -296,7 +293,6 @@ export const ABOUT = {
       'Rien à télécharger, aucune inscription. Dans certains jeux, chacun rejoint une salle avec son propre téléphone ; d’autres se jouent en se passant un seul téléphone, et certains n’en demandent aucun – il suffit de suivre le guide d’animation.',
       'Chaque jeu est accompagné de ses règles et de conseils sur ce qu’on peut dire en l’animant : idéal même pour une première fois. Le site existe en 8 langues, et de nouveaux jeux arrivent régulièrement.',
     ],
-    promisesHeading: 'Nos principes',
     promises: [
       ['Gratuit', 'Tous les jeux et outils sont gratuits.'],
       ['Sans inscription', 'Pas de compte, et nous ne demandons jamais votre nom ni votre numéro.'],
@@ -386,7 +382,6 @@ export const ABOUT = {
       'アプリのダウンロードも登録も不要です。それぞれのスマホでルームに参加するゲーム、1台のスマホを回して遊ぶゲーム、スマホなしで進行ガイドどおりに遊べるゲームがあります。',
       'どのゲームにもルールと進行のときの声かけ例がついているので、はじめて進行役をする人でも安心です。サイトは8言語に対応していて、ゲームはこれからも増えていきます。',
     ],
-    promisesHeading: '大切にしていること',
     promises: [
       ['無料', 'すべてのゲームとツールを無料で使えます。'],
       ['登録不要', 'アカウントは不要。名前や電話番号を聞くこともありません。'],
@@ -476,7 +471,6 @@ export const ABOUT = {
       '앱 설치도, 가입도 필요 없습니다. 각자 휴대폰으로 방에 들어가는 게임, 휴대폰 한 대를 돌려 가며 하는 게임, 휴대폰 없이 진행 안내만 따라 하면 되는 게임이 있습니다.',
       '모든 게임에 규칙과 진행할 때 할 수 있는 말을 함께 담아, 처음 진행하는 사람도 어렵지 않습니다. 사이트는 8개 언어를 지원하며, 게임은 계속 늘어납니다.',
     ],
-    promisesHeading: 'Woohop의 원칙',
     promises: [
       ['완전 무료', '모든 게임과 도구를 무료로 쓸 수 있습니다.'],
       ['가입 불필요', '계정이 필요 없고, 이름이나 전화번호를 묻지 않습니다.'],
@@ -566,7 +560,6 @@ export const ABOUT = {
       'Nada que descargar y sin registro. En algunos juegos cada uno entra a una sala con su propio móvil, otros se juegan pasándose un solo móvil y otros no necesitan móvil: basta con seguir la guía para el animador.',
       'Cada juego incluye las reglas y consejos sobre qué decir al dirigirlo, así que funciona incluso si es tu primera vez. El sitio está en 8 idiomas y seguimos añadiendo juegos.',
     ],
-    promisesHeading: 'En qué creemos',
     promises: [
       ['Gratis', 'Todos los juegos y herramientas son gratuitos.'],
       ['Sin registro', 'Sin cuenta, y nunca te pedimos tu nombre ni tu teléfono.'],
@@ -656,7 +649,6 @@ export const ABOUT = {
       '不用下载 App，也不用注册。有的游戏大家用自己的手机加入房间，有的只要一部手机传着玩，也有完全不用手机、照着带领说明就能玩的。',
       '每个游戏都附有玩法和带领时可以怎么说，第一次带活动也能上手。网站目前支持 8 种语言，游戏会持续增加。',
     ],
-    promisesHeading: '我们的原则',
     promises: [
       ['完全免费', '所有游戏和小工具都可以免费使用。'],
       ['无需注册', '不用账号，也不会让你留下姓名或手机号。'],

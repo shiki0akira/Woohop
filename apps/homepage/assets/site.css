@@ -297,11 +297,11 @@
 /* ---------- 關於我們＋聯絡表單、隱私權政策（2026-10-22） ---------- */
 .about-page main > section, .legal-page main > section { padding: 24px 0 40px; }
 .about-story .panel, .legal .panel { max-width: 760px; }
-.about-promises { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.about-promises .panel { margin: 0; }
-.about-promises svg { width: 28px; height: 28px; color: var(--mint-text); }
-.about-promises h3 { margin: 8px 0 4px; font-size: 18px; }
-.about-promises p { margin: 0; color: var(--muted); }
+/* 原則：放在「我們在做什麼」裡，打勾的短清單 */
+.prose ul.about-promises { list-style: none; padding: 0; margin: 16px 0 0; gap: 10px; }
+.about-promises li { display: flex; gap: 10px; align-items: flex-start; }
+.about-promises svg { width: 22px; height: 22px; flex: none; margin-top: 5px; color: var(--mint-text); }
+.about-promises b { margin-right: 8px; }
 /* 從頁尾「聯絡我們」跳過來時，標題不要被黏在上面的導覽列蓋住 */
 .about-contact { scroll-margin-top: 88px; }
 .about-contact .panel { max-width: 760px; }
