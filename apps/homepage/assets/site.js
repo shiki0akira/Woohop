@@ -48,7 +48,7 @@
     { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
     { key: 'avalon',  players: [5, 10], minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
-    { key: 'orchard', players: [5, 20], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', soon: true },
+    { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419' },
     { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
@@ -59,7 +59,6 @@
   // 還沒畫插圖的遊戲：一顆有表情的圓球先佔位
   const placeholderArt = (color, face) => () => `${ground}${burst(132, 28, '#FFC628')}${ring(28, 34, color)}${plus(146, 80, color)}
     ${body('<circle cx="80" cy="74" r="36"/>', color)}${makeFace(face, 80, 72, 2.2)}`;
-  art.orchard = art.orchard || placeholderArt('#FFC628', 'grin');
   const artSvg = key => `<svg viewBox="0 0 160 126" aria-hidden="true">${art[key]()}</svg>`;
 
   /* ================= 遊戲卡片 ================= */

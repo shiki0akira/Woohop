@@ -81,7 +81,17 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.bamboo()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
-  // 上樓下樓：目前只有 zh-TW（apps/stairs/app/strings.js 的 LANGS），只產生有的語言
+  // 果園菜園動物園（apps/orchard/app/strings.js 的 LANGS）
+  orchard: async () => {
+    const { STRINGS: Om, LANGS: OL } = await import(pathToFileURL(path.join(ROOT, '..', 'orchard', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'orchard', 'public', 'og'),
+      langs: OL,
+      title: (lang) => splitTitle(Om[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.orchard()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
+  // 上樓下樓（apps/stairs/app/strings.js 的 LANGS）
   stairs: async () => {
     const { STRINGS: Sm, LANGS: SL } = await import(pathToFileURL(path.join(ROOT, '..', 'stairs', 'app', 'strings.js')).href);
     return {

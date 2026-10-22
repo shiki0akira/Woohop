@@ -76,7 +76,7 @@ export default {
 
   // ---------- 回到開頭的確認 ----------
   leaveTitle: '要回到開頭嗎？',
-  leaveDesc: '這次的人數設定會保留，遊戲從頭開始。',
+  leaveDesc: '遊戲會從頭開始，主題重新抽。',
   leaveConfirm: '回到開頭',
   leaveCancel: '繼續玩',
 

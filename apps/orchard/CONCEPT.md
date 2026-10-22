@@ -1,6 +1,6 @@
 # 果園菜園動物園——小組破冰遊戲設計文件
 
-> 狀態：**開發中**（2026-10-21）。程式在 app/，本機 `npm run dev`（launch.json 的 orchard-dev，port 8793）。
+> 狀態：**已上線，8 種語言**（2026-10-22）。程式在 app/，本機 `npm run dev`（launch.json 的 orchard-dev，port 8793）。
 > 跟竹筍竹筍蹦蹦出、上樓下樓同一套：不用手機的團康，手機只在主持人手上帶領。步驟頭、規則卡、拉霸、節拍器（含配樂）都是全站共用的 `window.Leader`（apps/homepage/assets/game.js）。
 
 ## 一、遊戲簡介
@@ -44,10 +44,12 @@
 |---|---|---|
 | zh-TW | 果園菜園動物園 | |
 | zh-CN | 果园菜园动物园 | |
-| en | Concentration | 英語圈的拍手遊戲「Concentration 64」，選主題輪流說、重複或猶豫就輸 |
-| ja | 古今東西ゲーム | 手拍子 2 回のあとにお題に合う単語を言う、繰り返し・遅れたら負け |
-| ko | 待定 | 沒查到確定的對應遊戲，取看名字就懂的名稱 |
-| de／fr／es | 待定 | 同上 |
+| en | Concentration | 英語圈的拍手遊戲「Concentration 64」，選主題輪流說、重複或猶豫就輸；口令用它的「The category is…」 |
+| ja | 古今東西ゲーム | 手拍子 2 回のあとにお題に合う単語を言う、繰り返し・遅れたら負け；口令「古今・東西・イェーイ！」 |
+| ko | 아이엠그라운드 이름 대기 | MT、聚會常玩的「아이엠 그라운드 ○○ 이름 대기」，口令「아이엠·그라운드·이름 대기!」 |
+| de | Kategorien-Klatschen | 沒查到對應的遊戲，取看名字就懂的名稱；口令「Eins, zwei, drei!」 |
+| fr | Catégories en rythme | 同上；口令「Un, deux, trois !」 |
+| es | Categorías al ritmo | 同上；口令「¡Un, dos, tres!」 |
 
 ## 五、評估過但決定不做
 
