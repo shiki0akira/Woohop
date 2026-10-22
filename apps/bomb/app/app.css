@@ -27,14 +27,13 @@
 .seg-3 .seg-item { height: auto; min-height: 48px; padding: 6px 6px; font-size: 14px; line-height: 1.25; white-space: normal; text-align: center; }
 
 /* 「自訂區間」的開關：文字連結的份量，不做成按鈕，免得跟上面三顆區間搶注意力 */
+/* 顏色與滑過樣式用全站的 .link（深色模式會自動換色），這裡只排版＋箭頭 */
 .timer-toggle {
   display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; padding: 4px 0;
-  border: 0; background: none; cursor: pointer;
-  font: inherit; font-size: 14px; font-weight: 800; color: var(--blue-text);
+  border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800;
 }
 .timer-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
 .timer-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
-.timer-toggle:hover { color: var(--indigo); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
 
 /* ---------- 題目：問答型／動作型兩顆大按鈕 ----------
  * Woohop 按鈕語言：沒選是白底＋灰框，選了換成自己的粉彩色（問答＝藍、動作＝珊瑚），

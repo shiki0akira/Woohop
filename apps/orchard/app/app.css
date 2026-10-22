@@ -24,15 +24,13 @@
 /* 右上角的骰子鍵：只有圖示（名稱給螢幕閱讀器），左右內距 52px 讓主題字不會壓到它 */
 .topic-shuffle { position: absolute; top: 10px; right: 10px; width: 36px; padding: 0; }
 .topic-shuffle svg { width: 18px; height: 18px; }
-/* 「自己選主題」收合鍵：跟定時炸彈的「自訂區間」（apps/bomb/app/app.css .timer-toggle）同一個樣子 */
+/* 「自己選主題」收合鍵：顏色與滑過樣式用全站的 .link（深色模式會自動換色），這裡只排版＋箭頭；跟定時炸彈的「自訂區間」一樣 */
 .topic-toggle {
   justify-self: start; display: inline-flex; align-items: center; gap: 4px; padding: 4px 0;
-  border: 0; background: none; cursor: pointer;
-  font: inherit; font-size: 14px; font-weight: 800; color: var(--blue-text);
+  border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800;
 }
 .topic-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
 .topic-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
-.topic-toggle:hover { color: var(--indigo); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
 .topic-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ---------- 開始玩 ---------- */
