@@ -31,7 +31,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22b';
+const ASSET_VERSION = '2026-10-22c';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -398,7 +398,7 @@ function toolsPage(lang) {
   const s = STRINGS[lang];
   const T = s.tools;
   return `${head(s, lang, 'tools', T.seoTitle, T.seoDesc, jsonLd(s, lang, 'tools', T.seoTitle, T.seoDesc))}
-  <body>${navbar(s, lang, 'tools')}
+  <body class="tools-page">${navbar(s, lang, 'tools')}
       <main id="main">
         <div class="page-head">
           ${toolCrumbs(s, lang, 'tools')}
