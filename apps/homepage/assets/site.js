@@ -212,11 +212,13 @@
     const build = () => {
       const total = +root.querySelector('[data-time] [aria-pressed="true"]').dataset.v;
       const pool = GAMES.filter(g => !g.soon && !g.boardgame);
-      // 找出加起來最接近、但不超過總時間的一組（暖場一個＋認識一個），差不多長的隨機挑
+      // 找出加起來最接近總時間的一組（暖場一個＋認識一個），差不多長的隨機挑。
+      // 時長都是估計值，容許超出 1 分鐘：不然 10 分鐘的「認識」只排得進定時炸彈（喜好二選一 8 分＋最短暖場 3 分＝11）
+      const OVER = 1;
       const pairs = [];
       for (const a of pool.filter(g => g.purpose.includes('warmup')))
         for (const b of pool.filter(g => g.purpose.includes('know') && g !== a))
-          if (a.minutes + b.minutes <= total) pairs.push([a, b]);
+          if (a.minutes + b.minutes <= total + OVER) pairs.push([a, b]);
       const best = Math.max(0, ...pairs.map(([a, b]) => a.minutes + b.minutes));
       const pick = shuffle(pairs.filter(([a, b]) => a.minutes + b.minutes >= best - 3))[0];
       const stages = [[t.stageWarm, 's1'], [t.stageKnow, 's2']];
