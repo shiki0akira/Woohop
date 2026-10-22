@@ -12,7 +12,7 @@
 //   /{lang}/combo/    破冰組合
 //   /{lang}/tools/    桌遊助手（阿瓦隆＋小工具總覽，2026-10-22）
 //   /{lang}/tools/truth-or-dare/、metronome/、names/   小工具（全站共用的帶領元件 window.Leader）
-//   /{lang}/about/    關於我們，/{lang}/contact/  聯絡我們（意見表單），/{lang}/privacy/  隱私權政策（2026-10-22）
+//   /{lang}/about/    關於我們，/{lang}/contact/  聯絡我們（意見表單），/{lang}/terms/  服務條款，/{lang}/privacy/  隱私權政策（2026-10-22）
 // 舊網址只有 /{lang}/，維持不變；其他是新增的。
 
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
@@ -24,9 +24,10 @@ import { SLOT } from '../src/slot-prompts.mjs';
 import { THEMES, groupsFor } from '../src/name-pools.mjs';
 
 import { ABOUT, FEEDBACK_TYPES } from '../src/about-strings.mjs';
+import { TERMS } from '../src/terms-strings.mjs';
 
 // 小工具頁、關於／隱私頁的文案併進當頁語言的 STRINGS（s.tools、s.about），head／jsonLd／window.WOOHOP.t 都讀得到
-for (const lang of LANGS) Object.assign(STRINGS[lang], { tools: TOOLS[lang], about: ABOUT[lang] });
+for (const lang of LANGS) Object.assign(STRINGS[lang], { tools: TOOLS[lang], about: { ...ABOUT[lang], terms: TERMS[lang] } });
 const isTool = (page) => TOOL_KEYS.includes(page);
 
 const SITE = 'https://www.vibeweb100.com';
@@ -34,7 +35,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22x';
+const ASSET_VERSION = '2026-10-22y';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -176,7 +177,7 @@ function jsonLd(s, lang, page, title, desc) {
     const second = isTool(page) ? 'tools' : page;
     const items = [
       { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
-      { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1, tools: s.tools.h1, about: s.about.h1, contact: s.about.contactHeading, privacy: s.about.privacy.h1 }[second], item: url(lang, second) },
+      { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1, tools: s.tools.h1, about: s.about.h1, contact: s.about.contactHeading, terms: s.about.terms.h1, privacy: s.about.privacy.h1 }[second], item: url(lang, second) },
     ];
     if (isTool(page)) items.push({ '@type': 'ListItem', position: 3, name: s.tools.items[page].name, item: url(lang, page) });
     graph.push({ '@type': 'BreadcrumbList', itemListElement: items });
@@ -463,12 +464,12 @@ ${scripts(s, lang, key, ['game.js', 'tools.js'], { navPage: 'tools', tool })}
 
 // 信箱：跟頁尾一樣拆成兩半放在 data 屬性，site.js 組回來（HTML 裡不出現完整地址）
 const mailLink = '<a class="link footer-mail" data-u="woohop" data-d="vibeweb100.com" hidden><span></span></a>';
-// 隱私權政策段落：**粗體**、[文字](網址)；{mail}、{contact}、{rooms} 換成實際內容
+// 隱私權政策、服務條款的段落：**粗體**、[文字](網址)；{mail}、{contact}、{privacy}、{rooms} 換成實際內容
 const legal = (s, lang, p) => {
   const rooms = new Intl.ListFormat(lang, { type: 'conjunction' }).format(['buzzer', 'match', 'bingo'].map((k) => s.games[k][0]));
   return rich(p.replace('{rooms}', rooms))
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => {
-      const h = href === '{contact}' ? local(lang, 'contact') : href;
+      const h = { '{contact}': local(lang, 'contact'), '{privacy}': local(lang, 'privacy') }[href] || href;
       const ext = /^https?:/.test(h) ? ' target="_blank" rel="noopener"' : '';
       return `<a class="link" href="${h}"${ext}>${t}</a>`;
     })
@@ -567,11 +568,12 @@ ${scripts(s, lang, 'contact', ['about.js'])}
 `;
 }
 
-function privacyPage(lang) {
+// 隱私權政策、服務條款：同一個版型（日期＋前言＋一節一節的段落）
+const legalPage = (page) => (lang) => {
   const s = STRINGS[lang];
-  const P = s.about.privacy;
-  return `${head(s, lang, 'privacy', P.seoTitle, P.seoDesc, jsonLd(s, lang, 'privacy', P.seoTitle, P.seoDesc), ['game.css'])}
-  <body class="legal-page">${navbar(s, lang, 'privacy')}
+  const P = s.about[page];
+  return `${head(s, lang, page, P.seoTitle, P.seoDesc, jsonLd(s, lang, page, P.seoTitle, P.seoDesc), ['game.css'])}
+  <body class="legal-page">${navbar(s, lang, page)}
       <main id="main">
         <div class="page-head">
           <h1>${esc(P.h1)}</h1>
@@ -584,12 +586,12 @@ function privacyPage(lang) {
           </div>
         </section>
       </main>
-${footer(s, lang, 'privacy')}
-${scripts(s, lang, 'privacy', ['about.js'])}
+${footer(s, lang, page)}
+${scripts(s, lang, page, ['about.js'])}
   </body>
 </html>
 `;
-}
+};
 
 /* ---------- sitemap：每一頁都帶 hreflang（noindex 的頁面不放） ---------- */
 
@@ -611,7 +613,7 @@ mkdirSync(OUT, { recursive: true });
 
 const render = {
   home: homePage, games: gamesPage, combo: comboPage, tools: toolsPage, guides: guidesPage,
-  about: aboutPage, contact: contactPage, privacy: privacyPage,
+  about: aboutPage, contact: contactPage, terms: legalPage('terms'), privacy: legalPage('privacy'),
   ...Object.fromEntries(TOOL_KEYS.map((k) => [k, toolPage(k)])),
 };
 let count = 0;

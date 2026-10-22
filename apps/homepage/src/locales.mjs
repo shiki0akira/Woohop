@@ -130,6 +130,7 @@ export const STRINGS = {
     aboutUs: "關於我們",
     privacy: "隱私權政策",
     contact: "聯絡我們",
+    terms: "服務條款",
     faqKicker: "常見問題",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "帶領指南",
@@ -222,6 +223,7 @@ export const STRINGS = {
     aboutUs: "About us",
     privacy: "Privacy policy",
     contact: "Contact",
+    terms: "Terms of service",
     faqKicker: "FAQ",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Guides",
@@ -314,6 +316,7 @@ export const STRINGS = {
     aboutUs: "Über uns",
     privacy: "Datenschutz",
     contact: "Kontakt",
+    terms: "Nutzungsbedingungen",
     faqKicker: "Häufige Fragen",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Anleitungen",
@@ -406,6 +409,7 @@ export const STRINGS = {
     aboutUs: "Qui sommes-nous",
     privacy: "Confidentialité",
     contact: "Contact",
+    terms: "Conditions d’utilisation",
     faqKicker: "Questions fréquentes",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Guides",
@@ -498,6 +502,7 @@ export const STRINGS = {
     aboutUs: "私たちについて",
     privacy: "プライバシーポリシー",
     contact: "お問い合わせ",
+    terms: "利用規約",
     faqKicker: "よくある質問",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "進行ガイド",
@@ -590,6 +595,7 @@ export const STRINGS = {
     aboutUs: "우리에 대해",
     privacy: "개인정보 처리방침",
     contact: "문의하기",
+    terms: "이용약관",
     faqKicker: "자주 묻는 질문",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "진행 가이드",
@@ -682,6 +688,7 @@ export const STRINGS = {
     aboutUs: "Quiénes somos",
     privacy: "Privacidad",
     contact: "Contacto",
+    terms: "Términos de uso",
     faqKicker: "Preguntas frecuentes",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Guías",
@@ -774,6 +781,7 @@ export const STRINGS = {
     aboutUs: "关于我们",
     privacy: "隐私政策",
     contact: "联系我们",
+    terms: "服务条款",
     faqKicker: "常见问题",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "带领指南",
