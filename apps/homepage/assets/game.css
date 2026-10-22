@@ -343,4 +343,16 @@ dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1
 .metro-tempo output { min-width: 96px; font-size: 18px; }
 .metro-auto { min-height: 44px; }
 .metro-toggle { max-width: 420px; }
+/* 開場口令（metronome 的 intro）：跟竹筍的口令格子同一個樣子，跟燈佔同一個位置（高度一樣，換過去不會跳） */
+.metro-intro { display: flex; justify-content: center; gap: 8px; min-height: 52px; align-items: center; flex-wrap: wrap; }
+.metro-intro span {
+  display: grid; place-items: center; height: 44px; padding: 0 14px; border-radius: var(--r-md);
+  border: 2px solid var(--edge-n); background: var(--sunken); font-size: 18px; font-weight: 900; color: var(--muted);
+  transition: transform .08s, background .08s;
+}
+.metro-intro span.on { background: var(--orange); border-color: var(--orange-edge); color: var(--ink); transform: translateY(-4px) scale(1.08); }
+.metro-beats { min-height: 52px; align-items: center; }
+/* .beats 和 .metro-intro 都是 display:flex，會蓋掉 hidden，要自己補回來 */
+.metro-intro[hidden], .metro-beats[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .metro-intro span { transition: none; } .metro-intro span.on { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .metro-beats i { transition: none; } .metro-beats i.on { transform: none; } }

@@ -747,7 +747,8 @@
  *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, auto, sound, groove, onStart, onStop })
  *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「1、樓、上、4 樓」，最後一拍是重拍
  *       auto：自動加速一開始就開著（使用者還是可以關）
- *       onBeat(beat, bar)：每一拍亮燈時呼叫，bar 從按下「開始打拍子」算起（0 是第一組），用來對齊開局口令（果園菜園動物園）
+ *       intro：開場口令的詞（例如果園菜園動物園的 ['果園', '菜園', '動物園']）。燈那一排平常先顯示這些字，
+ *         按下開始後一拍亮一個詞，喊完才變回圓燈打拍子（跟竹筍的口令同一個樣子）
  *       sound：可選，回傳 true／false，關著就不出聲（燈照樣亮）
  *       groove：true 時多一層配樂（貝斯、鼓、小旋律）。配樂跟拍子分開開關，但踩同一個時鐘、同一個速度，永遠對得上拍
  *       回傳 { start(), stop(), running() } 管拍子；{ music(on), playing() } 管配樂；
@@ -904,7 +905,7 @@
      * 時鐘（clock）只有一個，上面兩層：拍子（running：拍子聲＋燈，按「開始打拍子」才有）和配樂（music：遊戲自己開關）。
      * 兩層分開開關，但踩同一個時鐘、同一個速度，所以永遠對得上拍。兩層都關了時鐘才停。
      */
-    var st = { clock: false, running: false, music: false, bg: false, duck: false, ducked: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
+    var st = { count: 0, clock: false, running: false, music: false, bg: false, duck: false, ducked: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
     var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
     var musicBus = null;
@@ -932,6 +933,11 @@
     var lights = make('div', 'beats metro-beats');
     lights.setAttribute('aria-hidden', 'true');
     for (var i = 0; i < o.beats; i += 1) lights.appendChild(make('i', isAccent(i) ? 'accent' : ''));
+    // 開場口令：跟燈放在同一個位置，平常顯示口令、打拍子時喊完口令才換成燈
+    var intro = opts.intro || [];
+    var introRow = make('div', 'metro-intro');
+    introRow.setAttribute('aria-hidden', 'true');
+    intro.forEach(function (word) { introRow.appendChild(make('span', '', word)); });
     var row = make('div', 'metro-row');
     var stepper = make('div', 'stepper metro-tempo');
     var slower = make('button', '', '−');
@@ -952,6 +958,7 @@
     row.appendChild(auto);
     var toggle = make('button', 'btn btn-lg btn-solid btn-block metro-toggle', t.metroStart);
     toggle.type = 'button';
+    if (intro.length) rootEl.appendChild(introRow);
     rootEl.appendChild(lights);
     rootEl.appendChild(row);
     rootEl.appendChild(toggle);
@@ -966,9 +973,16 @@
       auto.setAttribute('aria-pressed', String(st.auto));
     }
 
-    function light(index) {
+    // count 是按下開始後第幾拍：前 intro.length 拍亮口令的詞，之後亮燈；index -1 是全熄（停下來，回到顯示口令）
+    function light(index, count) {
+      var inIntro = intro.length > 0 && (index < 0 || count < intro.length);
+      introRow.hidden = !inIntro;
+      lights.hidden = inIntro;
+      Array.prototype.forEach.call(introRow.children, function (word, i) {
+        word.classList.toggle('on', index >= 0 && i === count);
+      });
       Array.prototype.forEach.call(lights.children, function (dot, i) {
-        dot.classList.toggle('on', i === index);
+        dot.classList.toggle('on', !inIntro && i === index);
       });
     }
 
@@ -995,12 +1009,10 @@
           if (st.music) groove(c, musicBus, at, b, o.beats, st.bars, accent, 30 / st.bpm);
         }
         if (st.running) {
-          (function (index, bar, when) {
-            st.visual.push(setTimeout(function () {
-              light(index);
-              if (opts.onBeat) opts.onBeat(index, bar);
-            }, Math.max(0, (when - c.currentTime) * 1000)));
-          })(b, st.bars, at);
+          (function (index, count, when) {
+            st.visual.push(setTimeout(function () { light(index, count); }, Math.max(0, (when - c.currentTime) * 1000)));
+          })(b, st.count, at);
+          st.count += 1;
         }
         st.next += 60 / st.bpm;
         st.beat = (b + 1) % o.beats;
@@ -1048,6 +1060,7 @@
       st.running = true;
       setGain(clickBus, CLICK_VOL);
       applyMusicLevel();
+      st.count = 0;
       st.beat = 0;
       st.bars = 0;
       tick();
@@ -1121,6 +1134,7 @@
     });
 
     sync();
+    light(-1);
     return {
       start: start, stop: stop, music: music, background: background, duck: duck,
       running: function () { return st.running; },

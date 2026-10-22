@@ -35,17 +35,6 @@
 .topic-toggle:hover { color: var(--indigo); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
 .topic-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* ---------- 開局口令：四格，喊到哪格亮哪格（最後一格是今天的主題） ---------- */
-.chant { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.chant li {
-  display: grid; place-items: center; min-height: 44px; padding: 4px; border-radius: var(--r-md); text-align: center;
-  border: 2px solid var(--edge-n); background: var(--surface); color: var(--text-2); font-weight: 900; font-size: 15px; line-height: 1.15;
-  transition: transform .08s, background .08s;
-}
-.chant li:last-child { border-color: var(--orange-edge); color: var(--orange-text); }
-.chant li.on { background: var(--orange); border-color: var(--orange-edge); color: #fff; transform: scale(1.06); }
-@media (prefers-reduced-motion: reduce) { .chant li { transition: none; } .chant li.on { transform: none; } }
-
 /* ---------- 開始玩 ---------- */
 /* 結束鍵：紅色、要按住 0.8 秒（跟竹筍的 .round-btn 同一個做法），按住時從左到右填滿 */
 .end-btn {

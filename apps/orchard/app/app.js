@@ -35,7 +35,6 @@
     topicShuffle: $('topic-shuffle'),
     topicChips: $('topic-chips'),
     topicToggle: $('topic-toggle'),
-    chant: $('chant'),
     metroRoot: $('metro-root'),
     endBtn: $('end-btn'),
     slotRoot: $('slot-root'),
@@ -82,7 +81,6 @@
     var topic = T.topics[index];
     el.topicName.textContent = topic[0];
     el.topicSay.textContent = fill(T.topicSay, { say: topic[1] });
-    if (el.chant.lastChild) el.chant.lastChild.textContent = topic[0];
     Array.prototype.forEach.call(el.topicChips.children, function (chip, i) {
       chip.setAttribute('aria-pressed', String(i === index));
     });
@@ -94,25 +92,6 @@
     if (T.topics.length < 2) return 0;
     var next = Math.floor(Math.random() * (T.topics.length - 1));
     return next >= topicIndex && topicIndex >= 0 ? next + 1 : next; // 不會抽到跟現在同一個
-  }
-
-  // ---------- 開局口令（CONCEPT.md 2.1）：果園、菜園、動物園＋今天的主題 ----------
-  /*
-   * 按下「開始打拍子」後，前四組的第三拍依序喊 T.chant 三個詞，第四組喊今天的主題（主持人喊），
-   * 之後才輪流接。格子跟著拍子亮（節拍器的 onBeat），像竹筍的口令一樣。
-   */
-  function renderChant() {
-    el.chant.textContent = '';
-    T.chant.concat(['']).forEach(function (word) {
-      var li = document.createElement('li');
-      li.textContent = word;
-      el.chant.appendChild(li);
-    });
-  }
-  function lightChant(index) {
-    Array.prototype.forEach.call(el.chant.children, function (li, i) {
-      li.classList.toggle('on', i === index);
-    });
   }
 
   function renderTopicChips() {
@@ -172,16 +151,13 @@
       auto: true, // 自動加速預設開著（使用者要求）
       // 配樂跟拍子分開（使用者要求）：一進「開始！」就放配樂，頂欄音符鍵只管配樂；拍子聲由「開始打拍子」管。兩個踩同一個時鐘，不會對不上
       groove: true,
-      // 前四組亮口令的格子（每組一格），第五組開始大家輪流接，格子全部熄掉
-      onBeat: function (beat, bar) { lightChant(bar < el.chant.children.length ? bar : -1); },
+      // 開場口令（CONCEPT.md 2.1）：燈那一排先顯示「果園、菜園、動物園」，第一組一拍亮一個詞，喊完才變回三個燈
+      intro: T.chant,
       onStart: function () {
         requestWakeLock();
         if (!startedAt) startedAt = Date.now();
       },
-      onStop: function () {
-        releaseWakeLock();
-        lightChant(-1);
-      },
+      onStop: releaseWakeLock,
     });
   }
 
@@ -369,7 +345,6 @@
   loadSettings();
   syncSound();
   Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);
-  renderChant();
   renderTopicChips();
   showScreen('setup');
 })();
