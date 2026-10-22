@@ -879,7 +879,7 @@
     osc.stop(at + 0.3);
   }
 
-  // 一拍（含後半拍）的配樂。beat 是這一小節第幾拍，bar 是第幾小節，half 是半拍的秒數
+  // 一拍的配樂。beat 是這一小節第幾拍，bar 是第幾小節，half 是半拍的秒數（只用來算音的長度）
   function groove(c, out, at, beat, beats, bar, accent, half) {
     if (beat === 0) grooveKick(c, out, at);
     if (accent) grooveHat(c, out, at, 0.22, 0.1, 1500);
