@@ -21,22 +21,21 @@
   // ---------- 卡片 ----------
   const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames' };
   const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A' };
-  // 橫式卡：左邊插圖，右邊小標籤（總覽頁才有，分桌遊／小工具）＋標題＋說明
-  const hCard = ({ href, attr, art, color, name, desc, kind }) => `<a class="game tool-card" href="${href}" ${attr}>
+  // 橫式卡：左邊插圖，右邊標題＋說明
+  const hCard = ({ href, attr, art, color, name, desc }) => `<a class="game tool-card" href="${href}" ${attr}>
       <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${art}</svg></div>
-      ${kind ? `<span class="badge ${kind[0]} tool-kind">${esc(kind[1])}</span>` : ''}
       <h3>${esc(name)}</h3>
       <p>${esc(desc)}</p>
       <svg class="w-row" viewBox="0 0 177 48" aria-hidden="true">${[0, 1, 2].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${color}"/>`).join('')}</svg>
     </a>`;
-  const toolCard = (key, href, kind) => hCard({
+  const toolCard = (key, href) => hCard({
     href, attr: `data-tool="${key}"`, art: W.art[TOOL_ART[key]](), color: TOOL_COLOR[key],
-    name: T.items[key].name, desc: T.items[key].short, kind,
+    name: T.items[key].name, desc: T.items[key].short,
   });
   // 桌遊（目前只有阿瓦隆）：資料用 site.js 的 GAMES，畫成跟小工具一樣的橫式卡
-  const boardCard = (key, href, kind) => {
+  const boardCard = (key, href) => {
     const g = Site.GAMES.find(x => x.key === key);
-    return hCard({ href, attr: `data-key="${key}"`, art: W.art[key](), color: g.color, name: g.name, desc: g.desc, kind });
+    return hCard({ href, attr: `data-key="${key}"`, art: W.art[key](), color: g.color, name: g.name, desc: g.desc });
   };
 
   // 爬蟲版的遊戲連結換成首頁同款的遊戲卡（data-games 列出要放哪幾個）
@@ -50,8 +49,8 @@
   const toolGrid = document.getElementById('tool-grid');
   if (toolGrid) {
     toolGrid.innerHTML = Array.prototype.map.call(toolGrid.children, a => a.dataset.board
-      ? boardCard(a.dataset.board, a.getAttribute('href'), ['b-info', T.boardHeading])
-      : toolCard(a.dataset.tool, a.getAttribute('href'), ['b-live', T.toolsHeading])).join('');
+      ? boardCard(a.dataset.board, a.getAttribute('href'))
+      : toolCard(a.dataset.tool, a.getAttribute('href'))).join('');
   }
 
   // ---------- 工具頁 ----------

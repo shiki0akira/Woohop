@@ -38,6 +38,7 @@
   /* ================= 遊戲資料 =================
    * players：最少～最多人；minutes：一局大約幾分鐘（卡片標「3 分一局」、「有多少時間」篩選、排破冰組合都用它）
    * phones：none / one / each；purpose：warmup / know（桌遊助手不是破冰遊戲，留空，選了目的就不會出現）
+   * added：上線日期（首頁沒篩選時「最新」那兩張照這個排；2026-10 改版前就有的遊戲不填）
    * 幸福模擬器不是遊戲（獨立專案），不在這裡，只在首頁專區與頁尾。
    */
   const GAMES = [
@@ -45,11 +46,11 @@
     { key: 'bingo',   players: [8, 30], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
     { key: 'bomb',    players: [4, 15], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
     { key: 'buzzer',  players: [5, 30], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
-    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A' },
+    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A', added: '2026-10-20' },
     { key: 'avalon',  players: [5, 10], minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
-    // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器，先佔位
-    { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419' },
-    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6' },
+    // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器
+    { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', added: '2026-10-22' },
+    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', added: '2026-10-21' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
@@ -78,7 +79,7 @@
   };
 
   /* ================= 推薦器 =================
-   * finder(root, { filters, limit, moreHref })：首頁只放兩個條件、列三張；找遊戲頁放全部。
+   * finder(root, { filters, limit, moreHref, featured })：首頁只放兩個條件、列四張（沒選條件時熱門兩個＋最新兩個）；找遊戲頁放全部。
    * 條件同步到網址（?people=5-15&phones=each），首頁的「看全部遊戲」帶著條件過去。
    */
   const FILTERS = {
@@ -88,7 +89,8 @@
     phones:  { label: t.fPhones,  type: 'many', values: ['none', 'one', 'each'],          labels: t.oPhones },
     purpose: { label: t.fPurpose, type: 'many', values: ['warmup', 'know'],               labels: t.oPurpose },
   };
-  const finder = (root, { filters = Object.keys(FILTERS), limit = Infinity, moreHref = null } = {}) => {
+  // featured：沒選任何條件時排在最前面的遊戲 key（首頁用：熱門兩個＋最新兩個）
+  const finder = (root, { filters = Object.keys(FILTERS), limit = Infinity, moreHref = null, featured = [] } = {}) => {
     const params = new URLSearchParams(location.search);
     const state = {};
     for (const k of Object.keys(FILTERS)) {
@@ -148,8 +150,9 @@
       const filtered = !!query();
       // 選了 5 分鐘、15 分鐘：一局最接近那個時間的排前面，比較能把時間用滿（15 分以上不排，不然阿瓦隆永遠第一）
       const byTime = state.time === '0' || state.time === '1';
+      const rank = g => { const i = filtered ? -1 : featured.indexOf(g.key); return i < 0 ? Infinity : i; };
       const all = GAMES.filter(g => match(g) && !(filtered && g.soon))
-        .sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0) || (byTime ? b.minutes - a.minutes : 0));
+        .sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0) || rank(a) - rank(b) || (byTime ? b.minutes - a.minutes : 0));
       $('[data-results]').innerHTML = all.slice(0, limit).map(g => card(g, state.purpose)).join('');
       const n = all.filter(g => !g.soon).length, soon = all.filter(g => g.soon).length;
       $('[data-count]').innerHTML = fmt(esc(t.found), { n: `<em>${n}</em>` }) + (soon ? `<span class="t-small">${esc(fmt(t.soonCount, { n: soon }))}</span>` : '');
