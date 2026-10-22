@@ -31,7 +31,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22k';
+const ASSET_VERSION = '2026-10-22l';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -314,7 +314,6 @@ function gamesPage(lang) {
   <body>${navbar(s, lang, 'games')}
       <main id="main">
         <div class="page-head">
-          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><span>${esc(s.navGames)}</span></nav>
           <h1>${esc(s.gamesH1)}</h1>
           <p>${esc(s.gamesLead)}</p>
         </div>
@@ -336,7 +335,6 @@ function comboPage(lang) {
   <body>${navbar(s, lang, 'combo')}
       <main id="main">
         <div class="page-head">
-          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><span>${esc(s.navCombo)}</span></nav>
           <h1>${esc(s.comboH1)}</h1>
           <p>${esc(s.comboPageLead)}</p>
         </div>
@@ -369,7 +367,6 @@ function guidesPage(lang) {
   <body>${navbar(s, lang, 'guides')}
       <main id="main">
         <div class="page-head">
-          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><span>${esc(s.navGuides)}</span></nav>
           <h1>${esc(s.guidesH1)}</h1>
           <p>${esc(s.guidesLead)}</p>
         </div>
@@ -401,7 +398,6 @@ function toolsPage(lang) {
   <body class="tools-page">${navbar(s, lang, 'tools')}
       <main id="main">
         <div class="page-head">
-          ${toolCrumbs(s, lang, 'tools')}
           <h1>${esc(T.h1)}</h1>
           <p>${esc(T.lead)}</p>
         </div>

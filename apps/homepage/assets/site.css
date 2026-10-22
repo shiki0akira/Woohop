@@ -169,8 +169,10 @@
   .footer-controls { display: flex; align-items: center; gap: 10px; }
 
   /* ---------- 子頁的標題區 ---------- */
-  .page-head { padding: 40px 0 8px; }
-  .page-head h1 { margin: 8px 0 8px; font-size: clamp(30px, 5vw, 44px); font-weight: 900; }
+  /* 標題離頂欄大約 40px（第一層頁面不放麵包屑，2026-10-22）；有麵包屑的頁面在麵包屑和標題之間留 8px */
+  .page-head { padding: 24px 0 8px; }
+  .page-head .crumbs + h1 { margin-top: 8px; }
+  .page-head h1 { margin: 0 0 8px; font-size: clamp(30px, 5vw, 44px); font-weight: 900; }
   .page-head p { margin: 0; color: var(--muted); max-width: 36em; }
 
   /* ---------- 帶領指南列表 ---------- */
@@ -294,7 +296,9 @@
 /* 桌遊助手總覽的小工具卡：一排三個，左邊插圖、右邊標題和說明（手機一排一個） */
 #tool-grid { grid-template-columns: 1fr; }
 @media (min-width: 900px) { #tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-#tool-grid .tool-card { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 14px; row-gap: 4px; align-content: start; padding: 18px 16px; }
+#tool-grid .tool-card { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 14px; row-gap: 4px; align-content: center; padding: 16px; }
 #tool-grid .tool-card .art { grid-row: 1 / span 2; height: 88px; place-items: center; }
 #tool-grid .tool-card .art svg { height: 84px; }
-#tool-grid .tool-card h3 { align-self: end; }
+/* 文字靠上、不撐高：說明最多兩行，卡片下面不留空 */
+#tool-grid .tool-card h3, #tool-grid .tool-card p { align-self: start; }
+#tool-grid .tool-card p { -webkit-line-clamp: 2; line-clamp: 2; }
