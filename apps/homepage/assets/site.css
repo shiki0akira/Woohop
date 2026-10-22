@@ -260,9 +260,9 @@
 
 /* ---------- 桌遊助手：小工具頁（tools.js 用全站共用的帶領元件 window.Leader 建，樣式大多在 game.css） ---------- */
 /* 桌遊助手總覽與小工具頁：每個區塊上下 40px（全站的 section 是 48px） */
-.tools-page section, .tool-page section { padding: 40px 0; }
+.tools-page main > section, .tool-page main > section { padding: 40px 0; }
 /* 「怎麼用」「也用在這些遊戲」緊接在上一塊下面，上面只留 20px */
-.tool-page section.tool-how, .tool-page section.tool-used { padding: 20px 0 40px; }
+.tool-page main > section.tool-how, .tool-page main > section.tool-used { padding: 20px 0 40px; }
 .tool-panel { padding: 20px; display: grid; gap: 16px; justify-items: center; }
 .tool-panel > * { width: 100%; max-width: 520px; }
 .tool-h { margin: 0 0 12px; font-size: 18px; }

@@ -317,7 +317,7 @@ dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1
 .namer .drawn-name { margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; word-break: keep-all; overflow-wrap: anywhere; color: var(--mint-text); }
 
 
-.namer .named { margin-top: 20px; }
+.namer .named { margin-top: 20px; padding: 0; } /* 它是 <section>，不要吃到全站 section 的上下 48px */
 .namer .named h2 { margin: 0 0 8px; color: var(--muted); font-weight: 800; }
 .namer .named-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .namer .named-chip { display: inline-flex; align-items: center; gap: 2px; padding: 4px 4px 4px 12px; border-radius: var(--r-pill); border: 2px solid var(--edge-n); background: var(--surface); font-weight: 800; }
