@@ -747,6 +747,7 @@
  *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, auto, sound, groove, onStart, onStop })
  *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「1、樓、上、4 樓」，最後一拍是重拍
  *       auto：自動加速一開始就開著（使用者還是可以關）
+ *       onBeat(beat, bar)：每一拍亮燈時呼叫，bar 從按下「開始打拍子」算起（0 是第一組），用來對齊開局口令（果園菜園動物園）
  *       sound：可選，回傳 true／false，關著就不出聲（燈照樣亮）
  *       groove：true 時多一層配樂（貝斯、鼓、小旋律）。配樂跟拍子分開開關，但踩同一個時鐘、同一個速度，永遠對得上拍
  *       回傳 { start(), stop(), running() } 管拍子；{ music(on), playing() } 管配樂；
@@ -994,9 +995,12 @@
           if (st.music) groove(c, musicBus, at, b, o.beats, st.bars, accent, 30 / st.bpm);
         }
         if (st.running) {
-          (function (index, when) {
-            st.visual.push(setTimeout(function () { light(index); }, Math.max(0, (when - c.currentTime) * 1000)));
-          })(b, at);
+          (function (index, bar, when) {
+            st.visual.push(setTimeout(function () {
+              light(index);
+              if (opts.onBeat) opts.onBeat(index, bar);
+            }, Math.max(0, (when - c.currentTime) * 1000)));
+          })(b, st.bars, at);
         }
         st.next += 60 / st.bpm;
         st.beat = (b + 1) % o.beats;
