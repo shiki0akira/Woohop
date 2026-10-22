@@ -1292,7 +1292,8 @@
   <div class="card" style="margin-top:16px">
     <p class="sub">選主題＋抽卡取名 <code>Leader.themes</code>、<code>Leader.namer</code></p>
     <p class="note">選主題（隨機、各名稱庫、可加「用本名」），手機傳一圈每人抽一張；抽過的列在下面不重複。遊戲裡還有「自己取一個」「大家都取好了」，小工具頁把這兩個藏掉。</p>
-    <div class="demo-grid two">
+    <!-- align-items:start：不然右邊抽卡比較高，左邊的主題卡會被撐成長條 -->
+    <div class="demo-grid two" style="align-items:start">
       <div id="demo-themes"></div>
       <div id="demo-namer"></div>
     </div>
