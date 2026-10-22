@@ -119,7 +119,8 @@
     build();
   }
 
-  // 抽卡取名：先選主題，再手機傳一圈（跟竹筍的取名同一個）；取好後留一份名單
+  // 抽卡取名：先選主題，再手機傳一圈每人抽一個（跟竹筍的取名同一個）。小工具只抽名字，
+  // 自己取、「大家都取好了」這些遊戲用的按鈕在 site.css 藏掉；抽過的名字留在下面的名單
   if (tool.key === 'names') {
     const I = T.items.names;
     const pool = tool.names;
@@ -135,45 +136,22 @@
 
     const play = make('div');
     play.hidden = true;
-    const done = make('div', 'tool-names-done');
-    done.hidden = true;
 
     root.appendChild(pick);
     root.appendChild(play);
-    root.appendChild(done);
 
     Leader.themes(grid, { pool, value: theme, realname: false, onChange: id => { theme = id; } });
 
     let namer = null;
     const session = { theme: '', random: false, names: [], own: [] };
-    const showDone = () => {
-      done.textContent = '';
-      done.appendChild(make('h2', 'tool-h', I.doneTitle));
-      const list = make('ul', 'named-list');
-      session.names.forEach(name => list.appendChild(make('li', 'named-chip', name)));
-      done.appendChild(list);
-      const again = make('button', 'btn btn-secondary btn-block', I.restart);
-      again.type = 'button';
-      again.addEventListener('click', () => {
-        done.hidden = true;
-        play.hidden = true;
-        pick.hidden = false;
-        root.scrollIntoView({ block: 'start' });
-      });
-      done.appendChild(again);
-      play.hidden = true;
-      done.hidden = false;
-      track('tool_names_done', { players: session.names.length, theme: session.theme });
-    };
     start.addEventListener('click', () => {
       session.random = theme === 'random';
       session.theme = session.random ? Leader.randomTheme(pool) : theme;
       session.names = [];
       session.own = [];
-      if (!namer) namer = Leader.namer(play, { pool, session, minPlayers: 2, onDone: showDone });
+      if (!namer) namer = Leader.namer(play, { pool, session, minPlayers: 1 });
       else namer.reset(session);
       pick.hidden = true;
-      done.hidden = true;
       play.hidden = false;
       track('tool_names_started', { theme: session.theme, random: session.random });
     });
