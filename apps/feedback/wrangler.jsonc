@@ -5,7 +5,7 @@
   "compatibility_date": "2025-11-01",
 
   /*
-   * 「關於與聯絡」頁的意見表單（/{lang}/about/#contact）送到這裡，整理成一封信寄到 woohop.app@gmail.com。
+   * 「聯絡我們」頁的意見表單（/{lang}/contact/）送到這裡，整理成一封信寄到 woohop.app@gmail.com。
    * 首頁的 vercel.json 把 /api/feedback 代理過來，瀏覽器看到的是同一個網域。
    *
    * 寄信用 Email Routing 的 send_email（只能寄給已驗證的收件地址，不用 API 金鑰）。

@@ -1,5 +1,5 @@
 /*
- * 關於我們（/{lang}/about/，聯絡表單在 #contact）與隱私權政策（/{lang}/privacy/）。2026-10-22
+ * 關於我們（/{lang}/about/）、聯絡我們（/{lang}/contact/，意見表單）、隱私權政策（/{lang}/privacy/）。2026-10-22
  *
  * 表單送到 /api/feedback（vercel.json 代理到 apps/feedback 的 Worker，寄到 woohop.app@gmail.com）。
  * 網址可以帶 ?type=bug&game=bomb 預先選好（之後遊戲頁的「回報問題」可以直接連過來）。
@@ -8,12 +8,14 @@
 (() => {
   'use strict';
 
-  const { lang, t } = window.WOOHOP;
+  const { lang, page, t } = window.WOOHOP;
   const Site = window.Site;
+  // 表單原本放在關於頁的 #contact（上線當天就拆成獨立頁），舊連結轉過去
+  if (page === 'about' && location.hash === '#contact') { location.replace(`/${lang}/contact/`); return; }
   Site.nav();
 
   const form = document.getElementById('feedback');
-  if (!form) return; // 隱私權政策頁只要導覽
+  if (!form) return; // 關於、隱私權政策頁只要導覽
   const F = t.about.form;
   const $ = id => document.getElementById(id);
   const message = $('fb-message'), email = $('fb-email'), game = $('fb-game');
@@ -33,7 +35,7 @@
   // 從站內哪一頁點過來（回報問題時知道是哪一頁）
   let from = q.get('from') || '';
   if (!from && document.referrer) {
-    try { const r = new URL(document.referrer); if (r.origin === location.origin && !r.pathname.includes('/about/')) from = r.pathname; } catch { /* 略過 */ }
+    try { const r = new URL(document.referrer); if (r.origin === location.origin && !r.pathname.includes('/contact/')) from = r.pathname; } catch { /* 略過 */ }
   }
 
   const showFieldError = (input, show) => {

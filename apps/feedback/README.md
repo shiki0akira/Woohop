@@ -1,6 +1,6 @@
 # apps/feedback（Woohop 意見表單）
 
-首頁「關於我們」頁（`/{lang}/about/#contact`）的表單送到這裡：檢查內容後寄一封信到 `woohop.app@gmail.com`。
+首頁「聯絡我們」頁（`/{lang}/contact/`）的表單送到這裡：檢查內容後寄一封信到 `woohop.app@gmail.com`。
 
 - 網址：`https://www.vibeweb100.com/api/feedback`（首頁 `vercel.json` 代理到 `woohop-feedback.shiki0akira.workers.dev`）
 - 寄信：Email Routing 的 `send_email` binding，只能寄給已驗證的地址（不用 API 金鑰）；寄件人 `feedback@vibeweb100.com`。有留信箱的話放在 Reply-To，Gmail 直接回覆就是回給對方

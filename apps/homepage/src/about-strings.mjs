@@ -1,5 +1,5 @@
 /*
- * 「關於我們＋聯絡我們」（/{lang}/about/，聯絡表單在 #contact）與隱私權政策（/{lang}/privacy/）的文案，8 種語言（2026-10-22）。
+ * 關於我們（/{lang}/about/）、聯絡我們（/{lang}/contact/，意見表單）與隱私權政策（/{lang}/privacy/）的文案，8 種語言（2026-10-22）。
  * prerender 會把這份併進 STRINGS[lang].about。各語言逐句照當地說法寫，不要丟翻譯 API。
  *
  * 表單送到 apps/feedback（Cloudflare Worker，寄到 woohop.app@gmail.com）。
@@ -16,8 +16,10 @@ const GOOGLE_PARTNERS = 'https://policies.google.com/technologies/partner-sites'
 
 export const ABOUT = {
   'zh-TW': {
-    seoTitle: '關於我們與聯絡｜Woohop 免費團康破冰遊戲',
-    seoDesc: 'Woohop 是免費的線上團康與破冰遊戲網站，打開就能玩、不用註冊。想推薦遊戲、回報問題或給建議，都可以在這裡告訴我們。',
+    seoTitle: '關於我們｜Woohop 免費團康破冰遊戲',
+    seoDesc: 'Woohop 是免費的線上團康與破冰遊戲網站：打開就能玩、不用註冊，每個遊戲都附玩法與帶領說明，支援 8 種語言。',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: '聯絡我們｜Woohop', seoDesc: '推薦遊戲、回報問題、給 Woohop 建議或合作邀約，填表單就能送出，每一則都會看。' },
     h1: '關於 Woohop',
     lead: '讓帶活動變簡單：打開網頁就能玩的團康、破冰遊戲與桌遊小工具。',
     storyHeading: '我們在做什麼',
@@ -28,7 +30,7 @@ export const ABOUT = {
     ],
     promises: [
       ['完全免費', '所有遊戲和小工具都可以免費使用。'],
-      ['不用註冊', '不用帳號，也不會要你留下姓名或電話。'],
+      ['不用註冊', '打開網頁就能玩，不用帳號。'],
       ['聽大家的意見', '新遊戲和改進，很多都來自使用者的建議。'],
     ],
     contactHeading: '聯絡我們',
@@ -68,8 +70,8 @@ export const ABOUT = {
       updated: '最後更新：2026 年 10 月 22 日',
       lead: 'Woohop（www.vibeweb100.com）是免費的團康與破冰遊戲網站。這一頁說明我們會接觸到哪些資料、怎麼使用，以及你可以怎麼做。',
       sections: [
-        ['不用註冊，也不收集個人資料', [
-          '使用 Woohop 不需要帳號。我們不會要你提供姓名、電話、地址或任何身分資料。',
+        ['目前不用註冊', [
+          '現在使用 Woohop 不需要帳號，我們也不會要你提供姓名、電話、地址或任何身分資料。如果未來推出會員功能，註冊會是自願的，而且我們會先更新這一頁，說明會收集哪些資料、怎麼使用。',
         ]],
         ['你在遊戲裡輸入的內容', [
           '需要多支手機一起玩的房間型遊戲（例如{rooms}），會把你輸入的暱稱和作答暫存在我們的伺服器，讓同一個房間的人看得到。**房間 3 小時沒有任何動作就會整個刪除**，我們不會另外保存。',
@@ -105,8 +107,10 @@ export const ABOUT = {
   },
 
   en: {
-    seoTitle: 'About & contact | Woohop — free group games and icebreakers',
-    seoDesc: 'Woohop is a free website of group games and icebreakers that run in your browser — no sign-up. Suggest a game, report a bug or share an idea here.',
+    seoTitle: 'About us | Woohop — free group games and icebreakers',
+    seoDesc: 'Woohop is a free website of group games and icebreakers that run in your browser — no sign-up, with rules and host tips for every game, in 8 languages.',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: 'Contact us | Woohop', seoDesc: 'Suggest a game, report a bug, share an idea or propose a partnership — send us a message and we’ll read every one.' },
     h1: 'About Woohop',
     lead: 'Making it easy to run an activity: group games, icebreakers and board game helpers that work right in your browser.',
     storyHeading: 'What we do',
@@ -117,7 +121,7 @@ export const ABOUT = {
     ],
     promises: [
       ['Free', 'Every game and tool is free to use.'],
-      ['No sign-up', 'No account, and we never ask for your name or phone number.'],
+      ['No sign-up', 'Open the page and play — no account needed.'],
       ['Shaped by you', 'Many new games and improvements come from people’s suggestions.'],
     ],
     contactHeading: 'Contact us',
@@ -157,8 +161,8 @@ export const ABOUT = {
       updated: 'Last updated: October 22, 2026',
       lead: 'Woohop (www.vibeweb100.com) is a free website of group games and icebreakers. This page explains what data we come across, how we use it, and the choices you have.',
       sections: [
-        ['No sign-up, no personal data', [
-          'You don’t need an account to use Woohop. We never ask for your name, phone number, address or any other identifying information.',
+        ['No sign-up for now', [
+          'You don’t need an account to use Woohop today, and we don’t ask for your name, phone number, address or any other identifying information. If we introduce accounts in the future, signing up will be optional, and we’ll update this page first to explain what we collect and how we use it.',
         ]],
         ['What you type in games', [
           'Room games played on several phones (such as {rooms}) temporarily store the nicknames and answers you enter on our server so others in the same room can see them. **A room is deleted entirely after 3 hours without activity**, and we keep no other copy.',
@@ -194,8 +198,10 @@ export const ABOUT = {
   },
 
   de: {
-    seoTitle: 'Über uns & Kontakt | Woohop – kostenlose Gruppenspiele und Eisbrecher',
-    seoDesc: 'Woohop ist eine kostenlose Website mit Gruppenspielen und Eisbrechern direkt im Browser – ohne Anmeldung. Spiel vorschlagen, Fehler melden oder Ideen teilen.',
+    seoTitle: 'Über uns | Woohop – kostenlose Gruppenspiele und Eisbrecher',
+    seoDesc: 'Woohop ist eine kostenlose Website mit Gruppenspielen und Eisbrechern direkt im Browser – ohne Anmeldung, mit Regeln und Tipps zum Anleiten, in 8 Sprachen.',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: 'Kontakt | Woohop', seoDesc: 'Spiel vorschlagen, Fehler melden, Idee teilen oder Zusammenarbeit anfragen – schick uns eine Nachricht, wir lesen jede.' },
     h1: 'Über Woohop',
     lead: 'Aktivitäten leicht gemacht: Gruppenspiele, Eisbrecher und Brettspiel-Helfer, die direkt im Browser laufen.',
     storyHeading: 'Was wir machen',
@@ -206,7 +212,7 @@ export const ABOUT = {
     ],
     promises: [
       ['Kostenlos', 'Alle Spiele und Tools sind kostenlos.'],
-      ['Ohne Anmeldung', 'Kein Konto – wir fragen nie nach Name oder Telefonnummer.'],
+      ['Ohne Anmeldung', 'Seite öffnen und loslegen – ganz ohne Konto.'],
       ['Mit euch gestaltet', 'Viele neue Spiele und Verbesserungen kommen aus euren Vorschlägen.'],
     ],
     contactHeading: 'Kontakt',
@@ -246,8 +252,8 @@ export const ABOUT = {
       updated: 'Zuletzt aktualisiert: 22. Oktober 2026',
       lead: 'Woohop (www.vibeweb100.com) ist eine kostenlose Website mit Gruppenspielen und Eisbrechern. Hier erklären wir, mit welchen Daten wir in Berührung kommen, wie wir sie nutzen und welche Möglichkeiten du hast.',
       sections: [
-        ['Keine Anmeldung, keine personenbezogenen Daten', [
-          'Für Woohop brauchst du kein Konto. Wir fragen nie nach Name, Telefonnummer, Adresse oder anderen Angaben, die dich identifizieren.',
+        ['Derzeit keine Anmeldung', [
+          'Für Woohop brauchst du derzeit kein Konto, und wir fragen nicht nach Name, Telefonnummer, Adresse oder anderen Angaben, die dich identifizieren. Falls wir künftig Benutzerkonten anbieten, ist die Anmeldung freiwillig – und wir aktualisieren diese Seite vorher und erklären, welche Daten wir erheben und wie wir sie nutzen.',
         ]],
         ['Was du in Spielen eingibst', [
           'Raumspiele, die auf mehreren Handys gespielt werden (z. B. {rooms}), speichern die eingegebenen Spitznamen und Antworten vorübergehend auf unserem Server, damit die anderen im Raum sie sehen. **Ein Raum wird nach 3 Stunden ohne Aktivität vollständig gelöscht**; wir behalten keine weitere Kopie.',
@@ -283,8 +289,10 @@ export const ABOUT = {
   },
 
   fr: {
-    seoTitle: 'À propos et contact | Woohop – jeux de groupe et brise-glace gratuits',
-    seoDesc: 'Woohop est un site gratuit de jeux de groupe et de brise-glace qui se jouent dans le navigateur, sans inscription. Proposez un jeu, signalez un bug ou partagez une idée.',
+    seoTitle: 'À propos | Woohop – jeux de groupe et brise-glace gratuits',
+    seoDesc: 'Woohop est un site gratuit de jeux de groupe et de brise-glace jouables dans le navigateur, sans inscription, avec règles et conseils d’animation, en 8 langues.',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: 'Nous contacter | Woohop', seoDesc: 'Proposez un jeu, signalez un bug, partagez une idée ou un partenariat : envoyez-nous un message, nous lisons chacun d’eux.' },
     h1: 'À propos de Woohop',
     lead: 'Rendre l’animation simple : jeux de groupe, brise-glace et outils pour jeux de société, directement dans le navigateur.',
     storyHeading: 'Ce que nous faisons',
@@ -295,7 +303,7 @@ export const ABOUT = {
     ],
     promises: [
       ['Gratuit', 'Tous les jeux et outils sont gratuits.'],
-      ['Sans inscription', 'Pas de compte, et nous ne demandons jamais votre nom ni votre numéro.'],
+      ['Sans inscription', 'Ouvrez la page et jouez, sans compte.'],
       ['Construit avec vous', 'Beaucoup de nouveaux jeux et d’améliorations viennent de vos suggestions.'],
     ],
     contactHeading: 'Nous contacter',
@@ -335,8 +343,8 @@ export const ABOUT = {
       updated: 'Dernière mise à jour : 22 octobre 2026',
       lead: 'Woohop (www.vibeweb100.com) est un site gratuit de jeux de groupe et de brise-glace. Cette page explique quelles données nous rencontrons, comment nous les utilisons et quels choix vous avez.',
       sections: [
-        ['Pas d’inscription, pas de données personnelles', [
-          'Aucun compte n’est nécessaire pour utiliser Woohop. Nous ne demandons jamais votre nom, votre numéro de téléphone, votre adresse ni aucune information permettant de vous identifier.',
+        ['Pas d’inscription pour l’instant', [
+          'Aucun compte n’est nécessaire pour utiliser Woohop aujourd’hui, et nous ne demandons ni votre nom, ni votre numéro de téléphone, ni votre adresse, ni aucune information permettant de vous identifier. Si nous proposons un jour des comptes, l’inscription sera facultative, et nous mettrons d’abord cette page à jour pour expliquer quelles données nous collectons et comment nous les utilisons.',
         ]],
         ['Ce que vous saisissez dans les jeux', [
           'Les jeux en salle joués sur plusieurs téléphones (comme {rooms}) conservent temporairement sur notre serveur les pseudos et réponses saisis, pour que les autres joueurs de la salle puissent les voir. **Une salle est entièrement supprimée après 3 heures sans activité**, et nous n’en gardons aucune copie.',
@@ -372,8 +380,10 @@ export const ABOUT = {
   },
 
   ja: {
-    seoTitle: 'Woohopについて・お問い合わせ｜無料のレクリエーション・アイスブレイクゲーム',
-    seoDesc: 'Woohopは、ブラウザですぐ遊べる無料のレクリエーション・アイスブレイクゲームのサイトです。登録不要。ゲームの提案、不具合の報告、ご意見はこちらから。',
+    seoTitle: 'Woohopについて｜無料のレクリエーション・アイスブレイクゲーム',
+    seoDesc: 'Woohopは、ブラウザですぐ遊べる無料のレクリエーション・アイスブレイクゲームのサイトです。登録不要、どのゲームにもルールと進行のコツつき、8言語対応。',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: 'お問い合わせ｜Woohop', seoDesc: 'ゲームの提案、不具合の報告、改善のアイデア、協業のご相談はこちらのフォームから。すべて目を通しています。' },
     h1: 'Woohopについて',
     lead: '場を回すのをもっとかんたんに。ブラウザですぐ遊べるレクリエーション、アイスブレイク、ボードゲームの便利ツール。',
     storyHeading: 'Woohopでできること',
@@ -384,7 +394,7 @@ export const ABOUT = {
     ],
     promises: [
       ['無料', 'すべてのゲームとツールを無料で使えます。'],
-      ['登録不要', 'アカウントは不要。名前や電話番号を聞くこともありません。'],
+      ['登録不要', 'ページを開くだけで遊べて、アカウントはいりません。'],
       ['みんなの声で育てる', '新しいゲームや改善の多くは、使ってくれた人の提案から生まれています。'],
     ],
     contactHeading: 'お問い合わせ',
@@ -424,8 +434,8 @@ export const ABOUT = {
       updated: '最終更新日：2026年10月22日',
       lead: 'Woohop（www.vibeweb100.com）は、無料のレクリエーション・アイスブレイクゲームのサイトです。このページでは、私たちが扱うデータ、その使い道、あなたが選べることを説明します。',
       sections: [
-        ['登録不要、個人情報は集めません', [
-          'Woohopの利用にアカウントは必要ありません。名前、電話番号、住所など、あなたを特定できる情報を求めることはありません。',
+        ['現在、登録は不要です', [
+          '現在、Woohopの利用にアカウントは必要なく、名前、電話番号、住所など、あなたを特定できる情報をお願いすることもありません。今後会員機能を設ける場合も登録は任意とし、その前にこのページを更新して、集める情報と使い道をお知らせします。',
         ]],
         ['ゲームで入力した内容', [
           '複数のスマホで遊ぶルーム型のゲーム（{rooms}など）では、入力したニックネームと回答を、同じルームの人に表示するためにサーバーに一時保存します。**ルームは3時間操作がないとまるごと削除され**、ほかに保存することはありません。',
@@ -461,8 +471,10 @@ export const ABOUT = {
   },
 
   ko: {
-    seoTitle: 'Woohop 소개 및 문의 | 무료 레크리에이션·아이스브레이킹 게임',
-    seoDesc: 'Woohop은 브라우저에서 바로 즐기는 무료 레크리에이션·아이스브레이킹 게임 사이트입니다. 가입 없이 사용하세요. 게임 추천, 오류 제보, 의견은 여기로 보내 주세요.',
+    seoTitle: 'Woohop 소개 | 무료 레크리에이션·아이스브레이킹 게임',
+    seoDesc: 'Woohop은 브라우저에서 바로 즐기는 무료 레크리에이션·아이스브레이킹 게임 사이트입니다. 가입 없이, 모든 게임에 규칙과 진행 팁을 담았고 8개 언어를 지원합니다.',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: '문의하기 | Woohop', seoDesc: '게임 추천, 오류 제보, 개선 아이디어, 제휴 문의는 이 양식으로 보내 주세요. 모든 메시지를 읽고 있습니다.' },
     h1: 'Woohop 소개',
     lead: '모임 진행을 더 쉽게. 브라우저에서 바로 하는 레크리에이션, 아이스브레이킹 게임과 보드게임 도우미.',
     storyHeading: 'Woohop이 하는 일',
@@ -473,7 +485,7 @@ export const ABOUT = {
     ],
     promises: [
       ['완전 무료', '모든 게임과 도구를 무료로 쓸 수 있습니다.'],
-      ['가입 불필요', '계정이 필요 없고, 이름이나 전화번호를 묻지 않습니다.'],
+      ['가입 불필요', '페이지를 열면 바로 할 수 있고, 계정이 필요 없습니다.'],
       ['여러분의 의견으로', '새 게임과 개선의 상당수가 사용자 제안에서 나왔습니다.'],
     ],
     contactHeading: '문의하기',
@@ -513,8 +525,8 @@ export const ABOUT = {
       updated: '최종 업데이트: 2026년 10월 22일',
       lead: 'Woohop(www.vibeweb100.com)은 무료 레크리에이션·아이스브레이킹 게임 사이트입니다. 이 페이지에서는 저희가 다루는 데이터와 그 사용 방법, 그리고 여러분이 선택할 수 있는 것을 설명합니다.',
       sections: [
-        ['가입 없음, 개인정보 수집 없음', [
-          'Woohop을 쓰는 데 계정은 필요 없습니다. 이름, 전화번호, 주소 등 여러분을 식별할 수 있는 정보를 요구하지 않습니다.',
+        ['현재 가입 불필요', [
+          '현재 Woohop을 쓰는 데 계정은 필요 없으며, 이름, 전화번호, 주소 등 여러분을 식별할 수 있는 정보를 요구하지 않습니다. 앞으로 회원 기능을 도입하더라도 가입은 선택 사항이며, 그 전에 이 페이지를 업데이트해 어떤 정보를 수집하고 어떻게 쓰는지 알려 드리겠습니다.',
         ]],
         ['게임에서 입력한 내용', [
           '여러 휴대폰으로 하는 방 게임(예: {rooms})은 입력한 닉네임과 답을 같은 방 사람들에게 보여 주기 위해 서버에 잠시 저장합니다. **방은 3시간 동안 활동이 없으면 통째로 삭제되며**, 따로 보관하지 않습니다.',
@@ -550,8 +562,10 @@ export const ABOUT = {
   },
 
   es: {
-    seoTitle: 'Sobre nosotros y contacto | Woohop – juegos grupales y rompehielos gratis',
-    seoDesc: 'Woohop es un sitio gratuito de juegos grupales y rompehielos que se juegan en el navegador, sin registro. Sugiere un juego, informa de un error o comparte una idea.',
+    seoTitle: 'Sobre nosotros | Woohop – juegos grupales y rompehielos gratis',
+    seoDesc: 'Woohop es un sitio gratuito de juegos grupales y rompehielos que se juegan en el navegador, sin registro, con reglas y consejos para animar, en 8 idiomas.',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: 'Contacto | Woohop', seoDesc: 'Sugiere un juego, informa de un error, comparte una idea o propón una colaboración: envíanos un mensaje, los leemos todos.' },
     h1: 'Sobre Woohop',
     lead: 'Hacer fácil animar un grupo: juegos grupales, rompehielos y herramientas para juegos de mesa, directamente en el navegador.',
     storyHeading: 'Qué hacemos',
@@ -562,7 +576,7 @@ export const ABOUT = {
     ],
     promises: [
       ['Gratis', 'Todos los juegos y herramientas son gratuitos.'],
-      ['Sin registro', 'Sin cuenta, y nunca te pedimos tu nombre ni tu teléfono.'],
+      ['Sin registro', 'Abre la página y juega, sin cuenta.'],
       ['Hecho contigo', 'Muchos juegos nuevos y mejoras nacen de las sugerencias de la gente.'],
     ],
     contactHeading: 'Contacto',
@@ -602,8 +616,8 @@ export const ABOUT = {
       updated: 'Última actualización: 22 de octubre de 2026',
       lead: 'Woohop (www.vibeweb100.com) es un sitio gratuito de juegos grupales y rompehielos. Esta página explica con qué datos tratamos, cómo los usamos y qué opciones tienes.',
       sections: [
-        ['Sin registro, sin datos personales', [
-          'No necesitas una cuenta para usar Woohop. Nunca te pedimos tu nombre, teléfono, dirección ni ningún dato que te identifique.',
+        ['Por ahora, sin registro', [
+          'Hoy no necesitas una cuenta para usar Woohop, y no te pedimos tu nombre, teléfono, dirección ni ningún dato que te identifique. Si en el futuro ofrecemos cuentas, registrarse será opcional, y antes actualizaremos esta página para explicar qué datos recogemos y cómo los usamos.',
         ]],
         ['Lo que escribes en los juegos', [
           'Los juegos de sala que se juegan con varios móviles (como {rooms}) guardan temporalmente en nuestro servidor los apodos y respuestas que introduces, para que los demás de la sala puedan verlos. **Una sala se borra por completo tras 3 horas sin actividad**, y no guardamos ninguna otra copia.',
@@ -639,8 +653,10 @@ export const ABOUT = {
   },
 
   'zh-CN': {
-    seoTitle: '关于我们与联系｜Woohop 免费团建破冰游戏',
-    seoDesc: 'Woohop 是免费的在线团建与破冰游戏网站，打开就能玩、无需注册。想推荐游戏、反馈问题或提建议，都可以在这里告诉我们。',
+    seoTitle: '关于我们｜Woohop 免费团建破冰游戏',
+    seoDesc: 'Woohop 是免费的在线团建与破冰游戏网站：打开就能玩、无需注册，每个游戏都附玩法和带领说明，支持 8 种语言。',
+    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
+    contactPage: { seoTitle: '联系我们｜Woohop', seoDesc: '推荐游戏、反馈问题、提建议或合作邀约，填写表单即可提交，每一条都会看。' },
     h1: '关于 Woohop',
     lead: '让带活动变简单：打开网页就能玩的团建、破冰游戏和桌游小工具。',
     storyHeading: '我们在做什么',
@@ -651,7 +667,7 @@ export const ABOUT = {
     ],
     promises: [
       ['完全免费', '所有游戏和小工具都可以免费使用。'],
-      ['无需注册', '不用账号，也不会让你留下姓名或手机号。'],
+      ['无需注册', '打开网页就能玩，不用账号。'],
       ['听大家的意见', '很多新游戏和改进都来自用户的建议。'],
     ],
     contactHeading: '联系我们',
@@ -691,8 +707,8 @@ export const ABOUT = {
       updated: '最后更新：2026 年 10 月 22 日',
       lead: 'Woohop（www.vibeweb100.com）是免费的团建与破冰游戏网站。本页说明我们会接触到哪些数据、如何使用，以及你可以怎么做。',
       sections: [
-        ['无需注册，不收集个人信息', [
-          '使用 Woohop 不需要账号。我们不会要求你提供姓名、手机号、地址或任何身份信息。',
+        ['目前无需注册', [
+          '现在使用 Woohop 不需要账号，我们也不会要求你提供姓名、手机号、地址或任何身份信息。如果将来推出会员功能，注册将是自愿的，而且我们会先更新本页，说明会收集哪些信息、如何使用。',
         ]],
         ['你在游戏中输入的内容', [
           '需要多部手机一起玩的房间类游戏（例如{rooms}）会把你输入的昵称和答案暂存在我们的服务器上，让同一房间的人看到。**房间 3 小时没有任何操作就会整个删除**，我们不会另外保存。',
