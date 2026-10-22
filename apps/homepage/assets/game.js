@@ -998,6 +998,9 @@
       }
     }
 
+    // 時鐘現在的速度：打拍子時照節拍器（調快、自動加速配樂都跟著）；沒打拍子時配樂回到原本的速度 o.bpm（2026-10-22 使用者要求）
+    function tempo() { return st.running ? st.bpm : o.bpm; }
+
     function tick() {
       var c = audio;
       while (st.next < c.currentTime + 0.12) {
@@ -1006,7 +1009,7 @@
         var accent = isAccent(b);
         if (soundOn()) {
           if (st.running) click(c, at, accent, clickBus);
-          if (st.music) groove(c, musicBus, at, b, o.beats, st.bars, accent, 30 / st.bpm);
+          if (st.music) groove(c, musicBus, at, b, o.beats, st.bars, accent, 30 / tempo());
         }
         if (st.running) {
           (function (index, count, when) {
@@ -1014,7 +1017,7 @@
           })(b, st.count, at);
           st.count += 1;
         }
-        st.next += 60 / st.bpm;
+        st.next += 60 / tempo();
         st.beat = (b + 1) % o.beats;
         if (st.beat === 0) {
           st.bars += 1;
@@ -1072,8 +1075,8 @@
     function stop() {
       if (!st.running) return;
       st.running = false;
-      // 自動加速加上去的速度歸零：配樂會繼續放，停在加速後的 115 BPM 聽起來很急（2026-10-22 使用者回報）。
-      // 打拍子中自己按 −／＋ 調的不算，只還原自動加的部分
+      // 節拍器的設定：自動加速加上去的歸零，打拍子中自己按 −／＋ 調的保留（下次開始從這裡打）。
+      // 配樂不看這個：沒打拍子時一律回到原本的速度（見 tempo）
       if (st.bpm > st.startBpm + st.manual) st.bpm = st.startBpm + st.manual;
       st.manual = 0;
       st.visual.forEach(clearTimeout);
