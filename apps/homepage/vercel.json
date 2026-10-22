@@ -95,7 +95,12 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/contact/:path*",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/contact/",
+      "destination": "/:lang/about/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/contact/index.html",
       "destination": "/:lang/about/",
       "permanent": true
     },
