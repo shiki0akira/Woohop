@@ -34,7 +34,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22s';
+const ASSET_VERSION = '2026-10-22t';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -528,7 +528,8 @@ function contactPage(lang) {
                 <span class="label" id="fb-type-label">${esc(F.type)}</span>
                 <div class="row fb-types" role="radiogroup" aria-labelledby="fb-type-label">${FEEDBACK_TYPES.map((k, i) => `<label class="chip"><input type="radio" name="type" value="${k}"${i === 0 ? ' checked' : ''}>${esc(F.types[k])}</label>`).join('')}</div>
               </div>
-              <div class="field field-wide">
+              <!-- 只有回報問題、修改建議才問是哪個遊戲（about.js 切換；預設類型是推薦遊戲，先藏起來） -->
+              <div class="field field-wide" id="fb-game-field" hidden>
                 <label for="fb-game">${esc(F.game)}</label>
                 <select class="select" id="fb-game" name="game">
                   <option value="">${esc(F.gameNone)}</option>

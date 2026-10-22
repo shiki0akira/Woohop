@@ -23,15 +23,22 @@
   const openedAt = Date.now();
 
   const currentType = () => form.querySelector('input[name="type"]:checked').value;
-  const setPlaceholder = () => { message.placeholder = F.placeholders[currentType()]; };
-  form.addEventListener('change', e => { if (e.target.name === 'type') setPlaceholder(); });
+  // 「跟哪個遊戲有關」只對回報問題、修改建議有意義（推薦的是還沒有的遊戲），其他類型藏起來
+  const GAME_TYPES = ['bug', 'idea'];
+  const gameField = $('fb-game-field');
+  const onType = () => {
+    message.placeholder = F.placeholders[currentType()];
+    gameField.hidden = !GAME_TYPES.includes(currentType());
+  };
+  form.addEventListener('change', e => { if (e.target.name === 'type') onType(); });
 
-  // 網址帶的預設值
+  // 網址帶的預設值；只帶遊戲沒帶類型（例如遊戲頁的回報連結），當成回報問題
   const q = new URLSearchParams(location.search);
-  const presetType = form.querySelector(`input[name="type"][value="${CSS.escape(q.get('type') || '')}"]`);
+  const presetGame = q.get('game') && [...game.options].some(o => o.value === q.get('game'));
+  const presetType = form.querySelector(`input[name="type"][value="${CSS.escape(q.get('type') || (presetGame ? 'bug' : ''))}"]`);
   if (presetType) presetType.checked = true;
-  if (q.get('game') && [...game.options].some(o => o.value === q.get('game'))) game.value = q.get('game');
-  setPlaceholder();
+  if (presetGame) game.value = q.get('game');
+  onType();
   // 從站內哪一頁點過來（回報問題時知道是哪一頁）
   let from = q.get('from') || '';
   if (!from && document.referrer) {
@@ -65,7 +72,7 @@
     send.disabled = true;
     send.textContent = F.sending;
     const body = {
-      type: currentType(), game: game.value, message: message.value.trim(), email: email.value.trim(),
+      type: currentType(), game: gameField.hidden ? '' : game.value, message: message.value.trim(), email: email.value.trim(),
       website: form.elements.website.value, elapsed: Date.now() - openedAt, lang, from,
     };
     try {
