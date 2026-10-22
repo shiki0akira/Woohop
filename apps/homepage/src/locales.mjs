@@ -120,7 +120,7 @@ export const STRINGS = {
     flowClose: '收尾', flowCloseTitle: '帶進今天的聚會', flowCloseDesc: '用一句話把破冰和接下來的主題接起來。',
     flowCloseSay: '謝謝大家！我們已經比剛剛熟一點了，接下來就輕鬆地開始今天的主題。',
     openGame: '打開{name}',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "帶領指南",
     guidesTitle: "第一次帶也不怕",
     readMin: "約 {n} 分鐘讀完",
@@ -212,7 +212,7 @@ export const STRINGS = {
     flowClose: 'Close', flowCloseTitle: 'Lead into your meeting', flowCloseDesc: 'Use one sentence to connect the icebreaker to what comes next.',
     flowCloseSay: 'Thanks, everyone! We know each other a bit better now — let’s ease into today’s topic.',
     openGame: 'Open {name}',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "Leading guides",
     guidesTitle: "Leading for the first time? No sweat",
     readMin: "{n} min read",
@@ -304,7 +304,7 @@ export const STRINGS = {
     flowClose: 'Abschluss', flowCloseTitle: 'Überleiten zum Treffen', flowCloseDesc: 'Verbinde den Eisbrecher mit einem Satz mit dem, was jetzt kommt.',
     flowCloseSay: 'Danke euch! Wir kennen uns jetzt ein bisschen besser – lasst uns entspannt ins heutige Thema starten.',
     openGame: '{name} öffnen',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "Anleitungen",
     guidesTitle: "Zum ersten Mal leiten? Kein Problem",
     readMin: "{n} Min. Lesezeit",
@@ -396,7 +396,7 @@ export const STRINGS = {
     flowClose: 'Conclusion', flowCloseTitle: 'Enchaîner sur la rencontre', flowCloseDesc: 'Une phrase pour relier le brise-glace à la suite.',
     flowCloseSay: 'Merci à tous ! On se connaît un peu mieux maintenant – entrons tranquillement dans le sujet du jour.',
     openGame: 'Ouvrir {name}',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "Guides d’animation",
     guidesTitle: "Première animation ? Pas de panique",
     readMin: "{n} min de lecture",
@@ -488,7 +488,7 @@ export const STRINGS = {
     flowClose: 'しめ', flowCloseTitle: '今日の集まりへつなぐ', flowCloseDesc: 'ひとことでアイスブレイクとこの後のテーマをつなげます。',
     flowCloseSay: 'ありがとうございました！さっきより少し仲良くなれましたね。では、気楽に今日のテーマに入りましょう。',
     openGame: '{name}を開く',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "進行ガイド",
     guidesTitle: "はじめての進行でも大丈夫",
     readMin: "約{n}分で読めます",
@@ -580,7 +580,7 @@ export const STRINGS = {
     flowClose: '마무리', flowCloseTitle: '오늘 모임으로 연결하기', flowCloseDesc: '한 문장으로 아이스브레이킹과 다음 주제를 이어 주세요.',
     flowCloseSay: '모두 고마워요! 아까보다 조금 더 친해졌네요. 이제 편하게 오늘 주제를 시작해 볼게요.',
     openGame: '{name} 열기',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "진행 가이드",
     guidesTitle: "처음 진행해도 걱정 없어요",
     readMin: "약 {n}분 분량",
@@ -672,7 +672,7 @@ export const STRINGS = {
     flowClose: 'Cierre', flowCloseTitle: 'Pasar al encuentro', flowCloseDesc: 'Une con una frase el rompehielos y lo que viene después.',
     flowCloseSay: '¡Gracias a todos! Ya nos conocemos un poco más; empecemos tranquilamente con el tema de hoy.',
     openGame: 'Abrir {name}',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "Guías",
     guidesTitle: "¿Diriges por primera vez? Sin miedo",
     readMin: "{n} min de lectura",
@@ -764,7 +764,7 @@ export const STRINGS = {
     flowClose: '收尾', flowCloseTitle: '带进今天的聚会', flowCloseDesc: '用一句话把破冰和接下来的主题接起来。',
     flowCloseSay: '谢谢大家！我们已经比刚刚熟一点了，接下来就轻松地开始今天的主题。',
     openGame: '打开{name}',
-    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（頁面還沒做，先停用）、常見問題
+    // 帶領指南卡片（文章還沒寫，先標即將推出）、頁尾「關於」（連到 about／privacy 頁）、常見問題
     guidesKicker: "带领指南",
     guidesTitle: "第一次带也不怕",
     readMin: "约 {n} 分钟读完",

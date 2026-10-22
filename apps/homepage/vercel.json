@@ -95,7 +95,7 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|privacy)",
       "destination": "/:lang/:page/",
       "permanent": true
     },
@@ -110,7 +110,7 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|privacy)/index.html",
       "destination": "/:lang/:page/",
       "permanent": true
     },
@@ -136,6 +136,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/feedback",
+      "destination": "https://woohop-feedback.shiki0akira.workers.dev/api/feedback"
+    },
     {
       "source": "/avalon-sitemap.xml",
       "destination": "https://web100-01-avalon-voice.vercel.app/sitemap.xml"
@@ -525,7 +529,7 @@
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/api/new-room"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|privacy)/",
       "destination": "/:lang/:page/index.html"
     },
     {

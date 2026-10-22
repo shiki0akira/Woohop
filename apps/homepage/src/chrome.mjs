@@ -11,6 +11,8 @@ import { LANGS, LANG_NAMES } from './locales.mjs';
 export const PAGES = {
   home: '', games: 'games/', combo: 'combo/', tools: 'tools/', guides: 'guides/',
   truthOrDare: 'tools/truth-or-dare/', metronome: 'tools/metronome/', names: 'tools/names/',
+  // 關於我們＋聯絡表單（#contact）合成一頁；隱私權政策（2026-10-22）
+  about: 'about/', privacy: 'privacy/',
 };
 export const local = (lang, page) => `/${lang}/${PAGES[page]}`;
 export const esc = (s) =>
@@ -78,7 +80,7 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
           </div>
           <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="${local(lang, 'tools')}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
           <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>
-          <div class="footer-col"><h4>${esc(s.footerAbout)}</h4><span class="link is-disabled" aria-disabled="true">${esc(s.aboutUs)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.privacy)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.contact)}</span></div>
+          <div class="footer-col"><h4>${esc(s.footerAbout)}</h4><a class="link" href="${local(lang, 'about')}">${esc(s.aboutUs)}</a><a class="link" href="${local(lang, 'privacy')}">${esc(s.privacy)}</a><a class="link" href="${local(lang, 'about')}#contact">${esc(s.contact)}</a></div>
         </div>
         <div class="footer-bottom">
           <span>© 2026 Woohop</span>

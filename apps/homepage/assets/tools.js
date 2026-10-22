@@ -15,6 +15,8 @@
   const W = window.Woohop;
   const esc = Site.esc;
   const track = Site.track;
+  // 導覽列與頁尾的下拉（語言、更多）、手機選單：其他頁各自呼叫，這裡漏了就整個點不開
+  Site.nav();
 
   // ---------- 卡片 ----------
   const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames' };

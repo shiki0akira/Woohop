@@ -14,6 +14,7 @@
 | `apps/match` | `/match/{lang}/` | 同上 |
 | `apps/bingo` | `/bingo/{lang}/` | 同上 |
 | `apps/bomb` | `/bomb/{lang}/` | 同上（assets-only Worker） |
+| `apps/feedback` | `/api/feedback` | Cloudflare Workers（意見表單 → 寄到 woohop.app@gmail.com），`cd apps/feedback && npx wrangler deploy` |
 
 幸福模擬器（`/happiness/`）是獨立 repo，不在這裡。
 

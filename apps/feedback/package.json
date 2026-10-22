@@ -1,0 +1,15 @@
+{
+  "name": "woohop-feedback",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Woohop 意見表單：把網站上送出的建議、問題回報寄到 Woohop 信箱（Cloudflare Worker）",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.118.0"
+  }
+}
