@@ -66,7 +66,7 @@
   const OFF = 'translate(5 6)';
   const withAttr = (shape, attrs) => shape.replace(/\/>\s*$/, ` ${attrs}/>`);
   const body = (shape, fill, shade = '', dash = true) => {
-    const id = `clip${++clipSeq}`;
+    const id = `wclip${++clipSeq}`; // 前綴 w：跟設計系統頁自己的插圖（clip1、clip2⋯）放在同一頁時 id 才不會撞
     // 先墊一層白：錯開後沒被顏色蓋到的地方是白的，後面的線條、底圖才不會透出來
     return withAttr(shape, 'fill="#fff"') + `<clipPath id="${id}">${shape}</clipPath>` +
       `<g clip-path="url(#${id})"><g transform="${OFF}">${withAttr(shape, `fill="${fill}"`)}${shade}</g></g>` +
