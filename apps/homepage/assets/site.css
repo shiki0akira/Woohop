@@ -293,12 +293,3 @@
 /* 小工具只抽名字：不要「自己取一個」、人數提示、「大家都取好了，下一步」（那是遊戲要往下一步用的） */
 .tool-page .namer .stage-choose > .btn-secondary, .tool-page .namer .need-more, .tool-page .namer .all-done { display: none; }
 .tool-panel .prose ol { margin: 0; }
-/* 桌遊助手總覽的小工具卡：一排三個，左邊插圖、右邊標題和說明（手機一排一個） */
-#tool-grid { grid-template-columns: 1fr; }
-@media (min-width: 900px) { #tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-#tool-grid .tool-card { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 20px; row-gap: 4px; align-content: center; padding: 16px; }
-#tool-grid .tool-card .art { grid-row: 1 / span 2; height: 88px; place-items: center; }
-#tool-grid .tool-card .art svg { height: 84px; }
-/* 文字靠上、不撐高，卡片下面不留空；說明完整顯示（不像遊戲卡限制行數） */
-#tool-grid .tool-card h3, #tool-grid .tool-card p { align-self: start; }
-#tool-grid .tool-card p { display: block; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }

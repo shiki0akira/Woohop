@@ -255,6 +255,8 @@
     border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); background: var(--surface); color: var(--ink);
     font: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
   }
+  /* 滑過：外框與底線換藍紫、背景帶一點淡藍（跟問答框 hover 同一個感覺）；選中的維持選中色 */
+  .chip:hover:not(:disabled):not([aria-pressed="true"]) { border-color: var(--blue-edge); box-shadow: 0 3px 0 var(--blue-edge); background: var(--hover-faint); }
   .chip[aria-pressed="true"] { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); box-shadow: 0 3px 0 var(--blue-edge); }
   .chip svg { width: 16px; height: 16px; }
 
@@ -328,7 +330,7 @@
   .game {
     position: relative; overflow: hidden;
     border: 2px solid var(--edge-n); border-radius: var(--radius);
-    padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; min-height: 300px; isolation: isolate;
+    padding: 18px 16px 20px; display: flex; flex-direction: column; gap: 8px; isolation: isolate;
     background-color: var(--surface);
     background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 32px 32px; background-position: -1px -1px;
@@ -336,14 +338,31 @@
     transition: transform .15s, box-shadow .15s; cursor: pointer;
   }
   .game:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--edge-n), var(--shadow); }
-  .game .art { position: relative; z-index: 1; height: 128px; display: grid; place-items: center start; }
-  .game .art svg { height: 120px; width: auto; }
+  .game .art { position: relative; z-index: 1; height: 104px; display: grid; place-items: center start; }
+  .game .art svg { height: 100px; width: auto; }
   /* 底部一整排相連的淡 W 當底圖：viewBox 剛好 3 顆寬，等比縮放，左右不會被切掉；文字直接疊在上面 */
   .game .w-row { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: auto; display: block; opacity: .13; pointer-events: none; z-index: -1; }
-  .game h4 { margin: 0; font-size: 20px; position: relative; }
+  .game h4, .game h3 { margin: 0; font-size: 20px; position: relative; }
   .game p { margin: 0; font-size: 14px; color: var(--muted); position: relative; }
-  .game .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; position: relative; }
-  .game .tags span { font-size: 12px; padding: 2px 10px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
+  /* 卡片高度不跟著語言長短跑：標題最多 2 行、說明最多 3 行，超過用刪節號（完整說明在遊戲頁） */
+  .game h3, .game h4, .game p { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .game h3, .game h4 { -webkit-line-clamp: 2; line-clamp: 2; line-height: 1.25; }
+  .game p { -webkit-line-clamp: 3; line-clamp: 3; }
+  /* 標籤固定一行：人數（人形圖示＋數字）、一局幾分鐘、手機；太窄時最後一個用刪節號，不折成兩排 */
+  .game .tags { display: flex; flex-wrap: nowrap; gap: 5px; margin-top: auto; padding-top: 4px; position: relative; min-width: 0; }
+  .game .tags span { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; white-space: nowrap; font-size: 12px; padding: 2px 6px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
+  .game .tags span:last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .game .tags svg { width: 12px; height: 12px; flex: none; color: var(--text-2); vertical-align: -2px; }
+
+  /* 小工具卡（.tool-grid > .game.tool-card）：橫式，左邊插圖、右邊標題和完整說明；寬螢幕一排三個、手機一排一個。2026-10-22 桌遊助手 */
+  .tool-grid { grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .tool-grid .tool-card { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 20px; row-gap: 4px; align-content: center; padding: 16px; }
+  .tool-grid .tool-card .art { grid-row: 1 / span 2; height: 88px; place-items: center; }
+  .tool-grid .tool-card .art svg { height: 84px; }
+  /* 文字靠上、不撐高，卡片下面不留空；說明完整顯示（不像遊戲卡限制行數） */
+  .tool-grid .tool-card h3, .tool-grid .tool-card p { align-self: start; }
+  .tool-grid .tool-card p { display: block; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
 
   /* ============================================================
      logo 陣列：W 彼此相連、淺色同色系、白底

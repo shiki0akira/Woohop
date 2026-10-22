@@ -1,0 +1,358 @@
+/*
+ * 各遊戲共用的版面：遊戲內頂欄（chrome.mjs 的 gameBar()）、單欄 720px、隱藏網站導覽列。
+ * 遊戲頁在 <body> 掛 class="woohop-game"，並用 data-game-mode 切換：
+ *   browse  設定畫面、玩法頁：頂欄有「玩法」「設定」分頁與選單鍵，遊戲名靠左、可以點
+ *   play    遊戲進行中、結算：只剩返回＋置中的遊戲名，不能點出去（誤點這一輪就沒了），頁尾也藏起來
+ */
+
+/* 遊戲頁不用網站導覽列，頂欄換成遊戲內頂欄 */
+.woohop-game #site-nav { display: none; }
+/* site.css 給每個 <section> 上下留白（首頁的大區塊），遊戲裡的區塊是卡片，不要。用 :where 壓低特異性，卡片自己的 padding 才蓋得過 */
+:where(.woohop-game main) section { padding: 0; }
+/* 拿在手上玩的東西：電腦上也是一欄、最寬 720px 置中，頂欄跟著同寬 */
+.woohop-game .game-main, .woohop-game .game-bar-host { max-width: 720px; margin-left: auto; margin-right: auto; }
+.woohop-game .game-main { padding-bottom: 40px; }
+.woohop-game[data-game-mode="play"] .site-footer { display: none; }
+
+/* ---------- 遊戲內頂欄：跟網站導覽列同一個位置、同一套外框（2px＋4px 底） ---------- */
+.game-bar-host { position: sticky; top: 10px; z-index: 30; margin-top: 10px; }
+.game-bar { container-type: inline-size; height: 64px; padding: 0 8px; background: var(--glass); backdrop-filter: blur(12px); border: 2px solid var(--edge-n); border-radius: var(--r-lg); box-shadow: var(--raise-n); }
+.game-bar .btn-icon { --h: 44px; flex: none; }
+
+/* 遊戲名：回遊戲主頁的連結，平常看起來就是標題；放不下時截成「⋯」，分頁不讓 */
+.game-bar .title { flex: 0 1 auto; min-width: 0; padding-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; font-weight: 900; text-align: left; color: var(--ink); text-decoration: none; border-radius: var(--r-sm); }
+.game-bar .title:hover { color: var(--accent-text); }
+.game-bar .title:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* 分頁（玩法、設定）：跟網站導覽列的連結同一種樣子；目前所在的分頁只換字色 */
+.game-tabs { flex: none; margin-left: auto; display: flex; gap: 4px; }
+.game-tabs a, .game-tabs button {
+  height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px;
+  border: 0; border-radius: var(--r-md); background: none; color: var(--ink);
+  font: inherit; font-weight: 800; font-size: 15px; text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.game-tabs a:hover, .game-tabs button:hover { background: var(--hover); }
+.game-tabs a[aria-current="page"], .sheet-list a[aria-current="page"] { color: var(--accent-text); }
+.game-tabs .tab-count { font-size: 12px; font-weight: 800; padding: 0 8px; border-radius: var(--r-pill); background: var(--coral-face); color: var(--coral-text); }
+.game-tabs .tab-count:empty { display: none; }
+
+/* 選單鍵 */
+.game-menu { flex: none; }
+.game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
+.game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
+.game-bar-spacer { width: 44px; flex: none; display: none; }
+
+/* 窄的頂欄：字與左右留白縮小 */
+@container (max-width: 560px) {
+  .game-bar { gap: 2px; }
+  .game-tabs { gap: 0; }
+  .game-tabs a, .game-tabs button { padding: 0 9px; font-size: 14px; }
+  .game-bar .title { font-size: 16px; }
+}
+/* 還是放不下（德文這類長字）時，game.js 分兩段換成圖示：is-compact 先換「設定」→齒輪、is-tight 再換「玩法」→書本 */
+.game-tabs .tab-icon { display: none; width: 22px; height: 22px; }
+.game-bar.is-compact #game-settings .tab-icon, .game-bar.is-tight .tab-rules .tab-icon { display: block; }
+.game-bar.is-compact #game-settings .tab-text, .game-bar.is-tight .tab-rules .tab-text { display: none; }
+.game-bar.is-compact #game-settings, .game-bar.is-tight .tab-rules { padding: 0 10px; }
+/* 手機（頂欄窄到 560 以下）一律用圖示，不管遊戲名有沒有被截，各遊戲看起來才一致 */
+@container (max-width: 560px) {
+  .game-tabs .tab-icon { display: block; }
+  .game-tabs .tab-text { display: none; }
+  .game-tabs .tab-rules, .game-tabs #game-settings { padding: 0 10px; }
+}
+
+/* 玩的時候：只剩返回＋置中的遊戲名（右邊補一個等寬的空位讓名字真的置中），不能點出去 */
+[data-game-mode="play"] .game-tabs, [data-game-mode="play"] .game-menu { display: none; }
+[data-game-mode="play"] .game-bar-spacer { display: block; }
+/* 玩的時候還要能開設定（例如房間大廳裡的主持人）：遊戲在 <body> 掛 data-game-settings，
+   分頁只留「設定」、而且只剩齒輪圖示 */
+[data-game-mode="play"][data-game-settings] .game-tabs { display: flex; }
+[data-game-mode="play"][data-game-settings] .tab-rules { display: none; }
+[data-game-mode="play"][data-game-settings] #game-settings { padding: 0 10px; }
+[data-game-mode="play"][data-game-settings] #game-settings .tab-icon { display: block; }
+[data-game-mode="play"][data-game-settings] #game-settings .tab-text { display: none; }
+/* 身分標籤（例如「主持人」）：只在玩的時候、有字的時候出現，佔掉右邊那個空位 */
+.game-bar-badge { display: none; flex: none; margin-right: 6px; }
+[data-game-mode="play"] .game-bar-badge:not(:empty) { display: inline-flex; }
+[data-game-mode="play"] .game-bar-badge:not(:empty) ~ .game-bar-spacer { display: none; }
+/* 音樂開關（chrome.mjs gameBar 的 musicLabel）：玩的時候也在，剛好佔掉右邊那格平衡用的空白 */
+.game-music svg { width: 22px; height: 22px; }
+.game-music .music-off { display: none; }
+.game-music[aria-pressed="false"] { color: var(--muted); }
+.game-music[aria-pressed="false"] .music-off { display: inline; }
+[data-game-mode="play"] .game-bar.has-music .game-bar-spacer { display: none; }
+[data-game-mode="play"] .game-bar .title { flex: 1; text-align: center; padding-left: 0; pointer-events: none; }
+
+/* ============================================================
+   遊戲頁共用元件（定時炸彈、喜好二選一⋯）。每個遊戲在 body 上設自己的代表色：
+     --game-edge  計數、玩法頁小標的字色（定時炸彈是珊瑚、二選一是粉紫）
+   ============================================================ */
+.woohop-game { --game-edge: var(--blue-edge); }
+.woohop-game .view { display: flex; flex-direction: column; gap: 16px; }
+.woohop-game .view[hidden] { display: none; }
+
+/* 頁首：麵包屑＋標題＋一句說明 */
+.game-main .page-head { padding: 28px 0 4px; }
+.game-main .page-head h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.25; text-wrap: balance; margin: 8px 0; }
+.game-main .page-head p { max-width: 40em; }
+.game-main .page-head .crumbs { margin-bottom: 4px; }
+/* 主標題拆成「遊戲名」＋「一句話」兩行（build 的 heroTitleHtml），冒號留在 HTML 給爬蟲、畫面上藏起來 */
+.game-main .page-head h1 > span { display: block; }
+.h1-name { font-size: 1.15em; }
+.h1-line { color: var(--accent-text); font-size: .78em; margin-top: 2px; }
+.sr-colon { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.game-main h1:lang(ja) { word-break: auto-phrase; }
+
+/* 白色卡片：Woohop 的浮起元件（2px 灰框＋4px 底部厚度） */
+.panel { background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); padding: 22px 24px 24px; margin-bottom: 4px; }
+@media (min-width: 760px) { .panel { padding: 28px 32px 32px; } }
+.panel h2 { margin: 0; font-size: 19px; font-weight: 900; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.counter { font-size: 14px; font-weight: 800; color: var(--game-edge); font-variant-numeric: tabular-nums; }
+
+.woohop-game .hint { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+.form-error { margin: 0; padding: 12px 14px; border-radius: var(--r-md); border: 2px solid var(--coral-edge); background: var(--coral-face); color: var(--coral-text); font-weight: 700; }
+/* 卡片裡的錯誤提示通常接在按鈕下面：按鈕有 4px 的底部厚度，再留一段距離才不會黏在一起 */
+.panel .form-error { margin-top: 14px; }
+.field-label { display: block; margin: 14px 0 8px; font-size: 14px; font-weight: 800; }
+.field-label-gap { margin-top: 18px; }
+.rules-link { margin: 4px 0 0; text-align: center; }
+dialog.modal h2 { margin: 0 0 4px; font-size: 20px; }
+dialog.modal .m-one { grid-template-columns: 1fr; }
+
+/* 一排單選：長得跟 Woohop 的分段控制一樣（灰底軌道，選中的那格白色浮起來）。
+   底層還是 <input type="radio">，鍵盤方向鍵與螢幕閱讀器都照舊，只是把圓點藏起來 */
+.seg { display: grid; gap: 4px; padding: 4px; border-radius: var(--r-md); background: var(--track); }
+.seg-3 { grid-template-columns: repeat(3, 1fr); }
+.seg-4 { grid-template-columns: repeat(4, 1fr); }
+.seg-5 { grid-template-columns: repeat(5, 1fr); }
+.seg-item {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  height: 44px; padding: 0 4px; border-radius: calc(var(--r-md) - 4px);
+  font-size: 14px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap;
+  cursor: pointer; transition: background .12s, color .12s;
+}
+.seg-item input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.seg-item:hover { color: var(--ink); }
+.seg-item:has(input:checked) { background: var(--surface); color: var(--ink); font-weight: 800; box-shadow: 0 2px 0 var(--edge-mid); }
+/* 深色：選中的那格用亮一階的灰浮起來，跟軌道、卡片分得出來 */
+:root[data-theme="dark"] .seg-item:has(input:checked) { background: #3a3a48; color: #fff; box-shadow: 0 2px 0 #14141a; }
+.seg-item:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.seg-item:has(input:disabled) { color: var(--text-dim); cursor: not-allowed; }
+
+/* ---------- 玩法頁（刻意精簡：一眼資訊、幾步怎麼玩、主持人怎麼帶） ---------- */
+.game-rules { display: flex; flex-direction: column; gap: 20px; }
+.prose h2 { margin-bottom: 10px; }
+.prose ol, .prose ul { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; }
+.prose li { line-height: 1.8; }
+.prose p { margin: 0 0 12px; color: var(--text-body); line-height: 1.85; }
+.prose p:last-child { margin-bottom: 0; }
+.rules-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.rules-facts li { display: grid; gap: 2px; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--edge-n); }
+.rules-facts span { font-size: 13px; font-weight: 800; color: var(--game-edge); letter-spacing: .04em; }
+.rules-facts b { font-size: 16px; line-height: 1.45; }
+/* 依人數的建議表（定時炸彈的引爆時間）：橫跨整列 */
+.rules-facts .rules-time { grid-column: 1 / -1; gap: 6px; }
+.rules-time table { border-collapse: collapse; width: 100%; max-width: 420px; }
+.rules-time th, .rules-time td { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 16px; text-align: left; white-space: normal; }
+.rules-time tr:last-child th, .rules-time tr:last-child td { border-bottom: 0; }
+.rules-time th { font-weight: 700; color: var(--muted); width: 45%; }
+.rules-time td { font-weight: 900; }
+.rules-time small { font-size: 14px; color: var(--muted); }
+/* 主持人怎麼帶：開場一句是「照著念」卡片（woohop.css 的 .prompt-card），底下是小提醒 */
+.rules-lead .prompt-card { margin: 18px 0; max-width: none; font-size: 18px; }
+.rules-back { margin: 8px 0 0; text-align: center; }
+
+/* ============================================================
+   帶領元件（game.js 的 Leader）：步驟頭、說明規則的插圖卡、真心話大冒險拉霸。
+   不用手機的遊戲（竹筍）和傳手機的遊戲（定時炸彈）共用，2026-10-21 從竹筍搬過來。
+   之後也打算拆成獨立的小工具（取名、拉霸），見 memory 的「小工具分頁」。
+   ============================================================ */
+/* ---------- 帶領的步驟頭（每個畫面上方，game.js 的 Leader.lead） ----------
+ * 步驟點＋「STEP 2 / 5」＋這一步的標題＋照著念。主持人一看就知道現在到哪、要說什麼。
+ */
+.lead-head { display: grid; gap: 6px; justify-items: center; text-align: center; margin: 20px 0 0; } /* 跟下面卡片的間距交給 .view 的 gap（16px），這裡不再加 */
+.lead-head .step-dots i.done { background: var(--indigo); opacity: .45; }
+.lead-head .step-no { font-size: 12px; font-weight: 900; letter-spacing: .12em; color: var(--muted); margin-top: 4px; }
+.lead-title { margin: 0; font-size: 26px; font-weight: 900; }
+.lead-head .lead-say mark { font-weight: 900; }
+.lead-head.no-say .lead-say { display: none; }
+.lead-head .lead-say { max-width: none; width: 100%; margin-top: 12px; text-align: left; font-size: 18px; }
+/* 第一個畫面上面已經有大標題，步驟頭不用再留那麼多空 */
+#view-setup .lead-head { margin-top: 8px; }
+
+/* ---------- 說明規則：三張插圖卡 ---------- */
+.rule-cards { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 12px; }
+.rule-card { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: center; padding: 12px 16px 12px 8px; background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); border-radius: var(--r-lg); }
+.rule-card .illo { width: 112px; height: auto; overflow: visible; }
+.rule-card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 900; }
+.rule-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+
+/* ---------- 真心話大冒險拉霸（Leader.slot） ---------- */
+.leader-slot { display: grid; gap: 14px; justify-items: center; width: 100%; }
+.leader-slot > .btn { width: 100%; max-width: 420px; }
+/*
+ * 拉霸機：粗外框＋底部厚度（設計系統的按鈕語言），窗格一次看得到三列，中間那列是停下來的位置。
+ * 列高 --row 是唯一要調的數字，Leader.slot 從畫面量，不用跟著改。
+ */
+.slot {
+  --row: 104px;
+  position: relative; width: 100%; max-width: 420px; margin-top: 6px; padding: 10px;
+  border: 2px solid var(--outline); border-radius: var(--r-lg); background: var(--yellow);
+  box-shadow: 0 6px 0 var(--outline);
+}
+.slot-window {
+  position: relative; height: calc(var(--row) * 3); overflow: hidden;
+  border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface);
+}
+/* 上下兩列蓋一層漸層淡出、中間那列墊一條淡黃：視線自然落在中間。
+   用疊上去的漸層、不用 mask：mask 會讓外框的黃色透進來，字變得髒髒的 */
+.slot-window::before, .slot-window::after { content: ""; position: absolute; left: 0; right: 0; pointer-events: none; }
+.slot-window::before { z-index: 0; top: var(--row); height: var(--row); background: var(--yellow-face); border-block: 2px dashed var(--yellow-edge); }
+.slot-window::after { z-index: 2; inset: 0; background: linear-gradient(var(--surface), transparent 34%, transparent 66%, var(--surface)); }
+/* 中間那條：停下來的位置，左右各一個三角形指著 */
+.slot::before, .slot::after {
+  content: ""; position: absolute; z-index: 2; top: 50%; width: 0; height: 0;
+  border: 10px solid transparent; transform: translateY(-50%);
+}
+.slot::before { left: -2px; border-left: 14px solid var(--outline); }
+.slot::after { right: -2px; border-right: 14px solid var(--outline); }
+.slot-reel { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; will-change: transform; }
+.slot-reel li {
+  height: var(--row); display: grid; place-content: center; justify-items: center; gap: 6px; padding: 0 18px; text-align: center;
+  font-size: 18px; font-weight: 800; line-height: 1.3; color: var(--muted); text-wrap: balance;
+}
+.slot-reel li.on { color: var(--ink); font-size: 21px; font-weight: 900; }
+/* 「回答」「動作」小標籤：問題是藍、動作是珊瑚，停下來一眼就知道要說還是要做 */
+.slot-kind { font-size: 12px; font-weight: 900; line-height: 1; padding: 3px 10px; border-radius: var(--r-pill); border: 2px solid var(--blue-edge); background: var(--blue-face); color: var(--blue-text); }
+.slot-do .slot-kind { border-color: var(--coral-edge); background: var(--coral-face); color: var(--coral-text); }
+.slot-text { display: block; }
+.slot.is-spinning .slot-reel li { filter: blur(.5px); }
+@media (prefers-reduced-motion: reduce) { .slot-reel { transition: none !important; } }
+:root[data-theme="dark"] .slot { background: #a8861c; }
+
+/* 真心話／隨機／大冒險（一排單選本體在 game.css 的 .seg）。拉霸在轉的時候不能換 */
+.slot-mode { width: 100%; max-width: 420px; }
+.slot-mode.is-locked { opacity: .55; pointer-events: none; }
+
+.slot-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/*
+ * 手機版拉霸：窄螢幕上長題目一定會折成兩行，加上上面的「真心話／大冒險」標籤，84px 放不下，
+ * 會超出中間那條框。列高加到 120px、字縮一點、左右內距收窄。列高是 Leader.slot 從畫面量的，不用跟著改程式。
+ */
+@media (max-width: 480px) {
+  .slot { --row: 120px; padding: 8px; }
+  .slot-reel li { padding: 0 10px; font-size: 16px; }
+  .slot-reel li.on { font-size: 19px; }
+}
+/*
+ * 確認框兩顆按鈕：woohop.css 是 1fr 1fr（全站的確認框都適用），但 1fr 的最小寬度是字的寬度，外語長一點就把右邊那顆擠出框外
+ * （法文「Revenir au début」）。改成 minmax(0, 1fr)，字太長就換行，不撐破框
+ */
+dialog.modal .m-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1.2; text-wrap: balance; }
+
+/* ============================================================
+   帶領元件之二：選主題（Leader.themes）與抽卡取名（Leader.namer），2026-10-21 從竹筍搬過來。
+   抽卡取名的選擇器都掛在 .namer 底下：定時炸彈也有自己的 .pass-row、.chosen-remove，不要互相影響
+   ============================================================ */
+/* ---------- 主題：兩欄選項卡 ---------- */
+.theme-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; } /* minmax(0,…)：不讓「Pas de nouveaux noms」這種長例子把格子撐出框 */
+/* 八顆卡要擠在一畫面裡：右上角的打勾圈縮小；上下內距對稱，字才會在卡片正中間 */
+.theme-grid .choice { min-width: 0; min-height: 92px; padding: 16px 8px; gap: 2px; }
+/* 只有標題要讓開右上角的打勾圈；例子那一行用全寬、只排一行，太長就「⋯」 */
+.theme-grid .choice-name { max-width: 100%; padding-inline: 16px; line-height: 1.25; overflow-wrap: break-word; }
+.theme-grid .choice-sub { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.theme-grid .choice::after { top: 6px; right: 6px; width: 18px; height: 18px; background-size: 11px; }
+@media (min-width: 560px) { .theme-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ---------- 取名 ---------- */
+.namer .name-card { display: grid; gap: 14px; padding: 20px; text-align: center; margin-top: 0; }
+.namer .name-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.namer .name-turn { font-size: 22px; font-weight: 900; }
+.namer .reroll { justify-self: end; margin-top: -6px; }
+
+/* 三個狀態一次只露一個（data-stage 由 Leader.namer 設）。不叫 .stage：首頁 site.css 用過那個名字 */
+.namer .name-card .name-stage { display: none; gap: 12px; }
+.namer .name-card[data-stage="choose"] .stage-choose,
+.namer .name-card[data-stage="own"] .stage-own,
+.namer .name-card[data-stage="reveal"] .stage-reveal { display: grid; }
+
+.namer .draw-btn { --h: 80px; font-size: 24px; border-radius: var(--r-lg); }
+
+/* ---------- 一疊名稱卡（抽牌） ----------
+ * 插圖本體在 game.js 的 Leader.namer（deckArt，跟網站其他插圖同一套畫法：粗描邊留缺口、色塊錯開露出白邊）。
+ * 這裡只管動態：平常整疊輕輕浮動，提示「這裡可以抽」；按下「抽一個」時加上 .is-drawing，
+ * 最上面那張（.deck-top）往上飛走，Leader.namer 等動畫跑完才翻出名稱。
+ */
+.namer .deck { display: block; width: 190px; height: auto; margin: 0 auto 4px; overflow: visible; animation: deck-float 2.4s ease-in-out infinite; }
+.namer .deck .deck-top { transform-box: fill-box; transform-origin: center; }
+.namer .deck.is-drawing { animation: none; }
+.namer .deck.is-drawing .deck-top { animation: card-fly .38s cubic-bezier(.5, 0, .7, .4) forwards; }
+@keyframes deck-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes card-fly { to { transform: translateY(-90px) rotate(14deg) scale(1.08); opacity: 0; } }
+
+/* 翻過來的那張卡：從側面轉正（rotateY），名稱在卡上 */
+.namer .drawn-card {
+  padding: 18px 14px 20px; border: 2px solid var(--mint-edge); border-radius: var(--r-lg);
+  background: var(--mint-face); box-shadow: 0 5px 0 var(--mint-edge);
+  animation: card-flip .5s cubic-bezier(.2, 1.3, .4, 1) 1;
+}
+.namer .drawn-card.pop { animation: card-flip .5s cubic-bezier(.2, 1.3, .4, 1) 1; }
+@keyframes card-flip { from { transform: perspective(600px) rotateY(90deg) scale(.85); } to { transform: none; } }
+.namer .reveal-hint { margin: 0; color: var(--muted); font-size: 15px; font-weight: 700; text-wrap: balance; }
+@media (prefers-reduced-motion: reduce) { .namer .deck, .namer .deck .deck-top, .namer .drawn-card { animation: none !important; } }
+.namer .pool-empty { margin: 0; }
+
+/* 「傳給下一個人」＋「換一個」：照定時炸彈的 .pass-row（apps/bomb/app/app.css），只是「換一個」一直都在，不用滑進來 */
+.namer .pass-row { display: flex; align-items: stretch; gap: 10px; margin-top: 4px; }
+.namer .pass-row .pass-bar:not(.pass-redraw) { flex: 1; min-width: 0; }
+.namer .pass-bar { --h: 72px; font-size: 19px; padding-inline: 14px; border-radius: var(--r-lg); white-space: normal; line-height: 1.3; }
+.namer .pass-redraw { flex: none; padding: 0 18px; font-size: 16px; white-space: nowrap; }
+
+.namer .own-say { max-width: none; margin-top: 12px; text-align: left; font-size: 18px; }
+
+.namer .you-are { margin: 0; color: var(--mint-text); font-weight: 800; opacity: .8; }
+/* 翻出來的名稱：全場要看得到，字越大越好；長名稱（大腸包小腸）自己縮 */
+.namer .drawn-name { margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; word-break: keep-all; overflow-wrap: anywhere; color: var(--mint-text); }
+
+
+.namer .named { margin-top: 20px; padding: 0; } /* 它是 <section>，不要吃到全站 section 的上下 48px */
+.namer .named h2 { margin: 0 0 8px; color: var(--muted); font-weight: 800; }
+.namer .named-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.namer .named-chip { display: inline-flex; align-items: center; gap: 2px; padding: 4px 4px 4px 12px; border-radius: var(--r-pill); border: 2px solid var(--edge-n); background: var(--surface); font-weight: 800; }
+.namer .chosen-remove { flex: none; width: 28px; height: 28px; border: 0; border-radius: var(--r-pill); background: none; color: var(--muted); cursor: pointer; font-size: 13px; }
+.namer .chosen-remove:hover { background: var(--coral-face); color: var(--coral-text); }
+
+.namer .need-more { margin-top: 16px; text-align: center; background: none; border: 0; padding: 0; color: var(--muted); font-weight: 700; }
+.namer .all-done { margin-top: 8px; }
+@media (min-width: 760px) {
+  .namer .name-card { padding: 28px 36px; }
+}
+
+/* ============================================================
+   帶領元件之三：節拍器（Leader.metronome）。三個大燈，最後一拍（重拍）是珊瑚色；
+   燈的本體（.beats i）在 woohop.css 的設計系統，這裡只放大、排版
+   ============================================================ */
+.metro { display: grid; gap: 16px; justify-items: center; width: 100%; }
+.metro-beats { gap: 14px; }
+.metro-beats i { width: 44px; height: 44px; transition: transform .06s, background .06s; }
+.metro-beats i.on { background: var(--orange); transform: scale(1.18); }
+.metro-beats i.accent.on { background: var(--coral); }
+.metro-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+.metro-tempo output { min-width: 96px; font-size: 18px; }
+.metro-auto { min-height: 44px; }
+.metro-toggle { max-width: 420px; }
+/* 開場口令（metronome 的 intro）：跟竹筍的口令格子同一個樣子，跟燈佔同一個位置（高度一樣，換過去不會跳） */
+.metro-intro { display: flex; justify-content: center; gap: 8px; min-height: 52px; align-items: center; flex-wrap: wrap; }
+.metro-intro span {
+  display: grid; place-items: center; height: 44px; padding: 0 14px; border-radius: var(--r-md);
+  border: 2px solid var(--edge-n); background: var(--sunken); font-size: 18px; font-weight: 900; color: var(--muted);
+  transition: transform .08s, background .08s;
+}
+.metro-intro span.on { background: var(--orange); border-color: var(--orange-edge); color: var(--ink); transform: translateY(-4px) scale(1.08); }
+.metro-beats { min-height: 52px; align-items: center; }
+/* .beats 和 .metro-intro 都是 display:flex，會蓋掉 hidden，要自己補回來 */
+.metro-intro[hidden], .metro-beats[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .metro-intro span { transition: none; } .metro-intro span.on { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .metro-beats i { transition: none; } .metro-beats i.on { transform: none; } }

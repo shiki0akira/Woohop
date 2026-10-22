@@ -154,7 +154,6 @@
   }
   :root[data-theme="dark"] svg.illo { background: radial-gradient(closest-side, #ffffff2a, #ffffff10 60%, transparent); border-radius: 50%; }
   /* 轉盤的指針不是插圖、是操作提示：深色時用文字色，不然深底上看不到 */
-  :root[data-theme="dark"] .wheel-pointer { border-top-color: var(--ink); }
   /* 從淺色換到深色時，帶點過場，不要整頁瞬間反白 */
   :root[data-theme] body { transition: background-color .25s, color .25s; }
 
@@ -364,6 +363,16 @@
   .game .tags span { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; white-space: nowrap; font-size: 12px; padding: 2px 6px; border-radius: var(--r-pill); background: var(--surface); border: 2px solid var(--edge-n); }
   .game .tags span:last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; display: block; }
   .game .tags svg { width: 12px; height: 12px; flex: none; color: var(--text-2); vertical-align: -2px; }
+
+  /* 小工具卡（.tool-grid > .game.tool-card）：橫式，左邊插圖、右邊標題和完整說明；寬螢幕一排三個、手機一排一個。2026-10-22 桌遊助手 */
+  .tool-grid { grid-template-columns: 1fr; }
+  @media (min-width: 900px) { .tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .tool-grid .tool-card { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 20px; row-gap: 4px; align-content: center; padding: 16px; }
+  .tool-grid .tool-card .art { grid-row: 1 / span 2; height: 88px; place-items: center; }
+  .tool-grid .tool-card .art svg { height: 84px; }
+  /* 文字靠上、不撐高，卡片下面不留空；說明完整顯示（不像遊戲卡限制行數） */
+  .tool-grid .tool-card h3, .tool-grid .tool-card p { align-self: start; }
+  .tool-grid .tool-card p { display: block; -webkit-line-clamp: unset; line-clamp: none; overflow: visible; }
 
   /* ============================================================
      logo 陣列：W 彼此相連、淺色同色系、白底
@@ -679,6 +688,19 @@
      帶領播放器
      ============================================================ */
   .player-frame { max-width: 380px; border-radius: var(--r-lg); border: 2px solid var(--outline); background: var(--bg); padding: 16px; display: grid; gap: 14px; box-shadow: 0 6px 0 var(--outline); }
+  /* 13. 帶領元件示範：主題卡（apps/orchard/app/app.css .topic-card）、按住結束鍵（apps/stairs、orchard 的 .end-btn） */
+  .demo-topic-card { position: relative; display: grid; justify-items: center; text-align: center; padding: 18px 52px; border: 2px solid var(--orange-edge); border-radius: var(--r-md); background: var(--orange-face); box-shadow: 0 4px 0 var(--orange-edge); }
+  .demo-topic-text { display: grid; gap: 2px; }
+  .demo-topic-text strong { font-size: 34px; line-height: 1.2; font-weight: 900; color: var(--ink); }
+  .demo-topic-text span { font-size: 16px; font-weight: 700; color: var(--orange-text); }
+  .demo-topic-shuffle { position: absolute; top: 10px; right: 10px; width: 36px; padding: 0; }
+  .demo-topic-shuffle svg { width: 18px; height: 18px; }
+  .demo-toggle { display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; padding: 4px 0; border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; }
+  .demo-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+  .demo-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
+  .demo-end { --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px; position: relative; overflow: hidden; font-size: 20px; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+  .demo-end::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+  .demo-end.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
   .step-dots { display: flex; gap: 6px; justify-content: center; }
   .step-dots i { width: 10px; height: 10px; border-radius: var(--r-pill); background: var(--edge-strong); transition: width .25s, background .25s; }
   .step-dots i.on { width: 28px; background: var(--indigo); }
@@ -695,11 +717,6 @@
   /* 「照著念」是亮黃底：深色模式時文字色變淺會看不到，固定用深色字 */
   :root[data-theme="dark"] .prompt-card .say { color: #3a2b03; }
 
-  .wheel-wrap { position: relative; width: 220px; height: 220px; }
-  .wheel { width: 100%; height: 100%; transition: transform 3.2s cubic-bezier(.17,.67,.21,1); }
-  /* 指針要疊在轉盤上面：轉盤有 transform 會自成一層，指針得給 z-index */
-  .wheel-pointer { position: absolute; z-index: 2; top: -6px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border: 14px solid transparent; border-top: 22px solid var(--outline); filter: drop-shadow(0 2px 0 #0003); }
-  .wheel-result { min-height: 28px; font-weight: 800; text-align: center; }
 
   .metronome { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .beats { display: flex; gap: 8px; }
@@ -774,7 +791,7 @@
   <h1>Woohop 設計系統</h1>
   <p class="lead">之後所有頁面的 UI 都從這一頁挑元件。顏色、字級、間距一律用這裡定義的值，不要另外發明。</p>
   <div class="decided"><span>✓ 柔和粉彩</span><span>✓ 底色 #f4f4f6</span><span>✓ 淺色相連陣列</span><span>✓ 翻牌 loading</span></div>
-  <nav class="toc" aria-label="目錄"><a href="#colors">色票</a><a href="#buttons">按鈕</a><a href="#games-list">遊戲列表</a><a href="#pattern">陣列</a><a href="#loading">Loading</a><a href="#type">字體</a><a href="#forms">表單</a><a href="#badges">徽章</a><a href="#nav">導覽</a><a href="#room">房間</a><a href="#feedback">回饋</a><a href="#dialogs">對話框</a><a href="#leader">帶領播放器</a><a href="#results">結果</a></nav>
+  <nav class="toc" aria-label="目錄"><a href="#colors">色票</a><a href="#buttons">按鈕</a><a href="#games-list">遊戲列表</a><a href="#pattern">陣列</a><a href="#loading">Loading</a><a href="#type">字體</a><a href="#forms">表單</a><a href="#badges">徽章</a><a href="#nav">導覽</a><a href="#room">房間</a><a href="#feedback">回饋</a><a href="#dialogs">對話框</a><a href="#leader">帶領元件</a><a href="#results">結果</a></nav>
 
   <!-- ================= 1. 色票 ================= -->
   <h2 id="colors">1. 色票</h2>
@@ -911,6 +928,10 @@
   <h2 id="games-list">3. 遊戲列表</h2>
   <p class="note">每個遊戲一張可愛插圖：粗黑描邊留小缺口；色塊往右下錯開、不把描邊填滿，左上露出的白邊就是亮面；每個主角表情都不一樣，底下一條虛線地板。卡片統一是 32px 大格子紙白底，底部一整排相連的淡淡 W 當底圖。</p>
   <div class="game-grid" id="games"></div>
+  <p class="note">標籤固定一行：人數前面一個人形圖示（省掉「人／players」），時間寫「N 分一局」，最後是手機；說明最多 3 行、標題最多 2 行，卡片高度不跟著語言長短跑。</p>
+  <h3 class="sub" style="margin-top:32px">小工具卡（桌遊助手）</h3>
+  <p class="note">橫式：左邊插圖、右邊標題和完整說明（不截斷）。寬螢幕一排三個、手機一排一個。<code>.tool-grid &gt; .game.tool-card</code></p>
+  <div class="game-grid tool-grid" id="tool-cards"></div>
 
   <!-- ================= 4. 陣列 ================= -->
   <h2 id="pattern">4. Logo 陣列</h2>
@@ -1240,45 +1261,58 @@
     </div>
   </dialog>
 
-  <!-- ================= 13. 帶領播放器 ================= -->
-  <h2 id="leader">13. 帶領播放器</h2>
-  <p class="note">企劃書 §5.1 的核心元件：步驟教學、主持人提詞卡、轉盤、節拍器。</p>
+  <!-- ================= 13. 帶領元件 ================= -->
+  <h2 id="leader">13. 帶領元件（window.Leader）</h2>
+  <p class="note">不用手機的團康（竹筍、上樓下樓、果園菜園動物園）、定時炸彈、桌遊助手小工具共用的元件。這一節載入的是網站那一份的副本（<code>design/game.js</code>＋<code>game.css</code>，來源是 <code>apps/homepage/assets/</code>），看到的就是遊戲裡的樣子。改了元件後在 apps/homepage 跑 <code>node scripts/design-demo-data.mjs</code>，會同步副本並產生示範用的文字與題目（<code>design/leader-demo-data.js</code>）。</p>
   <div class="demo-grid two">
-    <div class="player-frame" id="leader-player">
-      <div class="step-dots" id="step-dots"><i class="on"></i><i></i><i></i><i></i></div>
-      <div class="step-card">
-        <span class="step-no" id="step-no">STEP 1 / 4</span>
-        <svg class="illo" viewBox="0 0 160 126" aria-hidden="true" data-art="circle"></svg>
-        <h4 id="step-title">圍成一圈</h4>
-        <p id="step-text">大家圍成一圈，主持人先開始。</p>
-      </div>
-      <div class="step-nav">
-        <button class="btn btn-secondary" id="step-prev">上一步</button>
-        <button class="btn fab btn-solid" id="step-next" aria-label="下一步"><svg><use href="#i-arrow"/></svg></button>
-      </div>
+    <div class="card">
+      <p class="sub">步驟頭＋照著念 <code>Leader.lead</code></p>
+      <p class="note">一步一個畫面：步驟點、STEP n / 總數、標題，下面是主持人「照著念」的提詞卡。</p>
+      <div class="lead-slot" id="demo-lead"></div>
     </div>
-    <div class="stack">
-      <div class="prompt-card">
-        <span class="say">照著念</span>
-        我們等一下要玩「果園菜園動物園」。大家先跟我一起拍手——<mark>拍、拍</mark>，第三拍說出一個主題，下一個人就要說出那個主題裡的東西，卡住或重複的人就輸囉！
-      </div>
-      <div class="card">
-        <p class="sub">節拍器 <span id="bpm-val" style="color:var(--ink)">90 BPM</span></p>
-        <div class="metronome">
-          <div class="beats" id="beats"><i></i><i></i><i></i></div>
-          <button class="btn btn-sm btn-secondary" id="bpm-down" aria-label="變慢">−</button>
-          <button class="btn btn-sm btn-solid" id="metro-toggle">開始</button>
-          <button class="btn btn-sm btn-secondary" id="bpm-up" aria-label="變快">+</button>
-        </div>
-      </div>
+    <div class="card">
+      <p class="sub">說明規則插圖卡 <code>Leader.ruleCards</code></p>
+      <p class="note">每條規則一張卡：左邊插圖、右邊標題＋說明。</p>
+      <ol class="rule-cards" id="demo-rules"></ol>
     </div>
   </div>
-  <div class="card" style="margin-top:16px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:center">
-    <div class="wheel-wrap"><div class="wheel-pointer"></div><svg class="wheel" id="wheel" viewBox="0 0 200 200"></svg></div>
-    <div class="stack" style="justify-items:center;max-width:280px">
-      <p class="sub" style="margin:0">分享轉盤</p>
-      <div class="wheel-result" id="wheel-result">輸的人轉一下</div>
-      <button class="btn btn-lg btn-solid" id="spin">轉！</button>
+  <div class="demo-grid two" style="margin-top:16px">
+    <div class="card">
+      <p class="sub">真心話大冒險拉霸 <code>Leader.slot</code></p>
+      <p class="note">取代原本的轉盤。可選真心話／隨機／大冒險，停下來的那列墊淡黃、左右三角指著；不會連續抽到同一題。</p>
+      <div id="demo-slot"></div>
+    </div>
+    <div class="card">
+      <p class="sub">節拍器 <code>Leader.metronome</code></p>
+      <p class="note">幾拍一組、重拍、可調快慢（50～180，預設 80）、自動加速。<code>intro</code>：燈那排先顯示開場口令，打拍子時一拍亮一個詞、喊完才變回燈。<code>groove</code>：配樂跟拍子分開開關，沒打拍子時用原速、打拍子才跟著加快。</p>
+      <div id="demo-metro"></div>
+      <button class="chip" id="demo-music" type="button" aria-pressed="false" style="margin-top:12px">配樂</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <p class="sub">選主題＋抽卡取名 <code>Leader.themes</code>、<code>Leader.namer</code></p>
+    <p class="note">選主題（隨機、各名稱庫、可加「用本名」），手機傳一圈每人抽一張；抽過的列在下面不重複。遊戲裡還有「自己取一個」「大家都取好了」，小工具頁把這兩個藏掉。</p>
+    <div class="demo-grid two">
+      <div id="demo-themes"></div>
+      <div id="demo-namer"></div>
+    </div>
+  </div>
+  <div class="demo-grid two" style="margin-top:16px">
+    <div class="card">
+      <p class="sub">主題卡＋收合連結（果園菜園動物園）</p>
+      <p class="note">大字主題＋要說什麼，右上角骰子鍵換一個（只有圖示，名稱給螢幕閱讀器）。下面「自己選主題」是收合連結：顏色與滑過用全站 <code>.link</code>，自己只加箭頭（定時炸彈的「自訂區間」同一個）。</p>
+      <div class="demo-topic-card">
+        <div class="demo-topic-text"><strong>早餐店</strong><span>說出一種早餐</span></div>
+        <button class="btn btn-sm btn-secondary demo-topic-shuffle" type="button" aria-label="換一個主題" title="換一個主題"><svg aria-hidden="true"><use href="#i-dice"/></svg></button>
+      </div>
+      <button class="link demo-toggle" type="button" aria-expanded="false" id="demo-toggle">自己選主題</button>
+      <div class="row" id="demo-toggle-body" hidden style="margin-top:8px"><button class="chip" aria-pressed="true">早餐店</button><button class="chip">夜市</button><button class="chip">動物園</button></div>
+    </div>
+    <div class="card">
+      <p class="sub">按住結束鍵</p>
+      <p class="note">結束要按住 0.8 秒才算（防手滑），按住時從左到右填深；鍵盤按 Enter 直接結束。紅底白字、厚底。目前竹筍、上樓下樓、果園各自的 app.css 各一份（<code>.round-btn</code>／<code>.end-btn</code>）。</p>
+      <button class="btn btn-lg btn-block demo-end" id="demo-end" type="button">按住，結束遊戲</button>
+      <p class="sub" id="demo-end-out" style="margin:10px 0 0;text-align:center"></p>
     </div>
   </div>
 
@@ -1499,19 +1533,24 @@
   };
 
   const games = [
-    { key: 'avalon',    name: '阿瓦隆語音主持', desc: '一支手機幫你主持整場，不用有人當旁白。', tags: ['5–10 人', '30 分以上', '一支手機'], color: '#3D54B6' },
-    { key: 'buzzer',    name: '搶答遊戲',       desc: '每人一支手機當搶答鈴，主持人出題。',     tags: ['5–30 人', '5–15 分', '每人一支'], color: '#FF9419' },
-    { key: 'match',     name: '喜好二選一',     desc: '答完自動分組，還會列出你們的共同話題。', tags: ['5–30 人', '5–15 分', '每人一支'], color: '#F3A4FB' },
-    { key: 'bingo',     name: '幸福賓果',       desc: '找到符合條件的人簽名，連線就賓果。',     tags: ['8–30 人', '15 分以上', '每人一支'], color: '#FFC628' },
-    { key: 'bomb',      name: '定時炸彈',       desc: '一支手機傳著玩，炸在誰手上誰回答。',     tags: ['4–15 人', '5–15 分', '一支手機'], color: '#EE7B6A' },
-    { key: 'happiness', name: '幸福模擬器',     desc: '主持人大螢幕，全場用手機一起互動。',     tags: ['10–50 人', '15 分以上', '大螢幕'], color: '#4FB59A' },
+    { key: 'avalon',    name: '阿瓦隆語音主持', desc: '設定人數與角色，自動唸出主持人旁白台詞，不用自己背稿，直接開局。', tags: ['5–10', '40 分一局', '一支手機'], color: '#3D54B6' },
+    { key: 'buzzer',    name: '搶答遊戲',       desc: '多人現場搶答工具，掃 QR code 加入房間即可遊玩。',     tags: ['5–30', '5 分一局', '每人一支'], color: '#FF9419' },
+    { key: 'match',     name: '喜好二選一',     desc: '二選一破冰遊戲，答完自動分組並列出你們的共同話題。', tags: ['5–30', '8 分一局', '每人一支'], color: '#F3A4FB' },
+    { key: 'bingo',     name: '幸福賓果',       desc: '找人不找號碼的破冰賓果，找到符合描述的人、請他確認就能打勾。', tags: ['8–30', '12 分一局', '每人一支'], color: '#FFC628' },
+    { key: 'bomb',      name: '定時炸彈',       desc: '一台手機傳著玩，畫面出一題做完就傳給下一個人，爆在誰手上誰就輸。', tags: ['4–15', '5 分一局', '一支手機'], color: '#EE7B6A' },
+    { key: 'bamboo',    name: '竹筍竹筍蹦蹦出', desc: '輪流站起來喊數字，撞到就搶著喊對方的名字，最後還蹲著的輸。', tags: ['4–20', '3 分一局', '不用手機'], color: '#4FB59A' },
+    { key: 'stairs',    name: '上樓下樓',       desc: '圍成一圈當樓層，跟著拍子喊「1 樓上 4 樓」，喊錯或沒接上就輸。', tags: ['4–30', '3 分一局', '不用手機'], color: '#7489E6' },
+    { key: 'orchard',   name: '果園菜園動物園', desc: '跟著拍子「拍、拍、說」輪流說出符合主題的東西，重複或說錯類別就輸。', tags: ['4–30', '5 分一局', '不用手機'], color: '#FF9419' },
+    { key: 'happiness', name: '幸福模擬器',     desc: '主持人大螢幕，全場用手機一起互動。',     tags: ['10–50', '15 分一局', '大螢幕'], color: '#4FB59A' },
   ];
+  // 新遊戲的插圖在 woohop-art.js（下面載入的那份），這頁自己的 art 沒有的就跟它拿
+  const artOf = (key) => (art[key] || (window.Woohop && window.Woohop.art[key]) || (() => ''))();
   document.getElementById('games').innerHTML = games.map(g => `
     <article class="game">
-      <div class="art"><svg viewBox="0 0 160 126" role="img" aria-label="${g.name}插圖">${art[g.key]()}</svg></div>
+      <div class="art"><svg viewBox="0 0 160 126" role="img" aria-label="${g.name}插圖">${artOf(g.key)}</svg></div>
       <h4>${g.name}</h4>
       <p>${g.desc}</p>
-      <div class="tags">${g.tags.map(t => `<span>${t}</span>`).join('')}</div>
+      <div class="tags">${g.tags.map((t, i) => `<span>${i === 0 ? '<svg aria-hidden="true"><use href="#i-users"/></svg>' : ''}${t}</span>`).join('')}</div>
       <svg class="w-row" viewBox="0 0 177 48" aria-hidden="true">${[0, 1, 2].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${g.color}"/>`).join('')}</svg>
     </article>`).join('');
 
@@ -1645,64 +1684,6 @@
     d.addEventListener('click', e => { if (e.target === d) d.close(); }); // 點背景關閉
   });
 
-  // 帶領播放器：步驟切換
-  const steps = [
-    ['圍成一圈', '大家圍成一圈，主持人先開始。'],
-    ['跟著拍子', '拍兩下手，第三拍說出主題，例如「果園」。'],
-    ['輪流接', '下一個人跟著拍子說出一種水果，不能重複。'],
-    ['誰輸了', '卡住、說錯類別或重複的人就輸，轉分享轉盤！'],
-  ];
-  let step = 0;
-  const showStep = () => {
-    document.getElementById('step-no').textContent = `STEP ${step + 1} / ${steps.length}`;
-    document.getElementById('step-title').textContent = steps[step][0];
-    document.getElementById('step-text').textContent = steps[step][1];
-    document.querySelectorAll('#step-dots i').forEach((d, i) => d.classList.toggle('on', i === step));
-    document.getElementById('step-prev').disabled = step === 0;
-  };
-  document.getElementById('step-next').addEventListener('click', () => { step = (step + 1) % steps.length; showStep(); });
-  document.getElementById('step-prev').addEventListener('click', () => { step = Math.max(0, step - 1); showStep(); });
-  showStep();
-
-  // 節拍器：三拍一組，第三拍是重拍
-  (() => {
-    let bpm = 90, beat = 0, timer = null;
-    const beats = [...document.querySelectorAll('#beats i')];
-    const label = document.getElementById('bpm-val'), toggle = document.getElementById('metro-toggle');
-    const tick = () => { beats.forEach((b, i) => { b.classList.toggle('on', i === beat); b.classList.toggle('accent', i === 2); }); beat = (beat + 1) % 3; };
-    const start = () => { clearInterval(timer); timer = setInterval(tick, 60000 / bpm); toggle.textContent = '停止'; };
-    const stop = () => { clearInterval(timer); timer = null; beats.forEach(b => b.classList.remove('on')); toggle.textContent = '開始'; };
-    toggle.addEventListener('click', () => (timer ? stop() : start()));
-    const setBpm = d => { bpm = Math.min(160, Math.max(60, bpm + d)); label.textContent = `${bpm} BPM`; if (timer) start(); };
-    document.getElementById('bpm-up').addEventListener('click', () => setBpm(10));
-    document.getElementById('bpm-down').addEventListener('click', () => setBpm(-10));
-  })();
-
-  // 分享轉盤
-  (() => {
-    const prompts = ['最喜歡的食物', '小時候的夢想', '最近開心的事', '一個怪習慣', '想去的地方', '最近在追的劇'];
-    const colors = ['#d0daf9', '#ffdec2', '#fce3ff', '#ffeec8', '#cbe7de', '#fed6ce'];
-    const wheel = document.getElementById('wheel');
-    const seg = 360 / prompts.length;
-    const pt = (deg, r) => [100 + r * Math.sin(deg * Math.PI / 180), 100 - r * Math.cos(deg * Math.PI / 180)];
-    wheel.innerHTML = `<circle cx="100" cy="100" r="98" fill="#2a2a35"/>` + prompts.map((p, i) => {
-      const [x1, y1] = pt(i * seg, 94), [x2, y2] = pt((i + 1) * seg, 94), [tx, ty] = pt((i + .5) * seg, 60);
-      return `<path d="M100 100L${x1} ${y1}A94 94 0 0 1 ${x2} ${y2}Z" fill="${colors[i]}" stroke="#2a2a35" stroke-width="2"/>
-        <text x="${tx}" y="${ty}" transform="rotate(${(i + .5) * seg} ${tx} ${ty})" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="800" fill="#2a2a35" font-family="Nunito, sans-serif">${p}</text>`;
-    }).join('') + `<circle cx="100" cy="100" r="14" fill="#fff" stroke="#2a2a35" stroke-width="3"/>`;
-    let angle = 0, spinning = false;
-    document.getElementById('spin').addEventListener('click', () => {
-      if (spinning) return; spinning = true;
-      const pick = Math.floor(Math.random() * prompts.length);
-      // 讓 pick 那一格的中線轉到正上方
-      angle += 360 * 5 + (360 - ((pick + .5) * seg) - (angle % 360) + 360) % 360;
-      wheel.style.transform = `rotate(${angle}deg)`;
-      document.getElementById('wheel-result').textContent = '轉轉轉⋯';
-      // 用計時器而不是 transitionend：內嵌瀏覽器可能把 transition 凍住
-      setTimeout(() => { document.getElementById('wheel-result').textContent = `分享：${prompts[pick]}！`; spinning = false; }, 3300);
-    });
-  })();
-
   document.querySelector(".toc").addEventListener("click", e => {
     const a = e.target.closest("a"); if (!a) return;
     e.preventDefault();
@@ -1777,6 +1758,67 @@
       document.querySelectorAll('.nav-more > button').forEach(b => { b.setAttribute('aria-expanded', 'false'); b.nextElementSibling.hidden = true; });
     });
     document.querySelectorAll('.nav-burger').forEach(b => b.addEventListener('click', () => document.getElementById('sheet').showModal()));
+  })();
+</script>
+<!-- 13. 帶領元件：網站那一份的副本（apps/homepage/scripts/design-demo-data.mjs 同步） -->
+<link rel="stylesheet" href="game.css">
+<script src="leader-demo-data.js"></script>
+<script src="woohop-art.js"></script>
+<script src="game.js"></script>
+<script>
+  (() => {
+    const L = window.Leader, W = window.Woohop, D = window.LEADER_DEMO;
+    // 遊戲列表裡的新遊戲插圖、小工具卡要等 woohop-art.js 載入後才畫得出來，這裡補畫一次
+    document.querySelectorAll('#games .game').forEach((card, i) => {
+      const svg = card.querySelector('.art svg');
+      if (svg && !svg.innerHTML.trim()) {
+        const key = ['avalon', 'buzzer', 'match', 'bingo', 'bomb', 'bamboo', 'stairs', 'orchard', 'happiness'][i];
+        if (W.art[key]) svg.innerHTML = W.art[key]();
+      }
+    });
+    const tools = [['toolSlot', '真心話大冒險拉霸', '拉一下出題目，可以只抽真心話、只抽大冒險，或隨機。', '#FFC628'], ['toolMetronome', '節拍器', '可調快慢、可自動加速，帶拍子的團康遊戲都能用，還有配樂。', '#7489E6'], ['toolNames', '抽卡取名', '選一個主題，每個人抽一張卡當代號，玩需要喊名字的遊戲最方便。', '#4FB59A']];
+    document.getElementById('tool-cards').innerHTML = tools.map(([art, name, desc, color]) => `
+      <article class="game tool-card">
+        <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${W.art[art]()}</svg></div>
+        <h4>${name}</h4><p>${desc}</p>
+        <svg class="w-row" viewBox="0 0 177 48" aria-hidden="true">${[0, 1, 2].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${color}"/>`).join('')}</svg>
+      </article>`).join('');
+
+    L.lead(document.getElementById('demo-lead'), { index: 1, total: 4, title: '說明規則', say: '三拍一組：拍、拍、說。開局大家先一起喊「果園、菜園、動物園」，我再說今天逛哪裡！' });
+    L.ruleCards(document.getElementById('demo-rules'), [
+      ['今天逛哪裡', '主持人出主題，例如「早餐店」就說早餐。'],
+      ['跟著拍子接', '三拍一組：拍、拍、說。'],
+      ['重複或說錯就輸', '說過的不能再說、不能說錯類別。'],
+    ], [() => W.art.orchard(), () => W.art.stairs(), () => W.art.bamboo()]);
+    L.slot(document.getElementById('demo-slot'), { prompts: D.slot.prompts, actions: D.slot.actions }).reset();
+
+    const metro = L.metronome(document.getElementById('demo-metro'), { bpm: 80, min: 50, max: 180, step: 5, beats: 3, accents: [2], auto: true, intro: ['果園', '菜園', '動物園'], groove: true });
+    const music = document.getElementById('demo-music');
+    music.addEventListener('click', () => {
+      const on = music.getAttribute('aria-pressed') !== 'true';
+      music.setAttribute('aria-pressed', String(on));
+      metro.music(on);
+    });
+
+    let theme = 'food';
+    const session = { theme, random: false, names: [], own: [] };
+    L.themes(document.getElementById('demo-themes'), { pool: D.names, value: theme, realname: true, onChange: (id) => {
+      session.theme = id === 'random' ? L.randomTheme(D.names) : id === 'realname' ? 'food' : id;
+      session.names = []; session.own = [];
+      namer.reset(session);
+    } });
+    const namer = L.namer(document.getElementById('demo-namer'), { pool: D.names, session, minPlayers: 2, onDone: () => {} });
+
+    const toggle = document.getElementById('demo-toggle'), body = document.getElementById('demo-toggle-body');
+    toggle.addEventListener('click', () => { body.hidden = !body.hidden; toggle.setAttribute('aria-expanded', String(!body.hidden)); });
+
+    const end = document.getElementById('demo-end'), out = document.getElementById('demo-end-out');
+    let hold = 0;
+    const done = () => { cancel(); out.textContent = '結束了！'; setTimeout(() => { out.textContent = ''; }, 1500); };
+    const cancel = () => { clearTimeout(hold); end.classList.remove('is-holding'); };
+    end.addEventListener('pointerdown', () => { cancel(); end.classList.add('is-holding'); hold = setTimeout(done, 800); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => end.addEventListener(ev, cancel));
+    end.addEventListener('click', (e) => { if (e.detail === 0) done(); });
   })();
 </script>
 </body>
