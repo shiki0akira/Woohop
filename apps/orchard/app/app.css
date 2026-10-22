@@ -14,14 +14,16 @@
 /* ---------- 主題：大大的主題名稱，下面是隨機換和自己選 ---------- */
 .topic-panel { display: grid; gap: 10px; }
 .topic-card {
-  display: grid; gap: 12px; justify-items: center; text-align: center; padding: 16px 12px 14px;
+  position: relative; display: grid; justify-items: center; text-align: center; padding: 18px 52px;
   border: 2px solid var(--orange-edge); border-radius: var(--r-md); background: var(--orange-face); color: var(--orange-text);
   box-shadow: 0 4px 0 var(--orange-edge);
 }
 .topic-card strong { font-size: 34px; line-height: 1.2; font-weight: 900; color: var(--ink); text-wrap: balance; }
 .topic-text { display: grid; gap: 2px; }
 .topic-text span { font-size: 16px; font-weight: 700; }
-.topic-shuffle svg { width: 16px; height: 16px; }
+/* 右上角的骰子鍵：只有圖示（名稱給螢幕閱讀器），左右內距 52px 讓主題字不會壓到它 */
+.topic-shuffle { position: absolute; top: 10px; right: 10px; width: 36px; padding: 0; }
+.topic-shuffle svg { width: 18px; height: 18px; }
 /* 「自己選主題」收合鍵：跟定時炸彈的「自訂區間」（apps/bomb/app/app.css .timer-toggle）同一個樣子 */
 .topic-toggle {
   justify-self: start; display: inline-flex; align-items: center; gap: 4px; padding: 4px 0;
