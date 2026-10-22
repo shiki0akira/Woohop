@@ -1,0 +1,181 @@
+/*
+ * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/）。2026-10-22
+ *
+ * 小工具本體就是遊戲裡用的那一份全站共用帶領元件 window.Leader（assets/game.js），這裡只負責：
+ *   - 總覽頁：把爬蟲用的純文字連結換成有插圖的卡片（遊戲卡用 site.js 的 Site.card，工具卡自己畫）
+ *   - 工具頁：建工具、底下「也用在這些遊戲」換成卡片
+ * 文案在 window.WOOHOP.t.tools（src/tools-strings.mjs）；工具資料（題目、名稱庫）在 window.WOOHOP.tool。
+ */
+(() => {
+  'use strict';
+
+  const { lang, t } = window.WOOHOP;
+  const T = t.tools;
+  const Site = window.Site;
+  const W = window.Woohop;
+  const esc = Site.esc;
+  const track = Site.track;
+
+  // ---------- 卡片 ----------
+  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames' };
+  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A' };
+  const toolCard = (key, href) => `<a class="game tool-card" href="${href}" data-tool="${key}">
+      <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${W.art[TOOL_ART[key]]()}</svg></div>
+      <h3>${esc(T.items[key].name)}</h3>
+      <p>${esc(T.items[key].short)}</p>
+      <svg class="w-row" viewBox="0 0 177 48" aria-hidden="true">${[0, 1, 2].map(i => `<use href="#w" x="${i * 59}" width="59" height="48" fill="${TOOL_COLOR[key]}"/>`).join('')}</svg>
+    </a>`;
+
+  // 爬蟲版的遊戲連結換成首頁同款的遊戲卡（data-games 列出要放哪幾個）
+  document.querySelectorAll('[data-games]').forEach(grid => {
+    const keys = grid.getAttribute('data-games').split(',').filter(Boolean);
+    const games = keys.map(k => Site.GAMES.find(g => g.key === k)).filter(Boolean);
+    if (games.length) grid.innerHTML = games.map(g => Site.card(g)).join('');
+  });
+
+  const toolGrid = document.getElementById('tool-grid');
+  if (toolGrid) {
+    toolGrid.innerHTML = Array.prototype.map.call(toolGrid.children, a => toolCard(a.getAttribute('data-tool'), a.getAttribute('href'))).join('');
+  }
+
+  // ---------- 工具頁 ----------
+  const tool = window.WOOHOP.tool;
+  const root = document.getElementById('tool-root');
+  if (!tool || !root) return;
+  const Leader = window.Leader;
+  const make = (tag, cls, text) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  };
+
+  // 真心話大冒險拉霸：跟遊戲裡「誰輸了？」那一步同一個
+  if (tool.key === 'truthOrDare') {
+    Leader.slot(root, {
+      prompts: tool.slot.prompts,
+      actions: tool.slot.actions,
+      onPull: info => track('tool_slot_pulled', { kind: info.kind, mode: info.mode }),
+    }).reset();
+  }
+
+  // 節拍器：可選幾拍一組、可開配樂（配樂規則跟遊戲一樣：沒打拍子時原速，打拍子才跟著加快）
+  if (tool.key === 'metronome') {
+    const I = T.items.metronome;
+    const controls = make('div', 'tool-controls');
+    const beatsLabel = make('span', 'field-label', I.beatsLabel);
+    const seg = make('div', 'segmented tool-beats');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', I.beatsLabel);
+    const musicChip = make('button', 'chip tool-music', I.musicLabel);
+    musicChip.type = 'button';
+    musicChip.setAttribute('aria-pressed', 'false');
+    controls.appendChild(beatsLabel);
+    controls.appendChild(seg);
+    controls.appendChild(musicChip);
+    const host = make('div', 'tool-metro');
+    root.appendChild(controls);
+    root.appendChild(host);
+
+    let beats = 4;
+    let music = false;
+    let metro = null;
+    // 換拍數要重建節拍器（燈的數量不同）：換一個新的容器，舊的那個停掉丟掉
+    const build = () => {
+      if (metro) { metro.stop(); metro.music(false); }
+      const box = make('div');
+      host.textContent = '';
+      host.appendChild(box);
+      metro = Leader.metronome(box, {
+        bpm: 80, min: 50, max: 180, step: 5, beats, accents: [beats - 1], groove: true,
+        onStart: () => track('tool_metronome_started', { beats, music }),
+      });
+      if (music) metro.music(true);
+    };
+    [2, 3, 4].forEach(n => {
+      const b = make('button', '', String(n));
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(n === beats));
+      b.addEventListener('click', () => {
+        if (n === beats) return;
+        beats = n;
+        seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        build();
+      });
+      seg.appendChild(b);
+    });
+    musicChip.addEventListener('click', () => {
+      music = !music;
+      musicChip.setAttribute('aria-pressed', String(music));
+      metro.music(music);
+    });
+    // 切到背景時節拍器會自己把配樂停掉，開關也要跟著變回關
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden' && music) {
+        music = false;
+        musicChip.setAttribute('aria-pressed', 'false');
+      }
+    });
+    build();
+  }
+
+  // 抽卡取名：先選主題，再手機傳一圈（跟竹筍的取名同一個）；取好後留一份名單
+  if (tool.key === 'names') {
+    const I = T.items.names;
+    const pool = tool.names;
+    let theme = 'random';
+
+    const pick = make('div', 'tool-names-pick');
+    pick.appendChild(make('h2', 'tool-h', t.themeHeading));
+    const grid = make('div');
+    pick.appendChild(grid);
+    const start = make('button', 'btn btn-lg btn-solid btn-block', I.start);
+    start.type = 'button';
+    pick.appendChild(start);
+
+    const play = make('div');
+    play.hidden = true;
+    const done = make('div', 'tool-names-done');
+    done.hidden = true;
+
+    root.appendChild(pick);
+    root.appendChild(play);
+    root.appendChild(done);
+
+    Leader.themes(grid, { pool, value: theme, realname: false, onChange: id => { theme = id; } });
+
+    let namer = null;
+    const session = { theme: '', random: false, names: [], own: [] };
+    const showDone = () => {
+      done.textContent = '';
+      done.appendChild(make('h2', 'tool-h', I.doneTitle));
+      const list = make('ul', 'named-list');
+      session.names.forEach(name => list.appendChild(make('li', 'named-chip', name)));
+      done.appendChild(list);
+      const again = make('button', 'btn btn-secondary btn-block', I.restart);
+      again.type = 'button';
+      again.addEventListener('click', () => {
+        done.hidden = true;
+        play.hidden = true;
+        pick.hidden = false;
+        root.scrollIntoView({ block: 'start' });
+      });
+      done.appendChild(again);
+      play.hidden = true;
+      done.hidden = false;
+      track('tool_names_done', { players: session.names.length, theme: session.theme });
+    };
+    start.addEventListener('click', () => {
+      session.random = theme === 'random';
+      session.theme = session.random ? Leader.randomTheme(pool) : theme;
+      session.names = [];
+      session.own = [];
+      if (!namer) namer = Leader.namer(play, { pool, session, minPlayers: 2, onDone: showDone });
+      else namer.reset(session);
+      pick.hidden = true;
+      done.hidden = true;
+      play.hidden = false;
+      track('tool_names_started', { theme: session.theme, random: session.random });
+    });
+  }
+})();

@@ -7,7 +7,11 @@
 
 import { LANGS, LANG_NAMES } from './locales.mjs';
 
-export const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
+// tools 是「桌遊助手」總覽（阿瓦隆＋小工具，2026-10-22），下面三頁是小工具
+export const PAGES = {
+  home: '', games: 'games/', combo: 'combo/', tools: 'tools/', guides: 'guides/',
+  truthOrDare: 'tools/truth-or-dare/', metronome: 'tools/metronome/', names: 'tools/names/',
+};
 export const local = (lang, page) => `/${lang}/${PAGES[page]}`;
 export const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -16,7 +20,7 @@ export function navbar(s, lang, page, langHref = (l) => local(l, page)) {
   const nav = [
     [s.navGames, local(lang, 'games'), 'games'],
     [s.navCombo, local(lang, 'combo'), 'combo'],
-    [s.navBoardgame, `/avalon/${lang}`, 'boardgame'],
+    [s.navBoardgame, local(lang, 'tools'), 'tools'],
     [s.navGuides, local(lang, 'guides'), 'guides'],
   ];
   const langMenu = LANGS.map(
@@ -72,7 +76,7 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
                  HTML 裡不出現完整地址，少被爬蟲抓去寄垃圾信 -->
             <a class="link footer-mail" data-u="woohop" data-d="vibeweb100.com" hidden><svg aria-hidden="true"><use href="#i-mail"/></svg><span></span></a>
           </div>
-          <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="/avalon/${lang}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
+          <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="${local(lang, 'tools')}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
           <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>
           <div class="footer-col"><h4>${esc(s.footerAbout)}</h4><span class="link is-disabled" aria-disabled="true">${esc(s.aboutUs)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.privacy)}</span><span class="link is-disabled" aria-disabled="true">${esc(s.contact)}</span></div>
         </div>
@@ -116,7 +120,7 @@ export function gameBar(s, lang, opts) {
   const links = [
     [s.navGames, local(lang, 'games')],
     [s.navCombo, local(lang, 'combo')],
-    [s.navBoardgame, `/avalon/${lang}`],
+    [s.navBoardgame, local(lang, 'tools')],
     [s.navGuides, local(lang, 'guides')],
   ];
   const current = opts.isRules ? ' aria-current="page"' : '';

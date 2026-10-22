@@ -10,19 +10,28 @@
 //   /{lang}/          首頁
 //   /{lang}/games/    找遊戲
 //   /{lang}/combo/    破冰組合
-// 舊網址只有 /{lang}/，維持不變；新的兩頁是新增的。
+//   /{lang}/tools/    桌遊助手（阿瓦隆＋小工具總覽，2026-10-22）
+//   /{lang}/tools/truth-or-dare/、metronome/、names/   小工具（全站共用的帶領元件 window.Leader）
+// 舊網址只有 /{lang}/，維持不變；其他是新增的。
 
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES, GAME_LANGS, gameInLang } from '../src/locales.mjs';
 import { navbar, footer, PAGES, local, esc, THEME_HEAD } from '../src/chrome.mjs';
+import { TOOLS, TOOL_KEYS, TOOL_GAMES } from '../src/tools-strings.mjs';
+import { SLOT } from '../src/slot-prompts.mjs';
+import { THEMES, groupsFor } from '../src/name-pools.mjs';
+
+// 小工具頁的文案併進當頁語言的 STRINGS（s.tools），head／jsonLd／window.WOOHOP.t 都讀得到
+for (const lang of LANGS) STRINGS[lang].tools = TOOLS[lang];
+const isTool = (page) => TOOL_KEYS.includes(page);
 
 const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22a';
+const ASSET_VERSION = '2026-10-22b';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -32,7 +41,7 @@ const jsonForScript = (data) => JSON.stringify(data).replace(/</g, '\\u003c');
 
 /* ---------- 共用的頁首、頁尾 ---------- */
 
-function head(s, lang, page, title, desc, jsonLd) {
+function head(s, lang, page, title, desc, jsonLd, css = []) {
   const alternates = LANGS.map((l) => `    <link rel="alternate" hreflang="${l}" href="${url(l, page)}" />`).join('\n');
   const asset = (f) => `/assets/${f}?v=${ASSET_VERSION}`;
   return `<!doctype html>
@@ -74,14 +83,15 @@ ${alternates}
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="${asset('woohop.css')}" />
     <link rel="stylesheet" href="${asset('site.css')}" />
+${css.map((c) => `    <link rel="stylesheet" href="${asset(c)}" />`).join('\n')}
   </head>`;
 }
 
 // 每頁都嵌一份當頁語言的文案，執行期 JS 直接讀，不用再發請求
-function scripts(s, lang, page, extra = []) {
+function scripts(s, lang, page, extra = [], more = {}) {
   const v = `?v=${ASSET_VERSION}`;
   // gameLangs：只開放部分語言的遊戲，site.js 在其他語言把它標成「即將推出」
-  const data = { lang, page, t: s, langs: LANGS, langNames: LANG_NAMES, gameLangs: GAME_LANGS };
+  const data = { lang, page, t: s, langs: LANGS, langNames: LANG_NAMES, gameLangs: GAME_LANGS, ...more };
   return `
     <script>window.WOOHOP = ${jsonForScript(data)};</script>
     <script src="/assets/woohop-art.js${v}"></script>
@@ -158,12 +168,25 @@ function jsonLd(s, lang, page, title, desc) {
     });
   }
   if (page !== 'home') {
+    const second = isTool(page) ? 'tools' : page;
+    const items = [
+      { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
+      { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1, tools: s.tools.h1 }[second], item: url(lang, second) },
+    ];
+    if (isTool(page)) items.push({ '@type': 'ListItem', position: 3, name: s.tools.items[page].name, item: url(lang, page) });
+    graph.push({ '@type': 'BreadcrumbList', itemListElement: items });
+  }
+  if (isTool(page)) {
+    // 小工具本身：免費的網頁工具
     graph.push({
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
-        { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1 }[page], item: url(lang, page) },
-      ],
+      '@type': 'WebApplication',
+      name: s.tools.items[page].name,
+      description: desc,
+      url: url(lang, page),
+      applicationCategory: 'UtilitiesApplication',
+      operatingSystem: 'Any',
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'TWD' },
     });
   }
   return { '@context': 'https://schema.org', '@graph': graph };
@@ -360,6 +383,81 @@ ${scripts(s, lang, 'guides', ['guides.js'])}
 `;
 }
 
+/* ---------- 桌遊助手總覽與小工具 ----------
+ * 總覽：上面是桌遊（阿瓦隆），下面是小工具。靜態 HTML 先放純文字連結給爬蟲，tools.js 再換成有插圖的卡片。
+ * 小工具頁：工具本體（tools.js 用 window.Leader 建）＋怎麼用＋也用在哪些遊戲。
+ */
+const toolCrumbs = (s, lang, page) => `<nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span>${
+  isTool(page) ? `<a href="${local(lang, 'tools')}">${esc(s.tools.h1)}</a><span>›</span><span>${esc(s.tools.items[page].name)}</span>` : `<span>${esc(s.tools.h1)}</span>`
+}</nav>`;
+const toolLinks = (s, lang) => TOOL_KEYS
+  .map((k) => `<a class="game tool-card" href="${local(lang, k)}" data-tool="${k}"><h3>${esc(s.tools.items[k].name)}</h3><p>${esc(s.tools.items[k].short)}</p></a>`)
+  .join('');
+
+function toolsPage(lang) {
+  const s = STRINGS[lang];
+  const T = s.tools;
+  return `${head(s, lang, 'tools', T.seoTitle, T.seoDesc, jsonLd(s, lang, 'tools', T.seoTitle, T.seoDesc))}
+  <body>${navbar(s, lang, 'tools')}
+      <main id="main">
+        <div class="page-head">
+          ${toolCrumbs(s, lang, 'tools')}
+          <h1>${esc(T.h1)}</h1>
+          <p>${esc(T.lead)}</p>
+        </div>
+        <section>
+          <div class="section-head"><div><h2>${esc(T.boardHeading)}</h2></div></div>
+          <div class="game-grid" data-games="avalon">${staticGames(s, lang, ['avalon'])}</div>
+        </section>
+        <section>
+          <div class="section-head"><div><h2>${esc(T.toolsHeading)}</h2></div></div>
+          <div class="game-grid" id="tool-grid">${toolLinks(s, lang)}</div>
+        </section>
+      </main>
+${footer(s, lang, 'tools')}
+${scripts(s, lang, 'tools', ['tools.js'], { navPage: 'tools' })}
+  </body>
+</html>
+`;
+}
+
+const toolPage = (key) => (lang) => {
+  const s = STRINGS[lang];
+  const T = s.tools, it = T.items[key];
+  // 工具要用的資料，只嵌這個語言的
+  const tool = { key };
+  if (key === 'truthOrDare') tool.slot = SLOT[lang];
+  if (key === 'names') tool.names = { themes: THEMES, groups: Object.fromEntries(THEMES.map((th) => [th, groupsFor(th, lang)])) };
+  const games = TOOL_GAMES[key].filter((k) => gameInLang(k, lang));
+  return `${head(s, lang, key, it.seoTitle, it.seoDesc, jsonLd(s, lang, key, it.seoTitle, it.seoDesc), ['game.css'])}
+  <body class="tool-page" data-tool="${key}">${navbar(s, lang, 'tools', (l) => local(l, key))}
+      <main id="main">
+        <div class="page-head">
+          ${toolCrumbs(s, lang, key)}
+          <h1>${esc(it.name)}</h1>
+          <p>${esc(it.lead)}</p>
+        </div>
+        <section class="tool-section">
+          <div class="panel tool-panel" id="tool-root"></div>
+        </section>
+        <section>
+          <div class="panel prose">
+            <h2>${esc(T.howHeading)}</h2>
+            <ol>${it.how.map((step) => `<li>${esc(step)}</li>`).join('')}</ol>
+          </div>
+        </section>
+        <section>
+          <div class="section-head"><div><h2>${esc(T.usedIn)}</h2></div></div>
+          <div class="game-grid" data-games="${games.join(',')}">${staticGames(s, lang, games)}</div>
+        </section>
+      </main>
+${footer(s, lang, key, (l) => local(l, key))}
+${scripts(s, lang, key, ['game.js', 'tools.js'], { navPage: 'tools', tool })}
+  </body>
+</html>
+`;
+};
+
 /* ---------- sitemap：每一頁都帶 hreflang（noindex 的頁面不放） ---------- */
 
 function buildSitemap() {
@@ -378,7 +476,10 @@ function buildSitemap() {
 if (existsSync(OUT)) rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
-const render = { home: homePage, games: gamesPage, combo: comboPage, guides: guidesPage };
+const render = {
+  home: homePage, games: gamesPage, combo: comboPage, tools: toolsPage, guides: guidesPage,
+  ...Object.fromEntries(TOOL_KEYS.map((k) => [k, toolPage(k)])),
+};
 let count = 0;
 for (const lang of LANGS) {
   for (const page of Object.keys(PAGES)) {

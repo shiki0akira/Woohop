@@ -95,12 +95,22 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|guides)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides)",
       "destination": "/:lang/:page/",
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|guides)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names)",
+      "destination": "/:lang/tools/:tool/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names)/index.html",
+      "destination": "/:lang/tools/:tool/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides)/index.html",
       "destination": "/:lang/:page/",
       "permanent": true
     },
@@ -515,8 +525,12 @@
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/api/new-room"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|guides)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides)/",
       "destination": "/:lang/:page/index.html"
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names)/",
+      "destination": "/:lang/tools/:tool/index.html"
     },
     {
       "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",

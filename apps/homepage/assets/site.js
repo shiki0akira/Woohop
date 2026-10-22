@@ -25,7 +25,7 @@
   remember(lang);
 
   /* ================= 網址 ================= */
-  const PATHS = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
+  const PATHS = { home: '', games: 'games/', combo: 'combo/', tools: 'tools/', guides: 'guides/' };
   const pageUrl = (p, l = lang) => `/${l}/${PATHS[p]}`;
   const gameLangs = window.WOOHOP.gameLangs || {};
   const gameUrl = key => (key === 'avalon' ? `/avalon/${lang}` : key === 'happy' ? '/happiness/zh-TW/' : `/${key}/${lang}/`);
@@ -236,13 +236,15 @@
   };
 
   /* ================= 導覽列（分頁置中，放不下的收進「更多」）、語言選單、手機選單 ================= */
-  const NAV = [[t.navGames, pageUrl('games'), 'games'], [t.navCombo, pageUrl('combo'), 'combo'], [t.navBoardgame, `/avalon/${lang}`, 'boardgame'], [t.navGuides, pageUrl('guides'), 'guides']];
+  // 小工具頁（tools/metronome/ 等）在導覽列標成「桌遊助手」
+  const navPage = window.WOOHOP.navPage || page;
+  const NAV = [[t.navGames, pageUrl('games'), 'games'], [t.navCombo, pageUrl('combo'), 'combo'], [t.navBoardgame, pageUrl('tools'), 'tools'], [t.navGuides, pageUrl('guides'), 'guides']];
   const nav = () => {
     const host = document.getElementById('site-nav');
     const links = host.querySelector('.nav-links');
     const render = n => {
       const shown = NAV.slice(0, n), more = NAV.slice(n);
-      links.innerHTML = shown.map(([label, href, id]) => `<a href="${href}"${id === page ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('') +
+      links.innerHTML = shown.map(([label, href, id]) => `<a href="${href}"${id === navPage ? ' aria-current="page"' : ''}>${esc(label)}</a>`).join('') +
         (more.length ? `<div class="nav-more"><button type="button" aria-expanded="false" aria-haspopup="true">${esc(t.more)}<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="nav-menu" hidden>${more.map(([label, href]) => `<a href="${href}">${esc(label)}</a>`).join('')}</div></div>` : '');
     };
     const fit = () => { for (let n = NAV.length; n >= 0; n--) { render(n); if (links.scrollWidth <= links.clientWidth + 1) return; } };

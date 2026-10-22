@@ -158,6 +158,29 @@
       <path d="M78 46c0-10 3-17 8-21" fill="none" ${K}/>
       ${body('<path d="M86 30c6-12 22-14 28-8-6 10-18 14-28 8z"/>', '#4FB59A', '', false)}
       ${makeFace('grin', 78, 80, 1.6)}`,
+    // 桌遊助手的小工具（2026-10-22）：拉霸機、節拍器、一疊名稱卡
+    toolSlot: () => `
+      ${ground}${burst(140, 22, '#FFC628')}${ring(22, 32, '#EE7B6A')}${dot(150, 96, '#7489E6', 4)}
+      ${body('<rect x="36" y="30" width="80" height="84" rx="12"/>', '#FFC628', '<path d="M100 22h24v100h-24z" fill="#e3a90f"/>')}
+      ${body('<rect x="46" y="44" width="60" height="30" rx="6"/>', '#ffffff', '', false)}
+      <path d="M66 46v26M86 46v26" stroke="#22222c" stroke-width="3"/>
+      <text x="56" y="65" text-anchor="middle" font-size="16" font-weight="900" fill="#EE7B6A" font-family="Fredoka, Nunito, sans-serif">?</text>
+      <text x="76" y="65" text-anchor="middle" font-size="16" font-weight="900" fill="#7489E6" font-family="Fredoka, Nunito, sans-serif">!</text>
+      <text x="96" y="65" text-anchor="middle" font-size="16" font-weight="900" fill="#4FB59A" font-family="Fredoka, Nunito, sans-serif">?</text>
+      <path d="M116 60h10v-22" fill="none" ${K}/>${body('<circle cx="126" cy="34" r="7"/>', '#EE7B6A', '', false)}
+      ${makeFace('grin', 76, 94, 1.3)}`,
+    toolMetronome: () => `
+      ${ground}${burst(140, 26, '#FFC628')}${ring(24, 34, '#4FB59A')}${plus(146, 92, '#7489E6')}
+      ${body('<path d="M60 20h40l22 96H38z"/>', '#7489E6', '<path d="M92 14l34 106h-20z" fill="#5d72d0"/>')}
+      <path d="M80 98L98 40" stroke="#22222c" stroke-width="4" stroke-linecap="round"/>
+      ${body('<circle cx="94" cy="54" r="7"/>', '#FFC628', '', false)}
+      ${makeFace('happy', 74, 92, 1.2)}`,
+    toolNames: () => `
+      ${ground}${burst(138, 24, '#FFC628')}${ring(22, 34, '#7489E6')}${plus(142, 92, '#EE7B6A')}${dot(20, 92, '#4FB59A')}
+      <g transform="rotate(-14 63 70)">${body('<rect x="36" y="34" width="54" height="72" rx="9"/>', '#FFC628')}</g>
+      <g transform="rotate(12 97 70)">${body('<rect x="70" y="34" width="54" height="72" rx="9"/>', '#aebcf3')}</g>
+      ${body('<rect x="53" y="28" width="54" height="72" rx="9"/>', '#4FB59A')}
+      ${makeFace('grin', 80, 64, 1.3)}`,
     // 幸福模擬器：戴墨鏡的大螢幕＋愛心
     happiness: () => `
       ${ground}${burst(140, 20, '#F3A4FB')}${ring(22, 26, '#FFC628')}${plus(150, 70, '#FF9419')}${dot(16, 76, '#7489E6')}
