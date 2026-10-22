@@ -820,8 +820,8 @@
 
   /*
    * 配樂（opts.groove）：跟著節拍器同一個時鐘、同一個速度排，調快調慢、自動加速都會一起變，不會兩個聲音打架。
-   * 貝斯一小節往上走、下一小節往下走（上樓下樓），每拍一下 hi-hat、第一拍大鼓、重拍拍手，
-   * 上面再一段兩小節的小旋律，每拍最多一個音（C 大調五聲音階，輕快不刺耳）。都不放半拍的音，跟拍子同樣密度。
+   * 貝斯一小節往上走、下一小節往下走（上樓下樓），八分音符的 hi-hat、第一拍大鼓、重拍拍手，
+   * 上面再一段兩小節的小旋律（C 大調五聲音階，輕快不刺耳）。
    */
   var G = { C3: 130.81, D3: 146.83, E3: 164.81, G3: 196, A3: 220, C4: 261.63, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880 };
   var GROOVE_UP = ['C3', 'E3', 'G3', 'A3', 'C4', 'A3'];
@@ -879,18 +879,20 @@
     osc.stop(at + 0.3);
   }
 
-  // 一拍的配樂。beat 是這一小節第幾拍，bar 是第幾小節，half 是半拍的秒數（只用來算音的長度）
+  // 一拍（含後半拍）的配樂。beat 是這一小節第幾拍，bar 是第幾小節，half 是半拍的秒數
   function groove(c, out, at, beat, beats, bar, accent, half) {
     if (beat === 0) grooveKick(c, out, at);
     if (accent) grooveHat(c, out, at, 0.22, 0.1, 1500);
-    // 一拍一下、沒有半拍的音：配樂跟拍子同樣密度，停下拍子後才不會聽起來快一倍（2026-10-22 使用者回報）
-    grooveHat(c, out, at, 0.1, 0.03, 7000);
+    grooveHat(c, out, at, 0.08, 0.03, 7000);
+    grooveHat(c, out, at + half, 0.12, 0.03, 7000);
     var step = beat % GROOVE_UP.length;
     var bass = GROOVE_UP[bar % 2 === 0 ? step : GROOVE_UP.length - 1 - step];
     grooveTone(c, out, 'triangle', G[bass], at, 0.32, Math.min(0.3, half * 1.6));
     var line = GROOVE_MELODY[bar % 2];
-    var note = line[(beat * 2) % line.length];
-    if (note) grooveTone(c, out, 'square', G[note], at, 0.045, Math.min(0.3, half * 1.4));
+    for (var k = 0; k < 2; k += 1) {
+      var note = line[(beat * 2 + k) % line.length];
+      if (note) grooveTone(c, out, 'square', G[note], at + k * half, 0.045, Math.min(0.18, half * 0.9));
+    }
   }
 
   function metronome(rootEl, opts) {
