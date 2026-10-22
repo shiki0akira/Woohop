@@ -263,6 +263,10 @@
 /* ---------- 桌遊助手：小工具頁（tools.js 用全站共用的帶領元件 window.Leader 建，樣式大多在 game.css） ---------- */
 /* 桌遊助手總覽與小工具頁：每個區塊上下 40px（全站的 section 是 48px） */
 .tools-page main > section, .tool-page main > section { padding: 40px 0; }
+/* 總覽頁：桌遊和小工具同一個格子，標題上面一個小標籤分類，插圖跨三列 */
+.tools-page main > section { padding-top: 20px; }
+.tool-grid .tool-card:has(.tool-kind) .art { grid-row: 1 / span 3; }
+.tool-grid .tool-card .tool-kind { position: static; justify-self: start; margin-bottom: 2px; }
 /* 「怎麼用」「也用在這些遊戲」緊接在上一塊下面，上面只留 20px */
 .tool-page main > section.tool-how, .tool-page main > section.tool-used { padding: 20px 0 40px; }
 /* 手機點進來第一個畫面就要看到整個工具：標題區收緊、工具緊接在說明下面 */

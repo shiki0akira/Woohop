@@ -34,7 +34,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22v';
+const ASSET_VERSION = '2026-10-22w';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -406,13 +406,9 @@ function toolsPage(lang) {
           <h1>${esc(T.h1)}</h1>
           <p>${esc(T.lead)}</p>
         </div>
+        <!-- 桌遊和小工具放同一個格子（一進來全部看得到），卡片上的小標籤分「桌遊」「小工具」；數量多了再考慮篩選 -->
         <section>
-          <div class="section-head"><div><h2>${esc(T.boardHeading)}</h2></div></div>
-          <div class="game-grid" data-games="avalon">${staticGames(s, lang, ['avalon'])}</div>
-        </section>
-        <section>
-          <div class="section-head"><div><h2>${esc(T.toolsHeading)}</h2></div></div>
-          <div class="game-grid tool-grid" id="tool-grid">${toolLinks(s, lang)}</div>
+          <div class="game-grid tool-grid" id="tool-grid"><a class="game tool-card" href="/avalon/${lang}" data-board="avalon"><h3>${esc(s.games.avalon[0])}</h3><p>${esc(s.games.avalon[1])}</p></a>${toolLinks(s, lang)}</div>
         </section>
       </main>
 ${footer(s, lang, 'tools')}
