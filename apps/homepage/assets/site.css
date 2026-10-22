@@ -296,14 +296,10 @@
 .tool-page .namer .stage-choose > .btn-secondary, .tool-page .namer .need-more, .tool-page .namer .all-done { display: none; }
 .tool-panel .prose ol { margin: 0; }
 
-/* ---------- 關於我們、聯絡我們（意見表單）、隱私權政策（2026-10-22） ---------- */
-.about-page main > section, .contact-page main > section, .legal-page main > section { padding: 24px 0 40px; }
+/* ---------- 關於我們（含聯絡表單）、服務條款、隱私權政策（2026-10-22） ---------- */
+.about-page main > section, .legal-page main > section { padding: 24px 0 40px; }
+.about-page .about-story { padding-bottom: 8px; }
 .about-story .panel, .legal .panel { max-width: 760px; }
-/* 原則：放在「我們在做什麼」裡，打勾的短清單 */
-.prose ul.about-promises { list-style: none; padding: 0; margin: 16px 0 0; gap: 10px; }
-.about-promises li { display: flex; gap: 10px; align-items: flex-start; }
-.about-promises svg { width: 22px; height: 22px; flex: none; margin-top: 5px; color: var(--mint-text); }
-.about-promises b { margin-right: 8px; }
 .about-contact .panel { max-width: 760px; }
 .feedback { display: grid; gap: 20px; }
 .feedback .field-wide { max-width: none; }

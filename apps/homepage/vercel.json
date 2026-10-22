@@ -95,7 +95,17 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|contact|terms|privacy)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/contact/:path*",
+      "destination": "/:lang/about/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/contact",
+      "destination": "/:lang/about/",
+      "permanent": true
+    },
+    {
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|terms|privacy)",
       "destination": "/:lang/:page/",
       "permanent": true
     },
@@ -110,7 +120,7 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|contact|terms|privacy)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|terms|privacy)/index.html",
       "destination": "/:lang/:page/",
       "permanent": true
     },
@@ -529,7 +539,7 @@
       "destination": "https://happiness-simulator.shiki0akira.workers.dev/happiness/api/new-room"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|contact|terms|privacy)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|terms|privacy)/",
       "destination": "/:lang/:page/index.html"
     },
     {

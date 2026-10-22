@@ -18,21 +18,9 @@ export const ABOUT = {
   'zh-TW': {
     seoTitle: '關於我們｜Woohop 免費團康破冰遊戲',
     seoDesc: 'Woohop 是免費的線上團康與破冰遊戲網站：打開就能玩、不用註冊，每個遊戲都附玩法與帶領說明，支援 8 種語言。',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: '聯絡我們｜Woohop', seoDesc: '推薦遊戲、回報問題、給 Woohop 建議或合作邀約，填表單就能送出，每一則都會看。' },
     h1: '關於 Woohop',
     lead: '讓帶活動變簡單：打開網頁就能玩的團康、破冰遊戲與桌遊小工具。',
-    storyHeading: '我們在做什麼',
-    story: [
-      'Woohop 收集了適合聚會、課堂、團契和公司活動的團康與破冰遊戲，全部做成打開網頁就能玩的版本。另外也有阿瓦隆語音主持、節拍器、抽卡取名這類玩桌遊、帶團康時用得到的小工具。',
-      '不用下載 App、不用註冊。有的遊戲大家用自己的手機加入房間，有的只要一支手機傳著玩，也有完全不用手機、照著帶領說明就能玩的。',
-      '每個遊戲都附上玩法和帶領時可以怎麼說，第一次帶活動的人也能上手。網站目前有 8 種語言，遊戲會持續增加。',
-    ],
-    promises: [
-      ['完全免費', '所有遊戲和小工具都可以免費使用。'],
-      ['不用註冊', '打開網頁就能玩，不用帳號。'],
-      ['聽大家的意見', '新遊戲和改進，很多都來自使用者的建議。'],
-    ],
+    story: 'Woohop 收集了適合聚會、課堂、團契和公司活動的團康與破冰遊戲，全部做成打開網頁就能玩的版本。另外也有阿瓦隆語音主持、節拍器、抽卡取名這類玩桌遊、帶團康時用得到的小工具。',
     contactHeading: '聯絡我們',
     contactLead: '想推薦遊戲、發現哪裡壞掉、或有任何建議，都歡迎告訴我們，每一則都會看。',
     mailLead: '也可以直接寫信給我們：',
@@ -108,21 +96,9 @@ export const ABOUT = {
   en: {
     seoTitle: 'About us | Woohop — free group games and icebreakers',
     seoDesc: 'Woohop is a free website of group games and icebreakers that run in your browser — no sign-up, with rules and host tips for every game, in 8 languages.',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: 'Contact us | Woohop', seoDesc: 'Suggest a game, report a bug, share an idea or propose a partnership — send us a message and we’ll read every one.' },
     h1: 'About Woohop',
     lead: 'Making it easy to run an activity: group games, icebreakers and board game helpers that work right in your browser.',
-    storyHeading: 'What we do',
-    story: [
-      'Woohop collects group games and icebreakers for parties, classrooms, small groups and team events, and turns them into versions you can play straight from a web page. There are also handy helpers for board game nights and activities, like a voice narrator for Avalon, a metronome and a name picker.',
-      'Nothing to download and no sign-up. In some games everyone joins a room on their own phone, some are played by passing one phone around, and some need no phone at all — just follow the host guide.',
-      'Every game comes with rules and tips on what to say when you lead it, so it works even if it’s your first time hosting. The site is available in 8 languages, and new games keep coming.',
-    ],
-    promises: [
-      ['Free', 'Every game and tool is free to use.'],
-      ['No sign-up', 'Open the page and play — no account needed.'],
-      ['Shaped by you', 'Many new games and improvements come from people’s suggestions.'],
-    ],
+    story: 'Woohop collects group games and icebreakers for parties, classrooms, small groups and team events, and turns them into versions you can play straight from a web page. There are also handy helpers for board game nights and activities, like a voice narrator for Avalon, a metronome and a name picker.',
     contactHeading: 'Contact us',
     contactLead: 'Want to suggest a game, found something broken, or have an idea? Tell us — we read every message.',
     mailLead: 'Or email us directly:',
@@ -198,21 +174,9 @@ export const ABOUT = {
   de: {
     seoTitle: 'Über uns | Woohop – kostenlose Gruppenspiele und Eisbrecher',
     seoDesc: 'Woohop ist eine kostenlose Website mit Gruppenspielen und Eisbrechern direkt im Browser – ohne Anmeldung, mit Regeln und Tipps zum Anleiten, in 8 Sprachen.',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: 'Kontakt | Woohop', seoDesc: 'Spiel vorschlagen, Fehler melden, Idee teilen oder Zusammenarbeit anfragen – schick uns eine Nachricht, wir lesen jede.' },
     h1: 'Über Woohop',
     lead: 'Aktivitäten leicht gemacht: Gruppenspiele, Eisbrecher und Brettspiel-Helfer, die direkt im Browser laufen.',
-    storyHeading: 'Was wir machen',
-    story: [
-      'Woohop sammelt Gruppenspiele und Eisbrecher für Feiern, Unterricht, Kleingruppen und Teamevents und macht daraus Versionen, die du direkt auf einer Webseite spielen kannst. Dazu gibt es praktische Helfer für Spieleabende und Aktivitäten – etwa einen Sprecher für Avalon, ein Metronom und einen Namensgenerator.',
-      'Nichts herunterladen, keine Anmeldung. Bei manchen Spielen tritt jeder mit dem eigenen Handy einem Raum bei, andere spielt ihr mit einem Handy, das herumgereicht wird, und manche brauchen gar kein Handy – einfach der Anleitung folgen.',
-      'Zu jedem Spiel gibt es Regeln und Tipps, was du beim Anleiten sagen kannst – so klappt es auch beim ersten Mal. Die Seite gibt es in 8 Sprachen, und es kommen laufend neue Spiele dazu.',
-    ],
-    promises: [
-      ['Kostenlos', 'Alle Spiele und Tools sind kostenlos.'],
-      ['Ohne Anmeldung', 'Seite öffnen und loslegen – ganz ohne Konto.'],
-      ['Mit euch gestaltet', 'Viele neue Spiele und Verbesserungen kommen aus euren Vorschlägen.'],
-    ],
+    story: 'Woohop sammelt Gruppenspiele und Eisbrecher für Feiern, Unterricht, Kleingruppen und Teamevents und macht daraus Versionen, die du direkt auf einer Webseite spielen kannst. Dazu gibt es praktische Helfer für Spieleabende und Aktivitäten – etwa einen Sprecher für Avalon, ein Metronom und einen Namensgenerator.',
     contactHeading: 'Kontakt',
     contactLead: 'Du möchtest ein Spiel vorschlagen, hast einen Fehler gefunden oder eine Idee? Schreib uns – wir lesen jede Nachricht.',
     mailLead: 'Oder schreib uns direkt eine E-Mail:',
@@ -288,21 +252,9 @@ export const ABOUT = {
   fr: {
     seoTitle: 'À propos | Woohop – jeux de groupe et brise-glace gratuits',
     seoDesc: 'Woohop est un site gratuit de jeux de groupe et de brise-glace jouables dans le navigateur, sans inscription, avec règles et conseils d’animation, en 8 langues.',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: 'Nous contacter | Woohop', seoDesc: 'Proposez un jeu, signalez un bug, partagez une idée ou un partenariat : envoyez-nous un message, nous lisons chacun d’eux.' },
     h1: 'À propos de Woohop',
     lead: 'Rendre l’animation simple : jeux de groupe, brise-glace et outils pour jeux de société, directement dans le navigateur.',
-    storyHeading: 'Ce que nous faisons',
-    story: [
-      'Woohop rassemble des jeux de groupe et des brise-glace pour les fêtes, les cours, les petits groupes et les événements d’équipe, et en fait des versions jouables directement depuis une page web. On y trouve aussi des outils pratiques pour les soirées jeux et les animations : un narrateur vocal pour Avalon, un métronome, un tirage de noms…',
-      'Rien à télécharger, aucune inscription. Dans certains jeux, chacun rejoint une salle avec son propre téléphone ; d’autres se jouent en se passant un seul téléphone, et certains n’en demandent aucun – il suffit de suivre le guide d’animation.',
-      'Chaque jeu est accompagné de ses règles et de conseils sur ce qu’on peut dire en l’animant : idéal même pour une première fois. Le site existe en 8 langues, et de nouveaux jeux arrivent régulièrement.',
-    ],
-    promises: [
-      ['Gratuit', 'Tous les jeux et outils sont gratuits.'],
-      ['Sans inscription', 'Ouvrez la page et jouez, sans compte.'],
-      ['Construit avec vous', 'Beaucoup de nouveaux jeux et d’améliorations viennent de vos suggestions.'],
-    ],
+    story: 'Woohop rassemble des jeux de groupe et des brise-glace pour les fêtes, les cours, les petits groupes et les événements d’équipe, et en fait des versions jouables directement depuis une page web. On y trouve aussi des outils pratiques pour les soirées jeux et les animations : un narrateur vocal pour Avalon, un métronome, un tirage de noms…',
     contactHeading: 'Nous contacter',
     contactLead: 'Vous voulez proposer un jeu, vous avez trouvé un bug ou vous avez une idée ? Dites-le-nous : nous lisons chaque message.',
     mailLead: 'Ou écrivez-nous directement :',
@@ -378,21 +330,9 @@ export const ABOUT = {
   ja: {
     seoTitle: 'Woohopについて｜無料のレクリエーション・アイスブレイクゲーム',
     seoDesc: 'Woohopは、ブラウザですぐ遊べる無料のレクリエーション・アイスブレイクゲームのサイトです。登録不要、どのゲームにもルールと進行のコツつき、8言語対応。',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: 'お問い合わせ｜Woohop', seoDesc: 'ゲームの提案、不具合の報告、改善のアイデア、協業のご相談はこちらのフォームから。すべて目を通しています。' },
     h1: 'Woohopについて',
     lead: '場を回すのをもっとかんたんに。ブラウザですぐ遊べるレクリエーション、アイスブレイク、ボードゲームの便利ツール。',
-    storyHeading: 'Woohopでできること',
-    story: [
-      'Woohopは、飲み会、授業、サークル、社内イベントなどで使えるレクリエーションやアイスブレイクのゲームを集めて、Webページを開くだけで遊べる形にしています。アヴァロンの音声進行、メトロノーム、名前くじなど、ボードゲームやレクで役立つツールもあります。',
-      'アプリのダウンロードも登録も不要です。それぞれのスマホでルームに参加するゲーム、1台のスマホを回して遊ぶゲーム、スマホなしで進行ガイドどおりに遊べるゲームがあります。',
-      'どのゲームにもルールと進行のときの声かけ例がついているので、はじめて進行役をする人でも安心です。サイトは8言語に対応していて、ゲームはこれからも増えていきます。',
-    ],
-    promises: [
-      ['無料', 'すべてのゲームとツールを無料で使えます。'],
-      ['登録不要', 'ページを開くだけで遊べて、アカウントはいりません。'],
-      ['みんなの声で育てる', '新しいゲームや改善の多くは、使ってくれた人の提案から生まれています。'],
-    ],
+    story: 'Woohopは、飲み会、授業、サークル、社内イベントなどで使えるレクリエーションやアイスブレイクのゲームを集めて、Webページを開くだけで遊べる形にしています。アヴァロンの音声進行、メトロノーム、名前くじなど、ボードゲームやレクで役立つツールもあります。',
     contactHeading: 'お問い合わせ',
     contactLead: 'おすすめのゲーム、不具合、改善のアイデアなど、なんでも教えてください。すべて目を通しています。',
     mailLead: 'メールでも受け付けています：',
@@ -468,21 +408,9 @@ export const ABOUT = {
   ko: {
     seoTitle: 'Woohop 소개 | 무료 레크리에이션·아이스브레이킹 게임',
     seoDesc: 'Woohop은 브라우저에서 바로 즐기는 무료 레크리에이션·아이스브레이킹 게임 사이트입니다. 가입 없이, 모든 게임에 규칙과 진행 팁을 담았고 8개 언어를 지원합니다.',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: '문의하기 | Woohop', seoDesc: '게임 추천, 오류 제보, 개선 아이디어, 제휴 문의는 이 양식으로 보내 주세요. 모든 메시지를 읽고 있습니다.' },
     h1: 'Woohop 소개',
     lead: '모임 진행을 더 쉽게. 브라우저에서 바로 하는 레크리에이션, 아이스브레이킹 게임과 보드게임 도우미.',
-    storyHeading: 'Woohop이 하는 일',
-    story: [
-      'Woohop은 모임, 수업, 소그룹, 회사 행사에서 할 수 있는 레크리에이션과 아이스브레이킹 게임을 모아, 웹페이지만 열면 바로 할 수 있게 만들었습니다. 아발론 음성 진행, 메트로놈, 이름 뽑기처럼 보드게임과 레크리에이션에 쓸 만한 도구도 있습니다.',
-      '앱 설치도, 가입도 필요 없습니다. 각자 휴대폰으로 방에 들어가는 게임, 휴대폰 한 대를 돌려 가며 하는 게임, 휴대폰 없이 진행 안내만 따라 하면 되는 게임이 있습니다.',
-      '모든 게임에 규칙과 진행할 때 할 수 있는 말을 함께 담아, 처음 진행하는 사람도 어렵지 않습니다. 사이트는 8개 언어를 지원하며, 게임은 계속 늘어납니다.',
-    ],
-    promises: [
-      ['완전 무료', '모든 게임과 도구를 무료로 쓸 수 있습니다.'],
-      ['가입 불필요', '페이지를 열면 바로 할 수 있고, 계정이 필요 없습니다.'],
-      ['여러분의 의견으로', '새 게임과 개선의 상당수가 사용자 제안에서 나왔습니다.'],
-    ],
+    story: 'Woohop은 모임, 수업, 소그룹, 회사 행사에서 할 수 있는 레크리에이션과 아이스브레이킹 게임을 모아, 웹페이지만 열면 바로 할 수 있게 만들었습니다. 아발론 음성 진행, 메트로놈, 이름 뽑기처럼 보드게임과 레크리에이션에 쓸 만한 도구도 있습니다.',
     contactHeading: '문의하기',
     contactLead: '추천하고 싶은 게임, 고장 난 부분, 개선 아이디어 무엇이든 알려 주세요. 모든 메시지를 읽고 있습니다.',
     mailLead: '이메일로도 보내실 수 있습니다:',
@@ -558,21 +486,9 @@ export const ABOUT = {
   es: {
     seoTitle: 'Sobre nosotros | Woohop – juegos grupales y rompehielos gratis',
     seoDesc: 'Woohop es un sitio gratuito de juegos grupales y rompehielos que se juegan en el navegador, sin registro, con reglas y consejos para animar, en 8 idiomas.',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: 'Contacto | Woohop', seoDesc: 'Sugiere un juego, informa de un error, comparte una idea o propón una colaboración: envíanos un mensaje, los leemos todos.' },
     h1: 'Sobre Woohop',
     lead: 'Hacer fácil animar un grupo: juegos grupales, rompehielos y herramientas para juegos de mesa, directamente en el navegador.',
-    storyHeading: 'Qué hacemos',
-    story: [
-      'Woohop reúne juegos grupales y rompehielos para fiestas, clases, grupos pequeños y eventos de equipo, y los convierte en versiones que se juegan directamente desde una página web. También hay herramientas útiles para noches de juegos y dinámicas, como un narrador por voz para Avalon, un metrónomo y un sorteo de nombres.',
-      'Nada que descargar y sin registro. En algunos juegos cada uno entra a una sala con su propio móvil, otros se juegan pasándose un solo móvil y otros no necesitan móvil: basta con seguir la guía para el animador.',
-      'Cada juego incluye las reglas y consejos sobre qué decir al dirigirlo, así que funciona incluso si es tu primera vez. El sitio está en 8 idiomas y seguimos añadiendo juegos.',
-    ],
-    promises: [
-      ['Gratis', 'Todos los juegos y herramientas son gratuitos.'],
-      ['Sin registro', 'Abre la página y juega, sin cuenta.'],
-      ['Hecho contigo', 'Muchos juegos nuevos y mejoras nacen de las sugerencias de la gente.'],
-    ],
+    story: 'Woohop reúne juegos grupales y rompehielos para fiestas, clases, grupos pequeños y eventos de equipo, y los convierte en versiones que se juegan directamente desde una página web. También hay herramientas útiles para noches de juegos y dinámicas, como un narrador por voz para Avalon, un metrónomo y un sorteo de nombres.',
     contactHeading: 'Contacto',
     contactLead: '¿Quieres sugerir un juego, encontraste algo que no funciona o tienes una idea? Cuéntanoslo: leemos todos los mensajes.',
     mailLead: 'O escríbenos directamente:',
@@ -648,21 +564,9 @@ export const ABOUT = {
   'zh-CN': {
     seoTitle: '关于我们｜Woohop 免费团建破冰游戏',
     seoDesc: 'Woohop 是免费的在线团建与破冰游戏网站：打开就能玩、无需注册，每个游戏都附玩法和带领说明，支持 8 种语言。',
-    // 聯絡我們頁（/{lang}/contact/）；頁面標題與說明用下面的 contactHeading、contactLead
-    contactPage: { seoTitle: '联系我们｜Woohop', seoDesc: '推荐游戏、反馈问题、提建议或合作邀约，填写表单即可提交，每一条都会看。' },
     h1: '关于 Woohop',
     lead: '让带活动变简单：打开网页就能玩的团建、破冰游戏和桌游小工具。',
-    storyHeading: '我们在做什么',
-    story: [
-      'Woohop 收集了适合聚会、课堂、小组和公司活动的团建与破冰游戏，全部做成打开网页就能玩的版本。另外还有阿瓦隆语音主持、节拍器、抽卡起名这类玩桌游、带活动时用得上的小工具。',
-      '不用下载 App，也不用注册。有的游戏大家用自己的手机加入房间，有的只要一部手机传着玩，也有完全不用手机、照着带领说明就能玩的。',
-      '每个游戏都附有玩法和带领时可以怎么说，第一次带活动也能上手。网站目前支持 8 种语言，游戏会持续增加。',
-    ],
-    promises: [
-      ['完全免费', '所有游戏和小工具都可以免费使用。'],
-      ['无需注册', '打开网页就能玩，不用账号。'],
-      ['听大家的意见', '很多新游戏和改进都来自用户的建议。'],
-    ],
+    story: 'Woohop 收集了适合聚会、课堂、小组和公司活动的团建与破冰游戏，全部做成打开网页就能玩的版本。另外还有阿瓦隆语音主持、节拍器、抽卡起名这类玩桌游、带活动时用得上的小工具。',
     contactHeading: '联系我们',
     contactLead: '想推荐游戏、发现哪里出了问题，或者有任何建议，都欢迎告诉我们，每一条都会看。',
     mailLead: '也可以直接给我们发邮件：',

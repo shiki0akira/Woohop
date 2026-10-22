@@ -12,7 +12,7 @@
 //   /{lang}/combo/    破冰組合
 //   /{lang}/tools/    桌遊助手（阿瓦隆＋小工具總覽，2026-10-22）
 //   /{lang}/tools/truth-or-dare/、metronome/、names/   小工具（全站共用的帶領元件 window.Leader）
-//   /{lang}/about/    關於我們，/{lang}/contact/  聯絡我們（意見表單），/{lang}/terms/  服務條款，/{lang}/privacy/  隱私權政策（2026-10-22）
+//   /{lang}/about/    關於我們＋聯絡表單（舊的 /contact/ 轉過來），/{lang}/terms/  服務條款，/{lang}/privacy/  隱私權政策（2026-10-22）
 // 舊網址只有 /{lang}/，維持不變；其他是新增的。
 
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
@@ -35,7 +35,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-22y';
+const ASSET_VERSION = '2026-10-22z';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -96,7 +96,7 @@ function scripts(s, lang, page, extra = [], more = {}) {
   const v = `?v=${ASSET_VERSION}`;
   // gameLangs：只開放部分語言的遊戲，site.js 在其他語言把它標成「即將推出」
   // 關於／隱私的長文只在靜態 HTML 裡；執行期只有聯絡頁的表單要用到文字
-  const t = { ...s, about: page === 'contact' ? { form: s.about.form } : undefined };
+  const t = { ...s, about: page === 'about' ? { form: s.about.form } : undefined };
   const data = { lang, page, t, langs: LANGS, langNames: LANG_NAMES, gameLangs: GAME_LANGS, ...more };
   return `
     <script>window.WOOHOP = ${jsonForScript(data)};</script>
@@ -129,7 +129,7 @@ function jsonLd(s, lang, page, title, desc) {
     inLanguage: LANGS,
   };
   const pageNode = {
-    '@type': { about: 'AboutPage', contact: 'ContactPage' }[page] || 'WebPage',
+    '@type': { about: 'AboutPage' }[page] || 'WebPage',
     '@id': `${url(lang, page)}#webpage`,
     url: url(lang, page),
     name: title,
@@ -177,7 +177,7 @@ function jsonLd(s, lang, page, title, desc) {
     const second = isTool(page) ? 'tools' : page;
     const items = [
       { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
-      { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1, tools: s.tools.h1, about: s.about.h1, contact: s.about.contactHeading, terms: s.about.terms.h1, privacy: s.about.privacy.h1 }[second], item: url(lang, second) },
+      { '@type': 'ListItem', position: 2, name: { games: s.gamesH1, combo: s.comboH1, guides: s.guidesH1, tools: s.tools.h1, about: s.about.h1, terms: s.about.terms.h1, privacy: s.about.privacy.h1 }[second], item: url(lang, second) },
     ];
     if (isTool(page)) items.push({ '@type': 'ListItem', position: 3, name: s.tools.items[page].name, item: url(lang, page) });
     graph.push({ '@type': 'BreadcrumbList', itemListElement: items });
@@ -456,7 +456,7 @@ ${scripts(s, lang, key, ['game.js', 'tools.js'], { navPage: 'tools', tool })}
 `;
 };
 
-/* ---------- 關於我們、聯絡我們（意見表單）、隱私權政策 ----------
+/* ---------- 關於我們（含聯絡表單）、隱私權政策、服務條款 ----------
  * 表單送到 /api/feedback（vercel.json 代理到 apps/feedback 的 Worker，寄到 woohop.app@gmail.com），行為在 assets/about.js。
  * 之後要加「小額贊助（買杯咖啡）」：在關於頁加一個 id="support" 的區塊（外部贊助連結就好，不用後端），
  * 頁尾「關於」欄加一條連到 about/#support，隱私權政策補一段金流服務的說明。
@@ -469,7 +469,7 @@ const legal = (s, lang, p) => {
   const rooms = new Intl.ListFormat(lang, { type: 'conjunction' }).format(['buzzer', 'match', 'bingo'].map((k) => s.games[k][0]));
   return rich(p.replace('{rooms}', rooms))
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => {
-      const h = { '{contact}': local(lang, 'contact'), '{privacy}': local(lang, 'privacy') }[href] || href;
+      const h = { '{contact}': `${local(lang, 'about')}#contact`, '{privacy}': local(lang, 'privacy') }[href] || href;
       const ext = /^https?:/.test(h) ? ' target="_blank" rel="noopener"' : '';
       return `<a class="link" href="${h}"${ext}>${t}</a>`;
     })
@@ -478,7 +478,10 @@ const legal = (s, lang, p) => {
 
 function aboutPage(lang) {
   const s = STRINGS[lang];
-  const A = s.about;
+  const A = s.about, F = A.form;
+  // 「跟哪個遊戲有關」：這個語言玩得到的遊戲＋幸福模擬器＋小工具
+  const games = [...gameKeysFor(lang).map((k) => [k, s.games[k][0]]), ['happy', s.games.happy[0]], ...TOOL_KEYS.map((k) => [k, s.tools.items[k].name])];
+  const privacyLink = `<a class="link" href="${local(lang, 'privacy')}">${esc(A.privacy.h1)}</a>`;
   return `${head(s, lang, 'about', A.seoTitle, A.seoDesc, jsonLd(s, lang, 'about', A.seoTitle, A.seoDesc), ['game.css'])}
   <body class="about-page">${navbar(s, lang, 'about')}
       <main id="main">
@@ -486,39 +489,9 @@ function aboutPage(lang) {
           <h1>${esc(A.h1)}</h1>
           <p>${esc(A.lead)}</p>
         </div>
-        <section class="about-story">
-          <div class="panel prose">
-            <h2>${esc(A.storyHeading)}</h2>
-            ${A.story.map((p) => `<p>${esc(p)}</p>`).join('')}
-            <ul class="about-promises">${A.promises.map(([t, d]) => `<li><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>${esc(t)}</b>${esc(d)}</span></li>`).join('')}</ul>
-          </div>
-        </section>
-        <section class="about-cta">
+        <section class="about-story"><div class="panel prose"><p>${esc(A.story)}</p></div></section>
+        <section class="about-contact" id="contact">
           <div class="section-head"><div><h2>${esc(A.contactHeading)}</h2><p>${esc(A.contactLead)}</p></div></div>
-          <a class="btn btn-lg btn-solid" href="${local(lang, 'contact')}"><svg aria-hidden="true"><use href="#i-mail"/></svg>${esc(A.contactHeading)}</a>
-        </section>
-      </main>
-${footer(s, lang, 'about')}
-${scripts(s, lang, 'about', ['about.js'])}
-  </body>
-</html>
-`;
-}
-
-function contactPage(lang) {
-  const s = STRINGS[lang];
-  const A = s.about, F = A.form, C = A.contactPage;
-  // 「跟哪個遊戲有關」：這個語言玩得到的遊戲＋幸福模擬器＋小工具
-  const games = [...gameKeysFor(lang).map((k) => [k, s.games[k][0]]), ['happy', s.games.happy[0]], ...TOOL_KEYS.map((k) => [k, s.tools.items[k].name])];
-  const privacyLink = `<a class="link" href="${local(lang, 'privacy')}">${esc(A.privacy.h1)}</a>`;
-  return `${head(s, lang, 'contact', C.seoTitle, C.seoDesc, jsonLd(s, lang, 'contact', C.seoTitle, C.seoDesc), ['game.css'])}
-  <body class="contact-page">${navbar(s, lang, 'contact')}
-      <main id="main">
-        <div class="page-head">
-          <h1>${esc(A.contactHeading)}</h1>
-          <p>${esc(A.contactLead)}</p>
-        </div>
-        <section class="about-contact">
           <div class="panel">
             <form class="feedback" id="feedback" novalidate>
               <div class="field field-wide">
@@ -561,8 +534,8 @@ function contactPage(lang) {
           <p class="about-mail">${esc(A.mailLead)} ${mailLink}</p>
         </section>
       </main>
-${footer(s, lang, 'contact')}
-${scripts(s, lang, 'contact', ['about.js'])}
+${footer(s, lang, 'about')}
+${scripts(s, lang, 'about', ['about.js'])}
   </body>
 </html>
 `;
@@ -613,7 +586,7 @@ mkdirSync(OUT, { recursive: true });
 
 const render = {
   home: homePage, games: gamesPage, combo: comboPage, tools: toolsPage, guides: guidesPage,
-  about: aboutPage, contact: contactPage, terms: legalPage('terms'), privacy: legalPage('privacy'),
+  about: aboutPage, terms: legalPage('terms'), privacy: legalPage('privacy'),
   ...Object.fromEntries(TOOL_KEYS.map((k) => [k, toolPage(k)])),
 };
 let count = 0;
