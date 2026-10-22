@@ -2,7 +2,7 @@
  * 關於我們（/{lang}/about/）、聯絡我們（/{lang}/contact/，意見表單）、隱私權政策（/{lang}/privacy/）。2026-10-22
  *
  * 表單送到 /api/feedback（vercel.json 代理到 apps/feedback 的 Worker，寄到 woohop.app@gmail.com）。
- * 網址可以帶 ?type=bug&game=bomb 預先選好（之後遊戲頁的「回報問題」可以直接連過來）。
+ * 網址可以帶 ?type=idea&game=bomb 預先選好；只帶 ?game= 就當成修改建議（之後遊戲頁的「回報問題」可以直接連過來）。
  * GA 事件：feedback_sent（type、game）。
  */
 (() => {
@@ -23,8 +23,8 @@
   const openedAt = Date.now();
 
   const currentType = () => form.querySelector('input[name="type"]:checked').value;
-  // 「跟哪個遊戲有關」只對回報問題、修改建議有意義（推薦的是還沒有的遊戲），其他類型藏起來
-  const GAME_TYPES = ['bug', 'idea'];
+  // 「跟哪個遊戲有關」只對修改建議（含回報問題）有意義（推薦的是還沒有的遊戲），其他類型藏起來
+  const GAME_TYPES = ['idea'];
   const gameField = $('fb-game-field');
   const onType = () => {
     message.placeholder = F.placeholders[currentType()];
@@ -32,10 +32,12 @@
   };
   form.addEventListener('change', e => { if (e.target.name === 'type') onType(); });
 
-  // 網址帶的預設值；只帶遊戲沒帶類型（例如遊戲頁的回報連結），當成回報問題
+  // 網址帶的預設值；只帶遊戲沒帶類型（例如遊戲頁的回報連結）當成修改建議。
+  // 回報問題（bug）上線當天就併進修改建議，舊連結的 type=bug 也轉成 idea
   const q = new URLSearchParams(location.search);
   const presetGame = q.get('game') && [...game.options].some(o => o.value === q.get('game'));
-  const presetType = form.querySelector(`input[name="type"][value="${CSS.escape(q.get('type') || (presetGame ? 'bug' : ''))}"]`);
+  const typeParam = q.get('type') === 'bug' ? 'idea' : q.get('type');
+  const presetType = form.querySelector(`input[name="type"][value="${CSS.escape(typeParam || (presetGame ? 'idea' : ''))}"]`);
   if (presetType) presetType.checked = true;
   if (presetGame) game.value = q.get('game');
   onType();

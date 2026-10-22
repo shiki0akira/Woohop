@@ -3,13 +3,13 @@
  * prerender 會把這份併進 STRINGS[lang].about。各語言逐句照當地說法寫，不要丟翻譯 API。
  *
  * 表單送到 apps/feedback（Cloudflare Worker，寄到 woohop.app@gmail.com）。
- * 類型的鍵（recommend / bug / idea / collab / other）兩邊要一致：apps/feedback/src/feedback.js 的 TYPES。
+ * 類型的鍵（recommend / idea / collab / other；回報問題併進 idea「修改建議」）兩邊要一致：apps/feedback/src/feedback.js 的 TYPES。
  *
  * 隱私權政策的段落可以用 **粗體** 與 [文字](網址)。內容要跟網站實際做的事一致：
  * 加了新的第三方服務（例如廣告、贊助金流）就要改這裡，也要改 updated 日期。
  */
 
-export const FEEDBACK_TYPES = ['recommend', 'bug', 'idea', 'collab', 'other'];
+export const FEEDBACK_TYPES = ['recommend', 'idea', 'collab', 'other'];
 
 const GA_OPTOUT = 'https://tools.google.com/dlpage/gaoptout';
 const GOOGLE_PARTNERS = 'https://policies.google.com/technologies/partner-sites';
@@ -38,15 +38,14 @@ export const ABOUT = {
     mailLead: '也可以直接寫信給我們：',
     form: {
       type: '想跟我們說什麼？',
-      types: { recommend: '推薦遊戲', bug: '回報問題', idea: '修改建議', collab: '合作邀約', other: '其他' },
+      types: { recommend: '推薦遊戲', idea: '修改建議', collab: '合作邀約', other: '其他' },
       game: '跟哪個遊戲有關？（選填）',
       gameNone: '沒有特定的',
       gameSite: '網站整體',
       message: '內容',
       placeholders: {
         recommend: '遊戲叫什麼、怎麼玩、適合幾個人？',
-        bug: '在哪一頁、做了什麼、發生什麼事？用的是手機還是電腦？',
-        idea: '哪裡可以更好？',
+        idea: '哪裡壞掉、或哪裡可以更好？如果是問題，請寫在哪一頁、發生什麼事，用手機還是電腦。',
         collab: '簡單介紹你和想合作的內容',
         other: '想說什麼都可以',
       },
@@ -129,15 +128,14 @@ export const ABOUT = {
     mailLead: 'Or email us directly:',
     form: {
       type: 'What’s it about?',
-      types: { recommend: 'Suggest a game', bug: 'Report a bug', idea: 'Improvement idea', collab: 'Partnership', other: 'Something else' },
+      types: { recommend: 'Suggest a game', idea: 'Feedback', collab: 'Partnership', other: 'Other' },
       game: 'Which game? (optional)',
       gameNone: 'Not a specific one',
       gameSite: 'The website in general',
       message: 'Message',
       placeholders: {
         recommend: 'What’s the game called, how is it played, and for how many people?',
-        bug: 'Which page, what did you do, and what happened? Phone or computer?',
-        idea: 'What could be better?',
+        idea: 'Something broken, or something that could be better? For a problem, tell us which page, what happened, and whether you were on a phone or computer.',
         collab: 'Tell us a little about yourself and what you have in mind',
         other: 'Anything you’d like to say',
       },
@@ -220,15 +218,14 @@ export const ABOUT = {
     mailLead: 'Oder schreib uns direkt eine E-Mail:',
     form: {
       type: 'Worum geht es?',
-      types: { recommend: 'Spiel vorschlagen', bug: 'Fehler melden', idea: 'Verbesserung', collab: 'Zusammenarbeit', other: 'Etwas anderes' },
+      types: { recommend: 'Spiel vorschlagen', idea: 'Feedback', collab: 'Kooperation', other: 'Sonstiges' },
       game: 'Welches Spiel? (optional)',
       gameNone: 'Kein bestimmtes',
       gameSite: 'Die Website allgemein',
       message: 'Nachricht',
       placeholders: {
         recommend: 'Wie heißt das Spiel, wie wird es gespielt und für wie viele Personen?',
-        bug: 'Welche Seite, was hast du gemacht, was ist passiert? Handy oder Computer?',
-        idea: 'Was könnte besser sein?',
+        idea: 'Etwas kaputt oder verbesserungswürdig? Bei einem Fehler: welche Seite, was ist passiert, Handy oder Computer?',
         collab: 'Erzähl kurz, wer du bist und was du vorhast',
         other: 'Was du uns sagen möchtest',
       },
@@ -311,15 +308,14 @@ export const ABOUT = {
     mailLead: 'Ou écrivez-nous directement :',
     form: {
       type: 'De quoi s’agit-il ?',
-      types: { recommend: 'Proposer un jeu', bug: 'Signaler un bug', idea: 'Suggestion', collab: 'Partenariat', other: 'Autre chose' },
+      types: { recommend: 'Proposer un jeu', idea: 'Suggestion', collab: 'Partenariat', other: 'Autre' },
       game: 'Quel jeu ? (facultatif)',
       gameNone: 'Aucun en particulier',
       gameSite: 'Le site en général',
       message: 'Message',
       placeholders: {
         recommend: 'Comment s’appelle le jeu, comment y joue-t-on, à combien ?',
-        bug: 'Quelle page, qu’avez-vous fait, que s’est-il passé ? Téléphone ou ordinateur ?',
-        idea: 'Qu’est-ce qui pourrait être mieux ?',
+        idea: 'Quelque chose ne marche pas ou pourrait être mieux ? Pour un bug : quelle page, que s’est-il passé, téléphone ou ordinateur ?',
         collab: 'Présentez-vous en quelques mots et dites-nous ce que vous imaginez',
         other: 'Tout ce que vous voulez nous dire',
       },
@@ -402,15 +398,14 @@ export const ABOUT = {
     mailLead: 'メールでも受け付けています：',
     form: {
       type: 'お問い合わせの種類',
-      types: { recommend: 'ゲームの提案', bug: '不具合の報告', idea: '改善のアイデア', collab: '協業のご相談', other: 'その他' },
+      types: { recommend: 'ゲームの提案', idea: '改善の提案', collab: '協業のご相談', other: 'その他' },
       game: '関係するゲーム（任意）',
       gameNone: 'とくになし',
       gameSite: 'サイト全体',
       message: '内容',
       placeholders: {
         recommend: 'ゲームの名前、遊び方、何人向けか教えてください',
-        bug: 'どのページで、何をしたら、どうなりましたか？スマホとパソコンのどちらですか？',
-        idea: 'どこをよくするとよさそうですか？',
+        idea: '不具合や、もっとよくできるところはありますか？不具合なら、どのページで何が起きたか、スマホかパソコンかも教えてください。',
         collab: 'かんたんな自己紹介と、ご相談の内容',
         other: 'なんでもどうぞ',
       },
@@ -493,15 +488,14 @@ export const ABOUT = {
     mailLead: '이메일로도 보내실 수 있습니다:',
     form: {
       type: '어떤 내용인가요?',
-      types: { recommend: '게임 추천', bug: '오류 제보', idea: '개선 제안', collab: '제휴 문의', other: '기타' },
+      types: { recommend: '게임 추천', idea: '개선 제안', collab: '제휴 문의', other: '기타' },
       game: '관련된 게임 (선택)',
       gameNone: '특정 게임 없음',
       gameSite: '사이트 전체',
       message: '내용',
       placeholders: {
         recommend: '게임 이름, 하는 방법, 몇 명이 하기 좋은지 알려 주세요',
-        bug: '어느 페이지에서 무엇을 했을 때 어떻게 됐나요? 휴대폰인가요, 컴퓨터인가요?',
-        idea: '어떤 점이 더 좋아지면 좋을까요?',
+        idea: '고장 난 곳이나 더 좋아지면 좋을 점이 있나요? 오류라면 어느 페이지에서 무슨 일이 있었는지, 휴대폰인지 컴퓨터인지 알려 주세요.',
         collab: '간단한 소개와 제안하고 싶은 내용',
         other: '무엇이든 적어 주세요',
       },
@@ -584,15 +578,14 @@ export const ABOUT = {
     mailLead: 'O escríbenos directamente:',
     form: {
       type: '¿Sobre qué es?',
-      types: { recommend: 'Sugerir un juego', bug: 'Informar de un error', idea: 'Idea de mejora', collab: 'Colaboración', other: 'Otra cosa' },
+      types: { recommend: 'Sugerir un juego', idea: 'Sugerencia', collab: 'Colaboración', other: 'Otro' },
       game: '¿Qué juego? (opcional)',
       gameNone: 'Ninguno en concreto',
       gameSite: 'El sitio en general',
       message: 'Mensaje',
       placeholders: {
         recommend: '¿Cómo se llama el juego, cómo se juega y para cuántas personas?',
-        bug: '¿En qué página, qué hiciste y qué pasó? ¿Móvil u ordenador?',
-        idea: '¿Qué podría mejorar?',
+        idea: '¿Algo no funciona o podría mejorar? Si es un error, dinos en qué página, qué pasó y si usabas móvil u ordenador.',
         collab: 'Cuéntanos un poco quién eres y qué tienes en mente',
         other: 'Lo que quieras decirnos',
       },
@@ -675,15 +668,14 @@ export const ABOUT = {
     mailLead: '也可以直接给我们发邮件：',
     form: {
       type: '想和我们说什么？',
-      types: { recommend: '推荐游戏', bug: '反馈问题', idea: '改进建议', collab: '合作邀约', other: '其他' },
+      types: { recommend: '推荐游戏', idea: '改进建议', collab: '合作邀约', other: '其他' },
       game: '和哪个游戏有关？（选填）',
       gameNone: '没有特定的',
       gameSite: '网站整体',
       message: '内容',
       placeholders: {
         recommend: '游戏叫什么、怎么玩、适合几个人？',
-        bug: '在哪个页面、做了什么、发生了什么？用的是手机还是电脑？',
-        idea: '哪里可以做得更好？',
+        idea: '哪里出了问题，或者哪里可以更好？如果是问题，请写在哪个页面、发生了什么，用的是手机还是电脑。',
         collab: '简单介绍一下你和想合作的内容',
         other: '想说什么都可以',
       },

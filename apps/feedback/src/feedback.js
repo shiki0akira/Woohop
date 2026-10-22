@@ -1,9 +1,9 @@
 // 意見表單的檢查與信件內容。跟 Workers 執行環境無關的部分都放這裡，node --test 測得到。
 
 // 表單的「想跟我們說什麼」。順序跟頁面上的選項一樣（文案在 apps/homepage/src/about-strings.mjs）
-export const TYPES = ['recommend', 'bug', 'idea', 'collab', 'other'];
+export const TYPES = ['recommend', 'idea', 'collab', 'other'];
 export const TYPE_LABEL = {
-  recommend: '推薦遊戲', bug: '問題回報', idea: '修改建議', collab: '合作邀約', other: '其他',
+  recommend: '推薦遊戲', idea: '修改建議', collab: '合作邀約', other: '其他',
 };
 // 「跟哪個遊戲有關」：site 是網站整體；空字串是沒選
 export const GAMES = ['', 'site', 'match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'orchard', 'avalon',
@@ -30,7 +30,8 @@ export function validate(body) {
   if (str(body.website, 200)) return { ok: true, skip: 'honeypot' };
   if (typeof body.elapsed === 'number' && body.elapsed < MIN_FILL_MS) return { ok: true, skip: 'too-fast' };
 
-  const type = TYPES.includes(body.type) ? body.type : null;
+  // 回報問題（bug）上線當天併進修改建議；還開著舊頁面的人送來的 bug 照樣收
+  const type = body.type === 'bug' ? 'idea' : TYPES.includes(body.type) ? body.type : null;
   const game = GAMES.includes(body.game) ? body.game : '';
   const message = str(body.message, MESSAGE_MAX + 1);
   const email = str(body.email, 200);

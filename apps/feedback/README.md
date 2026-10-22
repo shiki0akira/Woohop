@@ -12,4 +12,4 @@ npm test                 # node --test，檢查與信件格式
 npx wrangler deploy      # 部署
 ```
 
-類型的鍵（`recommend` / `bug` / `idea` / `collab` / `other`）跟 `apps/homepage/src/about-strings.mjs` 的 `FEEDBACK_TYPES` 要一致；加新遊戲時 `src/feedback.js` 的 `GAMES` 也要加，不然那個選項會被當成「沒選」。
+類型的鍵（`recommend` / `idea` / `collab` / `other`；回報問題上線當天併進 `idea`，舊頁面送來的 `bug` 會轉成 `idea`）跟 `apps/homepage/src/about-strings.mjs` 的 `FEEDBACK_TYPES` 要一致；加新遊戲時 `src/feedback.js` 的 `GAMES` 也要加，不然那個選項會被當成「沒選」。

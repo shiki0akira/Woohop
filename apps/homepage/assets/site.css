@@ -308,6 +308,7 @@
 .feedback .label { font-weight: 800; font-size: 14px; }
 /* 類型：單選的膠囊（radio 藏起來，選中的套 .chip 的選中色） */
 .fb-types { flex-wrap: wrap; gap: 8px; }
+.fb-types .chip { white-space: nowrap; }
 .fb-types input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .fb-types .chip:has(input:checked) { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); box-shadow: 0 3px 0 var(--blue-edge); }
 .fb-types .chip:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
