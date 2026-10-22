@@ -746,7 +746,7 @@
  *
  *   Leader.metronome(rootEl, { bpm, min, max, step, beats, accents, auto, sound, groove, onStart, onStop })
  *       accents：哪幾拍是重拍（從 0 算），預設只有最後一拍。上樓下樓是四拍「1、樓、上、4 樓」，最後一拍是重拍
- *       auto：自動加速一開始就開著（使用者還是可以關）
+ *       auto：自動加速一開始就開著（使用者還是可以關）。停下來時自動加上去的速度會歸零，回到按開始時的速度＋中途自己調的
  *       intro：開場口令的詞（例如果園菜園動物園的 ['果園', '菜園', '動物園']）。燈那一排平常先顯示這些字，
  *         按下開始後一拍亮一個詞，喊完才變回圓燈打拍子（跟竹筍的口令同一個樣子）
  *       sound：可選，回傳 true／false，關著就不出聲（燈照樣亮）
@@ -905,7 +905,7 @@
      * 時鐘（clock）只有一個，上面兩層：拍子（running：拍子聲＋燈，按「開始打拍子」才有）和配樂（music：遊戲自己開關）。
      * 兩層分開開關，但踩同一個時鐘、同一個速度，所以永遠對得上拍。兩層都關了時鐘才停。
      */
-    var st = { count: 0, clock: false, running: false, music: false, bg: false, duck: false, ducked: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
+    var st = { startBpm: o.bpm, manual: 0, count: 0, clock: false, running: false, music: false, bg: false, duck: false, ducked: false, bpm: o.bpm, timer: 0, next: 0, beat: 0, bars: 0, auto: !!opts.auto, visual: [] };
     var soundOn = function () { return !opts.sound || opts.sound(); };
     var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
     var musicBus = null;
@@ -1058,6 +1058,7 @@
       var c = startClock();
       if (!c) return;
       st.running = true;
+      st.startBpm = st.bpm; // 停下來時回到這個速度（見 stop）
       setGain(clickBus, CLICK_VOL);
       applyMusicLevel();
       st.count = 0;
@@ -1071,6 +1072,10 @@
     function stop() {
       if (!st.running) return;
       st.running = false;
+      // 自動加速加上去的速度歸零：配樂會繼續放，停在加速後的 115 BPM 聽起來很急（2026-10-22 使用者回報）。
+      // 打拍子中自己按 −／＋ 調的不算，只還原自動加的部分
+      if (st.bpm > st.startBpm + st.manual) st.bpm = st.startBpm + st.manual;
+      st.manual = 0;
       st.visual.forEach(clearTimeout);
       st.visual = [];
       setGain(clickBus, 0);
@@ -1115,10 +1120,12 @@
       else start();
     });
     slower.addEventListener('click', function () {
+      if (st.running) st.manual -= Math.min(o.step, st.bpm - o.min);
       st.bpm = Math.max(o.min, st.bpm - o.step);
       sync();
     });
     faster.addEventListener('click', function () {
+      if (st.running) st.manual += Math.min(o.step, o.max - st.bpm);
       st.bpm = Math.min(o.max, st.bpm + o.step);
       sync();
     });
