@@ -30,7 +30,7 @@ export const TOOLS = {
         short: '拉一下出題目，可以只抽真心話、只抽大冒險，或隨機。',
         seoTitle: '真心話大冒險拉霸｜線上抽題目，聚會破冰、懲罰遊戲都能用',
         seoDesc: '手機拉一下就出一題真心話或大冒險，可以只抽真心話、只抽大冒險或隨機。題目適合第一次見面的聚會，不尷尬、不越線。免下載、免註冊。',
-        lead: '輸了要接受懲罰？拉一下，看是回答一個問題還是做一個動作。題目都是第一次見面也不尷尬的。',
+        lead: '輸的人拉一下，回答問題或做個動作。',
         how: [
           '先選「真心話」「大冒險」或「隨機」。',
           '按「拉一下！」，拉霸停下來的那一題就是你的。',
@@ -42,7 +42,7 @@ export const TOOLS = {
         short: '可調快慢、可自動加速，帶拍子的團康遊戲都能用，還有配樂。',
         seoTitle: '節拍器｜線上團康節拍器，可調快慢、自動加速、附配樂',
         seoDesc: '帶團康用的手機節拍器：可選幾拍一組、調快調慢、開自動加速越玩越快，還能開輕快的配樂。適合上樓下樓、果園菜園動物園這類跟著拍子的遊戲。免下載、免註冊。',
-        lead: '跟著拍子的團康遊戲，靠大家自己拍很容易越拍越亂。讓手機打拍子，還能慢慢加快，越玩越刺激。',
+        lead: '讓手機幫大家打拍子，還能越打越快。',
         how: [
           '先選幾拍一組，再按「−／＋」調速度，一開始慢一點。',
           '按「開始打拍子」，最後一拍是重拍；開「自動加速」會每 4 組快一點。',
@@ -56,7 +56,7 @@ export const TOOLS = {
         short: '選一個主題，每個人抽一張卡當代號，玩需要喊名字的遊戲最方便。',
         seoTitle: '抽卡取名｜團康代號產生器，食物、動物、卡通角色隨機抽',
         seoDesc: '玩需要喊名字的團康遊戲，先幫每個人抽一個好笑的代號：選主題（食物、動物、卡通角色⋯⋯）或隨機，手機傳一圈，每人抽一張。免下載、免註冊。',
-        lead: '竹筍竹筍蹦蹦出這類要喊名字的遊戲，用好笑的代號比本名更好玩。選一個主題，手機傳一圈，每人抽一張。',
+        lead: '選個主題，手機傳一圈，每人抽一個代號。',
         how: [
           '選一個主題，或交給隨機。',
           '手機傳一圈：每個人按「抽一個」，抽到的就是自己的代號，大聲念出來。',
@@ -83,7 +83,7 @@ export const TOOLS = {
         short: '拉一下出题目，可以只抽真心话、只抽大冒险，或随机。',
         seoTitle: '真心话大冒险老虎机｜在线抽题目，聚会破冰、惩罚游戏都能用',
         seoDesc: '手机拉一下就出一题真心话或大冒险，可以只抽真心话、只抽大冒险或随机。题目适合第一次见面的聚会，不尴尬、不越界。免下载、免注册。',
-        lead: '输了要接受惩罚？拉一下，看是回答一个问题还是做一个动作。题目都是第一次见面也不尴尬的。',
+        lead: '输的人拉一下，回答问题或做个动作。',
         how: [
           '先选“真心话”“大冒险”或“随机”。',
           '按“拉一下！”，老虎机停下来的那一题就是你的。',
@@ -95,7 +95,7 @@ export const TOOLS = {
         short: '可调快慢、可自动加速，带节拍的团建游戏都能用，还有背景音乐。',
         seoTitle: '节拍器｜在线团建节拍器，可调快慢、自动加速、带背景音乐',
         seoDesc: '带团建用的手机节拍器：可选几拍一组、调快调慢、开自动加速越玩越快，还能开轻快的背景音乐。适合上楼下楼、果园菜园动物园这类跟着节拍的游戏。免下载、免注册。',
-        lead: '跟着节拍的团建游戏，靠大家自己拍很容易越拍越乱。让手机打节拍，还能慢慢加快，越玩越刺激。',
+        lead: '让手机帮大家打节拍，还能越打越快。',
         how: [
           '先选几拍一组，再按“−／＋”调速度，一开始慢一点。',
           '按“开始打拍子”，最后一拍是重拍；开“自动加速”会每 4 组快一点。',
@@ -109,7 +109,7 @@ export const TOOLS = {
         short: '选一个主题，每个人抽一张卡当代号，玩需要喊名字的游戏最方便。',
         seoTitle: '抽卡取名｜团建代号生成器，食物、动物、动画角色随机抽',
         seoDesc: '玩需要喊名字的团建游戏，先帮每个人抽一个好笑的代号：选主题（食物、动物、动画角色……）或随机，手机传一圈，每人抽一张。免下载、免注册。',
-        lead: '竹笋竹笋蹦蹦出这类要喊名字的游戏，用好笑的代号比本名更好玩。选一个主题，手机传一圈，每人抽一张。',
+        lead: '选个主题，手机传一圈，每人抽一个代号。',
         how: [
           '选一个主题，或交给随机。',
           '手机传一圈：每个人按“抽一个”，抽到的就是自己的代号，大声念出来。',
@@ -136,7 +136,7 @@ export const TOOLS = {
         short: 'Pull the lever for a prompt — truths only, dares only, or a mix.',
         seoTitle: 'Truth or Dare slot machine | Random questions and dares for parties',
         seoDesc: 'Pull the lever on your phone for a random truth or dare. Choose truths only, dares only or a mix. Prompts are friendly enough for people meeting for the first time. No download, no sign-up.',
-        lead: 'Someone lost and owes a forfeit? Pull the lever and see whether they answer a question or do a dare. Every prompt works even with people you’ve just met.',
+        lead: 'Whoever lost pulls the lever: answer a question or do a dare.',
         how: [
           'Pick Truth, Dare or Random.',
           'Tap “Pull!” — whatever the slot stops on is yours.',
@@ -148,7 +148,7 @@ export const TOOLS = {
         short: 'Adjustable tempo with auto speed-up and music — for any clap-along group game.',
         seoTitle: 'Metronome for group games | Adjustable tempo, auto speed-up, music',
         seoDesc: 'A phone metronome made for group games: choose the beats per bar, speed up or slow down, turn on auto speed-up, and add upbeat music. Great for clap-along games like Elevator or Concentration. No download, no sign-up.',
-        lead: 'Clap-along games fall apart when everyone keeps their own beat. Let the phone keep time — and speed it up bit by bit to raise the stakes.',
+        lead: 'Let the phone keep the beat — and speed it up as you go.',
         how: [
           'Pick how many beats per bar, then use − / + to set the tempo. Start slow.',
           'Tap “Start the beat”. The last beat is the accent; “Speed up” adds a little every 4 bars.',
@@ -162,7 +162,7 @@ export const TOOLS = {
         short: 'Pick a theme and everyone draws a funny nickname — perfect for name-calling games.',
         seoTitle: 'Name draw | Random funny nicknames for group games',
         seoDesc: 'For group games where you call out names, give everyone a funny nickname first: pick a theme (food, animals, cartoon characters…) or go random, pass the phone around and draw one each. No download, no sign-up.',
-        lead: 'Games where you shout out names are more fun with silly nicknames. Pick a theme, pass the phone around, and everyone draws one.',
+        lead: 'Pick a theme, pass the phone, everyone draws a nickname.',
         how: [
           'Pick a theme, or leave it to chance.',
           'Pass the phone around: each person taps “Draw a name” and reads their nickname out loud.',
@@ -189,7 +189,7 @@ export const TOOLS = {
         short: 'Am Hebel ziehen und eine Aufgabe bekommen – nur Wahrheit, nur Pflicht oder gemischt.',
         seoTitle: 'Wahrheit oder Pflicht Automat | Zufällige Fragen und Aufgaben für Partys',
         seoDesc: 'Am Handy den Hebel ziehen und eine zufällige Wahrheit oder Pflicht bekommen – nur Fragen, nur Aufgaben oder gemischt. Alles passt auch, wenn man sich gerade erst kennenlernt. Ohne Download, ohne Anmeldung.',
-        lead: 'Jemand hat verloren und muss ran? Am Hebel ziehen und schauen, ob eine Frage oder eine Aufgabe kommt. Alles harmlos genug fürs erste Kennenlernen.',
+        lead: 'Wer verloren hat, zieht: eine Frage beantworten oder eine Aufgabe machen.',
         how: [
           'Wahrheit, Pflicht oder Zufall wählen.',
           '„Ziehen!“ tippen – wo der Automat stehen bleibt, das ist deine Aufgabe.',
@@ -201,7 +201,7 @@ export const TOOLS = {
         short: 'Tempo einstellbar, mit automatischem Beschleunigen und Musik – für jedes Klatschspiel.',
         seoTitle: 'Metronom für Gruppenspiele | Tempo einstellen, automatisch schneller, mit Musik',
         seoDesc: 'Ein Handy-Metronom für Gruppenspiele: Schläge pro Takt wählen, schneller oder langsamer stellen, automatisch beschleunigen lassen und fröhliche Musik dazuschalten. Ideal für Klatschspiele wie Fahrstuhl oder Kategorien-Klatschen. Ohne Download, ohne Anmeldung.',
-        lead: 'Bei Klatschspielen gerät der Takt schnell durcheinander, wenn jeder sein eigenes Tempo hat. Lass das Handy den Takt halten – und ihn nach und nach anziehen.',
+        lead: 'Das Handy gibt den Takt vor – und wird nach und nach schneller.',
         how: [
           'Schläge pro Takt wählen und mit − / + das Tempo einstellen. Langsam anfangen.',
           '„Takt starten“ tippen. Der letzte Schlag ist betont; „Immer schneller“ legt alle 4 Takte etwas zu.',
@@ -215,7 +215,7 @@ export const TOOLS = {
         short: 'Thema wählen, jeder zieht einen lustigen Spitznamen – ideal für Spiele mit Namenrufen.',
         seoTitle: 'Namen ziehen | Lustige Spitznamen für Gruppenspiele',
         seoDesc: 'Für Gruppenspiele, bei denen Namen gerufen werden: erst allen einen lustigen Spitznamen geben. Thema wählen (Essen, Tiere, Zeichentrickfiguren …) oder Zufall, Handy herumgeben, jeder zieht einen. Ohne Download, ohne Anmeldung.',
-        lead: 'Spiele, bei denen man Namen ruft, machen mit albernen Spitznamen mehr Spaß. Thema wählen, Handy herumgeben, jeder zieht einen.',
+        lead: 'Thema wählen, Handy herumgeben, jeder zieht einen Spitznamen.',
         how: [
           'Ein Thema wählen oder den Zufall entscheiden lassen.',
           'Handy herumgeben: Jede Person tippt „Namen ziehen“ und liest ihren Spitznamen laut vor.',
@@ -242,7 +242,7 @@ export const TOOLS = {
         short: 'Tirez le levier pour un défi – que des vérités, que des actions, ou au hasard.',
         seoTitle: 'Action ou vérité : machine à tirer | Questions et défis au hasard pour soirées',
         seoDesc: 'Tirez le levier sur votre téléphone pour une action ou une vérité au hasard : que des questions, que des défis, ou un mélange. Tout reste sympa, même entre gens qui viennent de se rencontrer. Sans téléchargement, sans inscription.',
-        lead: 'Quelqu’un a perdu et doit payer un gage ? Tirez le levier : question ou défi ? Tout passe, même avec des gens qu’on vient de rencontrer.',
+        lead: 'Le perdant tire le levier : une question ou un défi.',
         how: [
           'Choisissez Vérité, Action ou Hasard.',
           'Appuyez sur « Tirer ! » : là où la machine s’arrête, c’est pour vous.',
@@ -254,7 +254,7 @@ export const TOOLS = {
         short: 'Tempo réglable, accélération automatique et musique – pour tous les jeux en rythme.',
         seoTitle: 'Métronome pour jeux de groupe | Tempo réglable, accélération, musique',
         seoDesc: 'Un métronome sur téléphone pensé pour les jeux de groupe : nombre de temps par mesure, plus vite ou plus lent, accélération automatique et musique entraînante. Idéal pour les jeux en rythme comme L’ascenseur ou Catégories en rythme. Sans téléchargement, sans inscription.',
-        lead: 'Dans les jeux en rythme, le tempo part vite dans tous les sens si chacun tape le sien. Laissez le téléphone garder le rythme… et l’accélérer petit à petit.',
+        lead: 'Le téléphone garde le rythme… et accélère petit à petit.',
         how: [
           'Choisissez le nombre de temps par mesure, puis réglez le tempo avec − / +. Commencez lentement.',
           'Appuyez sur « Lancer le rythme ». Le dernier temps est accentué ; « Accélérer » ajoute un peu toutes les 4 mesures.',
@@ -268,7 +268,7 @@ export const TOOLS = {
         short: 'Choisissez un thème, chacun tire un surnom rigolo – parfait pour les jeux où l’on s’appelle.',
         seoTitle: 'Tirage de surnoms | Surnoms rigolos au hasard pour jeux de groupe',
         seoDesc: 'Pour les jeux de groupe où l’on s’appelle par son nom, donnez d’abord un surnom rigolo à chacun : choisissez un thème (nourriture, animaux, personnages de dessins animés…) ou le hasard, faites tourner le téléphone, chacun tire le sien. Sans téléchargement, sans inscription.',
-        lead: 'Les jeux où l’on crie des noms sont plus drôles avec des surnoms absurdes. Choisissez un thème, faites tourner le téléphone, chacun tire le sien.',
+        lead: 'Choisissez un thème, faites tourner le téléphone, chacun tire un surnom.',
         how: [
           'Choisissez un thème, ou laissez faire le hasard.',
           'Faites tourner le téléphone : chacun appuie sur « Tirer un nom » et lit son surnom à voix haute.',
@@ -295,7 +295,7 @@ export const TOOLS = {
         short: 'レバーを引いてお題を出す。本音だけ、罰ゲームだけ、ランダムも選べる。',
         seoTitle: '本音・罰ゲームスロット｜ランダムでお題が出る、飲み会・罰ゲームに',
         seoDesc: 'スマホでレバーを引くと、本音（質問）か罰ゲーム（お題）がランダムに出ます。本音だけ、罰ゲームだけ、ランダムも選べます。初対面でも気まずくならないお題だけ。ダウンロード・登録不要。',
-        lead: '負けた人に罰ゲーム？レバーを引いて、質問に答えるか、お題をやるか決めましょう。初対面でも気まずくならないお題だけです。',
+        lead: '負けた人がレバーを引いて、質問に答えるかお題をやる。',
         how: [
           '「本音」「罰ゲーム」「ランダム」から選びます。',
           '「回す！」を押して、スロットが止まったお題があなたの番。',
@@ -307,7 +307,7 @@ export const TOOLS = {
         short: 'テンポ調整、自動で速く、BGM 付き。リズムに乗るレクならなんでも。',
         seoTitle: 'レク用メトロノーム｜テンポ調整・自動で速く・BGM 付き',
         seoDesc: 'レク向けのスマホメトロノーム：何拍でひと組か選んで、速さを調整、自動で少しずつ速くもできて、楽しい BGM も流せます。エレベーターゲームや古今東西ゲームのようなリズム遊びにぴったり。ダウンロード・登録不要。',
-        lead: 'リズムに乗るゲームは、みんなが自分で手拍子するとすぐバラバラに。スマホに拍を刻ませて、少しずつ速くすれば盛り上がります。',
+        lead: 'スマホが拍を刻んで、だんだん速くもできる。',
         how: [
           '何拍でひと組か選んで、−／＋ でテンポを決めます。最初はゆっくり。',
           '「リズムスタート」を押します。最後の拍が強拍。「だんだん速く」をオンにすると 4 組ごとに少し速くなります。',
@@ -321,7 +321,7 @@ export const TOOLS = {
         short: 'テーマを選んで、ひとり 1 枚あだ名を引く。名前を呼び合うゲームに。',
         seoTitle: 'あだ名くじ｜レク用のおもしろあだ名をランダムで',
         seoDesc: '名前を呼び合うレクの前に、みんなにおもしろいあだ名を：テーマ（食べ物、動物、アニメキャラ……）を選ぶかランダムで、スマホを回してひとり 1 枚引きます。ダウンロード・登録不要。',
-        lead: '名前を呼び合うゲームは、本名よりおもしろいあだ名のほうが盛り上がります。テーマを選んで、スマホを回して、ひとり 1 枚。',
+        lead: 'テーマを選んで、スマホを回して、ひとり 1 つあだ名を引く。',
         how: [
           'テーマを選ぶか、ランダムにおまかせ。',
           'スマホを回して、ひとりずつ「名前を引く」を押して、あだ名を声に出します。',
@@ -348,7 +348,7 @@ export const TOOLS = {
         short: '레버를 당기면 문제가 나와요. 진실만, 도전만, 랜덤도 가능.',
         seoTitle: '진실 혹은 도전 슬롯｜랜덤 질문·미션, 모임 벌칙 게임에',
         seoDesc: '휴대폰에서 레버를 당기면 진실(질문)이나 도전(미션)이 랜덤으로 나와요. 진실만, 도전만, 랜덤도 고를 수 있어요. 처음 만난 사이에도 어색하지 않은 문제만. 설치·가입 없이.',
-        lead: '진 사람 벌칙은? 레버를 당겨서 질문에 답할지, 미션을 할지 정해요. 처음 만난 사이에도 어색하지 않은 문제만 있어요.',
+        lead: '진 사람이 레버를 당겨서 질문에 답하거나 미션을 해요.',
         how: [
           '“진실”, “도전”, “랜덤” 중에 골라요.',
           '“당기기!”를 누르면 슬롯이 멈춘 문제가 내 차례예요.',
@@ -360,7 +360,7 @@ export const TOOLS = {
         short: '빠르기 조절, 자동 가속, 배경 음악까지. 박자 맞추는 레크리에이션이면 뭐든.',
         seoTitle: '레크리에이션 메트로놈｜빠르기 조절·자동 가속·배경 음악',
         seoDesc: '레크리에이션용 휴대폰 메트로놈: 몇 박이 한 묶음인지 고르고, 빠르기를 조절하고, 자동 가속으로 점점 빠르게, 신나는 배경 음악도 켤 수 있어요. 엘리베이터 게임, 아이엠그라운드 같은 박자 게임에 딱. 설치·가입 없이.',
-        lead: '박자 맞추는 게임은 각자 박수 치면 금방 엉망이 돼요. 휴대폰이 박자를 치게 하고, 조금씩 빠르게 하면 훨씬 재밌어요.',
+        lead: '휴대폰이 박자를 치고, 점점 빠르게도 할 수 있어요.',
         how: [
           '몇 박이 한 묶음인지 고르고, −／＋로 빠르기를 정해요. 처음엔 느리게.',
           '“박자 시작”을 눌러요. 마지막 박이 강박이에요. “점점 빠르게”를 켜면 4묶음마다 조금씩 빨라져요.',
@@ -374,7 +374,7 @@ export const TOOLS = {
         short: '주제를 고르고 한 사람씩 별명 카드를 뽑아요. 이름 부르는 게임에 딱.',
         seoTitle: '별명 뽑기｜레크리에이션용 웃긴 별명 랜덤 생성',
         seoDesc: '이름을 부르는 레크리에이션 전에 다들 웃긴 별명부터: 주제(음식, 동물, 만화 캐릭터…)를 고르거나 랜덤으로, 휴대폰을 돌려 한 장씩 뽑아요. 설치·가입 없이.',
-        lead: '이름을 부르는 게임은 본명보다 웃긴 별명이 훨씬 재밌어요. 주제를 고르고, 휴대폰을 돌려서 한 장씩 뽑아요.',
+        lead: '주제를 고르고 휴대폰을 돌려 한 사람씩 별명을 뽑아요.',
         how: [
           '주제를 고르거나 랜덤에 맡겨요.',
           '휴대폰을 돌려요. 한 사람씩 “이름 뽑기”를 누르고 별명을 크게 말해요.',
@@ -401,7 +401,7 @@ export const TOOLS = {
         short: 'Tira de la palanca y sale una prueba: solo verdades, solo retos o al azar.',
         seoTitle: 'Verdad o reto: tragaperras | Preguntas y retos al azar para fiestas',
         seoDesc: 'Tira de la palanca en el móvil y sale una verdad o un reto al azar: solo preguntas, solo retos o mezclados. Todo vale incluso entre gente que se acaba de conocer. Sin descargas ni registro.',
-        lead: '¿Alguien ha perdido y le toca prenda? Tira de la palanca y mira si le toca contestar una pregunta o hacer un reto. Todo vale aunque os acabéis de conocer.',
+        lead: 'Quien pierde tira de la palanca: contesta una pregunta o hace un reto.',
         how: [
           'Elige Verdad, Reto o Al azar.',
           'Pulsa «¡Tira!»: donde se pare la tragaperras, eso te toca.',
@@ -413,7 +413,7 @@ export const TOOLS = {
         short: 'Tempo ajustable, aceleración automática y música, para cualquier juego al ritmo.',
         seoTitle: 'Metrónomo para juegos en grupo | Tempo ajustable, aceleración y música',
         seoDesc: 'Un metrónomo en el móvil pensado para juegos en grupo: elige los tiempos por compás, sube o baja el tempo, activa la aceleración automática y añade música animada. Ideal para juegos al ritmo como El ascensor o Categorías al ritmo. Sin descargas ni registro.',
-        lead: 'En los juegos al ritmo, el compás se descontrola enseguida si cada uno lleva el suyo. Deja que el móvil marque el ritmo… y que lo vaya acelerando poco a poco.',
+        lead: 'El móvil marca el ritmo… y lo va acelerando.',
         how: [
           'Elige cuántos tiempos por compás y ajusta el tempo con − / +. Empieza despacio.',
           'Pulsa «Empezar el ritmo». El último tiempo va acentuado; «Acelerar» sube un poco cada 4 compases.',
@@ -427,7 +427,7 @@ export const TOOLS = {
         short: 'Elige un tema y cada uno saca un mote divertido, ideal para juegos de decir nombres.',
         seoTitle: 'Sorteo de motes | Motes divertidos al azar para juegos en grupo',
         seoDesc: 'Para juegos en grupo en los que hay que decir nombres, primero un mote divertido para cada uno: elige un tema (comida, animales, personajes de dibujos…) o al azar, pasa el móvil y cada uno saca el suyo. Sin descargas ni registro.',
-        lead: 'Los juegos de gritar nombres son más divertidos con motes absurdos. Elige un tema, pasa el móvil y que cada uno saque el suyo.',
+        lead: 'Elige un tema, pasa el móvil y cada uno saca un mote.',
         how: [
           'Elige un tema, o deja que decida el azar.',
           'Pasa el móvil: cada persona pulsa «Sacar un nombre» y lee su mote en voz alta.',

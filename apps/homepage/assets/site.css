@@ -263,6 +263,23 @@
 .tools-page main > section, .tool-page main > section { padding: 40px 0; }
 /* 「怎麼用」「也用在這些遊戲」緊接在上一塊下面，上面只留 20px */
 .tool-page main > section.tool-how, .tool-page main > section.tool-used { padding: 20px 0 40px; }
+/* 手機點進來第一個畫面就要看到整個工具：標題區收緊、工具緊接在說明下面 */
+.tool-page .page-head { padding: 24px 0 0; }
+.tool-page main > section.tool-section { padding: 16px 0 40px; }
+@media (max-width: 480px) {
+  .tool-page .tool-panel { padding: 16px 14px; gap: 12px; }
+  /* 麵包屑在結構化資料裡已經有，手機上省下這一行 */
+  .tool-page .page-head .crumbs { display: none; }
+  .tool-page .page-head { padding-top: 16px; }
+  .tool-page .page-head h1 { font-size: 28px; margin: 0 0 4px; }
+  .tool-page .page-head p { font-size: 14px; }
+  .tool-page main > section.tool-section { padding-top: 12px; }
+  /* 拉霸：遊戲裡手機一列 120px，中日韓的工具頁降到 104px（題目最多兩行，量過放得下）；拉丁文字的題目會到三行，維持 120px */
+  .tool-page:is(:lang(zh), :lang(ja), :lang(ko)) .slot { --row: 104px; }
+  /* 抽卡取名的主題卡收小一點 */
+  .tool-page .theme-grid .choice { min-height: 0; padding-top: 10px; padding-bottom: 10px; }
+  .tool-page .tool-h { margin-bottom: 8px; }
+}
 .tool-panel { padding: 20px; display: grid; gap: 16px; justify-items: center; }
 .tool-panel > * { width: 100%; max-width: 520px; }
 .tool-h { margin: 0 0 12px; font-size: 18px; }
