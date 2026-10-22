@@ -147,7 +147,7 @@
     if (metro) return;
     metro = Leader.metronome(el.metroRoot, {
       // 三拍一組「拍、拍、說」：前兩拍拍手，第三拍輪到的人說（2026-10-21 使用者確認），第三拍是重拍
-      bpm: 80, min: 60, max: 180, step: 5, beats: 3, accents: [2],
+      bpm: 80, min: 50, max: 180, step: 5, beats: 3, accents: [2],
       auto: true, // 自動加速預設開著（使用者要求）
       // 配樂跟拍子分開（使用者要求）：一進「開始！」就放配樂，頂欄音符鍵只管配樂；拍子聲由「開始打拍子」管。兩個踩同一個時鐘，不會對不上
       groove: true,
