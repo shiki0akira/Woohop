@@ -158,7 +158,7 @@
       <path d="M78 46c0-10 3-17 8-21" fill="none" ${K}/>
       ${body('<path d="M86 30c6-12 22-14 28-8-6 10-18 14-28 8z"/>', '#4FB59A', '', false)}
       ${makeFace('grin', 78, 80, 1.6)}`,
-    // 桌遊助手的小工具（2026-10-22）：拉霸機、節拍器、一疊名稱卡
+    // 桌遊助手的小工具（2026-10-22）：拉霸機、節拍器（擺錘正中間、不放表情）、一疊名稱卡
     toolSlot: () => `
       ${ground}${burst(140, 22, '#FFC628')}${ring(22, 32, '#EE7B6A')}${dot(150, 96, '#7489E6', 4)}
       ${body('<rect x="36" y="30" width="80" height="84" rx="12"/>', '#FFC628', '<path d="M100 22h24v100h-24z" fill="#e3a90f"/>')}
@@ -172,9 +172,8 @@
     toolMetronome: () => `
       ${ground}${burst(140, 26, '#FFC628')}${ring(24, 34, '#4FB59A')}${plus(146, 92, '#7489E6')}
       ${body('<path d="M60 20h40l22 96H38z"/>', '#7489E6', '<path d="M92 14l34 106h-20z" fill="#5d72d0"/>')}
-      <path d="M80 98L98 40" stroke="#22222c" stroke-width="4" stroke-linecap="round"/>
-      ${body('<circle cx="94" cy="54" r="7"/>', '#FFC628', '', false)}
-      ${makeFace('happy', 74, 92, 1.2)}`,
+      <path d="M80 104V32" stroke="#22222c" stroke-width="4" stroke-linecap="round"/>
+      ${body('<rect x="72" y="52" width="16" height="14" rx="3"/>', '#FFC628', '', false)}`,
     toolNames: () => `
       ${ground}${burst(138, 24, '#FFC628')}${ring(22, 34, '#7489E6')}${plus(142, 92, '#EE7B6A')}${dot(20, 92, '#4FB59A')}
       <g transform="rotate(-14 63 70)">${body('<rect x="36" y="34" width="54" height="72" rx="9"/>', '#FFC628')}</g>
