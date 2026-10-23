@@ -48,4 +48,4 @@ npm run deploy         # build + wrangler deploy（一次部署全部暖場遊�
 ## 部署與線上網址
 
 - Worker：`woohop-warmup.shiki0akira.workers.dev`，首頁 `vercel.json` 用一組 `:game(...)` 白名單規則代理 `/{遊戲}/*`。多一個頁面或檔名要回去補
-- 舊的 `web100-05-time-bomb`、`web100-bamboo`、`web100-stairs`、`web100-orchard` 四個 Worker 在切換後已不再接流量，確認沒問題後可以到 Cloudflare 刪掉
+- 合併前的 `web100-05-time-bomb`、`web100-bamboo`、`web100-stairs`、`web100-orchard` 四個 Worker 已在 2026-10-23 刪除
