@@ -2,7 +2,7 @@
  * 產生分享縮圖（og:image）：每個語言一張 1200×630 的 PNG。
  *
  *   node scripts/og-image.mjs          首頁 → apps/homepage/og/{lang}.png
- *   node scripts/og-image.mjs bomb     定時炸彈 → apps/bomb/public/og/{lang}.png
+ *   node scripts/og-image.mjs bomb     定時炸彈 → apps/warmup/games/bomb/public/og/{lang}.png
  *
  * 各遊戲改版成 Woohop 新設計時，在下面的 TARGETS 加一筆（標題兩行＋那個遊戲的插圖）。
  *
@@ -31,9 +31,9 @@ const TARGETS = {
     scripts: ['hero-art.js'], art: 'window.heroArt()', viewBox: '0 0 530 380', artWidth: 560,
   }),
   bomb: async () => {
-    const { STRINGS: B } = await import(pathToFileURL(path.join(ROOT, '..', 'bomb', 'app', 'strings.js')).href);
+    const { STRINGS: B } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'bomb', 'app', 'strings.js')).href);
     return {
-      out: path.join(ROOT, '..', 'bomb', 'public', 'og'),
+      out: path.join(ROOT, '..', 'warmup', 'games', 'bomb', 'public', 'og'),
       title: (lang) => splitTitle(B[lang].heroTitle),
       scripts: [], art: 'window.Woohop.art.bomb()', viewBox: '0 0 160 128', artWidth: 500,
     };
@@ -71,31 +71,31 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.bingo()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
-  // 竹筍竹筍蹦蹦出：目前只有 zh-TW（apps/bamboo/app/strings.js 的 LANGS），只產生有的語言
+  // 竹筍竹筍蹦蹦出：apps/warmup/games/bamboo/app/strings.js 的 LANGS
   bamboo: async () => {
-    const { STRINGS: Bm, LANGS: BL } = await import(pathToFileURL(path.join(ROOT, '..', 'bamboo', 'app', 'strings.js')).href);
+    const { STRINGS: Bm, LANGS: BL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'bamboo', 'app', 'strings.js')).href);
     return {
-      out: path.join(ROOT, '..', 'bamboo', 'public', 'og'),
+      out: path.join(ROOT, '..', 'warmup', 'games', 'bamboo', 'public', 'og'),
       langs: BL,
       title: (lang) => splitTitle(Bm[lang].heroTitle),
       scripts: [], art: 'window.Woohop.art.bamboo()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
-  // 果園菜園動物園（apps/orchard/app/strings.js 的 LANGS）
+  // 果園菜園動物園（apps/warmup/games/orchard/app/strings.js 的 LANGS）
   orchard: async () => {
-    const { STRINGS: Om, LANGS: OL } = await import(pathToFileURL(path.join(ROOT, '..', 'orchard', 'app', 'strings.js')).href);
+    const { STRINGS: Om, LANGS: OL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'orchard', 'app', 'strings.js')).href);
     return {
-      out: path.join(ROOT, '..', 'orchard', 'public', 'og'),
+      out: path.join(ROOT, '..', 'warmup', 'games', 'orchard', 'public', 'og'),
       langs: OL,
       title: (lang) => splitTitle(Om[lang].heroTitle),
       scripts: [], art: 'window.Woohop.art.orchard()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
-  // 上樓下樓（apps/stairs/app/strings.js 的 LANGS）
+  // 上樓下樓（apps/warmup/games/stairs/app/strings.js 的 LANGS）
   stairs: async () => {
-    const { STRINGS: Sm, LANGS: SL } = await import(pathToFileURL(path.join(ROOT, '..', 'stairs', 'app', 'strings.js')).href);
+    const { STRINGS: Sm, LANGS: SL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'stairs', 'app', 'strings.js')).href);
     return {
-      out: path.join(ROOT, '..', 'stairs', 'public', 'og'),
+      out: path.join(ROOT, '..', 'warmup', 'games', 'stairs', 'public', 'og'),
       langs: SL,
       title: (lang) => splitTitle(Sm[lang].heroTitle),
       scripts: [], art: 'window.Woohop.art.stairs()', viewBox: '0 0 160 128', artWidth: 500,

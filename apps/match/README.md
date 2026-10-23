@@ -40,7 +40,7 @@ npm run test:smoke
 
 ## 介面（2026-10 改版成 Woohop 新設計）
 
-照定時炸彈的做法（細節見 `apps/bomb/CLAUDE.md` 的「配色 / UI」），只有淺色：
+照定時炸彈的做法（細節見 `apps/warmup/games/bomb/CLAUDE.md` 的「配色 / UI」），只有淺色：
 
 - 導覽列、頁尾、遊戲內頂欄、按鈕、彈窗、輸入框、頭像、房號都用 Woohop 全站共用的東西：`scripts/build.js` 從 `apps/homepage` 拿 `src/chrome.mjs`（navbar／footer／gameBar）和 assets（woohop.css、site.css、game.css、woohop-art.js、site.js、game.js），複製進 `dist/match/woohop/`。**首頁改了這些檔，這裡要重新 build、部署**
 - 線上 `/match/woohop/*`、`/match/og/*` 靠首頁 `vercel.json` 的白名單

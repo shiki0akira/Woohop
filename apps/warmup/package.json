@@ -1,0 +1,17 @@
+{
+  "name": "woohop-warmup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Woohop 暖場遊戲（定時炸彈、竹筍、上樓下樓、果園菜園動物園），一次建置、部署成同一個 assets-only Worker",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "npm run build && wrangler dev",
+    "dev:lan": "npm run build && wrangler dev --ip 0.0.0.0",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test games/*/test/*.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.118.0"
+  }
+}

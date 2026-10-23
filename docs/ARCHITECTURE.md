@@ -84,10 +84,8 @@ Woohop/
 │  ├─ buzzer/     ← web100_02_BuzzerGame      （Workers，在資料夾內 npm run deploy）
 │  ├─ match/      ← web100_03_PreferenceMatch （同上）
 │  ├─ bingo/      ← web100_04_HappyBingo      （同上）
-│  ├─ bomb/       ← web100_05_TimeBomb        （同上）
-│  └─ bamboo/     ← 竹筍竹筍蹦蹦出             （同上，assets-only Worker）
-│  └─ stairs/     ← 上樓下樓                  （同上，assets-only Worker）
-│  └─ orchard/    ← 果園菜園動物園            （同上，assets-only Worker）
+│  └─ warmup/     ← 暖場遊戲：games/ 底下的定時炸彈、竹筍、上樓下樓、果園菜園動物園
+│                   （同上，合在一個 assets-only Worker，2026-10-23 合併）
 ├─ packages/      ← 之後的共用程式（design tokens、房間系統、頁首頁尾、帶領播放器）
 └─ docs/          ← 本文件、改版企劃、figma-variables.json
 ```
@@ -160,7 +158,7 @@ Woohop/
 | web100_02_BuzzerGame | 已上線 | Cloudflare Workers | 單一 Worker 同時服務靜態檔與 Durable Object；8 種語言，已裝 GA4 |
 | web100_03_PreferenceMatch | 已上線 | Cloudflare Workers | 二選一破冰配對，路徑 /match/；接法同搶答（網頁走代理、API 與 WebSocket 直連）|
 | web100_04_HappyBingo | 已上線 | Cloudflare Workers | 找人配對的破冰賓果，路徑 /bingo/；接法同搶答。上線時只有 zh-TW／en，2026-08-26 補齊 8 種語言 |
-| web100_05_TimeBomb | 已上線 | Cloudflare Workers | 一台手機傳著玩的定時炸彈，路徑 /bomb/；8 種語言。**純前端卻走 Workers**，是第 4 節那條規則的例外，理由見下方 |
+| web100_05_TimeBomb | 已上線 | Cloudflare Workers | 一台手機傳著玩的定時炸彈，路徑 /bomb/；8 種語言。2026-10-23 起跟其他暖場遊戲合在 `apps/warmup` 的同一個 Worker（`woohop-warmup`）。**純前端卻走 Workers**，是第 4 節那條規則的例外，理由見下方 |
 | bamboo（竹筍竹筍蹦蹦出） | 已上線（2026-10-20） | Cloudflare Workers | 第一個不用手機的遊戲（手機只在主持人手上帶領），路徑 /bamboo/；8 種語言（zh-TW 先上，同一天補齊；遊戲名用各地類似遊戲的名稱）。接法同定時炸彈（assets-only Worker） |
 | stairs（上樓下樓） | 已上線（2026-10-21，8 種語言） | Cloudflare Workers | 不用手機的團康，手機帶規則、打節拍（共用 Leader.metronome，含配樂）、輸的人拉真心話大冒險；路徑 /stairs/；8 種語言（zh-TW 先上，同一天補齊；外語名用「電梯」）。接法同竹筍 |
 | orchard（果園菜園動物園） | 已上線（2026-10-22，8 種語言） | Cloudflare Workers | 不用手機的團康：手機出主題、打三拍節拍（共用 Leader.metronome，含開場口令 intro 與配樂）、輸的人拉真心話大冒險；路徑 /orchard/。外語名用當地類似遊戲（en Concentration、ja 古今東西ゲーム、ko 아이엠그라운드 이름 대기）。接法同竹筍 |

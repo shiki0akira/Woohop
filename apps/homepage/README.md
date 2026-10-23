@@ -17,10 +17,10 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | web100_02_BuzzerGame | [www.vibeweb100.com/buzzer](https://www.vibeweb100.com/buzzer) | `apps/buzzer` | 已上線 |
 | web100_03_PreferenceMatch | [www.vibeweb100.com/match](https://www.vibeweb100.com/match) | `apps/match` | 已上線 |
 | web100_04_HappyBingo | [www.vibeweb100.com/bingo](https://www.vibeweb100.com/bingo) | `apps/bingo` | 已上線 |
-| web100_05_TimeBomb | [www.vibeweb100.com/bomb](https://www.vibeweb100.com/bomb) | `apps/bomb` | 已上線 |
-| 竹筍竹筍蹦蹦出 | [www.vibeweb100.com/bamboo](https://www.vibeweb100.com/bamboo/zh-TW/) | `apps/bamboo` | 已上線（2026-10-20） |
-| 上樓下樓 | [www.vibeweb100.com/stairs](https://www.vibeweb100.com/stairs/zh-TW/) | `apps/stairs` | 已上線（2026-10-21） |
-| 果園菜園動物園 | [www.vibeweb100.com/orchard](https://www.vibeweb100.com/orchard/zh-TW/) | `apps/orchard` | 已上線（2026-10-22） |
+| web100_05_TimeBomb | [www.vibeweb100.com/bomb](https://www.vibeweb100.com/bomb) | `apps/warmup/games/bomb` | 已上線 |
+| 竹筍竹筍蹦蹦出 | [www.vibeweb100.com/bamboo](https://www.vibeweb100.com/bamboo/zh-TW/) | `apps/warmup/games/bamboo` | 已上線（2026-10-20） |
+| 上樓下樓 | [www.vibeweb100.com/stairs](https://www.vibeweb100.com/stairs/zh-TW/) | `apps/warmup/games/stairs` | 已上線（2026-10-21） |
+| 果園菜園動物園 | [www.vibeweb100.com/orchard](https://www.vibeweb100.com/orchard/zh-TW/) | `apps/warmup/games/orchard` | 已上線（2026-10-22） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
 ## 架構說明
