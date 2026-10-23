@@ -314,6 +314,19 @@
 .fb-types .chip:has(input:checked) { background: var(--blue-face); border-color: var(--blue-edge); color: var(--blue-text); box-shadow: 0 3px 0 var(--blue-edge); }
 .fb-types .chip:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
 .fb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+/* 「跟哪個遊戲有關」打字篩選（about.js 的 combo）：輸入框下面浮出符合的清單 */
+.combo { position: relative; }
+.combo .input { width: 100%; }
+.combo-list {
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 5; margin: 0; padding: 6px; list-style: none;
+  max-height: 264px; overflow-y: auto; background: var(--surface); border: 2px solid var(--edge-n); border-radius: var(--r-md);
+  box-shadow: var(--raise-n), var(--shadow);
+}
+.combo-list li { padding: 10px 12px; border-radius: calc(var(--r-md) - 6px); cursor: pointer; font-weight: 700; }
+.combo-list li:hover, .combo-list li.is-active { background: var(--hover-faint); }
+.combo-list li[aria-selected="true"] { background: var(--blue-face); color: var(--blue-text); }
+.combo-list .combo-empty { cursor: default; color: var(--muted); font-weight: 600; }
+.combo-list .combo-empty:hover { background: none; }
 .fb-submit { display: grid; gap: 10px; justify-items: start; }
 .fb-submit p { margin: 0; }
 .fb-done { display: grid; gap: 16px; justify-items: start; }

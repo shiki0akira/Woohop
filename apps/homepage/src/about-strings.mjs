@@ -29,6 +29,8 @@ export const ABOUT = {
       types: { recommend: '推薦遊戲', idea: '修改建議', collab: '合作邀約', other: '其他' },
       game: '跟哪個遊戲有關？（選填）',
       gameNone: '沒有特定的',
+      gameSearch: '打字找遊戲，例如「炸彈」',
+      gameNoMatch: '找不到符合的遊戲',
       gameSite: '網站整體',
       message: '內容',
       placeholders: {
@@ -107,6 +109,8 @@ export const ABOUT = {
       types: { recommend: 'Suggest a game', idea: 'Feedback', collab: 'Partnership', other: 'Other' },
       game: 'Which game? (optional)',
       gameNone: 'Not a specific one',
+      gameSearch: 'Type to find a game, e.g. “bomb”',
+      gameNoMatch: 'No matching game',
       gameSite: 'The website in general',
       message: 'Message',
       placeholders: {
@@ -185,6 +189,8 @@ export const ABOUT = {
       types: { recommend: 'Spiel vorschlagen', idea: 'Feedback', collab: 'Kooperation', other: 'Sonstiges' },
       game: 'Welches Spiel? (optional)',
       gameNone: 'Kein bestimmtes',
+      gameSearch: 'Tippen, um ein Spiel zu finden, z. B. „Bombe“',
+      gameNoMatch: 'Kein passendes Spiel',
       gameSite: 'Die Website allgemein',
       message: 'Nachricht',
       placeholders: {
@@ -263,6 +269,8 @@ export const ABOUT = {
       types: { recommend: 'Proposer un jeu', idea: 'Suggestion', collab: 'Partenariat', other: 'Autre' },
       game: 'Quel jeu ? (facultatif)',
       gameNone: 'Aucun en particulier',
+      gameSearch: 'Tape pour trouver un jeu, ex. « bombe »',
+      gameNoMatch: 'Aucun jeu trouvé',
       gameSite: 'Le site en général',
       message: 'Message',
       placeholders: {
@@ -341,6 +349,8 @@ export const ABOUT = {
       types: { recommend: 'ゲームの提案', idea: '改善の提案', collab: '協業のご相談', other: 'その他' },
       game: '関係するゲーム（任意）',
       gameNone: 'とくになし',
+      gameSearch: 'ゲーム名を入力して検索（例：爆弾）',
+      gameNoMatch: '見つかりませんでした',
       gameSite: 'サイト全体',
       message: '内容',
       placeholders: {
@@ -419,6 +429,8 @@ export const ABOUT = {
       types: { recommend: '게임 추천', idea: '개선 제안', collab: '제휴 문의', other: '기타' },
       game: '관련된 게임 (선택)',
       gameNone: '특정 게임 없음',
+      gameSearch: '게임 이름을 입력해 찾기 (예: 폭탄)',
+      gameNoMatch: '맞는 게임이 없어요',
       gameSite: '사이트 전체',
       message: '내용',
       placeholders: {
@@ -497,6 +509,8 @@ export const ABOUT = {
       types: { recommend: 'Sugerir un juego', idea: 'Sugerencia', collab: 'Colaboración', other: 'Otro' },
       game: '¿Qué juego? (opcional)',
       gameNone: 'Ninguno en concreto',
+      gameSearch: 'Escribe para buscar un juego, p. ej. «bomba»',
+      gameNoMatch: 'Ningún juego coincide',
       gameSite: 'El sitio en general',
       message: 'Mensaje',
       placeholders: {
@@ -575,6 +589,8 @@ export const ABOUT = {
       types: { recommend: '推荐游戏', idea: '改进建议', collab: '合作邀约', other: '其他' },
       game: '和哪个游戏有关？（选填）',
       gameNone: '没有特定的',
+      gameSearch: '输入游戏名称查找，例如“炸弹”',
+      gameNoMatch: '找不到符合的游戏',
       gameSite: '网站整体',
       message: '内容',
       placeholders: {

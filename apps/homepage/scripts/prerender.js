@@ -35,7 +35,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-23d';
+const ASSET_VERSION = '2026-10-23e';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -481,8 +481,8 @@ const legal = (s, lang, p) => {
 function aboutPage(lang) {
   const s = STRINGS[lang];
   const A = s.about, F = A.form;
-  // 「跟哪個遊戲有關」：這個語言玩得到的遊戲＋幸福模擬器＋小工具
-  const games = [...gameKeysFor(lang).map((k) => [k, s.games[k][0]]), ['happy', s.games.happy[0]], ...TOOL_KEYS.map((k) => [k, s.tools.items[k].name])];
+  // 「跟哪個遊戲有關」：這個語言玩得到的遊戲＋小工具（幸福模擬器不是遊戲，2026-10-23 使用者要求拿掉）
+  const games = [...gameKeysFor(lang).map((k) => [k, s.games[k][0]]), ...TOOL_KEYS.map((k) => [k, s.tools.items[k].name])];
   const privacyLink = `<a class="link" href="${local(lang, 'privacy')}">${esc(A.privacy.h1)}</a>`;
   return `${head(s, lang, 'about', A.seoTitle, A.seoDesc, jsonLd(s, lang, 'about', A.seoTitle, A.seoDesc), ['game.css'])}
   <body class="about-page">${navbar(s, lang, 'about')}

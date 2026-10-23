@@ -6,8 +6,8 @@ export const TYPE_LABEL = {
   recommend: '推薦遊戲', idea: '修改建議', collab: '合作邀約', other: '其他',
 };
 // 「跟哪個遊戲有關」：site 是網站整體；空字串是沒選
-export const GAMES = ['', 'site', 'match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'orchard', 'avalon',
-  'happy', 'truthOrDare', 'metronome', 'names'];
+export const GAMES = ['', 'site', 'match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'orchard', 'reverse', 'avalon',
+  'truthOrDare', 'metronome', 'names', 'recorder'];
 export const LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 
 export const MESSAGE_MIN = 5;
