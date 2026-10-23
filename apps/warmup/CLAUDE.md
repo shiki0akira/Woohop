@@ -8,6 +8,7 @@
 | 竹筍竹筍蹦蹦出 | `games/bamboo` | `/bamboo/{lang}/` |
 | 上樓下樓 | `games/stairs` | `/stairs/{lang}/` |
 | 果園菜園動物園 | `games/orchard` | `/orchard/{lang}/` |
+| 倒放猜猜看（先只有繁中） | `games/reverse` | `/reverse/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 

@@ -158,6 +158,16 @@
       <path d="M78 46c0-10 3-17 8-21" fill="none" ${K}/>
       ${body('<path d="M86 30c6-12 22-14 28-8-6 10-18 14-28 8z"/>', '#4FB59A', '', false)}
       ${makeFace('grin', 78, 80, 1.6)}`,
+    // 倒放猜猜看：粉紅錄音機，卡帶窗兩個捲盤，右上角倒轉的箭頭
+    reverse: () => `
+      ${ground}${burst(26, 24, '#FFC628')}${ring(146, 96, '#7489E6')}${dot(16, 92, '#4FB59A', 4)}
+      <path d="M58 42V32a6 6 0 0 1 6-6h32a6 6 0 0 1 6 6v10" fill="none" ${K}/>
+      ${body('<rect x="28" y="42" width="104" height="74" rx="12"/>', '#F3A4FB', '<path d="M116 34h24v90h-24z" fill="#e083ea"/>')}
+      ${makeFace('grin', 80, 58, 1.4)}
+      ${body('<rect x="42" y="74" width="76" height="30" rx="7"/>', '#ffffff', '', false)}
+      <circle cx="62" cy="89" r="7" fill="none" ${K}/><circle cx="98" cy="89" r="7" fill="none" ${K}/>
+      <path d="M69 89h22" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>
+      <path d="M150 34l-8 7 8 7M140 34l-8 7 8 7" fill="none" stroke="#7489E6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`,
     // 桌遊助手的小工具（2026-10-22）：拉霸機、節拍器（擺錘正中間、不放表情）、一疊名稱卡
     toolSlot: () => `
       ${ground}${burst(140, 22, '#FFC628')}${ring(22, 32, '#EE7B6A')}${dot(150, 96, '#7489E6', 4)}

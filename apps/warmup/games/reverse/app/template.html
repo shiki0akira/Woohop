@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="reverse-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="reverse-main game-main">
+      <!-- 第 1 步：開場。選一支手機輪流傳或每人一支（預設一支，打開就能玩） -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <section class="panel">
+          <!-- 人數和每人幾題並排：題數跟著人數算，預設也跟著人數換（app.js 的 defaultsFor） -->
+          <div class="setup-row">
+            <div>
+              <span class="field-label">{{countLabel}}</span>
+              <div class="stepper">
+                <button type="button" id="count-less" aria-label="{{countLess}}">−</button>
+                <output id="count-value" aria-live="polite"></output>
+                <button type="button" id="count-more" aria-label="{{countMore}}">+</button>
+              </div>
+            </div>
+            <div class="per-field">
+              <span class="field-label">{{perLabel}}</span>
+              <div class="seg seg-3" role="radiogroup" aria-label="{{perLabel}}">
+                <label class="seg-item"><input type="radio" name="per" value="1">{{per1}}</label>
+                <label class="seg-item"><input type="radio" name="per" value="2">{{per2}}</label>
+                <label class="seg-item"><input type="radio" name="per" value="free">{{perFree}}</label>
+              </div>
+            </div>
+          </div>
+          <p class="hint" id="rounds-hint"></p>
+
+          <!-- 怎麼猜：人少固定輪流猜（一支手機傳），人多才給選搶答（各自用手機），見 app.js 的 RACE_MIN -->
+          <div id="mode-field" hidden>
+            <span class="field-label field-label-gap">{{modeLabel}}</span>
+            <div class="seg seg-2" role="radiogroup" aria-label="{{modeLabel}}">
+              <label class="seg-item"><input type="radio" name="mode" value="one">{{modeOne}}</label>
+              <label class="seg-item"><input type="radio" name="mode" value="each">{{modeEach}}</label>
+            </div>
+            <p class="hint" id="mode-hint">{{modeOneHint}}</p>
+            <!-- 搶答：一切過去就給 QR code，大家趁主持人說明規則時先打開錄音機 -->
+            <div class="qr qr-box setup-qr" id="setup-qr" role="img" aria-label="{{qrAlt}}" hidden></div>
+          </div>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <a class="btn btn-lg btn-secondary btn-block" href="#rec" id="rec-only-link">{{recOnlyLink}}</a>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!--
+        第 3 步：開始。一題分四段（data-phase），一次只露這一段該按的東西，「下一題」放在最後才不會誤觸：
+          draw 抽題目 → reveal 翻開看題目 → record 蓋起來錄音 → guess 放倒放、大家學、提示／公布答案、下一題
+      -->
+      <div class="view" id="view-play" data-phase="draw" hidden>
+        <div class="lead-slot"></div>
+
+        <!-- 第幾題（設計系統的進度條）；不限題數時只有字 -->
+        <div class="round-progress">
+          <p class="round-no" id="round-no"></p>
+          <div class="progress" id="round-progress"><div id="round-bar" style="--p:0%"></div></div>
+        </div>
+
+        <!-- 題卡（照抽卡取名的做法，用它的 .namer 樣式）。guess 那段藏起來 -->
+        <div class="namer phase-card">
+          <section class="panel name-card" id="card" data-stage="draw">
+            <div class="name-stage stage-draw">
+              <svg class="illo deck" id="deck" viewBox="0 0 160 126" aria-hidden="true"></svg>
+              <button class="btn btn-lg btn-solid btn-block draw-btn" id="card-draw" type="button">{{drawButton}}</button>
+              <p class="hint">{{drawHint}}</p>
+            </div>
+            <div class="name-stage stage-reveal">
+              <div class="drawn-card" id="drawn">
+                <span class="badge" id="card-kind"></span>
+                <p class="drawn-name" id="card-text" aria-live="polite"></p>
+              </div>
+              <p class="reveal-hint">{{revealHint}}</p>
+              <div class="pass-row">
+                <!-- 主要鍵在左、換一題在右（跟抽卡取名、定時炸彈一樣）。按下去就蓋起來並開始錄 -->
+                <button class="btn btn-lg btn-solid pass-bar" id="card-cover" type="button">{{coverButton}}</button>
+                <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="card-shuffle" type="button">{{cardShuffle}}</button>
+              </div>
+            </div>
+            <!-- 蓋起來只留一行，錄音鍵才會在同一個畫面裡，不用往下滑找 -->
+            <div class="name-stage stage-covered">
+              <p class="covered-text">{{coveredText}}</p>
+              <button class="btn btn-sm btn-secondary" id="card-peek" type="button">{{peekAgain}}</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- record：錄下題目，錄完自動進 guess -->
+        <section class="panel rec-panel phase-record">
+          <h2>{{recordHeading}}</h2>
+          <p class="hint">{{recordHint}}</p>
+          <div id="ask-rec"></div>
+        </section>
+
+        <!-- guess：放倒放給大家聽 -->
+        <section class="panel rec-panel phase-guess">
+          <h2>{{guessHeading}}</h2>
+          <p class="hint">{{guessHint}}</p>
+          <div class="guess-play" id="guess-play"></div>
+          <button class="link redo-link" id="redo" type="button">{{redoLink}}</button>
+        </section>
+
+        <!-- 輪流猜：傳給下一個人學。搶答時大家已經在開場掃過 QR code，這裡不再放 -->
+        <section class="panel rec-panel phase-guess" id="stage-one">
+          <h2>{{stageCopy}}</h2>
+          <p class="hint">{{stageCopyOne}}</p>
+          <div id="copy-rec"></div>
+        </section>
+        <!-- 猜不出來：提示看情況用，最後公布答案（放原聲） -->
+        <section class="panel phase-guess">
+          <h2>{{stuckHeading}}</h2>
+          <div class="stuck-row" id="stuck-row">
+            <button class="btn btn-lg btn-secondary" id="hint-btn" type="button">{{hintButton}}</button>
+          </div>
+          <p class="card-hint" id="card-hint-text" hidden></p>
+        </section>
+
+        <!-- 下一題放最後、不黏底，公布答案之後才能按：手機傳來傳去時拇指很容易碰到 -->
+        <div class="next-row phase-guess">
+          <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button" disabled>{{nextRound}}</button>
+          <p class="hint next-hint" id="next-hint">{{nextLocked}}</p>
+          <button class="btn btn-lg btn-secondary btn-block" id="end-early" type="button" hidden>{{endGame}}</button>
+        </div>
+      </div>
+
+      <!-- 第 4 步：玩完了。不計分，誰最會學大家自己吵 -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+
+      <!-- 只有錄音機：每人一支手機時，猜的人掃 QR code 直接到這裡（網址帶 #rec），不走帶領步驟 -->
+      <div class="view" id="view-rec" hidden>
+        <div class="page-head">
+          <h1>{{recOnlyTitle}}</h1>
+          <p>{{recOnlyDesc}}</p>
+        </div>
+        <section class="panel rec-panel">
+          <div id="solo-rec"></div>
+        </section>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/" id="rec-only-back">{{recOnlyBack}}</a></p>
+      </div>
+    </main>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.REVERSE = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+      };
+    </script>
+    <script src="{{base}}/vendor/qrcode.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

@@ -1,0 +1,94 @@
+/*
+ * 倒放猜猜看自己的樣式。步驟頭、規則卡、按鈕、分段控制、進度條、QR 外框都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：粉紅 */
+.reverse-app { --game-edge: var(--pink-edge); }
+.reverse-app .panel { padding: 20px; }
+.reverse-app .panel h2 { font-size: 17px; }
+.reverse-app .panel .hint { margin-top: 4px; }
+
+/* 「開始遊戲」「下一步」「下一題」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+.seg-2 { grid-template-columns: repeat(2, 1fr); }
+/* 開場：手機上人數和每人幾題並排；電腦版每人幾題自己一行（使用者要求，寬螢幕並排反而散） */
+.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.setup-row .field-label { margin-top: 0; }
+.per-field { flex: 1 1 140px; }
+@media (min-width: 600px) {
+  .setup-row { gap: 18px 12px; }
+  .per-field { flex-basis: 100%; }
+}
+/* 加減鈕縮一點，手機寬度才放得下兩個並排 */
+.setup-row .stepper button { width: 44px; height: 48px; }
+.setup-row .stepper output { min-width: 48px; }
+.per-field .seg-item { padding: 0 2px; }
+.reverse-app .panel > .field-label:first-child { margin-top: 0; }
+
+/* ---------- 一題分四段：只露這一段的區塊（app.js 的 setPhase） ---------- */
+#view-play:not([data-phase="record"]) .phase-record,
+#view-play:not([data-phase="guess"]) .phase-guess,
+#view-play[data-phase="guess"] .phase-card { display: none; }
+
+.reverse-app .stepper button:disabled { opacity: .4; cursor: default; }
+.guess-play { margin-top: 14px; }
+.redo-link { display: block; margin: 12px auto 0; border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; padding: 4px 0; }
+.stuck-row { display: flex; gap: 10px; margin-top: 14px; }
+/* 看提示窄一點、公布答案寬一點（使用者要求） */
+.stuck-row .btn { flex: 0 0 auto; padding-inline: 20px; }
+.stuck-row .answer-btn { flex: 1 1 0; min-width: 0; }
+.stuck-row svg { width: 18px; height: 18px; }
+.stuck-row + .card-hint { margin-top: 12px; text-align: center; }
+.next-row { display: grid; gap: 12px; margin-top: 4px; }
+.next-hint { margin: 0; text-align: center; }
+/* 出題的錄音機只有錄音鍵，播放鍵在「放給大家聽」「猜不出來？」 */
+.rec-plays:empty { display: none; }
+
+/* ---------- 第幾題：設計系統的進度條 ---------- */
+.round-progress { display: grid; gap: 8px; }
+.round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+.round-progress .progress { max-width: none; }
+
+/*
+ * ---------- 題卡：照抽卡取名（.namer 的樣式在 game.css） ----------
+ * 抽卡取名只有 choose／own／reveal 三面，這裡多了 draw（同 choose）與 covered（蓋回去），自己開。
+ */
+.reverse-app .namer .name-card[data-stage="draw"] .stage-draw,
+.reverse-app .namer .name-card[data-stage="covered"] .stage-covered { display: grid; }
+.reverse-app .namer .stage-draw .hint { margin: 0; }
+/* 翻出來的卡換成這個遊戲的粉紅；題目是一句話，字比抽卡取名的名稱小 */
+.reverse-app .namer .drawn-card { display: grid; justify-items: center; gap: 10px; border-color: var(--pink-edge); background: var(--pink-face); box-shadow: 0 5px 0 var(--pink-edge); }
+.reverse-app .namer .drawn-name { font-size: clamp(26px, 7.5vw, 36px); color: var(--pink-text); text-wrap: balance; }
+.reverse-app .namer .drawn-card .badge { background: var(--surface); color: var(--pink-text); border-color: var(--pink-edge); }
+/* 蓋起來只剩一行：題目蓋起來了 · 再偷看一次 */
+.reverse-app .namer .name-card[data-stage="covered"] .stage-covered { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 14px; }
+.covered-text { margin: 0; font-weight: 800; }
+.card-hint { margin: 0; font-size: 22px; font-weight: 900; }
+
+/* ---------- 錄音機 ---------- */
+.recorder { display: grid; gap: 12px; margin-top: 14px; }
+.rec-btn .rec-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--coral-edge); flex: none; }
+.rec-btn.btn-solid .rec-dot { background: var(--coral); }
+.rec-btn.btn-danger .rec-dot { border-radius: 3px; }
+/* 錄音中的進度條要即時跟上秒數，不用設計系統預設的 .4s 動畫 */
+.recorder .progress { max-width: none; }
+.recorder .progress > div { transition: none; }
+.rec-meter { display: flex; align-items: center; gap: 10px; }
+.rec-meter .progress { flex: 1; }
+.rec-time { flex: none; min-width: 3.6em; text-align: right; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.rec-time:empty { display: none; }
+.rec-status { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
+.rec-status:empty { display: none; }
+.rec-plays { display: flex; flex-wrap: wrap; gap: 10px; }
+.rec-plays .btn { flex: 1 1 0; min-width: 120px; }
+.rec-plays .is-reverse { flex-grow: 2; }
+.rec-plays svg { width: 18px; height: 18px; }
+/* 倒放鍵的箭頭朝左：同一個播放圖示翻過來 */
+.is-reverse svg { transform: scaleX(-1); }
+
+/* ---------- 搶答：開場的 QR code（開始之後就不再出現） ---------- */
+.setup-qr { margin: 14px auto 0; width: 188px; height: 188px; }
+.qr-box svg { display: block; width: 100%; height: 100%; }

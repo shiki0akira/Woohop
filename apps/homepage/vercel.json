@@ -340,39 +340,47 @@
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/orchard/sitemap.xml"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)",
+      "source": "/reverse-sitemap.xml",
+      "destination": "https://woohop-warmup.shiki0akira.workers.dev/reverse/sitemap.xml"
+    },
+    {
+      "source": "/reverse/vendor/:file(qrcode.js)",
+      "destination": "https://woohop-warmup.shiki0akira.workers.dev/reverse/vendor/:file"
+    },
+    {
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/:page"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/:page/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:file"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/woohop/:file"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard)/og/:file([a-zA-Z-]+\\.png)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse)/og/:file([a-zA-Z-]+\\.png)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/og/:file"
     },
     {

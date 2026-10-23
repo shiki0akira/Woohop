@@ -91,6 +91,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.orchard()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 倒放猜猜看（apps/warmup/games/reverse/app/strings.js 的 LANGS）
+  reverse: async () => {
+    const { STRINGS: Rm, LANGS: RL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'reverse', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'warmup', 'games', 'reverse', 'public', 'og'),
+      langs: RL,
+      title: (lang) => splitTitle(Rm[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.reverse()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 上樓下樓（apps/warmup/games/stairs/app/strings.js 的 LANGS）
   stairs: async () => {
     const { STRINGS: Sm, LANGS: SL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'stairs', 'app', 'strings.js')).href);
