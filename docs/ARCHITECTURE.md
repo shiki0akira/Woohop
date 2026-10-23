@@ -84,7 +84,7 @@ Woohop/
 │  ├─ buzzer/     ← web100_02_BuzzerGame      （Workers，在資料夾內 npm run deploy）
 │  ├─ match/      ← web100_03_PreferenceMatch （同上）
 │  ├─ bingo/      ← web100_04_HappyBingo      （同上）
-│  └─ warmup/     ← 暖場遊戲：games/ 底下的定時炸彈、竹筍、上樓下樓、果園菜園動物園
+│  └─ warmup/     ← 暖場遊戲：games/ 底下的定時炸彈、竹筍、上樓下樓、果園菜園動物園、倒放猜猜看
 │                   （同上，合在一個 assets-only Worker，2026-10-23 合併）
 ├─ packages/      ← 之後的共用程式（design tokens、房間系統、頁首頁尾、帶領播放器）
 └─ docs/          ← 本文件、改版企劃、figma-variables.json
@@ -162,6 +162,7 @@ Woohop/
 | bamboo（竹筍竹筍蹦蹦出） | 已上線（2026-10-20） | Cloudflare Workers | 第一個不用手機的遊戲（手機只在主持人手上帶領），路徑 /bamboo/；8 種語言（zh-TW 先上，同一天補齊；遊戲名用各地類似遊戲的名稱）。接法同定時炸彈（assets-only Worker） |
 | stairs（上樓下樓） | 已上線（2026-10-21，8 種語言） | Cloudflare Workers | 不用手機的團康，手機帶規則、打節拍（共用 Leader.metronome，含配樂）、輸的人拉真心話大冒險；路徑 /stairs/；8 種語言（zh-TW 先上，同一天補齊；外語名用「電梯」）。接法同竹筍 |
 | orchard（果園菜園動物園） | 已上線（2026-10-22，8 種語言） | Cloudflare Workers | 不用手機的團康：手機出主題、打三拍節拍（共用 Leader.metronome，含開場口令 intro 與配樂）、輸的人拉真心話大冒險；路徑 /orchard/。外語名用當地類似遊戲（en Concentration、ja 古今東西ゲーム、ko 아이엠그라운드 이름 대기）。接法同竹筍 |
+| reverse（倒放猜猜看） | 已上線（2026-10-23，先只有 zh-TW） | Cloudflare Workers | 一支手機錄一句話倒過來播，大家學著唸再倒回來猜；人多可各自掃 QR code 打開錄音機搶答。不用房間、不用伺服器，錄音只在手機記憶體。路徑 /reverse/，跟其他暖場遊戲同一個 Worker（woohop-warmup） |
 | web100_06_HappinessSimulator | 已上線 | Cloudflare Workers | 幸福小組七關互動信息，路徑 /happiness/；**只有 zh-TW**。接法同搶答（網頁與 /happiness/api 走代理、WebSocket 直連）。首頁上跟其他作品一樣是一張卡片、同樣大小，但換成幸福模擬器自己的像素風（硬邊框、硬陰影、右上角兩條線），標籤是「互動信息分享」 |
 
 ### 搶答遊戲的特殊接法：網頁走代理、WebSocket 直連
