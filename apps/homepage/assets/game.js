@@ -1154,3 +1154,242 @@
 
   window.Leader.metronome = metronome;
 })();
+
+/*
+ * 帶領元件之四：倒放錄音機 Leader.recorder（2026-10-23 從倒放猜猜看抽出來，桌遊助手的「錄音機」也用同一份）。
+ * 錄音只留在記憶體，不上傳、不存檔。共用文字（開始錄音、停止、麥克風錯誤⋯⋯）在 src/locales.mjs 的 rec*。
+ *
+ *   var rec = Leader.recorder(rootEl, { maxSec, onRecorded(sec) })
+ *       錄音鍵＋進度條（右邊是秒數）＋狀態列（處理中、錯誤才有字）。錄好的聲音在 rec.forward（原聲）、rec.backward（倒放）
+ *   rec.button(which, cls, icon, label, onPlay)   做一顆播放鍵（which：forward／backward），放哪裡由呼叫的人決定；
+ *       播放中變「停止」，點了、播完、或改播別段都變回原本的字。rec.plays 是錄音機底下現成的一排
+ *   rec.setRate(r)   播放速度（0.5～2，連音高一起變），只影響之後按的播放
+ *   rec.start() 開始／停止錄音（要在使用者點擊裡呼叫，iOS 才給麥克風）、rec.isRecording()、rec.reset()
+ *   Leader.stopPlaying()   停掉正在播的那一段（換畫面時用）
+ */
+(function () {
+  'use strict';
+
+  var t = (window.WOOHOP && window.WOOHOP.t) || {};
+  var fill = function (s, v) {
+    return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in v ? v[k] : m; });
+  };
+
+  // 全頁只有一個 AudioContext、同時只播一段、只錄一段。AudioContext 要在使用者點擊裡才建立，iOS 才肯出聲
+  var ctx = null;
+  var playing = null; // { src, btn, label }
+  var recording = null; // { owner, stop }
+
+  function audio() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  function pickMime() {
+    // iOS Safari 只錄得出 mp4，Chrome／Android 是 webm
+    var types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+    for (var i = 0; i < types.length; i += 1) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported(types[i])) return types[i];
+    }
+    return '';
+  }
+
+  function copyBuffer(buf, start, end, reverse) {
+    var out = audio().createBuffer(buf.numberOfChannels, end - start, buf.sampleRate);
+    for (var c = 0; c < buf.numberOfChannels; c += 1) {
+      var part = buf.getChannelData(c).slice(start, end);
+      if (reverse) part.reverse();
+      out.copyToChannel(part, c);
+    }
+    return out;
+  }
+
+  // 頭尾音量低於門檻的部分剪掉，倒放時才不會先聽到一大段空白
+  function trimSilence(buf) {
+    var data = buf.getChannelData(0);
+    var win = Math.floor(buf.sampleRate * 0.02);
+    var peak = 0;
+    for (var i = 0; i < data.length; i += 1) peak = Math.max(peak, Math.abs(data[i]));
+    // 門檻跟著這段最大音量走；下限壓低，手機關掉自動增益後收音比較小聲，不然整段都會被當成空白剪掉
+    var th = Math.max(0.005, peak * 0.08);
+    var loud = function (at) {
+      for (var j = at; j < Math.min(at + win, data.length); j += 1) if (Math.abs(data[j]) > th) return true;
+      return false;
+    };
+    var start = 0;
+    var end = data.length;
+    while (start < end && !loud(start)) start += win;
+    while (end > start && !loud(Math.max(0, end - win))) end -= win;
+    var pad = Math.floor(buf.sampleRate * 0.08);
+    start = Math.max(0, start - pad);
+    end = Math.min(data.length, end + pad);
+    if (end - start < buf.sampleRate * 0.2) return buf;
+    return copyBuffer(buf, start, end, false);
+  }
+
+  function stopPlaying() {
+    if (!playing) return;
+    var p = playing;
+    playing = null;
+    try { p.src.stop(); } catch (e) { /* 已經停了 */ }
+    p.btn.querySelector('span').textContent = p.label;
+  }
+
+  function play(buf, btn, rate) {
+    stopPlaying();
+    var src = audio().createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = rate || 1;
+    src.connect(ctx.destination);
+    var label = btn.querySelector('span');
+    playing = { src: src, btn: btn, label: label.textContent };
+    src.onended = function () { if (playing && playing.src === src) stopPlaying(); };
+    label.textContent = t.playStop || '';
+    src.start();
+  }
+
+  function iconBtn(cls, icon, label) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn ' + cls;
+    b.innerHTML = (icon ? '<svg aria-hidden="true"><use href="#' + icon + '"/></svg>' : '<i class="rec-dot" aria-hidden="true"></i>') + '<span></span>';
+    b.querySelector('span').textContent = label;
+    return b;
+  }
+
+  function recorder(root, opts) {
+    opts = opts || {};
+    var maxSec = opts.maxSec || 15;
+    var wrap = document.createElement('div');
+    wrap.className = 'recorder';
+    var recBtn = iconBtn('btn-lg btn-solid btn-block rec-btn', '', t.recStart);
+    var bar = document.createElement('div');
+    bar.className = 'progress';
+    bar.innerHTML = '<div style="--p:0%"></div>';
+    var fillBar = bar.firstChild;
+    // 秒數放在進度條右邊：錄音中即時跳，錄好留著這段的長度
+    var meter = document.createElement('div');
+    meter.className = 'rec-meter';
+    var time = document.createElement('span');
+    time.className = 'rec-time';
+    meter.appendChild(bar);
+    meter.appendChild(time);
+    var status = document.createElement('p');
+    status.className = 'rec-status';
+    status.setAttribute('aria-live', 'polite');
+    var plays = document.createElement('div');
+    plays.className = 'rec-plays';
+    wrap.appendChild(recBtn);
+    wrap.appendChild(meter);
+    wrap.appendChild(status);
+    wrap.appendChild(plays);
+    root.appendChild(wrap);
+
+    var self = { forward: null, backward: null, buttons: [], plays: plays, wrap: wrap, rate: 1 };
+    var owner = {};
+
+    function setRecLabel(text, on) {
+      recBtn.querySelector('span').textContent = text;
+      // 平常是實心主要鍵，錄音中變紅色的「停止」
+      recBtn.classList.toggle('btn-danger', on);
+      recBtn.classList.toggle('btn-solid', !on);
+    }
+    function sync() {
+      self.buttons.forEach(function (b) { b.disabled = !self.forward; });
+    }
+    function showTime(sec) {
+      fillBar.style.setProperty('--p', Math.min(100, (sec / maxSec) * 100) + '%');
+      time.textContent = fill(t.recTime, { sec: sec.toFixed(1) });
+    }
+    function stopRec() {
+      if (recording && recording.owner === owner) recording.stop();
+    }
+
+    function start() {
+      audio();
+      if (recording && recording.owner === owner) return stopRec();
+      if (recording) recording.stop();
+      stopPlaying();
+
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        status.textContent = t.micInsecure;
+        return;
+      }
+      // 關掉降噪／回音消除：手機會把別支手機喇叭放出來的倒放聲當雜訊濾掉
+      navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+      }).then(function (stream) {
+        var mime = pickMime();
+        var rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+        var chunks = [];
+        var t0 = performance.now();
+        var timer = 0;
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+          clearInterval(timer);
+          stream.getTracks().forEach(function (tr) { tr.stop(); });
+          if (recording && recording.owner === owner) recording = null;
+          setRecLabel(t.recRedo, false);
+          status.textContent = t.recProcessing;
+          new Blob(chunks, { type: rec.mimeType || mime }).arrayBuffer()
+            .then(function (data) { return audio().decodeAudioData(data); })
+            .then(function (decoded) {
+              self.forward = trimSilence(decoded);
+              self.backward = copyBuffer(self.forward, 0, self.forward.length, true);
+              status.textContent = '';
+              showTime(self.forward.duration); // 剪掉頭尾空白後的長度
+              sync();
+              if (opts.onRecorded) opts.onRecorded(self.forward.duration);
+            })
+            .catch(function () { status.textContent = t.decodeFailed; });
+        };
+        recording = { owner: owner, stop: function () { if (rec.state !== 'inactive') rec.stop(); } };
+        rec.start();
+        setRecLabel(t.recStop, true);
+        status.textContent = '';
+        showTime(0);
+        timer = setInterval(function () {
+          var s = (performance.now() - t0) / 1000;
+          showTime(Math.min(s, maxSec));
+          if (s >= maxSec) stopRec();
+        }, 50);
+      }).catch(function () {
+        status.textContent = t.micDenied;
+      });
+    }
+
+    recBtn.addEventListener('click', start);
+
+    self.button = function (which, cls, icon, label, onPlay) {
+      var b = iconBtn(cls, icon, label);
+      b.disabled = true;
+      b.addEventListener('click', function () {
+        if (playing && playing.btn === b) return stopPlaying();
+        if (!self[which]) return;
+        play(self[which], b, self.rate);
+        if (onPlay) onPlay();
+      });
+      self.buttons.push(b);
+      return b;
+    };
+    self.setRate = function (r) { self.rate = r; };
+    self.reset = function () {
+      stopRec();
+      if (playing && self.buttons.indexOf(playing.btn) >= 0) stopPlaying();
+      self.forward = self.backward = null;
+      setRecLabel(t.recStart, false);
+      status.textContent = '';
+      fillBar.style.setProperty('--p', '0%');
+      time.textContent = '';
+      sync();
+    };
+    self.stop = stopRec;
+    self.start = start;
+    self.isRecording = function () { return Boolean(recording && recording.owner === owner); };
+    return self;
+  }
+
+  window.Leader.recorder = recorder;
+  window.Leader.stopPlaying = stopPlaying;
+})();

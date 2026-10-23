@@ -8,7 +8,7 @@
  * 另外有 rec「只有錄音機」：搶答時，猜的人掃 QR code 進來（網址帶 #rec），不走帶領步驟。
  * 返回鍵一律回第一頁；玩到一半先確認。
  *
- * 錄音只留在手機的記憶體裡，不上傳、不存檔。
+ * 錄音只留在手機的記憶體裡，不上傳、不存檔（錄音機本體是共用的 Leader.recorder）。
  */
 (function () {
   'use strict';
@@ -92,226 +92,12 @@
   }
 
   // ---------- 聲音：錄音、倒放、播放 ----------
-  /*
-   * AudioContext 要在使用者點擊裡才建立，iOS 才肯出聲。全頁只播一段：
-   * 播放中的按鈕變成「停止」，點了、播完、或改播別段都變回原本的字。
-   */
-  var ctx = null;
-  var playing = null; // { src, btn, label }
-  var recording = null; // { owner, stop }
-
-  function audio() {
-    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === 'suspended') ctx.resume();
-    return ctx;
-  }
-
-  function pickMime() {
-    // iOS Safari 只錄得出 mp4，Chrome／Android 是 webm
-    var types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
-    for (var i = 0; i < types.length; i += 1) {
-      if (window.MediaRecorder && MediaRecorder.isTypeSupported(types[i])) return types[i];
-    }
-    return '';
-  }
-
-  function copyBuffer(buf, start, end, reverse) {
-    var out = audio().createBuffer(buf.numberOfChannels, end - start, buf.sampleRate);
-    for (var c = 0; c < buf.numberOfChannels; c += 1) {
-      var part = buf.getChannelData(c).slice(start, end);
-      if (reverse) part.reverse();
-      out.copyToChannel(part, c);
-    }
-    return out;
-  }
-
-  // 頭尾音量低於門檻的部分剪掉，倒放時才不會先聽到一大段空白
-  function trimSilence(buf) {
-    var data = buf.getChannelData(0);
-    var win = Math.floor(buf.sampleRate * 0.02);
-    var peak = 0;
-    for (var i = 0; i < data.length; i += 1) peak = Math.max(peak, Math.abs(data[i]));
-    // 門檻跟著這段最大音量走；下限壓低，手機關掉自動增益後收音比較小聲，不然整段都會被當成空白剪掉
-    var th = Math.max(0.005, peak * 0.08);
-    var loud = function (at) {
-      for (var j = at; j < Math.min(at + win, data.length); j += 1) if (Math.abs(data[j]) > th) return true;
-      return false;
-    };
-    var start = 0;
-    var end = data.length;
-    while (start < end && !loud(start)) start += win;
-    while (end > start && !loud(Math.max(0, end - win))) end -= win;
-    var pad = Math.floor(buf.sampleRate * 0.08);
-    start = Math.max(0, start - pad);
-    end = Math.min(data.length, end + pad);
-    if (end - start < buf.sampleRate * 0.2) return buf;
-    return copyBuffer(buf, start, end, false);
-  }
-
-  function stopPlaying() {
-    if (!playing) return;
-    var p = playing;
-    playing = null;
-    try { p.src.stop(); } catch (e) { /* 已經停了 */ }
-    p.btn.querySelector('span').textContent = p.label;
-  }
-
-  function play(buf, btn) {
-    stopPlaying();
-    var src = audio().createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    var label = btn.querySelector('span');
-    playing = { src: src, btn: btn, label: label.textContent };
-    src.onended = function () { if (playing && playing.src === src) stopPlaying(); };
-    label.textContent = T.playStop;
-    src.start();
-  }
-
-  function iconBtn(cls, icon, label) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'btn ' + cls;
-    b.innerHTML = (icon ? '<svg aria-hidden="true"><use href="#' + icon + '"/></svg>' : '<i class="rec-dot" aria-hidden="true"></i>') + '<span></span>';
-    b.querySelector('span').textContent = label;
-    return b;
-  }
-
-  /*
-   * 一台錄音機：錄音鍵＋進度條（設計系統的 .progress，右邊是秒數）＋狀態列（處理中、錯誤才有字）。播放鍵由 button() 另外做，
-   * 放在錄音機下面一排，或像「公布答案」那樣放在別的地方。
-   */
-  function recorder(root, opts) {
-    var wrap = document.createElement('div');
-    wrap.className = 'recorder';
-    var recBtn = iconBtn('btn-lg btn-solid btn-block rec-btn', '', T.recStart);
-    var bar = document.createElement('div');
-    bar.className = 'progress';
-    bar.innerHTML = '<div style="--p:0%"></div>';
-    var fillBar = bar.firstChild;
-    // 秒數放在進度條右邊（使用者要求）：錄音中即時跳，錄好留著這段的長度
-    var meter = document.createElement('div');
-    meter.className = 'rec-meter';
-    var time = document.createElement('span');
-    time.className = 'rec-time';
-    meter.appendChild(bar);
-    meter.appendChild(time);
-    var status = document.createElement('p');
-    status.className = 'rec-status';
-    status.setAttribute('aria-live', 'polite');
-    var plays = document.createElement('div');
-    plays.className = 'rec-plays';
-    wrap.appendChild(recBtn);
-    wrap.appendChild(meter);
-    wrap.appendChild(status);
-    wrap.appendChild(plays);
-    root.appendChild(wrap);
-
-    var self = { forward: null, backward: null, buttons: [], plays: plays, wrap: wrap };
-    var owner = {};
-
-    function setRecLabel(text, on) {
-      recBtn.querySelector('span').textContent = text;
-      // 平常是實心主要鍵（使用者要求），錄音中變紅色的「停止」
-      recBtn.classList.toggle('btn-danger', on);
-      recBtn.classList.toggle('btn-solid', !on);
-    }
-    function sync() {
-      self.buttons.forEach(function (b) { b.disabled = !self.forward; });
-    }
-
-    function showTime(sec) {
-      fillBar.style.setProperty('--p', Math.min(100, (sec / MAX_SEC) * 100) + '%');
-      time.textContent = fill(T.recTime, { sec: sec.toFixed(1) });
-    }
-
-    function stopRec() {
-      if (recording && recording.owner === owner) recording.stop();
-    }
-
-    function start() {
-      audio();
-      if (recording && recording.owner === owner) return stopRec();
-      if (recording) recording.stop();
-      stopPlaying();
-
-      if (!navigator.mediaDevices || !window.MediaRecorder) {
-        status.textContent = T.micInsecure;
-        return;
-      }
-      // 關掉降噪／回音消除：手機會把別支手機喇叭放出來的倒放聲當雜訊濾掉
-      navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-      }).then(function (stream) {
-        var mime = pickMime();
-        var rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
-        var chunks = [];
-        var t0 = performance.now();
-        var timer = 0;
-        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
-        rec.onstop = function () {
-          clearInterval(timer);
-          stream.getTracks().forEach(function (t) { t.stop(); });
-          if (recording && recording.owner === owner) recording = null;
-          setRecLabel(T.recRedo, false);
-          status.textContent = T.recProcessing;
-          new Blob(chunks, { type: rec.mimeType || mime }).arrayBuffer()
-            .then(function (data) { return audio().decodeAudioData(data); })
-            .then(function (decoded) {
-              self.forward = trimSilence(decoded);
-              self.backward = copyBuffer(self.forward, 0, self.forward.length, true);
-              status.textContent = '';
-              showTime(self.forward.duration); // 剪掉頭尾空白後的長度
-              sync();
-              if (opts.onRecorded) opts.onRecorded(self.forward.duration);
-            })
-            .catch(function () { status.textContent = T.decodeFailed; });
-        };
-        recording = { owner: owner, stop: function () { if (rec.state !== 'inactive') rec.stop(); } };
-        rec.start();
-        setRecLabel(T.recStop, true);
-        status.textContent = '';
-        showTime(0);
-        timer = setInterval(function () {
-          var s = (performance.now() - t0) / 1000;
-          showTime(Math.min(s, MAX_SEC));
-          if (s >= MAX_SEC) stopRec();
-        }, 50);
-      }).catch(function () {
-        status.textContent = T.micDenied;
-      });
-    }
-
-    recBtn.addEventListener('click', start);
-
-    // which：forward 原聲／backward 倒放
-    self.button = function (which, cls, icon, label, onPlay) {
-      var b = iconBtn(cls, icon, label);
-      b.disabled = true;
-      b.addEventListener('click', function () {
-        if (playing && playing.btn === b) return stopPlaying();
-        if (!self[which]) return;
-        play(self[which], b);
-        if (onPlay) onPlay();
-      });
-      self.buttons.push(b);
-      return b;
-    };
-    self.reset = function () {
-      stopRec();
-      if (playing && self.buttons.indexOf(playing.btn) >= 0) stopPlaying();
-      self.forward = self.backward = null;
-      setRecLabel(T.recStart, false);
-      status.textContent = '';
-      fillBar.style.setProperty('--p', '0%');
-      time.textContent = '';
-      sync();
-    };
-    self.stop = stopRec;
-    self.start = start;
-    self.isRecording = function () { return Boolean(recording && recording.owner === owner); };
-    return self;
-  }
+  // 錄音機是全站共用的 Leader.recorder（homepage/assets/game.js），桌遊助手的「錄音機」也是同一份
+  var recorder = function (root, opts) {
+    opts.maxSec = MAX_SEC;
+    return Leader.recorder(root, opts);
+  };
+  var stopPlaying = Leader.stopPlaying;
 
   // 每台錄音機下面都是同一排：左邊小的「原聲」、右邊大的「倒放」。出題的原聲就是答案
   function playRow(rec, mineLabel, revLabel, onMine) {
@@ -383,11 +169,11 @@
     var item = pick(T.prompts[kind], card && card.kind === kind ? card.item : null);
     // 造句的提示就是那個詞；哼歌、自由發揮的提示是題型本身
     card = kind === 'sentence'
-      ? { kind: kind, item: item, text: fill(T.sentenceTask, { word: item }), hint: '「' + item + '」' }
+      ? { kind: kind, item: item, text: fill(T.sentenceTask, { word: item }), hint: fill(T.hintWord, { word: item }) }
       : { kind: kind, item: item, text: item, hint: T.kindNames[kind] };
     el.cardKind.textContent = T.kindNames[kind];
     el.cardText.textContent = card.text;
-    el.cardHintText.textContent = T.hintLabel + '：' + card.hint;
+    el.cardHintText.textContent = fill(T.hintLine, { hint: card.hint });
   }
 
   /*

@@ -40,7 +40,6 @@ export default {
     guessEach: '放倒放給大家聽！大家用自己的手機學、倒回來聽，最先猜中的喊出來！',
   },
   whoNext: '第 {n} 個人',
-  whoAny: '下一個人',
   // 「說明規則」那一步的三張插圖卡：[標題, 說明]
   ruleCards: [
     ['偷看題目、錄一句話', '輪到的人抽題：用題目的詞造一句話、哼一首歌，或自由發揮。錄好手機會把聲音倒過來。'],
@@ -83,7 +82,8 @@ export default {
   coveredText: '題目蓋起來了',
   peekAgain: '再偷看一次',
   hintButton: '看提示',
-  hintLabel: '提示',
+  hintLine: '提示：{hint}',
+  hintWord: '「{word}」',
   answerButton: '公布答案',
   // [造句用的詞]、[哼歌的題目]、[自由發揮的題目]
   prompts: {
@@ -111,12 +111,6 @@ export default {
   },
 
   // ---------- 錄音 ----------
-  recStart: '開始錄音',
-  recStop: '停止',
-  recRedo: '重錄',
-  recProcessing: '處理中⋯',
-  recTime: '{sec} 秒',
-  playStop: '停止',
   recordHeading: '錄下你的題目',
   recordHint: '照著題目說一句話（最長 15 秒），錄好就換大家猜。',
   guessHeading: '放給大家聽',
@@ -134,13 +128,10 @@ export default {
   lastRound: '玩完了，看結果',
   endGame: '結束遊戲',
   againButton: '再玩一次',
-  micDenied: '拿不到麥克風：請在瀏覽器設定允許這個網站使用麥克風。',
-  micInsecure: '這個瀏覽器不支援錄音，請換 Chrome 或 Safari 試試。',
-  decodeFailed: '這段錄音讀不出來，再錄一次試試。',
 
   // ---------- 只有錄音機（搶答時，猜的人用） ----------
   recOnlyTitle: '倒放錄音機',
-  recOnlyDesc: '錄下倒放的聲音或自己學著唸，再按「倒回來聽」。',
+  recOnlyDesc: '錄下倒放的聲音或自己學著唸，再按「倒放」聽聽看。',
   recOnlyMine: '原聲',
   recOnlyReverse: '倒放',
   recOnlyBack: '← 我要出題',

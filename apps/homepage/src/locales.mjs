@@ -17,9 +17,7 @@ export const DEFAULT_LANG = 'zh-TW';
  * 那個遊戲加了語言之後，回來這裡補上；8 種都有了就整筆拿掉。
  */
 export const GAME_LANGS = {
-  // 竹筍竹筍蹦蹦出 2026-10-20、上樓下樓 2026-10-21 補齊 8 種語言，已拿掉
-  // 倒放猜猜看 2026-10-23 先上繁中；其他語言的名稱是暫定，補語言時照「先查當地類似遊戲」再定
-  reverse: ['zh-TW'],
+  // 竹筍竹筍蹦蹦出 2026-10-20、上樓下樓 2026-10-21、倒放猜猜看 2026-10-23 補齊 8 種語言，已拿掉
 };
 export const gameInLang = (key, lang) => !GAME_LANGS[key] || GAME_LANGS[key].includes(lang);
 export const LANG_NAMES = {
@@ -109,6 +107,8 @@ export const STRINGS = {
     flowKicker: '照著帶就好', flowTitle: '這一組怎麼帶', flowLead: '框起來的部分可以直接念出來。', sayLabel: '照著念',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "拉一下！", slotPullAgain: "再拉一次", slotModeLabel: "要回答還是做動作", slotAsk: "真心話", slotMix: "隨機", slotDo: "大冒險",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "開始錄音", recStop: "停止", recRedo: "重錄", recProcessing: "處理中⋯", recTime: "{sec} 秒", playStop: "停止", micDenied: "拿不到麥克風：請在瀏覽器設定允許這個網站使用麥克風。", micInsecure: "這個瀏覽器不支援錄音，請換 Chrome 或 Safari 試試。", decodeFailed: "這段錄音讀不出來，再錄一次試試。",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "取名主題", themeRandom: "隨機", themeRandomSub: "手機幫你挑", themeFood: "食物", themeDrink: "飲料", themeAnimal: "動物", themeFruit: "水果", themeDessert: "甜點", themeCartoon: "卡通角色", themeRealname: "用本名", themeRealnameSub: "不用取名", themeExample: "{a}、{b}⋯", nameTurn: "第 {n} 位", nameTheme: "主題：{theme}", rerollTheme: "換一個主題", drawButton: "抽一個", ownButton: "自己取一個", ownSay: "想一個名稱，大聲跟大家說：「我是＿＿＿！」說完就傳給下一個人。", ownCancel: "改用抽的", ownSlot: "自己取 {n}", youAre: "你是⋯⋯", redraw: "換一個", passNext: "傳給下一個人", revealHint: "記好了，就按「傳給下一個人」交出手機 👇", poolEmpty: "這個主題抽完了，自己取一個吧。", namedHeading: "已經取好的", removeName: "刪掉「{name}」", allDone: "大家都取好了，下一步", allDoneNeed: "至少要 {n} 個人才能開始。", listSep: "、",
     // 節拍器（game.js 的 Leader.metronome）
@@ -202,6 +202,8 @@ export const STRINGS = {
     flowKicker: 'Just follow along', flowTitle: 'How to lead this combo', flowLead: 'The boxed lines can be read out as they are.', sayLabel: 'Say this',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "Pull!", slotPullAgain: "Pull again", slotModeLabel: "Truth or dare", slotAsk: "Truth", slotMix: "Random", slotDo: "Dare",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "Start recording", recStop: "Stop", recRedo: "Record again", recProcessing: "Processing…", recTime: "{sec}s", playStop: "Stop", micDenied: "Can’t use the microphone. Please allow this site to use it in your browser settings.", micInsecure: "This browser can’t record audio. Try Chrome or Safari.", decodeFailed: "Couldn’t read that recording. Please try again.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Name theme", themeRandom: "Random", themeRandomSub: "Phone picks one", themeFood: "Food", themeDrink: "Drinks", themeAnimal: "Animals", themeFruit: "Fruit", themeDessert: "Desserts", themeCartoon: "Cartoons", themeRealname: "Real names", themeRealnameSub: "No new names", themeExample: "{a}, {b}…", nameTurn: "Player {n}", nameTheme: "Theme: {theme}", rerollTheme: "Another theme", drawButton: "Draw a name", ownButton: "Make up my own", ownSay: "Think of a name and announce it: “I’m ___!” Then pass the phone on.", ownCancel: "Draw instead", ownSlot: "Own name {n}", youAre: "You are…", redraw: "Another", passNext: "Pass it on", revealHint: "Got it? Tap “Pass it on” and hand over the phone 👇", poolEmpty: "This theme is all used up — make up your own!", namedHeading: "Names so far", removeName: "Remove “{name}”", allDone: "Everyone has a name — next", allDoneNeed: "You need at least {n} players to start.", listSep: ", ",
     // 節拍器（game.js 的 Leader.metronome）
@@ -242,7 +244,7 @@ export const STRINGS = {
       buzzer: ["Buzzer Game", "A live multiplayer buzzer tool — scan a QR code to join the room."],
       avalon: ["Avalon Voice Narrator", "Set your player count and roles, and the app narrates the host script for you — no memorizing required."],
       orchard: ['Concentration', 'Clap, clap, name one: take turns naming things in the category — repeat one or go off-topic and you’re out.'],
-      reverse: ['Say It Backwards', 'Record a line, play it in reverse, copy the gibberish and flip it back to guess what was said.'],
+      reverse: ['Reverse Audio Challenge', 'Record a line, play it in reverse, copy the gibberish and flip it back to guess what was said.'],
       stairs: ['Elevator', 'Stand in a circle as floors and chant "One up to four!" to the beat — wrong call or no answer and you’re out.'],
       bamboo: ['Pop-Up Count', 'Stand up and call the next number. Pop up at the same time as someone? Shout their name first. Last one down loses.'],
       happy: ["Happiness Simulator", "A seven-level interactive message: the host leads on a big screen, everyone joins by phone. Traditional Chinese only."],
@@ -295,6 +297,8 @@ export const STRINGS = {
     flowKicker: 'Einfach mitmachen', flowTitle: 'So leitest du die Kombi', flowLead: 'Die eingerahmten Sätze kannst du direkt vorlesen.', sayLabel: 'Vorlesen',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "SCHRITT {n} / {total}", slotPull: "Ziehen!", slotPullAgain: "Nochmal ziehen", slotModeLabel: "Wahrheit oder Pflicht", slotAsk: "Wahrheit", slotMix: "Zufall", slotDo: "Pflicht",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "Aufnahme starten", recStop: "Stopp", recRedo: "Neu aufnehmen", recProcessing: "Wird verarbeitet …", recTime: "{sec} s", playStop: "Stopp", micDenied: "Kein Zugriff aufs Mikrofon. Bitte erlaube es dieser Seite in den Browser-Einstellungen.", micInsecure: "Dieser Browser kann nicht aufnehmen. Probier es mit Chrome oder Safari.", decodeFailed: "Die Aufnahme konnte nicht gelesen werden. Bitte noch mal aufnehmen.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Thema der Namen", themeRandom: "Zufall", themeRandomSub: "Das Handy wählt", themeFood: "Essen", themeDrink: "Getränke", themeAnimal: "Tiere", themeFruit: "Obst", themeDessert: "Süßes", themeCartoon: "Trickfiguren", themeRealname: "Echte Namen", themeRealnameSub: "Keine neuen Namen", themeExample: "{a}, {b} …", nameTurn: "Person {n}", nameTheme: "Thema: {theme}", rerollTheme: "Anderes Thema", drawButton: "Namen ziehen", ownButton: "Selbst ausdenken", ownSay: "Denk dir einen Namen aus und sag ihn laut: „Ich bin ___!“ Dann gib das Handy weiter.", ownCancel: "Doch ziehen", ownSlot: "Eigener Name {n}", youAre: "Du bist …", redraw: "Neu ziehen", passNext: "Weitergeben", revealHint: "Gemerkt? Dann tippe auf „Weitergeben“ und reich das Handy weiter 👇", poolEmpty: "In diesem Thema sind alle Namen weg – denk dir selbst einen aus.", namedHeading: "Schon vergeben", removeName: "„{name}“ entfernen", allDone: "Alle haben einen Namen – weiter", allDoneNeed: "Ihr braucht mindestens {n} Personen.", listSep: ", ",
     // 節拍器（game.js 的 Leader.metronome）
@@ -335,7 +339,7 @@ export const STRINGS = {
       buzzer: ["Buzzer-Spiel", "Ein Live-Buzzer-Tool für mehrere Spieler — per QR-Code dem Raum beitreten."],
       avalon: ["Avalon Sprachassistent", "Spieleranzahl und Rollen einstellen, und der Spielleiter-Text wird automatisch vorgelesen — kein Auswendiglernen nötig."],
       orchard: ['Kategorien-Klatschen', 'Klatsch, klatsch, ein Wort: reihum etwas zum Thema nennen – wer wiederholt oder danebenliegt, ist raus.'],
-      reverse: ['Rückwärts-Raten', 'Einen Satz aufnehmen, rückwärts abspielen, das Kauderwelsch nachsprechen und wieder umdrehen – was wurde gesagt?'],
+      reverse: ['Rückwärts-Challenge', 'Einen Satz aufnehmen, rückwärts abspielen, das Kauderwelsch nachsprechen und wieder umdrehen – was wurde gesagt?'],
       stairs: ['Fahrstuhl', 'Im Kreis als Etagen im Takt „Eins hoch auf vier!“ rufen – falsch gerufen oder verpasst, und du bist raus.'],
       bamboo: ['Bis 10 zählen', 'Aufstehen und die nächste Zahl rufen. Stehen zwei gleichzeitig auf, gewinnt, wer zuerst den Namen des anderen ruft. Wer zuletzt sitzt, verliert.'],
       happy: ["Glückssimulator", "Interaktive Botschaft in sieben Stufen: Die Leitung führt am großen Bildschirm, alle machen am Handy mit. Nur auf traditionellem Chinesisch."],
@@ -388,6 +392,8 @@ export const STRINGS = {
     flowKicker: 'Il suffit de suivre', flowTitle: 'Comment animer ce combo', flowLead: 'Les phrases encadrées peuvent être lues telles quelles.', sayLabel: 'À lire',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "ÉTAPE {n} / {total}", slotPull: "Tirer !", slotPullAgain: "Encore une fois", slotModeLabel: "Action ou vérité", slotAsk: "Vérité", slotMix: "Hasard", slotDo: "Action",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "Enregistrer", recStop: "Stop", recRedo: "Recommencer", recProcessing: "Traitement…", recTime: "{sec} s", playStop: "Stop", micDenied: "Impossible d’utiliser le micro. Autorise ce site dans les réglages du navigateur.", micInsecure: "Ce navigateur ne peut pas enregistrer. Essaie avec Chrome ou Safari.", decodeFailed: "Impossible de lire l’enregistrement. Réessaie.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Thème des noms", themeRandom: "Hasard", themeRandomSub: "Le téléphone choisit", themeFood: "Plats", themeDrink: "Boissons", themeAnimal: "Animaux", themeFruit: "Fruits", themeDessert: "Desserts", themeCartoon: "Dessins animés", themeRealname: "Vrais prénoms", themeRealnameSub: "Pas de nouveaux noms", themeExample: "{a}, {b}…", nameTurn: "Joueur {n}", nameTheme: "Thème : {theme}", rerollTheme: "Autre thème", drawButton: "Tirer un nom", ownButton: "Choisir le mien", ownSay: "Pense à un nom et annonce-le bien fort : « Je suis ___ ! » Puis passe le téléphone.", ownCancel: "Plutôt tirer", ownSlot: "Nom perso {n}", youAre: "Tu es…", redraw: "Un autre", passNext: "Passer au suivant", revealHint: "C’est retenu ? Appuie sur « Passer au suivant » et donne le téléphone 👇", poolEmpty: "Plus de noms dans ce thème : invente le tien !", namedHeading: "Noms déjà pris", removeName: "Retirer « {name} »", allDone: "Tout le monde a un nom, suivant", allDoneNeed: "Il faut au moins {n} joueurs pour commencer.", listSep: ", ",
     // 節拍器（game.js 的 Leader.metronome）
@@ -428,7 +434,7 @@ export const STRINGS = {
       buzzer: ["Jeu de buzzer", "Un outil de buzzer multijoueur en direct — rejoignez la salle en scannant un QR code."],
       avalon: ["Narrateur vocal Avalon", "Réglez le nombre de joueurs et les rôles : le texte de l’animateur est lu automatiquement, sans rien apprendre par cœur."],
       orchard: ['Catégories en rythme', 'Clap, clap, un mot : chacun son tour cite quelque chose du thème – une répétition ou un hors-sujet, et c’est perdu.'],
-      reverse: ['Phrase à l’envers', 'On enregistre une phrase, on l’écoute à l’envers, on imite le charabia et on le remet à l’endroit pour deviner.'],
+      reverse: ['Défi à l’envers', 'On enregistre une phrase, on l’écoute à l’envers, on imite le charabia et on le remet à l’endroit pour deviner.'],
       stairs: ['L’ascenseur', 'En cercle, chacun est un étage : « Un monte au quatre ! » en rythme. Mauvaise annonce ou pas de réponse : perdu.'],
       bamboo: ['Compter jusqu’à 10', 'Levez-vous en annonçant le nombre suivant. Deux debout en même temps ? Le premier qui crie le nom de l’autre reste. Le dernier assis perd.'],
       happy: ["Simulateur de bonheur", "Un message interactif en sept étapes : l’animateur guide sur grand écran, chacun participe depuis son téléphone. En chinois traditionnel uniquement."],
@@ -481,6 +487,8 @@ export const STRINGS = {
     flowKicker: 'そのまま進めるだけ', flowTitle: 'このセットの進め方', flowLead: '枠の中はそのまま読み上げて大丈夫です。', sayLabel: '読み上げ',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "回す！", slotPullAgain: "もう一回", slotModeLabel: "本音か罰ゲームか", slotAsk: "本音", slotMix: "ランダム", slotDo: "罰ゲーム",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "録音する", recStop: "停止", recRedo: "録り直す", recProcessing: "処理中…", recTime: "{sec} 秒", playStop: "停止", micDenied: "マイクが使えません。ブラウザの設定でこのサイトのマイクを許可してください。", micInsecure: "このブラウザは録音に対応していません。Chrome か Safari でお試しください。", decodeFailed: "録音を読み込めませんでした。もう一度録音してください。",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "名前のテーマ", themeRandom: "ランダム", themeRandomSub: "スマホにおまかせ", themeFood: "食べ物", themeDrink: "飲み物", themeAnimal: "動物", themeFruit: "くだもの", themeDessert: "スイーツ", themeCartoon: "キャラクター", themeRealname: "本名で", themeRealnameSub: "名前はそのまま", themeExample: "{a}、{b}…", nameTurn: "{n} 人目", nameTheme: "テーマ：{theme}", rerollTheme: "別のテーマにする", drawButton: "名前を引く", ownButton: "自分で決める", ownSay: "名前を考えて、みんなに大きな声で「わたしは＿＿＿！」と言ってね。言えたら次の人へ。", ownCancel: "引くほうにする", ownSlot: "自分で決めた {n}", youAre: "あなたは……", redraw: "引き直す", passNext: "次の人へ", revealHint: "覚えたら「次の人へ」を押してスマホを渡してね 👇", poolEmpty: "このテーマの名前はもうありません。自分で決めてね。", namedHeading: "決まった名前", removeName: "「{name}」を消す", allDone: "みんな決まった、次へ", allDoneNeed: "{n} 人以上いないと始められません。", listSep: "、",
     // 節拍器（game.js 的 Leader.metronome）
@@ -574,6 +582,8 @@ export const STRINGS = {
     flowKicker: '그대로 따라 하기', flowTitle: '이 세트 진행 방법', flowLead: '상자 안의 문장은 그대로 읽으면 됩니다.', sayLabel: '읽어 주기',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "당기기!", slotPullAgain: "한 번 더", slotModeLabel: "진실 혹은 도전", slotAsk: "진실", slotMix: "랜덤", slotDo: "도전",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "녹음 시작", recStop: "정지", recRedo: "다시 녹음", recProcessing: "처리 중…", recTime: "{sec}초", playStop: "정지", micDenied: "마이크를 쓸 수 없어요. 브라우저 설정에서 이 사이트의 마이크를 허용해 주세요.", micInsecure: "이 브라우저는 녹음을 지원하지 않아요. Chrome이나 Safari로 해 보세요.", decodeFailed: "녹음을 읽지 못했어요. 다시 녹음해 주세요.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "이름 주제", themeRandom: "랜덤", themeRandomSub: "휴대폰이 골라 줘요", themeFood: "음식", themeDrink: "음료", themeAnimal: "동물", themeFruit: "과일", themeDessert: "디저트", themeCartoon: "캐릭터", themeRealname: "본명으로", themeRealnameSub: "이름 그대로", themeExample: "{a}, {b}…", nameTurn: "{n}번째", nameTheme: "주제: {theme}", rerollTheme: "다른 주제로", drawButton: "이름 뽑기", ownButton: "내가 정할래요", ownSay: "이름을 하나 생각해서 크게 말해 주세요: “나는 ___!” 말했으면 다음 사람에게.", ownCancel: "뽑기로 할래요", ownSlot: "직접 정한 이름 {n}", youAre: "당신은……", redraw: "다시 뽑기", passNext: "다음 사람에게", revealHint: "외웠으면 「다음 사람에게」를 누르고 휴대폰을 넘겨 주세요 👇", poolEmpty: "이 주제는 다 뽑았어요. 직접 정해 주세요.", namedHeading: "정해진 이름", removeName: "「{name}」 지우기", allDone: "다 정했어요, 다음", allDoneNeed: "최소 {n}명이 있어야 시작할 수 있어요.", listSep: ", ",
     // 節拍器（game.js 的 Leader.metronome）
@@ -614,7 +624,7 @@ export const STRINGS = {
       buzzer: ["버저 게임", "QR 코드를 스캔해서 방에 입장하는 실시간 다인용 버저 도구."],
       avalon: ["아발론 음성 진행", "인원수와 역할만 설정하면 진행자 대사를 자동으로 읽어줍니다."],
       orchard: ['아이엠그라운드 이름 대기', '짝, 짝, 말하기! 박자에 맞춰 주제에 맞는 이름을 돌아가며 대요. 겹치거나 틀리면 탈락.'],
-      reverse: ['거꾸로 말하기 게임', '한마디 녹음해서 거꾸로 재생! 이상한 소리를 따라 하고 다시 뒤집어서 원래 말을 맞혀요.'],
+      reverse: ['역재생 챌린지', '한마디 녹음해서 거꾸로 재생! 이상한 소리를 따라 하고 다시 뒤집어서 원래 말을 맞혀요.'],
       stairs: ['엘리베이터 게임', '둥글게 서서 층이 되고 박자에 맞춰 “1층 위로 4층!” 틀리거나 못 받으면 탈락.'],
       bamboo: ['눈치게임', '일어나면서 다음 숫자를 외쳐요. 누군가와 겹치면 상대 이름을 먼저 외친 사람이 살아남아요. 마지막까지 앉아 있는 사람이 벌칙!'],
       happy: ["행복 시뮬레이터", "7단계 인터랙티브 메시지. 진행자가 큰 화면으로 이끌고 모두 휴대폰으로 참여합니다. 번체 중국어만 지원."],
@@ -667,6 +677,8 @@ export const STRINGS = {
     flowKicker: 'Solo tienes que seguirlo', flowTitle: 'Cómo dirigir este combo', flowLead: 'Las frases recuadradas se pueden leer tal cual.', sayLabel: 'Leer en voz alta',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "PASO {n} / {total}", slotPull: "¡Tira!", slotPullAgain: "Otra vez", slotModeLabel: "Verdad o reto", slotAsk: "Verdad", slotMix: "Al azar", slotDo: "Reto",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "Grabar", recStop: "Parar", recRedo: "Volver a grabar", recProcessing: "Procesando…", recTime: "{sec} s", playStop: "Parar", micDenied: "No se puede usar el micrófono. Permite que esta web lo use en los ajustes del navegador.", micInsecure: "Este navegador no puede grabar. Prueba con Chrome o Safari.", decodeFailed: "No se ha podido leer la grabación. Vuelve a intentarlo.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Tema de los nombres", themeRandom: "Al azar", themeRandomSub: "Elige el móvil", themeFood: "Comida", themeDrink: "Bebidas", themeAnimal: "Animales", themeFruit: "Frutas", themeDessert: "Postres", themeCartoon: "Dibujos", themeRealname: "Nombres reales", themeRealnameSub: "Sin nombres nuevos", themeExample: "{a}, {b}…", nameTurn: "Jugador {n}", nameTheme: "Tema: {theme}", rerollTheme: "Otro tema", drawButton: "Sacar un nombre", ownButton: "Elegir el mío", ownSay: "Piensa un nombre y dilo bien alto: «¡Soy ___!». Después pasa el móvil.", ownCancel: "Mejor sacar uno", ownSlot: "Nombre propio {n}", youAre: "Eres…", redraw: "Otro", passNext: "Pasar al siguiente", revealHint: "¿Lo tienes? Pulsa «Pasar al siguiente» y entrega el móvil 👇", poolEmpty: "Ya no quedan nombres de este tema: invéntate uno.", namedHeading: "Nombres ya elegidos", removeName: "Quitar «{name}»", allDone: "Todos tienen nombre, siguiente", allDoneNeed: "Hacen falta al menos {n} jugadores.", listSep: ", ",
     // 節拍器（game.js 的 Leader.metronome）
@@ -707,7 +719,7 @@ export const STRINGS = {
       buzzer: ["Juego de timbre", "Una herramienta de timbre en vivo para varios jugadores — escanea un código QR para unirte a la sala."],
       avalon: ["Narrador de voz de Avalon", "Configura el número de jugadores y los roles, y el guion del anfitrión se lee en voz alta automáticamente, sin memorizar nada."],
       orchard: ['Categorías al ritmo', 'Palmas, palmas, palabra: por turnos di algo del tema; si repites o te sales del tema, pierdes.'],
-      reverse: ['Dilo al revés', 'Graba una frase, escúchala al revés, imita ese galimatías y dale la vuelta para adivinar qué se dijo.'],
+      reverse: ['Reto al revés', 'Graba una frase, escúchala al revés, imita ese galimatías y dale la vuelta para adivinar qué se dijo.'],
       stairs: ['El ascensor', 'En círculo, cada uno es un piso: «¡Uno sube al cuatro!» al ritmo. Si fallas o no contestas, pierdes.'],
       bamboo: ['Contar hasta diez', 'Levántate diciendo el siguiente número. Si te levantas a la vez que alguien, gana quien grite antes el nombre del otro. El último sentado pierde.'],
       happy: ["Simulador de felicidad", "Un mensaje interactivo en siete niveles: quien dirige usa la pantalla grande y todos participan desde el móvil. Solo en chino tradicional."],
@@ -760,6 +772,8 @@ export const STRINGS = {
     flowKicker: '照着带就好', flowTitle: '这一组怎么带', flowLead: '框起来的部分可以直接念出来。', sayLabel: '照着念',
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "拉一下！", slotPullAgain: "再拉一次", slotModeLabel: "要回答还是做动作", slotAsk: "真心话", slotMix: "随机", slotDo: "大冒险",
+    // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    recStart: "开始录音", recStop: "停止", recRedo: "重录", recProcessing: "处理中…", recTime: "{sec} 秒", playStop: "停止", micDenied: "拿不到麦克风：请在浏览器设置里允许这个网站使用麦克风。", micInsecure: "这个浏览器不支持录音，请换 Chrome 或 Safari 试试。", decodeFailed: "这段录音读不出来，再录一次试试。",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "起名主题", themeRandom: "随机", themeRandomSub: "手机帮你选", themeFood: "美食", themeDrink: "饮料", themeAnimal: "动物", themeFruit: "水果", themeDessert: "甜点", themeCartoon: "动画角色", themeRealname: "用真名", themeRealnameSub: "不用起名", themeExample: "{a}、{b}⋯", nameTurn: "第 {n} 位", nameTheme: "主题：{theme}", rerollTheme: "换一个主题", drawButton: "抽一个", ownButton: "自己起一个", ownSay: "想一个名字，大声跟大家说：「我是＿＿＿！」说完就传给下一个人。", ownCancel: "改成抽的", ownSlot: "自己起的 {n}", youAre: "你是⋯⋯", redraw: "换一个", passNext: "传给下一个人", revealHint: "记住了，就按「传给下一个人」交出手机 👇", poolEmpty: "这个主题抽完了，自己起一个吧。", namedHeading: "已经起好的", removeName: "删掉「{name}」", allDone: "大家都起好了，下一步", allDoneNeed: "至少要 {n} 个人才能开始。", listSep: "、",
     // 節拍器（game.js 的 Leader.metronome）
@@ -800,7 +814,7 @@ export const STRINGS = {
       buzzer: ["抢答游戏", "多人现场抢答工具，扫 QR code 加入房间即可游玩。"],
       avalon: ["阿瓦隆语音主持", "设置人数与角色，自动念出主持人旁白台词，不用自己背稿，直接开局。"],
       orchard: ['果园菜园动物园', '跟着节拍“拍、拍、说”轮流说出符合主题的东西，重复或说错类别就输。'],
-      reverse: ['倒放猜猜看', '录一句话倒过来播，大家学着念那串怪声再倒回来听，猜猜原本说什么。'],
+      reverse: ['倒放挑战', '录一句话倒过来播，大家学着念那串怪声再倒回来听，猜猜原本说什么。'],
       stairs: ['上楼下楼', '围成一圈当楼层，跟着节拍喊“1 楼上 4 楼”，喊错或没接上就输。'],
       bamboo: ['竹笋竹笋蹦蹦出', '轮流站起来喊数字，撞到就抢着喊对方的名字，最后还蹲着的输。'],
       happy: ["幸福模拟器", "七关互动信息，主持人用大屏幕带，全场拿手机一起参与。仅提供繁体中文。"],

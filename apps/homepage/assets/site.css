@@ -291,6 +291,9 @@
 .tool-controls .field-label { font-size: 14px; font-weight: 800; color: var(--text-2); }
 .tool-beats { width: auto; }
 .tool-beats button { min-width: 48px; }
+.tool-speed { width: auto; }
+.tool-speed button { min-width: 52px; padding: 0 10px; font-variant-numeric: tabular-nums; }
+.tool-recorder { width: 100%; }
 .tool-names-pick { display: grid; gap: 14px; }
 /* 小工具只抽名字：不要「自己取一個」、人數提示、「大家都取好了，下一步」（那是遊戲要往下一步用的） */
 .tool-page .namer .stage-choose > .btn-secondary, .tool-page .namer .need-more, .tool-page .namer .all-done { display: none; }

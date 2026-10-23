@@ -5,12 +5,13 @@
  * prerender 會把這份併進 STRINGS[lang].tools。各語言逐句照當地說法寫，不要丟翻譯 API。
  */
 
-export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names'];
+export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names', 'recorder'];
 // 每個小工具在哪些遊戲裡也用得到（總覽頁與工具頁底下的「也用在這些遊戲」）
 export const TOOL_GAMES = {
   truthOrDare: ['bamboo', 'stairs', 'orchard', 'bomb'],
   metronome: ['stairs', 'orchard'],
   names: ['bamboo'],
+  recorder: ['reverse'],
 };
 
 export const TOOLS = {
@@ -63,6 +64,21 @@ export const TOOLS = {
           '抽過的名字會列在下面，不會重複；想換一批就按「換一個主題」。',
         ],
         start: '開始抽卡',
+      },
+      recorder: {
+        name: '倒放錄音機',
+        short: '錄一段話馬上倒過來播，還能調快調慢，玩倒放、變聲都好笑。',
+        seoTitle: '倒放錄音機｜線上把聲音倒過來播，可調快慢，免下載',
+        seoDesc: '用手機錄一段話，按一下就倒過來播，還能 0.5～2 倍調快調慢（連音高一起變）。玩倒放挑戰、聽自己變成花栗鼠或大叔聲都好笑。錄音只留在你的手機上，免下載、免註冊。',
+        lead: '錄一段話，倒過來播、調快調慢都可以。',
+        how: [
+          '按「開始錄音」說一段話，說完按「停止」（最長 30 秒）。',
+          '按「倒放」聽倒過來的聲音，按「原聲」聽原本的。',
+          '選上面的速度：慢一點像大叔、快一點像花栗鼠。想玩倒放挑戰：把倒放的聲音學著唸、錄下來再倒放一次。',
+        ],
+        speedLabel: '速度',
+        mineLabel: '原聲',
+        reverseLabel: '倒放',
       },
     },
   },
@@ -117,6 +133,21 @@ export const TOOLS = {
         ],
         start: '开始抽卡',
       },
+      recorder: {
+        name: '倒放录音机',
+        short: '录一段话马上倒过来播，还能调快调慢，玩倒放、变声都好笑。',
+        seoTitle: '倒放录音机｜在线把声音倒过来播，可调快慢，免下载',
+        seoDesc: '用手机录一段话，点一下就倒过来播，还能 0.5～2 倍调快调慢（音调一起变）。玩倒放挑战、听自己变成花栗鼠或大叔音都好笑。录音只留在你的手机上，免下载、免注册。',
+        lead: '录一段话，倒过来播、调快调慢都可以。',
+        how: [
+          '点「开始录音」说一段话，说完点「停止」（最长 30 秒）。',
+          '点「倒放」听倒过来的声音，点「原声」听原本的。',
+          '选上面的速度：慢一点像大叔、快一点像花栗鼠。想玩倒放挑战：把倒放的声音学着念、录下来再倒放一次。',
+        ],
+        speedLabel: '速度',
+        mineLabel: '原声',
+        reverseLabel: '倒放',
+      },
     },
   },
 
@@ -169,6 +200,21 @@ export const TOOLS = {
           'Names drawn so far are listed below and never repeat. Want a fresh batch? Tap “Another theme”.',
         ],
         start: 'Start drawing',
+      },
+      recorder: {
+        name: 'Reverse recorder',
+        short: 'Record a line and play it backwards — slow it down or speed it up for extra laughs.',
+        seoTitle: 'Reverse recorder | Play your voice backwards online, slow or fast',
+        seoDesc: 'Record a line on your phone and play it backwards with one tap, at 0.5× to 2× speed (pitch changes too). Great for the reverse audio challenge — or just to hear yourself as a chipmunk. Recordings stay on your phone. No app, no sign-up.',
+        lead: 'Record a line, then play it backwards, slower or faster.',
+        how: [
+          'Tap “Start recording”, say something, then tap “Stop” (up to 30 seconds).',
+          'Tap “Play backwards” to hear it reversed, or “Original” to hear it as recorded.',
+          'Pick a speed above: slower sounds deep, faster sounds like a chipmunk. For the reverse challenge, copy the reversed sound, record it, and play that backwards too.',
+        ],
+        speedLabel: 'Speed',
+        mineLabel: 'Original',
+        reverseLabel: 'Play backwards',
       },
     },
   },
@@ -223,6 +269,21 @@ export const TOOLS = {
         ],
         start: 'Los geht’s',
       },
+      recorder: {
+        name: 'Rückwärts-Rekorder',
+        short: 'Einen Satz aufnehmen und rückwärts abspielen – langsamer oder schneller, für noch mehr Lacher.',
+        seoTitle: 'Rückwärts-Rekorder | Stimme online rückwärts abspielen, langsam oder schnell',
+        seoDesc: 'Nimm mit dem Handy einen Satz auf und spiel ihn per Fingertipp rückwärts ab, mit 0,5- bis 2-facher Geschwindigkeit (die Tonhöhe ändert sich mit). Perfekt für die Rückwärts-Challenge oder um dich als Streifenhörnchen zu hören. Die Aufnahmen bleiben auf deinem Handy. Ohne App, ohne Anmeldung.',
+        lead: 'Einen Satz aufnehmen, dann rückwärts, langsamer oder schneller abspielen.',
+        how: [
+          'Tippe auf „Aufnahme starten“, sag etwas und tippe dann auf „Stopp“ (bis zu 30 Sekunden).',
+          'Mit „Rückwärts“ hörst du es umgedreht, mit „Original“ so, wie es aufgenommen wurde.',
+          'Oben die Geschwindigkeit wählen: langsamer klingt tief, schneller wie ein Streifenhörnchen. Für die Rückwärts-Challenge: den Rückwärts-Ton nachsprechen, aufnehmen und auch rückwärts abspielen.',
+        ],
+        speedLabel: 'Tempo',
+        mineLabel: 'Original',
+        reverseLabel: 'Rückwärts',
+      },
     },
   },
 
@@ -275,6 +336,21 @@ export const TOOLS = {
           'Les noms déjà tirés restent en dessous et ne reviennent pas. Envie de changer ? Appuyez sur « Autre thème ».',
         ],
         start: 'Commencer',
+      },
+      recorder: {
+        name: 'Enregistreur à l’envers',
+        short: 'Enregistre une phrase et écoute-la à l’envers – plus lent ou plus rapide pour encore plus de rires.',
+        seoTitle: 'Enregistreur à l’envers | Passer sa voix à l’envers en ligne, lent ou rapide',
+        seoDesc: 'Enregistre une phrase avec ton téléphone et écoute-la à l’envers d’un seul geste, de 0,5× à 2× (la hauteur de la voix change aussi). Idéal pour le défi à l’envers, ou pour t’entendre avec une voix de tamia. Les enregistrements restent sur ton téléphone. Sans appli ni inscription.',
+        lead: 'Enregistre une phrase, puis écoute-la à l’envers, plus lente ou plus rapide.',
+        how: [
+          'Appuie sur « Enregistrer », dis quelque chose, puis sur « Stop » (30 secondes max).',
+          '« À l’envers » la fait écouter retournée, « Original » telle qu’enregistrée.',
+          'Choisis la vitesse en haut : plus lent, la voix devient grave ; plus rapide, une voix de tamia. Pour le défi à l’envers : imite le son à l’envers, enregistre-le et écoute-le aussi à l’envers.',
+        ],
+        speedLabel: 'Vitesse',
+        mineLabel: 'Original',
+        reverseLabel: 'À l’envers',
       },
     },
   },
@@ -329,6 +405,21 @@ export const TOOLS = {
         ],
         start: '引きはじめる',
       },
+      recorder: {
+        name: '逆再生レコーダー',
+        short: 'ひと言録音してすぐ逆再生。スロー・早回しもできて、変な声で盛り上がる。',
+        seoTitle: '逆再生レコーダー｜声をオンラインで逆再生、スロー・早回しも',
+        seoDesc: 'スマホでひと言録音して、ワンタップで逆再生。0.5〜2 倍のスロー・早回し（声の高さも変わる）にも対応。逆再生ゲームにも、自分の声をリスみたいにして笑うのにも。録音はあなたのスマホから出ません。アプリ不要・登録不要。',
+        lead: 'ひと言録音して、逆再生・スロー・早回しで聞こう。',
+        how: [
+          '「録音する」を押してしゃべり、終わったら「停止」（最長 30 秒）。',
+          '「逆再生」で逆さまの音、「そのまま」で録ったままの音を聞けます。',
+          '上で速さを選ぼう：ゆっくりだと低い声、速いとリスみたいな声に。逆再生ゲームをするなら、逆再生の音をまねして録音し、それも逆再生してみよう。',
+        ],
+        speedLabel: '速さ',
+        mineLabel: 'そのまま',
+        reverseLabel: '逆再生',
+      },
     },
   },
 
@@ -382,6 +473,21 @@ export const TOOLS = {
         ],
         start: '뽑기 시작',
       },
+      recorder: {
+        name: '역재생 녹음기',
+        short: '한마디 녹음하면 바로 거꾸로 재생. 느리게·빠르게도 돼서 목소리 장난에 딱이에요.',
+        seoTitle: '역재생 녹음기｜온라인으로 목소리 거꾸로 재생, 느리게·빠르게',
+        seoDesc: '휴대폰으로 한마디 녹음하고 한 번 누르면 거꾸로 재생돼요. 0.5~2배로 느리게·빠르게(목소리 높이도 같이 바뀜). 역재생 챌린지에도, 다람쥐 목소리로 웃기에도 좋아요. 녹음은 내 휴대폰에만 남아요. 앱 설치·가입 없이.',
+        lead: '한마디 녹음하고, 거꾸로·느리게·빠르게 들어 봐요.',
+        how: [
+          '「녹음 시작」을 누르고 말한 뒤 「정지」를 눌러요(최대 30초).',
+          '「거꾸로 재생」은 뒤집힌 소리, 「그대로」는 녹음한 그대로 들려줘요.',
+          '위에서 속도를 골라요: 느리면 굵은 목소리, 빠르면 다람쥐 목소리. 역재생 챌린지를 하려면 거꾸로 된 소리를 따라 해서 녹음하고 그것도 거꾸로 틀어 봐요.',
+        ],
+        speedLabel: '속도',
+        mineLabel: '그대로',
+        reverseLabel: '거꾸로 재생',
+      },
     },
   },
 
@@ -434,6 +540,21 @@ export const TOOLS = {
           'Los nombres que ya han salido quedan abajo y no se repiten. ¿Quieres otros? Pulsa «Otro tema».',
         ],
         start: 'Empezar',
+      },
+      recorder: {
+        name: 'Grabadora al revés',
+        short: 'Graba una frase y ponla al revés al momento; más lenta o más rápida para reírte aún más.',
+        seoTitle: 'Grabadora al revés | Pon tu voz al revés online, lenta o rápida',
+        seoDesc: 'Graba una frase con el móvil y ponla al revés con un toque, de 0,5× a 2× (el tono de voz también cambia). Perfecta para el reto al revés o para oírte con voz de ardilla. Las grabaciones se quedan en tu móvil. Sin app ni registro.',
+        lead: 'Graba una frase y escúchala al revés, más lenta o más rápida.',
+        how: [
+          'Pulsa «Grabar», di algo y pulsa «Parar» (30 segundos como máximo).',
+          '«Al revés» la reproduce dada la vuelta; «Original», tal como se grabó.',
+          'Elige la velocidad arriba: más lenta suena grave; más rápida, voz de ardilla. Para el reto al revés: imita el sonido al revés, grábalo y ponlo también al revés.',
+        ],
+        speedLabel: 'Velocidad',
+        mineLabel: 'Original',
+        reverseLabel: 'Al revés',
       },
     },
   },

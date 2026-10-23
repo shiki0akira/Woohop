@@ -1,5 +1,5 @@
 /*
- * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/）。2026-10-22
+ * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/、recorder/）。2026-10-22，錄音機 2026-10-23
  *
  * 小工具本體就是遊戲裡用的那一份全站共用帶領元件 window.Leader（assets/game.js），這裡只負責：
  *   - 總覽頁：把爬蟲用的純文字連結換成有插圖的卡片（遊戲卡用 site.js 的 Site.card，工具卡自己畫）
@@ -19,8 +19,9 @@
   Site.nav();
 
   // ---------- 卡片 ----------
-  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames' };
-  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A' };
+  // 錄音機跟倒放猜猜看用同一張插圖
+  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse' };
+  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB' };
   // 橫式卡：左邊插圖，右邊標題＋說明
   const hCard = ({ href, attr, art, color, name, desc }) => `<a class="game tool-card" href="${href}" ${attr}>
       <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${art}</svg></div>
@@ -169,6 +170,40 @@
       pick.hidden = true;
       play.hidden = false;
       track('tool_names_started', { theme: session.theme, random: session.random });
+    });
+  }
+
+  // 倒放錄音機：跟倒放猜猜看同一個 Leader.recorder，多了播放速度（連音高一起變，慢像大叔、快像花栗鼠）
+  if (tool.key === 'recorder') {
+    const I = T.items.recorder;
+    const controls = make('div', 'tool-controls');
+    controls.appendChild(make('span', 'field-label', I.speedLabel));
+    const seg = make('div', 'segmented tool-speed');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', I.speedLabel);
+    controls.appendChild(seg);
+    const host = make('div', 'tool-recorder');
+    root.appendChild(controls);
+    root.appendChild(host);
+
+    const rec = Leader.recorder(host, {
+      maxSec: 30,
+      onRecorded: sec => track('tool_recorder_recorded', { seconds: Math.round(sec) }),
+    });
+    const played = dir => () => track('tool_recorder_played', { direction: dir, rate: rec.rate });
+    rec.plays.appendChild(rec.button('forward', 'btn-lg btn-secondary', 'i-play', I.mineLabel, played('forward')));
+    rec.plays.appendChild(rec.button('backward', 'btn-lg btn-solid is-reverse', 'i-play', I.reverseLabel, played('backward')));
+
+    [0.5, 0.75, 1, 1.5, 2].forEach(r => {
+      // 德法西文的小數點是逗號（0,5×）
+      const b = make('button', '', r.toLocaleString(lang) + '×');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(r === 1));
+      b.addEventListener('click', () => {
+        rec.setRate(r);
+        seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      });
+      seg.appendChild(b);
     });
   }
 })();

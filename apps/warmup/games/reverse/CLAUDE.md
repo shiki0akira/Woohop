@@ -2,7 +2,7 @@
 
 一支手機（或搶答時每人一支）錄音、倒放、學著唸再倒回來猜。玩法與設計決策在 `CONCEPT.md`，這裡只記跟程式碼直接相關的事。
 
-建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-23 上線，**先只有繁中**（首頁 `GAME_LANGS` 列著，其他語言標「即將推出」，名稱是暫定）。首頁插圖是 `woohop-art.js` 的 `art.reverse`（錄音機）。`vendor/qrcode.js` 在首頁 `vercel.json` 另外列了一條白名單。
+建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-23 上線，同一天補齊 8 種語言（名稱見 CONCEPT.md 第四節）。首頁插圖是 `woohop-art.js` 的 `art.reverse`（錄音機）。`vendor/qrcode.js` 在首頁 `vercel.json` 另外列了一條白名單。
 
 ## `app/app.js` 的結構
 

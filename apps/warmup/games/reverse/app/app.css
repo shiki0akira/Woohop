@@ -44,8 +44,6 @@
 .stuck-row + .card-hint { margin-top: 12px; text-align: center; }
 .next-row { display: grid; gap: 12px; margin-top: 4px; }
 .next-hint { margin: 0; text-align: center; }
-/* 出題的錄音機只有錄音鍵，播放鍵在「放給大家聽」「猜不出來？」 */
-.rec-plays:empty { display: none; }
 
 /* ---------- 第幾題：設計系統的進度條 ---------- */
 .round-progress { display: grid; gap: 8px; }
@@ -68,26 +66,8 @@
 .covered-text { margin: 0; font-weight: 800; }
 .card-hint { margin: 0; font-size: 22px; font-weight: 900; }
 
-/* ---------- 錄音機 ---------- */
-.recorder { display: grid; gap: 12px; margin-top: 14px; }
-.rec-btn .rec-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--coral-edge); flex: none; }
-.rec-btn.btn-solid .rec-dot { background: var(--coral); }
-.rec-btn.btn-danger .rec-dot { border-radius: 3px; }
-/* 錄音中的進度條要即時跟上秒數，不用設計系統預設的 .4s 動畫 */
-.recorder .progress { max-width: none; }
-.recorder .progress > div { transition: none; }
-.rec-meter { display: flex; align-items: center; gap: 10px; }
-.rec-meter .progress { flex: 1; }
-.rec-time { flex: none; min-width: 3.6em; text-align: right; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.rec-time:empty { display: none; }
-.rec-status { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
-.rec-status:empty { display: none; }
-.rec-plays { display: flex; flex-wrap: wrap; gap: 10px; }
-.rec-plays .btn { flex: 1 1 0; min-width: 120px; }
-.rec-plays .is-reverse { flex-grow: 2; }
-.rec-plays svg { width: 18px; height: 18px; }
-/* 倒放鍵的箭頭朝左：同一個播放圖示翻過來 */
-.is-reverse svg { transform: scaleX(-1); }
+/* 錄音機本體的樣式在全站共用的 game.css（Leader.recorder），這裡只留這個遊戲的排法 */
+.reverse-app .recorder { margin-top: 14px; }
 
 /* ---------- 搶答：開場的 QR code（開始之後就不再出現） ---------- */
 .setup-qr { margin: 14px auto 0; width: 188px; height: 188px; }

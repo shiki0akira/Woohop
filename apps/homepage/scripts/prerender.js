@@ -11,7 +11,7 @@
 //   /{lang}/games/    找遊戲
 //   /{lang}/combo/    破冰組合
 //   /{lang}/tools/    桌遊助手（阿瓦隆＋小工具總覽，2026-10-22）
-//   /{lang}/tools/truth-or-dare/、metronome/、names/   小工具（全站共用的帶領元件 window.Leader）
+//   /{lang}/tools/truth-or-dare/、metronome/、names/、recorder/   小工具（全站共用的帶領元件 window.Leader）
 //   /{lang}/about/    關於我們＋聯絡表單（舊的 /contact/ 轉過來），/{lang}/terms/  服務條款，/{lang}/privacy/  隱私權政策（2026-10-22）
 // 舊網址只有 /{lang}/，維持不變；其他是新增的。
 
@@ -35,7 +35,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-23a';
+const ASSET_VERSION = '2026-10-23b';
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
