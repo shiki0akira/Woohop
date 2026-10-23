@@ -21,19 +21,10 @@ export default {
   heroDesc: 'Record a line and the phone plays it in reverse — it sounds like an alien language. Copy the gibberish, flip it back, and see who guesses the original first!',
 
   lead: {
-    setup: ['Intro', 'Let’s play the Reverse Audio Challenge! Someone records a line, the phone plays it backwards, and we all try to copy it — then flip it back to hear what it really said.'],
+    setup: ['Set up players', 'Let’s play the Reverse Audio Challenge! Someone records a line, the phone plays it backwards, and we all try to copy it — then flip it back to hear what it really said.'],
     rules: ['How it works', 'We take turns giving prompts: peek at your prompt, record a line, and the phone plays it backwards to everyone. Then we copy that weird sound, flip it back and guess what was said!'],
     end: ['That’s a wrap!', 'Great copying, everyone! Who sounded closest, and who guessed first? Tap “Play again” for another round.'],
   },
-  playTitle: 'Go!',
-  playSay: {
-    draw: '{who}, you’re up! Draw a prompt — don’t let anyone see it.',
-    reveal: 'Got it? Hide the card and get ready to record.',
-    record: 'Tap “Start recording”, say a sentence for your prompt, tap “Stop”, and the phone will play it backwards.',
-    guessOne: 'Play it backwards for everyone! Pass the phone to the next person to copy it, then flip it back to hear what it says.',
-    guessEach: 'Play it backwards for everyone! Copy it on your own phones, flip it back, and shout out the answer first!',
-  },
-  whoNext: 'Player {n}',
   ruleCards: [
     ['Peek and record', 'The player whose turn it is draws a prompt: make a sentence with a word, hum a song, or say anything. The phone flips the recording backwards.'],
     ['Copy the gibberish', 'Listen to the reversed sound, say it the same way into the phone, and flip it back — it sounds surprisingly close to the original.'],

@@ -178,7 +178,7 @@
 
   /*
    * 一題的四段。畫面上哪些區塊出現由 CSS 看 #view-play 的 data-phase 決定（app.css 的 .phase-*），
-   * 題卡自己的三面（draw／reveal／covered）跟著換。換段時照著念也跟著換，主持人照念就知道下一步。
+   * 題卡自己的三面（draw／reveal／covered）跟著換。
    */
   function setPhase(next) {
     phase = next;
@@ -186,21 +186,8 @@
     el.card.setAttribute('data-stage', next === 'record' || next === 'guess' ? 'covered' : next);
     if (next !== 'guess') el.cardHintText.hidden = true;
     el.stageOne.hidden = mode !== 'one';
-    if (screen === 'play') {
-      renderLead();
-      // 換段後把這一段的開頭捲進畫面，下一件事不用自己往下滑找（使用者要求）
-      if (next !== 'draw') views.play.querySelector('.lead-slot').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-    }
-  }
-
-  // 輪到誰：照人數繞圈數「第 n 個人」，每人兩題或不限題數就從頭再繞
-  function who() {
-    return fill(T.whoNext, { n: ((roundNumber - 1) % count) + 1 });
-  }
-  function playSay() {
-    if (phase === 'draw') return fill(T.playSay.draw, { who: who() });
-    if (phase === 'guess') return mode === 'each' ? T.playSay.guessEach : T.playSay.guessOne; // 第二題起藏起來（renderLead）
-    return T.playSay[phase];
+    // 換段後把這一段的開頭（第幾題）捲回畫面上方，下一件事不用自己往下滑找（使用者要求）
+    if (screen === 'play' && next !== 'draw') el.roundNo.parentNode.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   }
 
   // 卡片從側面轉正（game.css 的 .drawn-card.pop），換一題也再翻一次
@@ -236,16 +223,15 @@
 
   var STEPS = ['setup', 'rules', 'play', 'end'];
 
+  // 「開始！」那一步不放步驟頭（跟定時炸彈一樣，2026-10-23 使用者要求）：手機在大家手上傳，畫面只留題卡和錄音
   function renderLead() {
-    if (STEPS.indexOf(screen) < 0) return;
+    if (!T.lead[screen]) return;
     Leader.lead(views[screen].querySelector('.lead-slot'), {
       index: STEPS.indexOf(screen),
       total: STEPS.length,
-      title: screen === 'play' ? T.playTitle : T.lead[screen][0],
-      say: screen === 'play' ? playSay() : T.lead[screen][1],
+      title: T.lead[screen][0],
+      say: T.lead[screen][1],
     });
-    // 「放給大家聽」那段的照著念只在第一題出現（使用者要求）：說過一次大家就知道怎麼學
-    Leader.hideSay(screen === 'play' && phase === 'guess' && roundNumber > 1);
   }
 
   /*

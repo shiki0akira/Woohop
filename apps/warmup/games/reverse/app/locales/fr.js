@@ -21,19 +21,10 @@ export default {
   heroDesc: 'Enregistre une phrase et le téléphone la joue à l’envers – on dirait une langue extraterrestre. Imite ce charabia, remets-le à l’endroit, et voyons qui devine la phrase en premier !',
 
   lead: {
-    setup: ['Introduction', 'On joue au Défi à l’envers ! Quelqu’un enregistre une phrase, le téléphone la passe à l’envers, et on essaie tous de l’imiter – puis on la remet à l’endroit pour entendre ce qui a vraiment été dit.'],
+    setup: ['Nombre de joueurs', 'On joue au Défi à l’envers ! Quelqu’un enregistre une phrase, le téléphone la passe à l’envers, et on essaie tous de l’imiter – puis on la remet à l’endroit pour entendre ce qui a vraiment été dit.'],
     rules: ['Les règles', 'On donne une consigne chacun son tour : on regarde la consigne en cachette et on enregistre une phrase. Le téléphone la passe à l’envers pour tout le monde. Ensuite, on imite ce son bizarre, on le remet à l’endroit et on devine la phrase !'],
     end: ['C’est fini !', 'Bravo pour les imitations ! Qui était le plus proche, qui a deviné en premier ? Pour une autre partie, appuie sur « Rejouer ».'],
   },
-  playTitle: 'C’est parti !',
-  playSay: {
-    draw: 'À {who} ! Tire une consigne, et ne la montre à personne.',
-    reveal: 'C’est retenu ? Cache la carte et prépare-toi à enregistrer.',
-    record: 'Appuie sur « Enregistrer », dis une phrase pour ta consigne, appuie sur « Stop », et le téléphone la passera à l’envers.',
-    guessOne: 'Passez-la à l’envers pour tout le monde ! Donnez le téléphone à la personne suivante pour qu’elle imite, puis remettez à l’endroit.',
-    guessEach: 'Passez-la à l’envers pour tout le monde ! Chacun imite sur son téléphone, remet à l’endroit – le premier qui trouve le crie !',
-  },
-  whoNext: 'la personne {n}',
   ruleCards: [
     ['Regarder et enregistrer', 'La personne dont c’est le tour tire une consigne : faire une phrase avec un mot, fredonner une chanson ou dire ce qu’on veut. Le téléphone retourne l’enregistrement.'],
     ['Imiter le charabia', 'Écoutez le son à l’envers, répétez-le pareil et enregistrez-le, puis remettez-le à l’endroit – c’est étonnamment proche de l’original.'],

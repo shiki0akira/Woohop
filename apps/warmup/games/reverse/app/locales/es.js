@@ -21,19 +21,10 @@ export default {
   heroDesc: 'Graba una frase y el móvil la pone al revés: parece un idioma extraterrestre. Imita ese galimatías, dale la vuelta y a ver quién adivina primero la frase original.',
 
   lead: {
-    setup: ['Para empezar', '¡Vamos a jugar al Reto al revés! Alguien graba una frase, el móvil la pone al revés y todos intentamos imitarla; luego le damos la vuelta para oír qué se dijo de verdad.'],
+    setup: ['Número de jugadores', '¡Vamos a jugar al Reto al revés! Alguien graba una frase, el móvil la pone al revés y todos intentamos imitarla; luego le damos la vuelta para oír qué se dijo de verdad.'],
     rules: ['Las reglas', 'Damos una consigna por turnos: quien le toca mira la consigna en secreto y graba una frase. El móvil la pone al revés para todos. Después imitamos ese sonido raro, le damos la vuelta y adivinamos la frase.'],
     end: ['¡Se acabó!', '¡Qué bien imitáis! ¿Quién sonó más parecido y quién acertó primero? Para otra ronda, pulsa «Jugar otra vez».'],
   },
-  playTitle: '¡Vamos!',
-  playSay: {
-    draw: '¡Le toca a {who}! Saca una consigna y no se la enseñes a nadie.',
-    reveal: '¿Te la sabes? Tapa la carta y prepárate para grabar.',
-    record: 'Pulsa «Grabar», di una frase con tu consigna y pulsa «Parar»: el móvil la pondrá al revés.',
-    guessOne: '¡Ponedla al revés para todos! Pasad el móvil a la siguiente persona para que la imite y le dé la vuelta.',
-    guessEach: '¡Ponedla al revés para todos! Cada uno imita en su móvil, le da la vuelta… ¡y quien lo sepa primero, que lo grite!',
-  },
-  whoNext: 'la persona {n}',
   ruleCards: [
     ['Mirar y grabar', 'A quien le toca saca una consigna: hacer una frase con una palabra, tararear una canción o decir lo que quiera. El móvil le da la vuelta a la grabación.'],
     ['Imitar el galimatías', 'Escuchad el sonido al revés, repetidlo igual, grabadlo y dadle la vuelta: suena sorprendentemente parecido al original.'],

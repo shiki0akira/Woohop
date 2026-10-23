@@ -21,19 +21,10 @@ export default {
   heroDesc: 'Nimm einen Satz auf, und das Handy spielt ihn rückwärts ab – klingt wie eine Alien-Sprache. Sprich das Kauderwelsch nach, dreh es wieder um und finde heraus, wer den Satz zuerst errät!',
 
   lead: {
-    setup: ['Einstieg', 'Wir spielen die Rückwärts-Challenge! Jemand nimmt einen Satz auf, das Handy spielt ihn rückwärts ab, und wir alle sprechen ihn nach – dann drehen wir ihn wieder um und hören, was eigentlich gesagt wurde.'],
+    setup: ['Personen festlegen', 'Wir spielen die Rückwärts-Challenge! Jemand nimmt einen Satz auf, das Handy spielt ihn rückwärts ab, und wir alle sprechen ihn nach – dann drehen wir ihn wieder um und hören, was eigentlich gesagt wurde.'],
     rules: ['Regeln', 'Wir stellen reihum Aufgaben: Wer dran ist, schaut heimlich auf die Aufgabe und nimmt einen Satz auf. Das Handy spielt ihn rückwärts für alle ab. Dann sprechen wir das komische Geräusch nach, drehen es um und raten den Satz!'],
     end: ['Geschafft!', 'Ihr seid richtig gut im Nachsprechen! Wer klang am ähnlichsten, wer hat zuerst geraten? Für eine neue Runde auf „Noch mal spielen“ tippen.'],
   },
-  playTitle: 'Los geht’s!',
-  playSay: {
-    draw: '{who} ist dran! Zieh eine Aufgabe – und lass niemanden draufschauen.',
-    reveal: 'Gemerkt? Dann Karte verdecken und bereit machen zum Aufnehmen.',
-    record: 'Tippe auf „Aufnahme starten“, sag einen Satz zur Aufgabe und tippe auf „Stopp“ – das Handy spielt ihn rückwärts ab.',
-    guessOne: 'Spielt es rückwärts für alle ab! Gebt das Handy weiter, die nächste Person spricht nach und dreht es wieder um.',
-    guessEach: 'Spielt es rückwärts für alle ab! Alle sprechen auf dem eigenen Handy nach, drehen es um – wer es zuerst weiß, ruft es laut!',
-  },
-  whoNext: 'Person {n}',
   ruleCards: [
     ['Heimlich schauen und aufnehmen', 'Wer dran ist, zieht eine Aufgabe: einen Satz mit einem Wort bilden, ein Lied summen oder frei etwas sagen. Das Handy dreht die Aufnahme um.'],
     ['Das Kauderwelsch nachsprechen', 'Hört euch den Rückwärts-Ton an, sprecht ihn genauso nach und dreht ihn wieder um – das klingt erstaunlich nah am Original.'],
