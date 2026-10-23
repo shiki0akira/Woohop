@@ -1292,11 +1292,11 @@
     var self = { forward: null, backward: null, buttons: [], plays: plays, wrap: wrap, rate: 1 };
     var owner = {};
 
-    function setRecLabel(text, on) {
+    // look：solid（開始錄音，實心主要鍵）、danger（錄音中，紅色「停止」）、pastel（錄好了的「重錄」，主要・粉彩，不跟播放鍵搶）
+    function setRecLabel(text, look) {
       recBtn.querySelector('span').textContent = text;
-      // 平常是實心主要鍵，錄音中變紅色的「停止」
-      recBtn.classList.toggle('btn-danger', on);
-      recBtn.classList.toggle('btn-solid', !on);
+      recBtn.classList.toggle('btn-danger', look === 'danger');
+      recBtn.classList.toggle('btn-solid', look === 'solid');
     }
     function sync() {
       self.buttons.forEach(function (b) { b.disabled = !self.forward; });
@@ -1333,7 +1333,7 @@
           clearInterval(timer);
           stream.getTracks().forEach(function (tr) { tr.stop(); });
           if (recording && recording.owner === owner) recording = null;
-          setRecLabel(t.recRedo, false);
+          setRecLabel(t.recRedo, 'pastel');
           status.textContent = t.recProcessing;
           new Blob(chunks, { type: rec.mimeType || mime }).arrayBuffer()
             .then(function (data) { return audio().decodeAudioData(data); })
@@ -1349,7 +1349,7 @@
         };
         recording = { owner: owner, stop: function () { if (rec.state !== 'inactive') rec.stop(); } };
         rec.start();
-        setRecLabel(t.recStop, true);
+        setRecLabel(t.recStop, 'danger');
         status.textContent = '';
         showTime(0);
         timer = setInterval(function () {
@@ -1385,7 +1385,7 @@
       stopRec();
       if (playing && self.buttons.indexOf(playing.btn) >= 0) stopPlaying();
       self.forward = self.backward = null;
-      setRecLabel(t.recStart, false);
+      setRecLabel(t.recStart, 'solid');
       status.textContent = '';
       fillBar.style.setProperty('--p', '0%');
       time.textContent = '';
