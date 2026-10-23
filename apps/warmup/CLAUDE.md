@@ -39,6 +39,7 @@ npm run deploy         # build + wrangler deploy（一次部署全部暖場遊�
 ## 加一個新的暖場遊戲
 
 1. 複製最像的那個遊戲資料夾成 `games/{新代號}/`（不用道具、照著帶的照抄 `orchard` 或 `stairs`），改 `app/strings.js` 的 `BASE_PATH`、文案、`app.js`、`build.mjs`
+   - **步驟頭（`Leader.lead`）什麼時候放**：手機在主持人手上、主持人對大家說話的那一步才放；手機在大家手上傳、或各自操作的那一步不放（locale 的 `lead` 不寫那一步、畫面不放 `.lead-slot`，例：`bomb`、`reverse` 的 play）。規則寫在設計系統頁「13. 帶領元件」
 2. `node scripts/build.js {新代號}` 會自動找到它（`games/` 底下有 `build.mjs` 的資料夾就是一個遊戲）
 3. 首頁 `apps/homepage/vercel.json`：在 `:game(bomb|bamboo|stairs|orchard)` 白名單加上新代號，再加一條 `/{新代號}-sitemap.xml`；`robots.txt` 加 sitemap
 4. 首頁的遊戲清單照 `apps/homepage/CLAUDE.md` 的「加新遊戲時要改的地方」
