@@ -50,7 +50,7 @@ export default {
   per2: '2',
   perFree: 'Illimité',
   roundsHint: '{total} manches : chacun son tour donne une consigne, puis c’est fini.',
-  roundsFreeHint: 'Illimité : jouez autant que vous voulez, puis appuyez sur « Terminer ».',
+  roundsFreeHint: 'Illimité : jouez autant que vous voulez, puis maintenez « Terminer » appuyé.',
   modeLabel: 'Deviner',
   modeOne: 'Chacun son tour',
   modeEach: 'Course',
@@ -111,7 +111,8 @@ export default {
   nextLocked: 'Écoutez l’original avec « Réponse » avant de passer à la suite.',
   nextRound: 'Manche suivante',
   lastRound: 'Terminé – voir la fin',
-  endGame: 'Terminer',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: 'Maintenir pour terminer',
   againButton: 'Rejouer',
 
   recOnlyTitle: 'Enregistreur à l’envers',

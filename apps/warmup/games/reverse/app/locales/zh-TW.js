@@ -59,7 +59,7 @@ export default {
   per2: '2 題',
   perFree: '不限',
   roundsHint: '共 {total} 題，每個人輪流出題，出完就結束。',
-  roundsFreeHint: '不限題數：想玩多久就玩多久，玩夠了按「結束遊戲」。',
+  roundsFreeHint: '不限題數：想玩多久就玩多久，玩夠了按住「結束遊戲」。',
   // 人少固定輪流猜，人多才出現這一欄（app.js 的 RACE_MIN）
   modeLabel: '怎麼猜',
   modeOne: '輪流猜',
@@ -126,7 +126,8 @@ export default {
   nextLocked: '按「公布答案」聽過原聲，才能下一題。',
   nextRound: '下一題',
   lastRound: '玩完了，看結果',
-  endGame: '結束遊戲',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: '按住，結束遊戲',
   againButton: '再玩一次',
 
   // ---------- 只有錄音機（搶答時，猜的人用） ----------

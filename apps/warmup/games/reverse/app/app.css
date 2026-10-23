@@ -72,3 +72,12 @@
 /* ---------- 搶答：開場的 QR code（開始之後就不再出現） ---------- */
 .setup-qr { margin: 14px auto 0; width: 188px; height: 188px; }
 .qr-box svg { display: block; width: 100%; height: 100%; }
+
+/* 結束鍵：紅色、要按住 0.8 秒（跟果園菜園動物園的 .end-btn 同一個做法），按住時從左到右填滿 */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }

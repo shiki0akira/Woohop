@@ -50,7 +50,7 @@ export default {
   per2: '2',
   perFree: 'Sin límite',
   roundsHint: '{total} rondas: por turnos, cada uno da una consigna y se acaba.',
-  roundsFreeHint: 'Sin límite: jugad lo que queráis y pulsad «Terminar» al final.',
+  roundsFreeHint: 'Sin límite: jugad lo que queráis y mantened pulsado «Terminar» al final.',
   modeLabel: 'Adivinar',
   modeOne: 'Por turnos',
   modeEach: 'A ver quién antes',
@@ -111,7 +111,8 @@ export default {
   nextLocked: 'Escuchad el original con «Ver respuesta» antes de seguir.',
   nextRound: 'Siguiente ronda',
   lastRound: 'Listo: ver el final',
-  endGame: 'Terminar',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: 'Mantén pulsado para terminar',
   againButton: 'Jugar otra vez',
 
   recOnlyTitle: 'Grabadora al revés',

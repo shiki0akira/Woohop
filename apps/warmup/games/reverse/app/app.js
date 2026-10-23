@@ -433,7 +433,27 @@
     newRound();
     window.scrollTo(0, 0);
   });
-  el.endEarly.addEventListener('click', endGame);
+  // 結束遊戲要按住 HOLD_MS 才算（跟果園菜園動物園同一個做法，防手滑）；鍵盤沒有「按住」可言，Enter／空白直接結束
+  var HOLD_MS = 800;
+  var holdId = 0;
+  var cancelHold = function () {
+    clearTimeout(holdId);
+    holdId = 0;
+    el.endEarly.classList.remove('is-holding');
+  };
+  el.endEarly.addEventListener('click', function (event) {
+    if (event.detail === 0) endGame();
+  });
+  el.endEarly.addEventListener('pointerdown', function (event) {
+    if (event.button > 0) return;
+    cancelHold();
+    el.endEarly.classList.add('is-holding');
+    holdId = setTimeout(function () { cancelHold(); endGame(); }, HOLD_MS);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (type) {
+    el.endEarly.addEventListener(type, cancelHold);
+  });
+  el.endEarly.addEventListener('contextmenu', function (event) { event.preventDefault(); });
   el.again.addEventListener('click', startPlay);
 
   el.leaveCancel.addEventListener('click', function () { el.leaveModal.close(); });

@@ -50,7 +50,7 @@ export default {
   per2: '2問',
   perFree: '無制限',
   roundsHint: '全 {total} 問：順番に出題して、全員出したら終わり。',
-  roundsFreeHint: '無制限：好きなだけ遊んで、満足したら「ゲーム終了」。',
+  roundsFreeHint: '無制限：好きなだけ遊んで、満足したら「ゲーム終了」を長押し。',
   modeLabel: '当て方',
   modeOne: '順番に',
   modeEach: '早押し',
@@ -111,7 +111,8 @@ export default {
   nextLocked: '「答え合わせ」で元の音声を聞いてから次の問題へ。',
   nextRound: '次の問題',
   lastRound: 'おしまい、結果へ',
-  endGame: 'ゲーム終了',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: '長押しでゲーム終了',
   againButton: 'もう一度遊ぶ',
 
   recOnlyTitle: '逆再生レコーダー',

@@ -143,7 +143,8 @@
         <div class="next-row phase-guess">
           <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button" disabled>{{nextRound}}</button>
           <p class="hint next-hint" id="next-hint">{{nextLocked}}</p>
-          <button class="btn btn-lg btn-secondary btn-block" id="end-early" type="button" hidden>{{endGame}}</button>
+          <!-- 不限題數才有：紅色、要按住 0.8 秒才結束，防手滑（跟果園菜園動物園、竹筍同一個樣子，app.js 的 HOLD_MS） -->
+          <button class="btn btn-lg btn-block end-btn" id="end-early" type="button" hidden>{{endGame}}</button>
         </div>
       </div>
 

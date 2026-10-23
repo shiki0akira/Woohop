@@ -50,7 +50,7 @@ export default {
   per2: '2',
   perFree: 'Offen',
   roundsHint: '{total} Runden: Alle stellen reihum Aufgaben, dann ist Schluss.',
-  roundsFreeHint: 'Offen: Spielt, so lange ihr wollt, und tippt am Ende auf „Spiel beenden“.',
+  roundsFreeHint: 'Offen: Spielt, so lange ihr wollt, und haltet am Ende „Beenden“ gedrückt.',
   modeLabel: 'Raten',
   modeOne: 'Reihum',
   modeEach: 'Um die Wette',
@@ -111,7 +111,8 @@ export default {
   nextLocked: 'Erst mit „Auflösen“ das Original anhören, dann geht es weiter.',
   nextRound: 'Nächste Runde',
   lastRound: 'Fertig – zum Ende',
-  endGame: 'Spiel beenden',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: 'Gedrückt halten zum Beenden',
   againButton: 'Noch mal spielen',
 
   recOnlyTitle: 'Rückwärts-Rekorder',

@@ -50,7 +50,7 @@ export default {
   per2: '2 题',
   perFree: '不限',
   roundsHint: '共 {total} 题，每个人轮流出题，出完就结束。',
-  roundsFreeHint: '不限题数：想玩多久就玩多久，玩够了按「结束游戏」。',
+  roundsFreeHint: '不限题数：想玩多久就玩多久，玩够了按住「结束游戏」。',
   modeLabel: '怎么猜',
   modeOne: '轮流猜',
   modeEach: '抢答',
@@ -111,7 +111,8 @@ export default {
   nextLocked: '按「公布答案」听过原声，才能下一题。',
   nextRound: '下一题',
   lastRound: '玩完了，看结果',
-  endGame: '结束游戏',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: '按住，结束游戏',
   againButton: '再玩一次',
 
   recOnlyTitle: '倒放录音机',

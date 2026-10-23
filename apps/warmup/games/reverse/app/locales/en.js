@@ -50,7 +50,7 @@ export default {
   per2: '2',
   perFree: 'No limit',
   roundsHint: '{total} rounds: everyone takes turns giving a prompt, then the game ends.',
-  roundsFreeHint: 'No limit: play as long as you like and tap “End game” when you’re done.',
+  roundsFreeHint: 'No limit: play as long as you like, then press and hold the end button when you’re done.',
   modeLabel: 'Guessing',
   modeOne: 'Take turns',
   modeEach: 'Race',
@@ -111,7 +111,8 @@ export default {
   nextLocked: 'Play the answer with “Reveal answer” before moving on.',
   nextRound: 'Next round',
   lastRound: 'All done — see the end',
-  endGame: 'End game',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: 'Hold to end the game',
   againButton: 'Play again',
 
   recOnlyTitle: 'Reverse recorder',

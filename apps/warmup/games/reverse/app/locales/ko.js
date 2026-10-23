@@ -50,7 +50,7 @@ export default {
   per2: '2문제',
   perFree: '제한 없음',
   roundsHint: '총 {total}문제: 돌아가며 문제를 내고, 모두 내면 끝나요.',
-  roundsFreeHint: '제한 없음: 원하는 만큼 하다가 「게임 끝내기」를 누르세요.',
+  roundsFreeHint: '제한 없음: 원하는 만큼 하다가 「게임 끝내기」를 길게 누르세요.',
   modeLabel: '맞히는 방식',
   modeOne: '돌아가며',
   modeEach: '빨리 맞히기',
@@ -111,7 +111,8 @@ export default {
   nextLocked: '「정답 공개」로 원래 소리를 들어야 다음 문제로 넘어가요.',
   nextRound: '다음 문제',
   lastRound: '끝! 결과 보기',
-  endGame: '게임 끝내기',
+  // 要按住才會結束，防手滑（跟果園菜園動物園、竹筍同一個做法）
+  endGame: '길게 눌러 게임 끝내기',
   againButton: '다시 하기',
 
   recOnlyTitle: '역재생 녹음기',
