@@ -38,6 +38,15 @@ export default function GameBar({ page }) {
     [s.navBoardgame, home],
     [s.navGuides, sitePath(lang, 'guides')],
   ];
+  // 選單最後一項「回報問題」：開聯絡表單、預先選好阿瓦隆（跟 chrome.mjs 的 gameBar 一樣）
+  const report = `${sitePath(lang, 'about')}?game=avalon#contact`;
+  const reportIcon = (
+    <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z" />
+      <path d="M12 6.8v4.4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="12" cy="13.4" r="1.3" fill="currentColor" />
+    </svg>
+  );
 
   const barRef = useRef(null);
   const titleRef = useRef(null);
@@ -134,6 +143,10 @@ export default function GameBar({ page }) {
                   {label}
                 </a>
               ))}
+              <a className="nav-report" href={report}>
+                {reportIcon}
+                {s.reportIssue}
+              </a>
             </div>
           </div>
           <span className="badge b-info game-bar-badge" id="game-bar-badge" />
@@ -148,6 +161,10 @@ export default function GameBar({ page }) {
               {label}
             </a>
           ))}
+          <a className="btn btn-ghost btn-block nav-report" href={report}>
+            {reportIcon}
+            {s.reportIssue}
+          </a>
         </div>
         <div className="sheet-foot">
           <button className="btn btn-ghost" type="button" data-close="">

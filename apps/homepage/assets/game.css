@@ -40,6 +40,12 @@
 .game-menu { flex: none; }
 .game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
 .game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
+/* 選單最後一項「回報問題」：圖示＋字，上面一條細線跟導覽連結分開（chrome.mjs 的 gameBar） */
+.nav-report { display: flex; align-items: center; gap: 8px; }
+.nav-report .nav-icon { flex: none; width: 18px; height: 18px; }
+.game-menu .nav-menu .nav-report { position: relative; margin-top: 9px; color: var(--text-2); }
+.game-menu .nav-menu .nav-report::before { content: ""; position: absolute; left: 8px; right: 8px; top: -6px; height: 2px; border-radius: 1px; background: var(--line); }
+.sheet-list .nav-report { justify-content: center; color: var(--text-2); }
 .game-bar-spacer { width: 44px; flex: none; display: none; }
 
 /* 窄的頂欄：字與左右留白縮小 */

@@ -11,7 +11,7 @@ export function siteStrings(lang) {
 }
 
 // 首頁各頁的網址（跟 chrome.mjs 的 local() 一樣）
-const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/' };
+const PAGES = { home: '', games: 'games/', combo: 'combo/', guides: 'guides/', about: 'about/' };
 export function sitePath(lang, page) {
   return `/${lang}/${PAGES[page]}`;
 }

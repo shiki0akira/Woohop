@@ -135,6 +135,7 @@ export const STRINGS = {
     faqKicker: "常見問題",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "帶領指南",
+    reportIssue: "回報問題",
     seeAllGuides: "看全部指南",
     guidesAll: "全部",
     guidesH1: "帶領指南",
@@ -230,6 +231,7 @@ export const STRINGS = {
     faqKicker: "FAQ",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Guides",
+    reportIssue: "Report a problem",
     seeAllGuides: "See all guides",
     guidesAll: "All",
     guidesH1: "Leading guides",
@@ -325,6 +327,7 @@ export const STRINGS = {
     faqKicker: "Häufige Fragen",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Anleitungen",
+    reportIssue: "Problem melden",
     seeAllGuides: "Alle Anleitungen",
     guidesAll: "Alle",
     guidesH1: "Anleitungen",
@@ -420,6 +423,7 @@ export const STRINGS = {
     faqKicker: "Questions fréquentes",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Guides",
+    reportIssue: "Signaler un problème",
     seeAllGuides: "Tous les guides",
     guidesAll: "Tous",
     guidesH1: "Guides d’animation",
@@ -515,6 +519,7 @@ export const STRINGS = {
     faqKicker: "よくある質問",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "進行ガイド",
+    reportIssue: "不具合を報告",
     seeAllGuides: "すべてのガイド",
     guidesAll: "すべて",
     guidesH1: "進行ガイド",
@@ -610,6 +615,7 @@ export const STRINGS = {
     faqKicker: "자주 묻는 질문",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "진행 가이드",
+    reportIssue: "문제 신고",
     seeAllGuides: "모든 가이드",
     guidesAll: "전체",
     guidesH1: "진행 가이드",
@@ -705,6 +711,7 @@ export const STRINGS = {
     faqKicker: "Preguntas frecuentes",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "Guías",
+    reportIssue: "Informar de un problema",
     seeAllGuides: "Ver todas las guías",
     guidesAll: "Todas",
     guidesH1: "Guías para dirigir",
@@ -800,6 +807,7 @@ export const STRINGS = {
     faqKicker: "常见问题",
     // 帶領指南頁（文章還沒寫：頁面先 noindex、不進 sitemap）。moreGuides 接在首頁那 3 篇後面
     navGuides: "带领指南",
+    reportIssue: "反馈问题",
     seeAllGuides: "看全部指南",
     guidesAll: "全部",
     guidesH1: "带领指南",

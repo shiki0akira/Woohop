@@ -118,6 +118,9 @@ const ICON_RULES = '<svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"
 const ICON_MUSIC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="2.2"/><path class="music-off" d="M3 3l18 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 const ICON_GEAR = '<svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>';
 
+// 回報問題：對話框裡一個驚嘆號
+const ICON_REPORT = '<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z"/><path d="M12 6.8v4.4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="13.4" r="1.3" fill="currentColor"/></svg>';
+
 export function gameBar(s, lang, opts) {
   const links = [
     [s.navGames, local(lang, 'games')],
@@ -125,6 +128,11 @@ export function gameBar(s, lang, opts) {
     [s.navBoardgame, local(lang, 'tools')],
     [s.navGuides, local(lang, 'guides')],
   ];
+  /*
+   * 選單最後一項「回報問題」（2026-10-23）：開關於頁的聯絡表單，預先選好修改建議＋這個遊戲。
+   * 遊戲代號就是網址第一段（/bomb/zh-TW/ → bomb），跟 apps/feedback 的 GAMES 對得上；從哪一頁來的由 about.js 看 referrer 記
+   */
+  const report = `${local(lang, 'about')}?game=${encodeURIComponent(opts.gameHref.split('/')[1] || '')}#contact`;
   const current = opts.isRules ? ' aria-current="page"' : '';
   const settings = opts.settingsLabel
     ? `<button type="button" id="game-settings" data-game-href="${opts.gameHref}" aria-label="${esc(opts.settingsLabel)}">${ICON_GEAR}<span class="tab-text">${esc(opts.settingsLabel)}</span><span class="tab-count" id="game-settings-count"></span></button>`
@@ -142,7 +150,7 @@ export function gameBar(s, lang, opts) {
         </nav>${music}
         <div class="nav-more game-menu">
           <button class="btn btn-icon btn-ghost" id="game-menu" type="button" aria-label="${esc(s.menu)}" aria-expanded="false" aria-haspopup="true"><svg><use href="#i-menu"/></svg></button>
-          <div class="nav-menu" hidden>${links.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}</div>
+          <div class="nav-menu" hidden>${links.map(([t, h]) => `<a href="${h}">${esc(t)}</a>`).join('')}<a class="nav-report" href="${report}">${ICON_REPORT}${esc(s.reportIssue)}</a></div>
         </div>
         <!-- 玩的時候右邊的身分標籤（房間型遊戲的「主持人」「玩家」），遊戲用 id 填字；空的就不顯示 -->
         <span class="badge b-info game-bar-badge" id="game-bar-badge"></span>
@@ -151,7 +159,7 @@ export function gameBar(s, lang, opts) {
     </div>
     <dialog class="sheet" id="game-sheet" aria-label="${esc(s.menu)}" tabindex="-1">
       <div class="grabber"></div>
-      <div class="sheet-list">${links.map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${esc(t)}</a>`).join('')}</div>
+      <div class="sheet-list">${links.map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${esc(t)}</a>`).join('')}<a class="btn btn-ghost btn-block nav-report" href="${report}">${ICON_REPORT}${esc(s.reportIssue)}</a></div>
       <div class="sheet-foot"><button class="btn btn-ghost" type="button" data-close>${esc(s.close)}</button></div>
     </dialog>`;
 }
