@@ -36,6 +36,8 @@ const OUT = path.resolve('dist');
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
 const ASSET_VERSION = '2026-10-23d';
+// 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
+const OG_VERSION = 2;
 
 const fmt = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? v[k] : ''));
 const url = (lang, page) => `${SITE}/${lang}/${PAGES[page]}`;
@@ -68,7 +70,7 @@ ${alternates}
     <meta property="og:description" content="${esc(desc)}" />
     <meta property="og:url" content="${url(lang, page)}" />
     <meta property="og:locale" content="${lang.replace('-', '_')}" />
-    <meta property="og:image" content="${SITE}/og/${lang}.png" />
+    <meta property="og:image" content="${SITE}/og/${lang}.png?v=${OG_VERSION}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="${esc(s.heroAlt)}" />
