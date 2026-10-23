@@ -270,6 +270,30 @@
     // 打開後把焦點放在面板本身：不然瀏覽器會自動聚焦第一個連結，看起來像「找遊戲」被選取
     host.querySelector('.nav-burger').addEventListener('click', () => { sheet.showModal(); sheet.focus(); });
     sheet.addEventListener('click', e => { if (e.target === sheet || e.target.closest('[data-close]') || e.target.closest('a')) sheet.close(); });
+    swipeToClose(sheet);
+  };
+
+  // 底部面板往下拉就關（沒有「關閉」鍵了，點旁邊或往下拉）。超過 80px 才關，不然彈回原位；game.js 有一份一樣的給遊戲頁
+  const swipeToClose = panel => {
+    let y0 = null, dy = 0;
+    panel.addEventListener('touchstart', e => {
+      if (panel.scrollTop > 0) return;
+      y0 = e.touches[0].clientY; dy = 0;
+      panel.style.transition = 'none';
+    }, { passive: true });
+    panel.addEventListener('touchmove', e => {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      panel.style.transform = dy ? `translateY(${dy}px)` : '';
+    }, { passive: true });
+    const end = () => {
+      if (y0 === null) return;
+      y0 = null;
+      panel.style.transition = ''; panel.style.transform = '';
+      if (dy > 80) panel.close();
+    };
+    panel.addEventListener('touchend', end);
+    panel.addEventListener('touchcancel', end);
   };
 
   /* ================= 遊戲連結點擊（首頁、找遊戲、破冰組合都算） ================= */

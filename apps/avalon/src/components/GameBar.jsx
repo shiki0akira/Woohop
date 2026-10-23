@@ -94,6 +94,42 @@ export default function GameBar({ page }) {
     setMenuOpen((open) => !open);
   };
 
+  // 面板往下拉就關（沒有「關閉」鍵了，點旁邊或往下拉）：跟 game.js 的 swipeToClose 一樣，超過 80px 才關
+  useEffect(() => {
+    const panel = sheetRef.current;
+    if (!panel) return undefined;
+    let y0 = null;
+    let dy = 0;
+    const start = (e) => {
+      if (panel.scrollTop > 0) return;
+      y0 = e.touches[0].clientY;
+      dy = 0;
+      panel.style.transition = 'none';
+    };
+    const move = (e) => {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      panel.style.transform = dy ? `translateY(${dy}px)` : '';
+    };
+    const end = () => {
+      if (y0 === null) return;
+      y0 = null;
+      panel.style.transition = '';
+      panel.style.transform = '';
+      if (dy > 80) panel.close();
+    };
+    panel.addEventListener('touchstart', start, { passive: true });
+    panel.addEventListener('touchmove', move, { passive: true });
+    panel.addEventListener('touchend', end);
+    panel.addEventListener('touchcancel', end);
+    return () => {
+      panel.removeEventListener('touchstart', start);
+      panel.removeEventListener('touchmove', move);
+      panel.removeEventListener('touchend', end);
+      panel.removeEventListener('touchcancel', end);
+    };
+  }, []);
+
   // 面板的每條關閉路徑自己關（不靠 dialog 的 close 事件，部分 WebView 不會發）
   const onSheetClick = (e) => {
     const sheet = sheetRef.current;
@@ -165,11 +201,6 @@ export default function GameBar({ page }) {
             {reportIcon}
             {s.reportIssue}
           </a>
-        </div>
-        <div className="sheet-foot">
-          <button className="btn btn-ghost" type="button" data-close="">
-            {s.close}
-          </button>
         </div>
       </dialog>
     </>

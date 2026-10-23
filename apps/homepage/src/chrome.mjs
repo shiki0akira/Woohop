@@ -46,7 +46,6 @@ export function navbar(s, lang, page, langHref = (l) => local(l, page)) {
       <dialog class="sheet" id="sheet" aria-label="${esc(s.menu)}" tabindex="-1">
         <div class="grabber"></div>
         <div class="sheet-list">${nav.map(([t, h, id]) => `<a class="btn btn-secondary btn-block" href="${h}"${id === page ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}</div>
-        <div class="sheet-foot"><button class="btn btn-ghost" type="button" data-close>${esc(s.close)}</button></div>
       </dialog>`;
 }
 
@@ -160,6 +159,5 @@ export function gameBar(s, lang, opts) {
     <dialog class="sheet" id="game-sheet" aria-label="${esc(s.menu)}" tabindex="-1">
       <div class="grabber"></div>
       <div class="sheet-list">${links.map(([t, h]) => `<a class="btn btn-secondary btn-block" href="${h}">${esc(t)}</a>`).join('')}<a class="btn btn-ghost btn-block nav-report" href="${report}">${ICON_REPORT}${esc(s.reportIssue)}</a></div>
-      <div class="sheet-foot"><button class="btn btn-ghost" type="button" data-close>${esc(s.close)}</button></div>
     </dialog>`;
 }

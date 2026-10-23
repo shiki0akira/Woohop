@@ -63,10 +63,40 @@
       sheet.showModal();
       sheet.focus();
     });
-    // 每條關閉路徑自己關（不靠 dialog 的 close 事件，那個在部分 WebView 不會發）
+    // 每條關閉路徑自己關（不靠 dialog 的 close 事件，那個在部分 WebView 不會發）：點旁邊、點連結、往下拉
     sheet.addEventListener('click', function (e) {
       if (e.target === sheet || e.target.closest('[data-close]') || e.target.closest('a')) sheet.close();
     });
+    swipeToClose(sheet);
+  }
+
+  /*
+   * 底部面板往下拉就關（2026-10-23 拿掉「關閉」鍵，改成點旁邊或往下拉）。
+   * 手指跟著拉下去，放開時超過 80px 才關，不然彈回原位。site.js（導覽列的面板）、阿瓦隆的 GameBar.jsx 各有一份一樣的
+   */
+  function swipeToClose(panel) {
+    var y0 = null;
+    var dy = 0;
+    panel.addEventListener('touchstart', function (e) {
+      if (panel.scrollTop > 0) return; // 面板自己在捲的時候不攔
+      y0 = e.touches[0].clientY;
+      dy = 0;
+      panel.style.transition = 'none';
+    }, { passive: true });
+    panel.addEventListener('touchmove', function (e) {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      panel.style.transform = dy ? 'translateY(' + dy + 'px)' : '';
+    }, { passive: true });
+    var end = function () {
+      if (y0 === null) return;
+      y0 = null;
+      panel.style.transition = '';
+      panel.style.transform = '';
+      if (dy > 80) panel.close();
+    };
+    panel.addEventListener('touchend', end);
+    panel.addEventListener('touchcancel', end);
   }
 })();
 
