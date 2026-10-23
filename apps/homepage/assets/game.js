@@ -1163,7 +1163,7 @@
  *       錄音鍵＋進度條（右邊是秒數）＋狀態列（處理中、錯誤才有字）。錄好的聲音在 rec.forward（原聲）、rec.backward（倒放）
  *   rec.button(which, cls, icon, label, onPlay)   做一顆播放鍵（which：forward／backward），放哪裡由呼叫的人決定；
  *       播放中變「停止」，點了、播完、或改播別段都變回原本的字。rec.plays 是錄音機底下現成的一排
- *   rec.setRate(r)   播放速度（0.5～2，連音高一起變），只影響之後按的播放
+ *   rec.setRate(r)   播放速度（0.5～2，連音高一起變），正在播的也馬上跟著變
  *   rec.start() 開始／停止錄音（要在使用者點擊裡呼叫，iOS 才給麥克風）、rec.isRecording()、rec.reset()
  *   Leader.stopPlaying()   停掉正在播的那一段（換畫面時用）
  */
@@ -1234,6 +1234,7 @@
     playing = null;
     try { p.src.stop(); } catch (e) { /* 已經停了 */ }
     p.btn.querySelector('span').textContent = p.label;
+    p.btn.classList.remove('btn-danger', 'is-playing');
   }
 
   function play(buf, btn, rate) {
@@ -1246,6 +1247,8 @@
     playing = { src: src, btn: btn, label: label.textContent };
     src.onended = function () { if (playing && playing.src === src) stopPlaying(); };
     label.textContent = t.playStop || '';
+    // 播放中跟錄音中的「停止」一樣變紅色、圖示換成方塊
+    btn.classList.add('btn-danger', 'is-playing');
     src.start();
   }
 
@@ -1373,7 +1376,11 @@
       self.buttons.push(b);
       return b;
     };
-    self.setRate = function (r) { self.rate = r; };
+    self.setRate = function (r) {
+      self.rate = r;
+      // 正在播的是這台錄音機的，也馬上換速度
+      if (playing && self.buttons.indexOf(playing.btn) >= 0) playing.src.playbackRate.value = r;
+    };
     self.reset = function () {
       stopRec();
       if (playing && self.buttons.indexOf(playing.btn) >= 0) stopPlaying();

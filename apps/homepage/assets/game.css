@@ -377,4 +377,7 @@ dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1
 .rec-plays svg { width: 18px; height: 18px; }
 /* 倒放鍵的箭頭朝左：同一個播放圖示翻過來 */
 .is-reverse svg { transform: scaleX(-1); }
+/* 播放中變紅色「停止」，圖示跟錄音中的停止一樣是小方塊 */
+.btn.is-playing svg { display: none; }
+.btn.is-playing::before { content: ''; width: 12px; height: 12px; border-radius: 3px; background: var(--coral-edge); flex: none; }
 .rec-plays:empty { display: none; }

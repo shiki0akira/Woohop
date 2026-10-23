@@ -34,7 +34,7 @@ export default {
   playSay: {
     draw: '輪到{who}出題！抽一張題目，別讓別人看到喔。',
     reveal: '記好題目就蓋起來，準備錄音。',
-    record: '照著題目說一句話，說完按「停止」，手機會倒過來播。',
+    record: '按「開始錄音」照著題目說一句話，說完按「停止」，手機會倒過來播。',
     // 放給大家聽：只有第一題會念（說明怎麼學），之後藏起來
     guessOne: '放倒放給大家聽！把手機傳給下一個人學，倒回來聽聽看原本說什麼。',
     guessEach: '放倒放給大家聽！大家用自己的手機學、倒回來聽，最先猜中的喊出來！',
@@ -76,8 +76,8 @@ export default {
   roundNoFree: '第 {n} 題',
   drawButton: '抽題目',
   drawHint: '只給出題的人看，別讓別人偷看！',
-  revealHint: '記好了就蓋起來，開始錄音 👇',
-  coverButton: '蓋起來，開始錄',
+  revealHint: '記好了就蓋起來 👇',
+  coverButton: '蓋起來',
   cardShuffle: '換一題',
   coveredText: '題目蓋起來了',
   peekAgain: '再偷看一次',

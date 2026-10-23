@@ -408,12 +408,9 @@
   });
 
   el.cardDraw.addEventListener('click', drawFromDeck);
-  // 「蓋起來，開始錄」：蓋上題卡、直接開始錄（同一次點擊裡要麥克風，iOS 才肯給）
-  el.cardCover.addEventListener('click', function () {
-    setPhase('record');
-    if (!ask.isRecording()) ask.start(); // 錄到一半偷看再蓋回來：不要把錄音停掉
-  });
-  // 再偷看一次：翻回去看，按「蓋起來，開始錄」回到錄音
+  // 「蓋起來」：只蓋上題卡，錄音讓玩家自己按「開始錄音」（錄到一半偷看再蓋回來，錄音照樣繼續）
+  el.cardCover.addEventListener('click', function () { setPhase('record'); });
+  // 再偷看一次：翻回去看，按「蓋起來」回到錄音
   el.cardPeek.addEventListener('click', function () { setPhase('reveal'); flip(); });
   el.cardShuffle.addEventListener('click', function () {
     drawCard(card.kind);
