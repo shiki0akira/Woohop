@@ -40,11 +40,10 @@ export default function GameBar({ page }) {
   ];
   // 選單最後一項「回報問題」：開聯絡表單、預先選好阿瓦隆（跟 chrome.mjs 的 gameBar 一樣）
   const report = `${sitePath(lang, 'about')}?game=avalon#contact`;
+  // 圖示是 Material Symbols Rounded 的 feedback（wght 500），跟 chrome.mjs 的 ICON_REPORT 同一個
   const reportIcon = (
-    <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4A1.5 1.5 0 0 1 4 14.5z" />
-      <path d="M12 6.8v4.4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-      <circle cx="12" cy="13.4" r="1.3" fill="currentColor" />
+    <svg className="nav-icon" viewBox="0 -960 960 960" aria-hidden="true">
+      <path fill="currentColor" d="M480-359.52q18.52 0 31.06-12.7 12.53-12.69 12.53-31.13 0-18.43-12.53-31.01-12.54-12.57-31.06-12.57t-31.06 12.53q-12.53 12.53-12.53 31.05 0 18.44 12.53 31.13 12.54 12.7 31.06 12.7Zm0-158.57q17.81 0 29.86-12.05T521.91-560v-158.09q0-17.81-12.05-29.86T480-760q-17.81 0-29.86 12.05t-12.05 29.86V-560q0 17.81 12.05 29.86T480-518.09ZM231.87-231.87l-82.44 82.44q-21.63 21.63-49.59 9.77-27.97-11.86-27.97-42.36v-615.11q0-37.78 26.61-64.39t64.39-26.61h634.26q37.78 0 64.39 26.61t26.61 64.39v474.26q0 37.78-26.61 64.39t-64.39 26.61H231.87Zm-34-91h599.26v-474.26H162.87v508.5l35-34.24Zm-35 0v-474.26 474.26Z" />
     </svg>
   );
 
