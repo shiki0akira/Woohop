@@ -56,6 +56,12 @@
 /* 翻出來的卡換成這個遊戲的藍色；題目是詞組，拿掉 keep-all 才會平均斷行 */
 .charades-app .namer .drawn-card { display: grid; justify-items: center; gap: 10px; border-color: var(--blue-edge); background: var(--blue-face); box-shadow: 0 5px 0 var(--blue-edge); }
 .charades-app .namer .drawn-name { color: var(--blue-text); word-break: normal; text-wrap: balance; }
+/* 英德法西的題目常是一整句（Kein warmes Wasser unter der Dusche），字縮小一點才不會排到五行；中日韓維持大字 */
+html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .namer .drawn-name,
+html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .result-answer { font-size: clamp(26px, 7.5vw, 36px); }
+/* 字母語言的提示方塊一個字母一格，數量多，縮小才排得下 */
+html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .hint-mask { font-size: clamp(22px, 6.5vw, 30px); gap: .08em; }
+html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .mask-box { border-width: 2px; border-radius: 5px; }
 .charades-app .namer .drawn-card .badge { background: var(--surface); color: var(--blue-text); border-color: var(--blue-edge); }
 
 /*
@@ -76,6 +82,11 @@
 .hint-kind[hidden], .hint-mask[hidden] { display: none; }
 .hint-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hint-row .btn:disabled { opacity: .45; cursor: default; }
+/* 外語的按鈕字比較長（Buchstabe verraten），讓它換行，不要把卡片撐出畫面 */
+.hint-row .btn { min-width: 0; height: auto; min-height: var(--h, 48px); padding: 8px 10px; white-space: normal; line-height: 1.25; text-wrap: balance; }
+/* 一個單字一組不換行；單字之間的空白給固定寬度（flex 會把空白字吃掉） */
+.mask-word { display: inline-flex; align-items: center; gap: inherit; white-space: nowrap; }
+.mask-space { display: inline-block; width: .35em; }
 /* 按住偷看：不讓手機跳出選字、長按選單 */
 .peek-btn {
   justify-self: center; border: 0; background: none; cursor: pointer; font: inherit; font-size: 15px; font-weight: 800; padding: 6px 0;

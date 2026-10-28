@@ -242,9 +242,23 @@
     return list;
   };
   // 沒露出來的字畫成方塊（使用者要求，不用○）：一個字一個 span，方塊跟字一樣大（app.css 的 .mask-box）
+  // 每個單字包成一組（.mask-word 不換行），換行只會發生在單字之間，不會把一個字拆到兩行
   function renderMask() {
     el.hintMask.textContent = '';
+    var word = null;
     hint.chars.forEach(function (ch, i) {
+      if (/\s/.test(ch)) {
+        word = null;
+        var gap = document.createElement('span');
+        gap.className = 'mask-space';
+        el.hintMask.appendChild(gap);
+        return;
+      }
+      if (!word) {
+        word = document.createElement('span');
+        word.className = 'mask-word';
+        el.hintMask.appendChild(word);
+      }
       var span = document.createElement('span');
       if (isLetter(ch) && hint.shown.indexOf(i) < 0) {
         span.className = 'mask-box';
@@ -252,7 +266,7 @@
       } else {
         span.textContent = ch;
       }
-      el.hintMask.appendChild(span);
+      word.appendChild(span);
     });
   }
 

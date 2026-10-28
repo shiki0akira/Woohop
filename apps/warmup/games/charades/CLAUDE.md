@@ -2,7 +2,7 @@
 
 一支手機的團康：大家圍一圈輪流上台，拿著手機抽題目、只能比不能說，其他人搶著猜。手機負責出題、提示，不計時、不記分。玩法與設計決策在 `CONCEPT.md`，這裡只記跟程式碼直接相關的事。
 
-建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-28 從 `statue` 複製出來，**先只有繁中、還沒接到首頁**。返回鍵、`<dialog>` 的坑跟定時炸彈一樣，原因寫在 `games/bomb/CLAUDE.md`。
+建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-28 從 `statue` 複製出來，同一天補齊 8 種語言（名稱見 CONCEPT.md 第五節），**還沒接到首頁**。返回鍵、`<dialog>` 的坑跟定時炸彈一樣，原因寫在 `games/bomb/CLAUDE.md`。
 
 ## `app/app.js` 的結構
 
@@ -13,7 +13,7 @@
   - 不放步驟頭：手機在比的人手上（apps/warmup/CLAUDE.md）。
   - `shuffleDeck()`：把選了的類型洗成一副，同一個詞出現在兩類只留一個；整副比完才重洗。
   - **題卡** `syncCard()`：`#drawn[data-view]` 是 `word`（ready、按住偷看）或 `covered`（開始比之後）；蓋起來時有給提示就加 `.has-hint`，顯示類型和遮住的題目（沒露出的字畫成方塊 `.mask-box`，使用者要求不用○）。
-  - **提示**：`giveKind()` 給類型、`giveChar()` 每按一次隨機多露一個字（`Array.from` 切字，只有字母數字算要猜的字；剩最後一個就停）。`hint` 每換一題重來。
+  - **提示**：`giveKind()` 給類型、`giveChar()` 每按一次隨機多露一個字（`Array.from` 切字，只有字母數字算要猜的字；剩最後一個就停）。`hint` 每換一題重來。`renderMask()` 把每個單字包成 `.mask-word`（不換行）、空白是 `.mask-space`，字母語言才不會把一個字拆到兩行。
   - **按住偷看** `setPeek()`：pointerdown 看、pointerup／leave／cancel 蓋回去；鍵盤是按一下切換。
 - **題庫**在 locale 的 `categories: [[代號, 名稱, [題目...]], ...]`，代號各語言一樣。`build.mjs` 的 `check()` 擋代號不一致、每類少於 25 題、類內重複。
 - **結束鍵**：要按住 0.8 秒（`HOLD_MS`），只在 draw 那段出現。題數比完會自動結束。
