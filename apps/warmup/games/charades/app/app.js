@@ -16,12 +16,17 @@
   var W = window.Woohop;
   var Leader = window.Leader;
 
-  var PREP_KEY = 'web100-charades-prep';
   var COUNT_MIN = 2;
   var COUNT_MAX = 30;
 
-  // 開場的設定，存在手機上：題目類型（代號）、幾個人、每人比幾題（1、2 或 free 不限）
-  var prep = { cats: T.categories.map(function (c) { return c[0]; }), count: 6, per: 1 };
+  // 每人比幾題的預設跟著人數換，跟倒放猜猜看一樣（使用者要求）：3 人以下不限、4～5 人每人兩題、6 人以上每人一題
+  function defaultPer(n) {
+    return n <= 3 ? 'free' : n <= 5 ? 2 : 1;
+  }
+
+  // 開場的設定：題目類型（代號）、幾個人、每人比幾題（1、2 或 free 不限）。
+  // 都不記上次選的（產品決定，跟倒放猜猜看一樣），每次打開都是預設值、馬上能玩
+  var prep = { cats: T.categories.map(function (c) { return c[0]; }), count: 6, per: defaultPer(6) };
   var screen = 'setup';
   var phase = 'draw';
   var roundNumber = 0; // 這一場比到第幾題
@@ -76,31 +81,6 @@
     if (typeof gtag === 'function') gtag('event', name, params || {});
   }
 
-  // ---------- 設定（存在手機上） ----------
-
-  function loadPrep() {
-    try {
-      var saved = JSON.parse(localStorage.getItem(PREP_KEY) || 'null');
-      if (!saved || typeof saved !== 'object') return;
-      var known = T.categories.map(function (c) { return c[0]; });
-      if (Array.isArray(saved.cats)) {
-        var cats = saved.cats.filter(function (id) { return known.indexOf(id) >= 0; });
-        if (cats.length) prep.cats = cats;
-      }
-      if (Number.isInteger(saved.count)) prep.count = Math.max(COUNT_MIN, Math.min(COUNT_MAX, saved.count));
-      if (saved.per === 1 || saved.per === 2 || saved.per === 'free') prep.per = saved.per;
-    } catch (e) {
-      /* 無痕模式或存檔壞了：照樣能玩，只是記不住 */
-    }
-  }
-  function savePrep() {
-    try {
-      localStorage.setItem(PREP_KEY, JSON.stringify(prep));
-    } catch (e) {
-      /* 同上 */
-    }
-  }
-
   // 題目類型：可複選、至少一類（最後一個不能取消）
   function renderCategories() {
     T.categories.forEach(function (c) {
@@ -124,7 +104,6 @@
         } else {
           prep.cats.push(c[0]);
         }
-        savePrep();
         syncCategories();
       });
       el.categoryGrid.appendChild(b);
@@ -151,9 +130,10 @@
     });
     el.roundsHint.textContent = limited() ? fill(T.roundsHint, { total: totalRounds() }) : T.roundsFreeHint;
   }
+  // 人數一改，每人幾題就套回這個人數的預設（主持人之後還是可以自己換）
   function setCount(n) {
     prep.count = Math.max(COUNT_MIN, Math.min(COUNT_MAX, n));
-    savePrep();
+    prep.per = defaultPer(prep.count);
     syncSetup();
   }
 
@@ -462,8 +442,7 @@
   document.querySelectorAll('input[name="per"]').forEach(function (input) {
     input.addEventListener('change', function () {
       prep.per = input.value === 'free' ? 'free' : Number(input.value);
-      savePrep();
-      syncSetup();
+        syncSetup();
     });
   });
 
@@ -520,7 +499,6 @@
 
   // ---------- 起手 ----------
 
-  loadPrep();
   renderCategories();
   syncSetup();
   el.deck.innerHTML = deckArt();
