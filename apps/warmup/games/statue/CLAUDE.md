@@ -2,7 +2,7 @@
 
 不用手機的團康：一二三木頭人，但每個人要先抽一張動作卡、用那個動作前進。手機負責三件事：帶規則、抽動作卡、遊戲結束時讓摸到鬼的人選一個動作給鬼做（沒有拉霸、沒有聲音）。玩法與設計決策在 `CONCEPT.md`，這裡只記跟程式碼直接相關的事。
 
-建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-28 從 `orchard` 複製出來，**先只有繁中、還沒接到首頁**（vercel.json 白名單、site.js 的 GAMES、og 縮圖、首頁插圖都還沒做）。返回鍵、`<dialog>` 的坑跟定時炸彈一樣，原因寫在 `games/bomb/CLAUDE.md`。
+建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-28 從 `orchard` 複製出來，同一天補齊 8 種語言（名稱見 CONCEPT.md 第五節），**還沒接到首頁**（vercel.json 白名單、site.js 的 GAMES、og 縮圖、首頁插圖都還沒做）。返回鍵、`<dialog>` 的坑跟定時炸彈一樣，原因寫在 `games/bomb/CLAUDE.md`。
 
 ## `app/app.js` 的結構
 
