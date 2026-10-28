@@ -288,6 +288,13 @@
 .tool-h { margin: 0 0 12px; font-size: 18px; }
 /* 抽題目（2026-10-28）：卡片借動作抽卡的 .action-face，上面多一個類型標籤 */
 .word-cats { margin-top: 0; }
+/* 類型收合的開關：跟定時炸彈的「自訂區間」一樣是文字連結＋箭頭；打開時右邊多一個「全選」 */
+.word-cats-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tool-toggle, .tool-toggle-side { display: inline-flex; align-items: center; gap: 4px; padding: 4px 0; border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; }
+.tool-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.tool-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
+.tool-toggle-side[hidden] { display: none; }
+.tool-toggle-side:disabled { opacity: .45; cursor: default; text-decoration: none; }
 .word-face { min-height: 150px; align-content: center; gap: 10px; }
 .word-name { font-size: clamp(28px, 8vw, 44px); }
 .tool-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 12px; }

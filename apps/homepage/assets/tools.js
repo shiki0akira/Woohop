@@ -81,13 +81,44 @@
     const cats = tool.words;
     const picked = new Set(cats.map(c => c[0]));
 
-    root.appendChild(make('h2', 'tool-h', I.catLabel));
+    // 類型平常收起來（九張卡在手機上佔滿一個畫面），開關上寫選了幾類；打開才有「全選」和勾選卡
+    // （開關的樣子跟定時炸彈的「自訂區間」一樣：文字連結＋箭頭）
+    const bar = make('div', 'word-cats-bar');
+    const toggle = make('button', 'link tool-toggle');
+    toggle.type = 'button';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', 'word-cats');
+    const allBtn = make('button', 'link tool-toggle-side', I.selectAll);
+    allBtn.type = 'button';
+    allBtn.hidden = true;
+    bar.appendChild(toggle);
+    bar.appendChild(allBtn);
+    root.appendChild(bar);
     const grid = make('div', 'theme-grid word-cats');
+    grid.id = 'word-cats';
+    grid.hidden = true;
     root.appendChild(grid);
+    const buttons = [];
+    const sync = () => {
+      buttons.forEach(([id, b]) => b.setAttribute('aria-pressed', String(picked.has(id))));
+      const all = picked.size === cats.length;
+      toggle.textContent = `${I.catLabel}・${all ? I.catAll : I.catCount.replace('{n}', picked.size)}`;
+      allBtn.disabled = all;
+      deck = [];
+    };
+    toggle.addEventListener('click', () => {
+      const open = grid.hidden;
+      grid.hidden = !open;
+      allBtn.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+    allBtn.addEventListener('click', () => {
+      cats.forEach(c => picked.add(c[0]));
+      sync();
+    });
     cats.forEach(c => {
       const b = make('button', 'choice');
       b.type = 'button';
-      b.setAttribute('aria-pressed', 'true');
       b.appendChild(make('span', 'choice-name', c[1]));
       b.appendChild(make('span', 'choice-sub', c[2].slice(0, 2).join(lang.startsWith('zh') || lang === 'ja' ? '、' : ', ')));
       b.addEventListener('click', () => {
@@ -95,9 +126,9 @@
           if (picked.size === 1) return; // 最後一類不能取消
           picked.delete(c[0]);
         } else picked.add(c[0]);
-        b.setAttribute('aria-pressed', String(picked.has(c[0])));
-        deck = [];
+        sync();
       });
+      buttons.push([c[0], b]);
       grid.appendChild(b);
     });
 
@@ -120,6 +151,7 @@
 
     let deck = [];
     let last = '';
+    sync();
     const shuffle = () => {
       const seen = new Set();
       deck = [];
