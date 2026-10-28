@@ -70,7 +70,9 @@
 .covered-text { margin: 0; padding: 18px 0; font-size: 20px; font-weight: 900; color: var(--blue-text); }
 .hint-badge { background: var(--yellow-face) !important; color: var(--yellow-text) !important; border-color: var(--yellow-edge) !important; }
 .hint-kind { margin: 0; font-size: 22px; font-weight: 900; color: var(--blue-text); }
-.hint-mask { margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; letter-spacing: .08em; color: var(--blue-text); overflow-wrap: anywhere; }
+.hint-mask { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .12em; margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; color: var(--blue-text); }
+/* 沒露出來的字：跟字一樣大的方塊，粗描邊＋淺色底（設計系統的 2px 線條） */
+.mask-box { display: inline-block; width: .9em; height: .9em; border: 3px solid currentColor; border-radius: 8px; background: var(--surface); opacity: .85; }
 .hint-kind[hidden], .hint-mask[hidden] { display: none; }
 .hint-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hint-row .btn:disabled { opacity: .45; cursor: default; }

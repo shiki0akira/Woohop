@@ -241,11 +241,19 @@
     });
     return list;
   };
-  function maskText() {
-    return hint.chars.map(function (ch, i) {
-      if (!isLetter(ch)) return ch;
-      return hint.shown.indexOf(i) >= 0 ? ch : '○';
-    }).join('');
+  // 沒露出來的字畫成方塊（使用者要求，不用○）：一個字一個 span，方塊跟字一樣大（app.css 的 .mask-box）
+  function renderMask() {
+    el.hintMask.textContent = '';
+    hint.chars.forEach(function (ch, i) {
+      var span = document.createElement('span');
+      if (isLetter(ch) && hint.shown.indexOf(i) < 0) {
+        span.className = 'mask-box';
+        span.setAttribute('aria-hidden', 'true');
+      } else {
+        span.textContent = ch;
+      }
+      el.hintMask.appendChild(span);
+    });
   }
 
   function syncCard() {
@@ -255,7 +263,8 @@
     el.drawn.classList.toggle('has-hint', Boolean(anyHint));
     el.hintKind.textContent = hint && hint.kind ? fill(T.hintKind, { kind: card[0] }) : '';
     el.hintKind.hidden = !(hint && hint.kind);
-    el.hintMask.textContent = hint && hint.shown.length ? maskText() : '';
+    if (hint && hint.shown.length) renderMask();
+    else el.hintMask.textContent = '';
     el.hintMask.hidden = !(hint && hint.shown.length);
     if (hint) {
       el.hintKindBtn.disabled = hint.kind;

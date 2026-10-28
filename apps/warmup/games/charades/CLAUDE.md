@@ -12,7 +12,7 @@
 - **play 分四段** `setPhase()`：`draw`（一疊卡）→ `ready`（翻出題目，開始比／跳過這題）→ `acting`（題目蓋起來；猜中了／提示類型／提示一個字／按住偷看；不能跳過）→ `result`（猜中了，下一個人；最後一題變「看結果」直接結束）。`renderRound()` 顯示第幾題、輪到第幾個人（人數取餘數輪下去）。CSS 看 `#view-play` 的 `data-phase`（`.phase-draw`／`.phase-ready`／`.phase-acting`），題卡自己的三面看 `data-stage`（draw／reveal／result）。
   - 不放步驟頭：手機在比的人手上（apps/warmup/CLAUDE.md）。
   - `shuffleDeck()`：把選了的類型洗成一副，同一個詞出現在兩類只留一個；整副比完才重洗。
-  - **題卡** `syncCard()`：`#drawn[data-view]` 是 `word`（ready、按住偷看）或 `covered`（開始比之後）；蓋起來時有給提示就加 `.has-hint`，顯示類型和 `○鐘`。
+  - **題卡** `syncCard()`：`#drawn[data-view]` 是 `word`（ready、按住偷看）或 `covered`（開始比之後）；蓋起來時有給提示就加 `.has-hint`，顯示類型和遮住的題目（沒露出的字畫成方塊 `.mask-box`，使用者要求不用○）。
   - **提示**：`giveKind()` 給類型、`giveChar()` 每按一次隨機多露一個字（`Array.from` 切字，只有字母數字算要猜的字；剩最後一個就停）。`hint` 每換一題重來。
   - **按住偷看** `setPeek()`：pointerdown 看、pointerup／leave／cancel 蓋回去；鍵盤是按一下切換。
 - **題庫**在 locale 的 `categories: [[代號, 名稱, [題目...]], ...]`，代號各語言一樣。`build.mjs` 的 `check()` 擋代號不一致、每類少於 25 題、類內重複。
