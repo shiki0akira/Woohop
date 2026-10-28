@@ -248,41 +248,98 @@
     build();
   }
 
-  // 抽卡取名：先選主題，再手機傳一圈每人抽一個（跟竹筍的取名同一個）。小工具只抽名字，
-  // 自己取、「大家都取好了」這些遊戲用的按鈕在 site.css 藏掉；抽過的名字留在下面的名單
+  // 抽卡取名（2026-10-28 改成跟抽題目一樣簡單）：一進來就能抽，主題收起來（預設隨機＝所有主題混著抽），
+  // 抽過的名字列在下面、不重複。名稱庫跟竹筍同一份（src/name-pools.mjs）；一組聽起來很像的名稱只會抽到其中一個。
+  // 遊戲裡的取名流程（Leader.namer：自己取、大家都取好了）小工具用不到，不用它；選主題還是共用的 Leader.themes
   if (tool.key === 'names') {
     const I = T.items.names;
     const pool = tool.names;
     let theme = 'random';
+    const used = new Set(); // 抽過的組：「主題:第幾組」
+    const drawn = [];
 
-    const pick = make('div', 'tool-names-pick');
-    pick.appendChild(make('h2', 'tool-h', t.themeHeading));
-    const grid = make('div');
-    pick.appendChild(grid);
-    const start = make('button', 'btn btn-lg btn-solid btn-block', I.start);
-    start.type = 'button';
-    pick.appendChild(start);
+    const card = make('div', 'action-card word-card');
+    const face = make('div', 'action-face word-face');
+    face.hidden = true;
+    const kind = make('span', 'badge word-kind');
+    const nameEl = make('p', 'action-name word-name');
+    nameEl.setAttribute('aria-live', 'polite');
+    face.appendChild(kind);
+    face.appendChild(nameEl);
+    const btn = make('button', 'btn btn-lg btn-solid btn-block action-draw');
+    btn.type = 'button';
+    btn.innerHTML = '<svg aria-hidden="true"><use href="#i-dice"/></svg><span></span>';
+    btn.querySelector('span').textContent = t.drawButton;
+    card.appendChild(face);
+    card.appendChild(btn);
+    root.appendChild(card);
 
-    const play = make('div');
-    play.hidden = true;
+    // 主題：收起來的開關（跟抽題目的類型一樣），打開是 Leader.themes 的單選卡
+    const bar = make('div', 'word-cats-bar');
+    const toggle = make('button', 'link tool-toggle');
+    toggle.type = 'button';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', 'name-themes');
+    bar.appendChild(toggle);
+    root.appendChild(bar);
+    const grid = make('div', 'word-cats');
+    grid.id = 'name-themes';
+    grid.hidden = true;
+    root.appendChild(grid);
+    const label = () => { toggle.textContent = `${t.themeHeading}・${theme === 'random' ? t.themeRandom : Leader.themeLabel(theme)}`; };
+    Leader.themes(grid, { pool, value: theme, realname: false, onChange: id => { theme = id; label(); } });
+    label();
+    toggle.addEventListener('click', () => {
+      const open = grid.hidden;
+      grid.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+    });
 
-    root.appendChild(pick);
-    root.appendChild(play);
+    // 抽過的名字
+    const list = make('div', 'name-list');
+    list.hidden = true;
+    const listHead = make('div', 'word-cats-bar');
+    listHead.appendChild(make('h2', 'tool-h', t.namedHeading));
+    const clear = make('button', 'link tool-toggle-side', I.clearLabel);
+    clear.type = 'button';
+    listHead.appendChild(clear);
+    const names = make('p', 'name-list-text');
+    list.appendChild(listHead);
+    list.appendChild(names);
+    root.appendChild(list);
+    const syncList = () => {
+      list.hidden = !drawn.length;
+      names.textContent = drawn.join(t.listSep);
+    };
+    clear.addEventListener('click', () => {
+      used.clear();
+      drawn.length = 0;
+      face.hidden = true;
+      syncList();
+    });
 
-    Leader.themes(grid, { pool, value: theme, realname: false, onChange: id => { theme = id; } });
-
-    let namer = null;
-    const session = { theme: '', random: false, names: [], own: [] };
-    start.addEventListener('click', () => {
-      session.random = theme === 'random';
-      session.theme = session.random ? Leader.randomTheme(pool) : theme;
-      session.names = [];
-      session.own = [];
-      if (!namer) namer = Leader.namer(play, { pool, session, minPlayers: 1 });
-      else namer.reset(session);
-      pick.hidden = true;
-      play.hidden = false;
-      track('tool_names_started', { theme: session.theme, random: session.random });
+    btn.addEventListener('click', () => {
+      const themes = theme === 'random' ? pool.themes : [theme];
+      const free = [];
+      themes.forEach(th => pool.groups[th].forEach((g, i) => { if (!used.has(th + ':' + i)) free.push([th, i, g]); }));
+      face.hidden = false;
+      if (!free.length) {
+        kind.hidden = true;
+        nameEl.textContent = t.poolEmpty;
+      } else {
+        const [th, i, g] = free[Math.floor(Math.random() * free.length)];
+        const name = g[Math.floor(Math.random() * g.length)];
+        used.add(th + ':' + i);
+        drawn.push(name);
+        kind.hidden = false;
+        kind.textContent = Leader.themeLabel(th);
+        nameEl.textContent = name;
+        syncList();
+        track('tool_name_drawn', { theme: th, random: theme === 'random' });
+      }
+      face.classList.remove('pop');
+      void face.offsetWidth;
+      face.classList.add('pop');
     });
   }
 
