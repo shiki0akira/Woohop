@@ -20,8 +20,7 @@
 
   // ---------- 卡片 ----------
   // 錄音機跟倒放猜猜看用同一張插圖
-  // 動作抽卡跟木頭人動作版用同一張插圖
-  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'statue' };
+  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'toolActions' };
   const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB', actions: '#EE7B6A' };
   // 橫式卡：左邊插圖，右邊標題＋說明
   const hCard = ({ href, attr, art, color, name, desc }) => `<a class="game tool-card" href="${href}" ${attr}>
