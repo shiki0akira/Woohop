@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="charades-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="charades-main game-main">
+      <!-- 第 1 步：開場。選題目類型（可複選）、每題時間。上方的步驟頭是全站共用的 Leader.lead -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <section class="panel setup-panel">
+          <span class="field-label">{{categoryLabel}}</span>
+          <p class="hint">{{categoryHint}}</p>
+          <!-- 勾選卡（設計系統的 .choice），app.js 依 T.categories 產生 -->
+          <div class="category-grid" id="category-grid"></div>
+          <span class="field-label field-label-gap">{{timeLabel}}</span>
+          <div class="seg seg-3" role="radiogroup" aria-label="{{timeLabel}}" id="time-seg"></div>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!--
+        第 3 步：上台。手機在比的人手上，不放步驟頭。分四段（data-phase），一次只露一段：
+          draw 抽題目 → ready 看題目（開始比／換一題）→ acting 倒數中（猜中了／換一題）→ result 猜中或時間到、下一個人 → draw
+      -->
+      <div class="view" id="view-play" data-phase="draw" hidden>
+        <p class="turn-no" id="turn-no"></p>
+        <div class="namer">
+          <section class="panel name-card" id="card" data-stage="draw">
+            <div class="name-stage stage-draw">
+              <svg class="illo deck" id="deck" viewBox="0 0 160 126" aria-hidden="true"></svg>
+              <button class="btn btn-lg btn-solid btn-block draw-btn" id="card-draw" type="button">{{drawButton}}</button>
+              <p class="hint">{{drawHint}}</p>
+            </div>
+            <div class="name-stage stage-reveal">
+              <div class="drawn-card" id="drawn">
+                <span class="badge" id="card-kind"></span>
+                <p class="drawn-name" id="card-text" aria-live="polite"></p>
+              </div>
+              <!-- 倒數（acting 才出現）：設計系統的進度條＋秒數 -->
+              <div class="timer phase-acting">
+                <div class="progress" id="timer-bar"><div style="--p:100%"></div></div>
+                <span class="timer-sec" id="timer-sec"></span>
+              </div>
+              <div class="pass-row">
+                <!-- 主要鍵在左、換一題在右（跟倒放猜猜看一樣）。ready 是「開始比！」，acting 換成「猜中了！」 -->
+                <button class="btn btn-lg btn-solid pass-bar phase-ready" id="act-start" type="button">{{startActing}}</button>
+                <button class="btn btn-lg btn-solid pass-bar phase-acting" id="got-it" type="button">{{gotIt}}</button>
+                <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
+              </div>
+            </div>
+            <!-- result：猜中了，或時間到公布答案（大家都看得到） -->
+            <div class="name-stage stage-result">
+              <p class="result-title" id="result-title"></p>
+              <p class="result-answer" id="result-answer"></p>
+              <p class="hint" id="result-hint"></p>
+              <button class="btn btn-lg btn-solid btn-block" id="next-turn" type="button">{{nextTurn}}</button>
+            </div>
+          </section>
+        </div>
+        <!-- 結束要按住，防手滑（跟果園同一個做法，app.js 的 HOLD_MS）；只在抽題目那段出現 -->
+        <button class="btn btn-lg btn-block end-btn phase-draw" id="end-btn" type="button">{{endGame}}</button>
+      </div>
+
+      <!-- 第 4 步：遊戲結束。手機不記分，大家自己算 -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+    </main>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.CHARADES = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

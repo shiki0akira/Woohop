@@ -1,0 +1,66 @@
+/*
+ * 比手畫腳自己的樣式。步驟頭、規則卡、抽卡（.namer）、分段控制、勾選卡、進度條、按鈕都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：藍 */
+.charades-app { --game-edge: var(--blue-edge); }
+.charades-app .panel { padding: 20px; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場：題目類型（可複選的勾選卡）、每題時間 ---------- */
+.setup-panel .field-label:first-child { margin-top: 0; }
+.setup-panel .hint { margin: 2px 0 10px; }
+.field-label-gap { margin-top: 18px; }
+/* 九類：共用 .choice 的最小高度 136px 排起來太長，改成三欄的小卡（例子只留一行，太長就省略） */
+.category-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.category-choice { min-height: 0; padding: 12px 6px 10px; gap: 2px; }
+.category-choice .choice-name { font-size: 16px; }
+.category-choice .choice-sub { max-width: 100%; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.category-choice::after { width: 20px; height: 20px; top: -7px; right: -7px; background-size: 12px; }
+
+/* ---------- 上台：只露這一段的區塊（app.js 的 setPhase） ---------- */
+#view-play:not([data-phase="draw"]) .phase-draw,
+#view-play:not([data-phase="ready"]) .phase-ready,
+#view-play:not([data-phase="acting"]) .phase-acting { display: none; }
+.turn-no { margin: 20px 0 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+
+/*
+ * 題卡：照抽卡取名（.namer 的樣式在 game.css）。抽卡取名只有 choose／own／reveal 三面，
+ * 這裡多了 draw（同 choose）與 result（猜中／時間到），自己開。
+ */
+.charades-app .namer .name-card[data-stage="draw"] .stage-draw,
+.charades-app .namer .name-card[data-stage="result"] .stage-result { display: grid; }
+.charades-app .namer .stage-draw .hint { margin: 0; }
+/* 翻出來的卡換成這個遊戲的藍色；題目是詞組，拿掉 keep-all 才會平均斷行 */
+.charades-app .namer .drawn-card { display: grid; justify-items: center; gap: 10px; border-color: var(--blue-edge); background: var(--blue-face); box-shadow: 0 5px 0 var(--blue-edge); }
+.charades-app .namer .drawn-name { color: var(--blue-text); word-break: normal; text-wrap: balance; }
+.charades-app .namer .drawn-card .badge { background: var(--surface); color: var(--blue-text); border-color: var(--blue-edge); }
+
+/* 倒數：進度條＋右邊的秒數，剩 5 秒變紅 */
+.timer { display: flex; align-items: center; gap: 12px; }
+.timer .progress { flex: 1; max-width: none; }
+.timer .progress > div { transition: none; }
+.timer-sec { flex: none; min-width: 2.2em; text-align: right; font-size: 28px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.timer-sec.is-hurry { color: #e0503c; }
+
+/* result：大字標題＋答案 */
+.stage-result { justify-items: center; text-align: center; }
+.result-title { margin: 0; font-size: 22px; font-weight: 900; }
+.result-answer { margin: 0; font-size: clamp(32px, 10vw, 52px); font-weight: 900; line-height: 1.2; color: var(--blue-text); text-wrap: balance; }
+.stage-result .hint { margin: 0; }
+
+/* 結束鍵：紅色、要按住 0.8 秒（跟果園菜園動物園的 .end-btn 同一個做法），按住時從左到右填滿 */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
+
+/* 頂欄的聲音開關（倒數的嗶聲）在第 1 步藏起來：還沒有聲音 */
+.charades-app[data-screen="setup"] .game-music { display: none; }
