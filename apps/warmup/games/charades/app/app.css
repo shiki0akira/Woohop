@@ -86,7 +86,9 @@ html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .mask-box { bord
 .mask-word { display: inline-flex; align-items: center; gap: inherit; white-space: nowrap; }
 .mask-space { display: inline-block; width: .35em; }
 /* 再偷看一次：跟倒放猜猜看一樣的小按鈕，置中 */
-.peek-btn { justify-self: center; }
+/* 卡片下面：「猜中了！」大按鈕，下面置中的小按鈕「再偷看一次」 */
+.got-it { --h: 72px; font-size: 20px; }
+.peek-btn { justify-self: center; align-self: center; width: auto; margin-inline: auto; }
 
 /* result：大字標題＋答案 */
 .stage-result { justify-items: center; text-align: center; }

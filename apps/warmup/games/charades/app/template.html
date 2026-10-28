@@ -96,14 +96,11 @@
                 <button class="btn btn-lg btn-solid pass-bar" id="act-start" type="button">{{startActing}}</button>
                 <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
               </div>
-              <!-- acting：猜中了；兩種提示；按住偷看題目 -->
-              <button class="btn btn-lg btn-solid btn-block pass-bar phase-acting" id="got-it" type="button">{{gotIt}}</button>
+              <!-- acting：卡片裡只放兩種提示；「猜中了！」和「再偷看一次」在卡片下面（使用者要求） -->
               <div class="hint-row phase-acting">
                 <button class="btn btn-secondary" id="hint-kind-btn" type="button">{{hintKindButton}}</button>
                 <button class="btn btn-secondary" id="hint-char-btn" type="button">{{hintCharButton}}</button>
               </div>
-              <!-- 再偷看一次：回上一步看題目（使用者要求：按住偷看沒反應改成回上一步；按鈕樣子跟倒放猜猜看一樣） -->
-              <button class="btn btn-sm btn-secondary peek-btn phase-acting" id="peek" type="button">{{peekButton}}</button>
             </div>
             <div class="name-stage stage-result">
               <p class="result-title">{{gotItResult}}</p>
@@ -113,6 +110,9 @@
             </div>
           </section>
         </div>
+        <!-- acting：卡片下面是「猜中了！」，再下面是「再偷看一次」（回上一步看題目；按住偷看沒反應改成回上一步，樣子跟倒放猜猜看一樣） -->
+        <button class="btn btn-lg btn-solid btn-block got-it phase-acting" id="got-it" type="button">{{gotIt}}</button>
+        <button class="btn btn-sm btn-secondary peek-btn phase-acting" id="peek" type="button">{{peekButton}}</button>
         <!-- 結束要按住，防手滑（跟果園同一個做法，app.js 的 HOLD_MS）；只在抽題目那段出現 -->
         <button class="btn btn-lg btn-block end-btn phase-draw" id="end-btn" type="button">{{endGame}}</button>
       </div>
