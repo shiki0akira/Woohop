@@ -8,7 +8,8 @@
   // 推薦器沒選條件時的四張：前兩張最熱門、後兩張最新。
   // 熱門看 GA4「網頁和畫面」各遊戲的活躍使用者（2026-10-22 看過去 28 天：搶答 117、定時炸彈 54、喜好二選一 43、賓果 28；
   // 阿瓦隆是桌遊、首頁另有專區，不算），之後定期再看一次改這裡。最新照 site.js GAMES 的 added 自動排。
-  const POPULAR = ['buzzer', 'bomb'];
+  // 2026-10-28 使用者要求把第一張的搶答換成喜好二選一
+  const POPULAR = ['match', 'bomb'];
   const newest = GAMES.filter(g => g.added && !g.soon && !POPULAR.includes(g.key))
     .sort((a, b) => b.added.localeCompare(a.added)).slice(0, 2).map(g => g.key);
   finder(document.getElementById('finder-root'), { filters: ['people', 'phones'], limit: 4, moreHref: pageUrl('games'), featured: [...POPULAR, ...newest] });
