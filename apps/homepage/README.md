@@ -23,6 +23,7 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | 果園菜園動物園 | [www.vibeweb100.com/orchard](https://www.vibeweb100.com/orchard/zh-TW/) | `apps/warmup/games/orchard` | 已上線（2026-10-22） |
 | 倒放猜猜看 | [www.vibeweb100.com/reverse](https://www.vibeweb100.com/reverse/zh-TW/) | `apps/warmup/games/reverse` | 已上線（2026-10-23，8 語） |
 | 木頭人動作版 | [www.vibeweb100.com/statue](https://www.vibeweb100.com/statue/zh-TW/) | `apps/warmup/games/statue` | 已上線（2026-10-28，8 語） |
+| 比手畫腳 | [www.vibeweb100.com/charades](https://www.vibeweb100.com/charades/zh-TW/) | `apps/warmup/games/charades` | 已上線（2026-10-28，8 語） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
 ## 架構說明

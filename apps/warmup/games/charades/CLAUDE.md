@@ -2,7 +2,7 @@
 
 一支手機的團康：大家圍一圈輪流上台，拿著手機抽題目、只能比不能說，其他人搶著猜。手機負責出題、提示，不計時、不記分。玩法與設計決策在 `CONCEPT.md`，這裡只記跟程式碼直接相關的事。
 
-建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-28 從 `statue` 複製出來，同一天補齊 8 種語言（名稱見 CONCEPT.md 第五節），**還沒接到首頁**。返回鍵、`<dialog>` 的坑跟定時炸彈一樣，原因寫在 `games/bomb/CLAUDE.md`。
+建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-10-28 從 `statue` 複製出來，同一天補齊 8 種語言（名稱見 CONCEPT.md 第五節）並上線。首頁插圖是 `woohop-art.js` 的 `art.charades`（比動作的小人、問號泡泡、三個方塊的對話框；使用者要求不放題卡）。返回鍵、`<dialog>` 的坑跟定時炸彈一樣，原因寫在 `games/bomb/CLAUDE.md`。
 
 ## `app/app.js` 的結構
 

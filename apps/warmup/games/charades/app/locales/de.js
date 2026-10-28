@@ -17,7 +17,7 @@ export default {
   gameBack: 'Zurück',
   rulesLinkText: 'Alle Regeln →',
 
-  heroTitle: 'Pantomime-Spiel – Begriff ziehen und darstellen: ohne ein Wort!',
+  heroTitle: 'Pantomime-Spiel: Begriff ziehen und ohne ein Wort darstellen',
   heroDesc: 'Reihum zieht jemand am Handy einen Begriff und stellt ihn stumm dar, alle anderen raten. Was nicht geht, wird übersprungen, und wenn alle festhängen, gibt es Tipps – wer errät, bekommt einen Punkt!',
 
   lead: {

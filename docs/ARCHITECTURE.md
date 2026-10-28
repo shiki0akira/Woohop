@@ -84,7 +84,7 @@ Woohop/
 │  ├─ buzzer/     ← web100_02_BuzzerGame      （Workers，在資料夾內 npm run deploy）
 │  ├─ match/      ← web100_03_PreferenceMatch （同上）
 │  ├─ bingo/      ← web100_04_HappyBingo      （同上）
-│  └─ warmup/     ← 暖場遊戲：games/ 底下的定時炸彈、竹筍、上樓下樓、果園菜園動物園、倒放猜猜看、木頭人動作版
+│  └─ warmup/     ← 暖場遊戲：games/ 底下的定時炸彈、竹筍、上樓下樓、果園菜園動物園、倒放猜猜看、木頭人動作版、比手畫腳、比手畫腳
 │                   （同上，合在一個 assets-only Worker，2026-10-23 合併）
 ├─ packages/      ← 之後的共用程式（design tokens、房間系統、頁首頁尾、帶領播放器）
 └─ docs/          ← 本文件、改版企劃、figma-variables.json
@@ -164,6 +164,7 @@ Woohop/
 | orchard（果園菜園動物園） | 已上線（2026-10-22，8 種語言） | Cloudflare Workers | 不用手機的團康：手機出主題、打三拍節拍（共用 Leader.metronome，含開場口令 intro 與配樂）、輸的人拉真心話大冒險；路徑 /orchard/。外語名用當地類似遊戲（en Concentration、ja 古今東西ゲーム、ko 아이엠그라운드 이름 대기）。接法同竹筍 |
 | reverse（倒放猜猜看） | 已上線（2026-10-23，8 語） | Cloudflare Workers | 一支手機錄一句話倒過來播，大家學著唸再倒回來猜；人多可各自掃 QR code 打開錄音機搶答。不用房間、不用伺服器，錄音只在手機記憶體。路徑 /reverse/，跟其他暖場遊戲同一個 Worker（woohop-warmup） |
 | statue（木頭人動作版） | 已上線（2026-10-28，8 語） | Cloudflare Workers | 一二三木頭人，但每人先在手機上抽一張動作卡（騎摩托車、螃蟹走路⋯⋯，一個動作一張插圖），用那個動作前進；遊戲結束時贏家抽一個動作讓輸家模仿、三連拍。手機只在主持人手上與抽卡時傳一圈。路徑 /statue/，跟其他暖場遊戲同一個 Worker（woohop-warmup） |
+| charades（比手畫腳） | 已上線（2026-10-28，8 語） | Cloudflare Workers | 圍一圈輪流上台，手機出題（九類、各語言三百多題，可複選），只能比不能說，比到有人猜中為止；開始比之後題目蓋起來只畫方塊，猜不出來可以提示類型或一個字。題數＝人數 × 每人題數，跟倒放猜猜看同一套。路徑 /charades/，跟其他暖場遊戲同一個 Worker（woohop-warmup） |
 | web100_06_HappinessSimulator | 已上線 | Cloudflare Workers | 幸福小組七關互動信息，路徑 /happiness/；**只有 zh-TW**。接法同搶答（網頁與 /happiness/api 走代理、WebSocket 直連）。首頁上跟其他作品一樣是一張卡片、同樣大小，但換成幸福模擬器自己的像素風（硬邊框、硬陰影、右上角兩條線），標籤是「互動信息分享」 |
 
 ### 搶答遊戲的特殊接法：網頁走代理、WebSocket 直連

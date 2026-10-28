@@ -110,6 +110,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.reverse()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 比手畫腳（apps/warmup/games/charades/app/strings.js 的 LANGS）
+  charades: async () => {
+    const { STRINGS: Cm, LANGS: CL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'charades', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'warmup', 'games', 'charades', 'public', 'og'),
+      langs: CL,
+      title: (lang) => splitTitle(Cm[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.charades()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 木頭人動作版（apps/warmup/games/statue/app/strings.js 的 LANGS）
   statue: async () => {
     const { STRINGS: Tm, LANGS: TL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'statue', 'app', 'strings.js')).href);

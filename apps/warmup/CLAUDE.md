@@ -10,6 +10,7 @@
 | 果園菜園動物園 | `games/orchard` | `/orchard/{lang}/` |
 | 倒放猜猜看 | `games/reverse` | `/reverse/{lang}/` |
 | 木頭人動作版 | `games/statue` | `/statue/{lang}/` |
+| 比手畫腳 | `games/charades` | `/charades/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 
