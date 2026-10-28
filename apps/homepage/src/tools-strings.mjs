@@ -5,7 +5,7 @@
  * prerender 會把這份併進 STRINGS[lang].tools。各語言逐句照當地說法寫，不要丟翻譯 API。
  */
 
-export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names', 'recorder', 'actions'];
+export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names', 'recorder', 'actions', 'words'];
 // 每個小工具在哪些遊戲裡也用得到（總覽頁與工具頁底下的「也用在這些遊戲」）
 export const TOOL_GAMES = {
   truthOrDare: ['bamboo', 'stairs', 'orchard', 'bomb'],
@@ -13,6 +13,7 @@ export const TOOL_GAMES = {
   names: ['bamboo'],
   recorder: ['reverse'],
   actions: ['statue'],
+  words: ['charades'],
 };
 
 export const TOOLS = {
@@ -92,6 +93,20 @@ export const TOOLS = {
           '輸的人照著卡片模仿，其他人拿出手機幫他拍三連拍。',
           '下一個人再按一次，不會連續抽到同一個動作。',
         ],
+      },
+      words: {
+        name: '抽題目',
+        short: '比手畫腳、你畫我猜的題目隨機抽，九種類型三百多題。',
+        seoTitle: '抽題目｜比手畫腳、你畫我猜題目產生器，300 多題免下載',
+        seoDesc: '比手畫腳、你畫我猜不知道出什麼題？手機按一下隨機抽一題：動物、職業、運動、日常生活、食物、交通、物品、搞笑情境、成語，九種類型三百多題，可以只選想要的類型，抽完一輪才會重複。免下載、免註冊。',
+        lead: '選好類型，按一下抽一題，只給上台的人看。',
+        how: [
+          '勾選想要的題目類型（預設全選，至少留一類）。',
+          '上台的人按「抽一題」，自己偷看題目，別讓猜的人看到。',
+          '比完、畫完換下一個人再抽，整副抽完才會出現重複的題目。',
+        ],
+        catLabel: '題目類型',
+        drawLabel: '抽一題',
       },
     },
   },
@@ -173,6 +188,20 @@ export const TOOLS = {
           '下一个人再按一次，不会连续抽到同一个动作。',
         ],
       },
+      words: {
+        name: '抽题目',
+        short: '你比我猜、你画我猜的题目随机抽，九种类型三百多题。',
+        seoTitle: '抽题目｜你比我猜、你画我猜题目生成器，300 多题免下载',
+        seoDesc: '你比我猜、你画我猜不知道出什么题？手机点一下随机抽一题：动物、职业、运动、日常生活、食物、交通、物品、搞笑情境、成语，九种类型三百多题，可以只选想要的类型，抽完一轮才会重复。免下载、免注册。',
+        lead: '选好类型，点一下抽一题，只给上台的人看。',
+        how: [
+          '勾选想要的题目类型（默认全选，至少留一类）。',
+          '上台的人点「抽一题」，自己偷看题目，别让猜的人看到。',
+          '比完、画完换下一个人再抽，整副抽完才会出现重复的题目。',
+        ],
+        catLabel: '题目类型',
+        drawLabel: '抽一题',
+      },
     },
   },
 
@@ -252,6 +281,20 @@ export const TOOLS = {
           'The loser acts out the card while everyone else grabs their phones for a photo burst.',
           'Next person taps again — you won’t get the same move twice in a row.',
         ],
+      },
+      words: {
+        name: 'Charades word generator',
+        short: 'Random words for charades or drawing games — 300+ in nine categories.',
+        seoTitle: 'Charades word generator: 300+ random words to act or draw',
+        seoDesc: 'Need words for charades or a drawing game? Tap once for a random word: animals, jobs, sports, everyday life, food, getting around, things, funny situations and idioms — 300+ words in nine categories. Pick only the ones you want; no repeats until the deck runs out. No app, no sign-up.',
+        lead: 'Pick your categories, tap for a word — only the actor looks.',
+        how: [
+          'Tick the categories you want (all are on by default; keep at least one).',
+          'Whoever’s up taps “Draw a word” and peeks — don’t let the guessers see.',
+          'Pass the phone to the next player. No word repeats until the whole deck is used.',
+        ],
+        catLabel: 'Categories',
+        drawLabel: 'Draw a word',
       },
     },
   },
@@ -333,6 +376,20 @@ export const TOOLS = {
           'Die nächste Person tippt noch mal – dieselbe Bewegung kommt nie zweimal hintereinander.',
         ],
       },
+      words: {
+        name: 'Begriffe ziehen',
+        short: 'Zufällige Begriffe für Pantomime oder Montagsmaler – über 300 in neun Kategorien.',
+        seoTitle: 'Begriffe für Pantomime & Montagsmaler: über 300 zufällig ziehen',
+        seoDesc: 'Keine Idee, was ihr darstellen sollt? Ein Tipp und du bekommst einen zufälligen Begriff: Tiere, Berufe, Sport, Alltag, Essen, Unterwegs, Gegenstände, lustige Situationen und Redewendungen – über 300 Begriffe in neun Kategorien. Wähl nur, was du willst; Wiederholungen erst, wenn alle durch sind. Ohne App, ohne Anmeldung.',
+        lead: 'Kategorien wählen, Begriff ziehen – nur wer dran ist, schaut hin.',
+        how: [
+          'Hak die Kategorien an, die ihr wollt (anfangs alle; mindestens eine bleibt).',
+          'Wer dran ist, tippt auf „Begriff ziehen“ und schaut heimlich – die Ratenden nicht gucken lassen.',
+          'Handy weitergeben. Ein Begriff kommt erst wieder, wenn alle durch sind.',
+        ],
+        catLabel: 'Kategorien',
+        drawLabel: 'Begriff ziehen',
+      },
     },
   },
 
@@ -412,6 +469,20 @@ export const TOOLS = {
           'Le perdant mime la carte pendant que les autres sortent leur téléphone pour une rafale de photos.',
           'La personne suivante appuie à nouveau : jamais deux fois le même mime d’affilée.',
         ],
+      },
+      words: {
+        name: 'Générateur de mots à mimer',
+        short: 'Des mots au hasard pour mimer ou dessiner – plus de 300 en neuf catégories.',
+        seoTitle: 'Mots à mimer ou à dessiner : plus de 300 mots au hasard',
+        seoDesc: 'En panne d’idées pour un jeu de mimes ou de dessin ? Un toucher et voilà un mot au hasard : animaux, métiers, sports, vie quotidienne, nourriture, transports, objets, situations drôles et expressions – plus de 300 mots en neuf catégories. Choisissez seulement celles que vous voulez ; pas de doublon avant la fin du paquet. Sans appli, sans inscription.',
+        lead: 'Choisissez les catégories, tirez un mot – seul le mime regarde.',
+        how: [
+          'Cochez les catégories voulues (toutes par défaut ; gardez-en au moins une).',
+          'Celui qui passe touche « Tirer un mot » et regarde en cachette – les autres ne doivent pas voir.',
+          'Passez le téléphone au suivant. Aucun mot ne revient avant la fin du paquet.',
+        ],
+        catLabel: 'Catégories',
+        drawLabel: 'Tirer un mot',
       },
     },
   },
@@ -493,6 +564,20 @@ export const TOOLS = {
           '次の人がもう一度押せば別のお題。同じお題が続けて出ることはありません。',
         ],
       },
+      words: {
+        name: 'お題ガチャ',
+        short: 'ジェスチャーゲームやお絵かきのお題をランダムに。9 ジャンル 300 以上。',
+        seoTitle: 'お題ガチャ｜ジェスチャーゲーム・お絵かきのお題を 300 以上からランダムに',
+        seoDesc: 'ジェスチャーゲームやお絵かきゲームのお題に困ったら、タップ一回でランダムにお題を出します。動物、職業、スポーツ、日常、食べもの、乗りもの、もの、おもしろシチュエーション、ことわざ・慣用句の 9 ジャンル 300 以上。ジャンルは選べて、一巡するまで同じお題は出ません。アプリ不要・登録不要。',
+        lead: 'ジャンルを選んでお題を引く。見るのは出題する人だけ。',
+        how: [
+          '使いたいジャンルにチェック（最初は全部、ひとつは残します）。',
+          '出題する人が「お題を引く」を押して、こっそり確認。当てる人には見せないで。',
+          '終わったら次の人へ。全部引き終わるまで同じお題は出ません。',
+        ],
+        catLabel: 'ジャンル',
+        drawLabel: 'お題を引く',
+      },
     },
   },
 
@@ -573,6 +658,20 @@ export const TOOLS = {
           '다음 사람이 다시 누르면 돼요. 같은 동작이 연달아 나오지 않아요.',
         ],
       },
+      words: {
+        name: '제시어 뽑기',
+        short: '몸으로 말해요, 그림 퀴즈 제시어를 랜덤으로. 9가지 주제 300개 이상.',
+        seoTitle: '제시어 뽑기｜몸으로 말해요·그림 퀴즈 제시어 300개 이상 랜덤',
+        seoDesc: '몸으로 말해요, 그림 퀴즈 제시어가 고민이라면 한 번 누르면 랜덤으로 나와요. 동물, 직업, 스포츠, 일상, 음식, 탈것, 물건, 웃긴 상황, 속담·관용구까지 9가지 주제 300개 이상. 원하는 주제만 고를 수 있고, 한 바퀴 다 돌기 전엔 겹치지 않아요. 앱 설치·가입 없이 바로.',
+        lead: '주제를 고르고 제시어를 뽑아요. 문제 내는 사람만 보세요.',
+        how: [
+          '원하는 주제를 체크하세요(처음엔 전부, 하나는 남겨야 해요).',
+          '차례인 사람이 「제시어 뽑기」를 누르고 몰래 확인해요. 맞히는 사람은 보면 안 돼요.',
+          '끝나면 다음 사람에게. 전부 뽑기 전까지 같은 제시어는 안 나와요.',
+        ],
+        catLabel: '주제',
+        drawLabel: '제시어 뽑기',
+      },
     },
   },
 
@@ -652,6 +751,20 @@ export const TOOLS = {
           'Quien pierde imita la carta y los demás sacan el móvil para una ráfaga de fotos.',
           'La siguiente persona vuelve a pulsar: nunca sale la misma acción dos veces seguidas.',
         ],
+      },
+      words: {
+        name: 'Generador de palabras para mímica',
+        short: 'Palabras al azar para mímica o juegos de dibujo: más de 300 en nueve categorías.',
+        seoTitle: 'Palabras para mímica y Pictionary: más de 300 al azar',
+        seoDesc: '¿No sabes qué palabra poner en mímica o en un juego de dibujo? Toca una vez y sale una al azar: animales, oficios, deportes, día a día, comida, transporte, objetos, situaciones graciosas y refranes. Más de 300 palabras en nueve categorías; elige solo las que quieras y no se repiten hasta acabar el mazo. Sin app, sin registro.',
+        lead: 'Elige las categorías y saca una palabra: solo la mira quien actúa.',
+        how: [
+          'Marca las categorías que quieras (todas por defecto; deja al menos una).',
+          'A quien le toca pulsa «Sacar palabra» y la mira a escondidas: que no la vean los que adivinan.',
+          'Pasa el móvil al siguiente. Ninguna palabra se repite hasta acabar el mazo.',
+        ],
+        catLabel: 'Categorías',
+        drawLabel: 'Sacar palabra',
       },
     },
   },

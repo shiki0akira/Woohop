@@ -286,6 +286,10 @@
 .tool-panel { padding: 20px; display: grid; gap: 16px; justify-items: center; }
 .tool-panel > * { width: 100%; max-width: 520px; }
 .tool-h { margin: 0 0 12px; font-size: 18px; }
+/* 抽題目（2026-10-28）：卡片借動作抽卡的 .action-face，上面多一個類型標籤 */
+.word-cats { margin-top: 0; }
+.word-face { min-height: 150px; align-content: center; gap: 10px; }
+.word-name { font-size: clamp(28px, 8vw, 44px); }
 .tool-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 12px; }
 .tool-controls .field-label { font-size: 14px; font-weight: 800; color: var(--text-2); }
 .tool-beats { width: auto; }

@@ -65,60 +65,6 @@ export default {
   endGame: 'Hold to end the game',
   againButton: 'Play again',
 
-  categories: [
-    ['animals', 'Animals', [
-      'Kangaroo', 'Penguin', 'Elephant', 'Giraffe', 'Monkey', 'Crab', 'Octopus', 'Snake', 'Frog', 'Rabbit',
-      'Owl', 'Peacock', 'Crocodile', 'Koala', 'Dolphin', 'Butterfly', 'Bee', 'Rooster', 'Turtle', 'Lion',
-      'Eagle', 'Squirrel', 'Hedgehog', 'Mosquito', 'Shark', 'Gorilla', 'Hippo', 'Bat', 'Spider', 'Ostrich',
-      'Seal', 'Panda', 'Sloth', 'Snail', 'Woodpecker', 'Flamingo', 'Chameleon', 'T-rex',
-    ]],
-    ['jobs', 'Jobs', [
-      'Dentist', 'Magician', 'Traffic cop', 'Chef', 'Hairdresser', 'Firefighter', 'Photographer', 'Flight attendant', 'Conductor', 'Delivery driver',
-      'Personal trainer', 'Painter', 'Bus driver', 'Gardener', 'Doctor', 'Teacher', 'News anchor', 'Security guard', 'Boxer', 'DJ',
-      'Fortune teller', 'Pilot', 'Fisherman', 'Vet', 'Astronaut', 'Detective', 'Clown', 'Farmer', 'Carpenter', 'Mechanic',
-      'Bartender', 'Tour guide', 'Cheerleader', 'Model', 'Singer', 'YouTuber', 'Lifeguard', 'Bride',
-    ]],
-    ['sports', 'Sports', [
-      'Swimming', 'Archery', 'Boxing', 'High jump', 'Table tennis', 'Badminton', 'Basketball', 'Soccer', 'Bowling', 'Golf',
-      'Rowing', 'Skiing', 'Surfing', 'Ice skating', 'Weightlifting', 'Diving', 'Fencing', 'Jump rope', 'Cycling', 'Yoga',
-      'Rock climbing', 'Baseball', 'Tennis', 'Volleyball', 'Sumo wrestling', 'Long jump', 'Pole vault', 'Shot put', 'Javelin', 'Horse riding',
-      'Karate', 'Gymnastics', 'Figure skating', 'Snorkeling', 'Skateboarding', 'Hula hoop', 'Tug of war', 'Sprinting',
-    ]],
-    ['daily', 'Everyday life', [
-      'Brushing your teeth', 'Rush-hour train', 'Putting on a raincoat', 'Taking a selfie', 'Sneezing', 'Tying your shoes', 'Blow-drying your hair', 'Washing dishes', 'Playing video games', 'Hanging up laundry',
-      'Taking out the trash', 'Chasing the bus', 'Face mask', 'Black Friday shopping', 'Nodding off', 'Stepping on a scale', 'Opening a jar', 'Clipping your nails', 'Looking for your keys', 'Ironing',
-      'Opening an umbrella', 'Swatting a mosquito', 'Scratching an itch', 'Looking in the mirror', 'Mopping the floor', 'Putting on makeup', 'Shaving', 'Making the bed', 'Watering plants', 'Walking the dog',
-      'Yawning', 'Stretching', 'Scrolling on your phone', 'Parallel parking', 'Typing', 'Putting in contact lenses',
-    ]],
-    ['food', 'Food', [
-      'Eating spaghetti', 'Peeling a banana', 'Drinking bubble tea', 'Eating watermelon', 'Grilling burgers', 'Eating an ice cream cone', 'Cracking a lobster', 'Eating a hot chili', 'Making pizza', 'Toasting marshmallows',
-      'Eating corn on the cob', 'Blowing out birthday candles', 'Sipping hot soup', 'Eating a taco', 'Flipping pancakes', 'Frying an egg', 'Peeling an orange', 'Eating a giant sandwich', 'Slurping noodles', 'Eating popcorn',
-      'Chopping onions', 'Opening a soda', 'Eating sushi with chopsticks', 'Stretchy cheese pizza', 'Eating a lemon', 'Drinking coffee', 'Eating cake', 'Chewing gum', 'Eating a hot dog', 'Licking a lollipop',
-      'Eating ribs', 'Carving a turkey', 'Eating a burrito', 'Shaking a milkshake',
-    ]],
-    ['vehicles', 'Getting around', [
-      'Riding a motorbike', 'Driving a car', 'Taking a plane', 'Riding a train', 'Riding a bike', 'Paddling a kayak', 'Steering a ship', 'Taking the elevator', 'Riding a roller coaster', 'Riding a horse',
-      'Driving a tank', 'Hot-air balloon', 'Flying a helicopter', 'Riding a unicycle', 'Cable car', 'Driving an excavator', 'Skateboarding', 'Pushing a stroller', 'Fire truck', 'Merry-go-round',
-      'Submarine', 'Escalator', 'Hailing a taxi', 'Driving a truck', 'Riding a camel', 'Rocket launch', 'Pushing a shopping cart', 'Ambulance', 'Riding a sled', 'Pogo stick',
-    ]],
-    ['objects', 'Things', [
-      'Umbrella', 'Hair dryer', 'Vacuum cleaner', 'Toothbrush', 'Flashlight', 'Binoculars', 'Scissors', 'Stapler', 'Alarm clock', 'Selfie stick',
-      'Electric fan', 'Microwave', 'Washing machine', 'Mirror', 'Comb', 'Pillow', 'Mop', 'Broom', 'Fly swatter', 'Lighter',
-      'Camera', 'Headphones', 'Microphone', 'Keyboard', 'Remote control', 'Helmet', 'Suitcase', 'Hammock', 'Yo-yo', 'Kite',
-      'Slingshot', 'Fishing rod', 'Bow and arrow', 'Walking stick', 'Parachute', 'Candle', 'Bell', 'Clock',
-    ]],
-    ['scenes', 'Funny situations', [
-      'Slipping on a banana peel', 'Getting bitten by a mosquito', 'Eating something really spicy', 'Someone farted in the elevator', 'Spilling your drink', 'A pebble in your shoe', 'Getting struck by lightning', 'Slipping on ice', 'Can’t find a toilet', 'Oversleeping',
-      'Being chased by a dog', 'Broken zipper', 'Dropping your phone in the toilet', 'Burning your tongue on soup', 'Hand stuck in the door', 'Walking into a lamppost', 'Can’t stop hiccuping', 'Your leg fell asleep', 'No hot water in the shower', 'Windy bad hair day',
-      'Boss catches you slacking', 'Watching a horror movie', 'Winning the lottery', 'Cheating on a test', 'First date', 'Getting lost', 'Shirt on inside out', 'Catching a thief', 'Pooped on by a bird', 'Front row at a concert',
-    ]],
-    ['idioms', 'Idioms', [
-      'Break the ice', 'Raining cats and dogs', 'Cold feet', 'Spill the beans', 'Piece of cake', 'Hit the sack', 'Cry over spilled milk', 'Let the cat out of the bag', 'Bite the bullet', 'Butterflies in your stomach',
-      'Head in the clouds', 'Walking on eggshells', 'Couch potato', 'Elephant in the room', 'Break a leg', 'Pull someone’s leg', 'Hold your horses', 'Burn the midnight oil', 'Cut corners', 'Kill two birds with one stone',
-      'Over the moon', 'Under the weather', 'Bend over backwards', 'Get your ducks in a row', 'Hit the road', 'Jump on the bandwagon', 'Sit on the fence', 'Barking up the wrong tree', 'Turn the tables', 'Run like the wind',
-    ]],
-  ],
-
   leaveTitle: 'Back to the start?',
   leaveDesc: 'The game starts over.',
   leaveConfirm: 'Back to the start',

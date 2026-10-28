@@ -65,60 +65,6 @@ export default {
   endGame: 'Gedrückt halten zum Beenden',
   againButton: 'Noch mal spielen',
 
-  categories: [
-    ['animals', 'Tiere', [
-      'Känguru', 'Pinguin', 'Elefant', 'Giraffe', 'Affe', 'Krabbe', 'Krake', 'Schlange', 'Frosch', 'Hase',
-      'Eule', 'Pfau', 'Krokodil', 'Koala', 'Delfin', 'Schmetterling', 'Biene', 'Hahn', 'Schildkröte', 'Löwe',
-      'Adler', 'Eichhörnchen', 'Igel', 'Mücke', 'Hai', 'Gorilla', 'Nilpferd', 'Fledermaus', 'Spinne', 'Strauß',
-      'Robbe', 'Panda', 'Faultier', 'Schnecke', 'Specht', 'Flamingo', 'Chamäleon', 'Dackel',
-    ]],
-    ['jobs', 'Berufe', [
-      'Zahnarzt', 'Zauberer', 'Verkehrspolizist', 'Koch', 'Friseur', 'Feuerwehrmann', 'Fotograf', 'Flugbegleiterin', 'Dirigent', 'Paketbote',
-      'Fitnesstrainer', 'Maler', 'Busfahrer', 'Gärtner', 'Ärztin', 'Lehrerin', 'Nachrichtensprecher', 'Türsteher', 'Boxer', 'DJ',
-      'Wahrsagerin', 'Pilot', 'Fischer', 'Tierärztin', 'Astronaut', 'Detektiv', 'Clown', 'Bauer', 'Schreiner', 'Mechaniker',
-      'Barkeeper', 'Reiseleiter', 'Cheerleader', 'Model', 'Sänger', 'Schornsteinfeger', 'Rettungsschwimmer', 'Braut',
-    ]],
-    ['sports', 'Sport', [
-      'Schwimmen', 'Bogenschießen', 'Boxen', 'Hochsprung', 'Tischtennis', 'Badminton', 'Basketball', 'Fußball', 'Bowling', 'Golf',
-      'Rudern', 'Skifahren', 'Surfen', 'Schlittschuhlaufen', 'Gewichtheben', 'Turmspringen', 'Fechten', 'Seilspringen', 'Radfahren', 'Yoga',
-      'Klettern', 'Baseball', 'Tennis', 'Volleyball', 'Sumoringen', 'Weitsprung', 'Stabhochsprung', 'Kugelstoßen', 'Speerwerfen', 'Reiten',
-      'Karate', 'Turnen', 'Eiskunstlauf', 'Schnorcheln', 'Skateboarden', 'Hula-Hoop', 'Tauziehen', 'Sackhüpfen',
-    ]],
-    ['daily', 'Alltag', [
-      'Zähneputzen', 'Volle U-Bahn', 'Regenjacke anziehen', 'Selfie machen', 'Niesen', 'Schuhe binden', 'Haare föhnen', 'Abwaschen', 'Videospiele zocken', 'Wäsche aufhängen',
-      'Müll rausbringen', 'Dem Bus hinterherrennen', 'Gesichtsmaske', 'Schnäppchenjagd', 'Einnicken', 'Auf die Waage steigen', 'Glas aufschrauben', 'Nägel schneiden', 'Schlüssel suchen', 'Bügeln',
-      'Regenschirm aufspannen', 'Mücke erschlagen', 'Rücken kratzen', 'In den Spiegel schauen', 'Boden wischen', 'Schminken', 'Rasieren', 'Bett machen', 'Blumen gießen', 'Gassi gehen',
-      'Gähnen', 'Strecken', 'Am Handy scrollen', 'Einparken', 'Tippen', 'Kontaktlinsen einsetzen',
-    ]],
-    ['food', 'Essen', [
-      'Spaghetti essen', 'Banane schälen', 'Bubble Tea trinken', 'Wassermelone essen', 'Grillen', 'Eis essen', 'Hummer knacken', 'Scharfe Chili essen', 'Pizza belegen', 'Marshmallows rösten',
-      'Maiskolben essen', 'Geburtstagskerzen auspusten', 'Heiße Suppe schlürfen', 'Döner essen', 'Pfannkuchen wenden', 'Spiegelei braten', 'Orange schälen', 'Brezel essen', 'Nudeln schlürfen', 'Popcorn essen',
-      'Zwiebeln schneiden', 'Limo aufmachen', 'Sushi mit Stäbchen essen', 'Käsefäden ziehen', 'In eine Zitrone beißen', 'Kaffee trinken', 'Kuchen essen', 'Kaugummi kauen', 'Bratwurst essen', 'Am Lutscher lecken',
-      'Fondue', 'Weißwurst zuzeln', 'Milchshake schütteln', 'Brot schneiden',
-    ]],
-    ['vehicles', 'Unterwegs', [
-      'Motorrad fahren', 'Auto fahren', 'Fliegen', 'Zug fahren', 'Fahrrad fahren', 'Kajak paddeln', 'Schiff steuern', 'Aufzug fahren', 'Achterbahn fahren', 'Reiten',
-      'Panzer', 'Heißluftballon', 'Hubschrauber', 'Einrad fahren', 'Seilbahn', 'Bagger fahren', 'Tretroller', 'Kinderwagen schieben', 'Feuerwehrauto', 'Karussell',
-      'U-Boot', 'Rolltreppe', 'Taxi heranwinken', 'Lkw fahren', 'Kamelreiten', 'Raketenstart', 'Einkaufswagen schieben', 'Krankenwagen', 'Schlitten fahren', 'Traktor fahren',
-    ]],
-    ['objects', 'Gegenstände', [
-      'Regenschirm', 'Föhn', 'Staubsauger', 'Zahnbürste', 'Taschenlampe', 'Fernglas', 'Schere', 'Tacker', 'Wecker', 'Selfiestick',
-      'Ventilator', 'Mikrowelle', 'Waschmaschine', 'Spiegel', 'Kamm', 'Kissen', 'Wischmopp', 'Besen', 'Fliegenklatsche', 'Feuerzeug',
-      'Kamera', 'Kopfhörer', 'Mikrofon', 'Tastatur', 'Fernbedienung', 'Helm', 'Koffer', 'Hängematte', 'Jo-Jo', 'Drachen',
-      'Steinschleuder', 'Angel', 'Pfeil und Bogen', 'Gehstock', 'Fallschirm', 'Kerze', 'Glocke', 'Kuckucksuhr',
-    ]],
-    ['scenes', 'Lustige Situationen', [
-      'Auf einer Bananenschale ausrutschen', 'Von einer Mücke gestochen werden', 'Etwas sehr Scharfes essen', 'Jemand pupst im Aufzug', 'Getränk umkippen', 'Steinchen im Schuh', 'Vom Blitz getroffen werden', 'Auf Glatteis ausrutschen', 'Keine Toilette finden', 'Verschlafen',
-      'Von einem Hund gejagt werden', 'Reißverschluss kaputt', 'Handy fällt ins Klo', 'Zunge an heißer Suppe verbrennen', 'Hand in der Tür einklemmen', 'Gegen einen Laternenpfahl laufen', 'Schluckauf, der nicht aufhört', 'Eingeschlafenes Bein', 'Kein warmes Wasser unter der Dusche', 'Frisur vom Wind zerzaust',
-      'Chef erwischt dich beim Faulenzen', 'Horrorfilm schauen', 'Lotto-Gewinn', 'Spicken in der Prüfung', 'Erstes Date', 'Sich verlaufen', 'Pulli verkehrt herum an', 'Einen Dieb fangen', 'Vom Vogel getroffen werden', 'Erste Reihe beim Konzert',
-    ]],
-    ['idioms', 'Redewendungen', [
-      'Die Daumen drücken', 'Tomaten auf den Augen haben', 'Ins Fettnäpfchen treten', 'Die Katze aus dem Sack lassen', 'Auf den Arm nehmen', 'Den Nagel auf den Kopf treffen', 'Schwein haben', 'Ins kalte Wasser springen', 'Kalte Füße bekommen', 'Den Kopf in den Sand stecken',
-      'Mit dem falschen Fuß aufstehen', 'Zwei Fliegen mit einer Klappe schlagen', 'Auf Wolke sieben schweben', 'Eine Eselsbrücke bauen', 'Jemandem einen Bären aufbinden', 'Die Nase voll haben', 'Durch die Blume sagen', 'Wie ein Elefant im Porzellanladen', 'Die Ohren steif halten', 'Hals über Kopf',
-      'Sich ein Bein ausreißen', 'Den Faden verlieren', 'Mit den Hühnern ins Bett gehen', 'Ein Brett vor dem Kopf haben', 'Auf dem Holzweg sein', 'Den Löffel abgeben', 'Alles in Butter', 'Um den heißen Brei herumreden', 'Ins Gras beißen', 'Luftschlösser bauen',
-    ]],
-  ],
-
   leaveTitle: 'Zurück zum Anfang?',
   leaveDesc: 'Das Spiel beginnt von vorne.',
   leaveConfirm: 'Zurück zum Anfang',

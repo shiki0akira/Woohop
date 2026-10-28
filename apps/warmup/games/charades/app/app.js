@@ -24,9 +24,11 @@
     return n <= 3 ? 'free' : n <= 5 ? 2 : 1;
   }
 
+  var CATS = window.CHARADES.words; // [代號, 類型名稱, [題目...]]（全站共用的 apps/homepage/src/word-bank.mjs）
+
   // 開場的設定：題目類型（代號）、幾個人、每人比幾題（1、2 或 free 不限）。
   // 都不記上次選的（產品決定，跟倒放猜猜看一樣），每次打開都是預設值、馬上能玩
-  var prep = { cats: T.categories.map(function (c) { return c[0]; }), count: 6, per: defaultPer(6) };
+  var prep = { cats: CATS.map(function (c) { return c[0]; }), count: 6, per: defaultPer(6) };
   var screen = 'setup';
   var phase = 'draw';
   var roundNumber = 0; // 這一場比到第幾題
@@ -83,7 +85,7 @@
 
   // 題目類型：可複選、至少一類（最後一個不能取消）
   function renderCategories() {
-    T.categories.forEach(function (c) {
+    CATS.forEach(function (c) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'choice category-choice';
@@ -176,7 +178,7 @@
   function shuffleDeck() {
     var seen = {};
     deck = [];
-    T.categories.forEach(function (c) {
+    CATS.forEach(function (c) {
       if (prep.cats.indexOf(c[0]) < 0) return;
       c[2].forEach(function (word) {
         if (seen[word]) return;

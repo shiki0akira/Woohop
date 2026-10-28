@@ -115,12 +115,12 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions|words)",
       "destination": "/:lang/tools/:tool/",
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions|words)/index.html",
       "destination": "/:lang/tools/:tool/",
       "permanent": true
     },
@@ -456,7 +456,7 @@
       "destination": "/:lang/:page/index.html"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions|words)/",
       "destination": "/:lang/tools/:tool/index.html"
     },
     {

@@ -1,5 +1,5 @@
 /*
- * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/、recorder/）。2026-10-22，錄音機 2026-10-23
+ * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/、recorder/、actions/、words/）。2026-10-22，錄音機 2026-10-23，抽題目 2026-10-28
  *
  * 小工具本體就是遊戲裡用的那一份全站共用帶領元件 window.Leader（assets/game.js），這裡只負責：
  *   - 總覽頁：把爬蟲用的純文字連結換成有插圖的卡片（遊戲卡用 site.js 的 Site.card，工具卡自己畫）
@@ -20,8 +20,8 @@
 
   // ---------- 卡片 ----------
   // 錄音機跟倒放猜猜看用同一張插圖
-  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'toolActions' };
-  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB', actions: '#EE7B6A' };
+  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'toolActions', words: 'toolWords' };
+  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB', actions: '#EE7B6A', words: '#FF9419' };
   // 橫式卡：左邊插圖，右邊標題＋說明
   const hCard = ({ href, attr, art, color, name, desc }) => `<a class="game tool-card" href="${href}" ${attr}>
       <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${art}</svg></div>
@@ -71,6 +71,79 @@
     Leader.actionCard(root, {
       actions: tool.actions,
       onDraw: action => track('tool_action_drawn', { action: action[0] }),
+    });
+  }
+
+  // 抽題目：題庫跟比手畫腳同一份（src/word-bank.mjs）。勾選類型（至少留一類）→ 抽一題；
+  // 選了的類型洗成一副，同一個詞在兩類只留一個，整副抽完或換了類型才重洗（跟比手畫腳的 shuffleDeck 一樣）
+  if (tool.key === 'words') {
+    const I = T.items.words;
+    const cats = tool.words;
+    const picked = new Set(cats.map(c => c[0]));
+
+    root.appendChild(make('h2', 'tool-h', I.catLabel));
+    const grid = make('div', 'theme-grid word-cats');
+    root.appendChild(grid);
+    cats.forEach(c => {
+      const b = make('button', 'choice');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', 'true');
+      b.appendChild(make('span', 'choice-name', c[1]));
+      b.appendChild(make('span', 'choice-sub', c[2].slice(0, 2).join(lang.startsWith('zh') || lang === 'ja' ? '、' : ', ')));
+      b.addEventListener('click', () => {
+        if (picked.has(c[0])) {
+          if (picked.size === 1) return; // 最後一類不能取消
+          picked.delete(c[0]);
+        } else picked.add(c[0]);
+        b.setAttribute('aria-pressed', String(picked.has(c[0])));
+        deck = [];
+      });
+      grid.appendChild(b);
+    });
+
+    const card = make('div', 'action-card word-card');
+    const face = make('div', 'action-face word-face');
+    face.hidden = true;
+    const kind = make('span', 'badge word-kind');
+    const word = make('p', 'action-name word-name');
+    word.setAttribute('aria-live', 'polite');
+    face.appendChild(kind);
+    face.appendChild(word);
+    const btn = make('button', 'btn btn-lg btn-solid btn-block action-draw');
+    btn.type = 'button';
+    btn.innerHTML = '<svg aria-hidden="true"><use href="#i-dice"/></svg><span></span>';
+    btn.querySelector('span').textContent = I.drawLabel;
+    card.appendChild(face);
+    card.appendChild(btn);
+    // 抽一題放最上面：類型九張卡在手機上就佔滿一個畫面，放下面要一直捲
+    root.insertBefore(card, root.firstChild);
+
+    let deck = [];
+    let last = '';
+    const shuffle = () => {
+      const seen = new Set();
+      deck = [];
+      cats.filter(c => picked.has(c[0])).forEach(c => c[2].forEach(w => {
+        if (!seen.has(w)) { seen.add(w); deck.push([c[0], c[1], w]); }
+      }));
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      // 重洗後第一張不要剛好是上一題
+      if (deck.length > 1 && deck[deck.length - 1][2] === last) deck.unshift(deck.pop());
+    };
+    btn.addEventListener('click', () => {
+      if (!deck.length) shuffle();
+      const [id, name, w] = deck.pop();
+      last = w;
+      kind.textContent = name;
+      word.textContent = w;
+      face.hidden = false;
+      face.classList.remove('pop');
+      void face.offsetWidth;
+      face.classList.add('pop');
+      track('tool_word_drawn', { category: id });
     });
   }
 

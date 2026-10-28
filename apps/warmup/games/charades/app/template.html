@@ -44,7 +44,7 @@
           <p class="hint" id="rounds-hint"></p>
           <span class="field-label field-label-gap">{{categoryLabel}}</span>
           <p class="hint">{{categoryHint}}</p>
-          <!-- 勾選卡（設計系統的 .choice），app.js 依 T.categories 產生 -->
+          <!-- 勾選卡（設計系統的 .choice），app.js 依題庫（apps/homepage/src/word-bank.mjs）產生 -->
           <div class="category-grid" id="category-grid"></div>
         </section>
 
@@ -142,6 +142,7 @@
         lang: '{{lang}}',
         base: '{{base}}',
         T: {{stringsJson}},
+        words: {{wordsJson}},
       };
     </script>
     <script src="{{base}}/header.js?v={{assetVersion}}"></script>

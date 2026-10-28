@@ -15,7 +15,7 @@
   - **題卡** `syncCard()`：`#drawn[data-view]` 是 `word`（ready）或 `covered`（acting）；蓋起來時一律畫方塊（`renderMask`，沒露出的字是 `.mask-box`），給了類型就多一個黃色標籤 `#hint-kind` 直接寫類型。`started` 記這題按過「開始比！」沒：回上一步時藏起「跳過這題」、主要鍵變「繼續比！」。
   - **提示**：`giveKind()` 給類型、`giveChar()` 每按一次隨機多露一個字（`Array.from` 切字，只有字母數字算要猜的字；剩最後一個就停）。`hint` 每換一題重來。`renderMask()` 把每個單字包成 `.mask-word`（不換行）、空白是 `.mask-space`，字母語言才不會把一個字拆到兩行。
   - **再偷看一次**（`#peek`，跟倒放猜猜看一樣的小按鈕）：回到 ready，提示保留（2026-10-28 原本是按住偷看，使用者說沒反應，改成回上一步）。
-- **題庫**在 locale 的 `categories: [[代號, 名稱, [題目...]], ...]`，代號各語言一樣。`build.mjs` 的 `check()` 擋代號不一致、每類少於 25 題、類內重複。
+- **題庫**是全站共用的 `apps/homepage/src/word-bank.mjs`（2026-10-28 從 locale 搬過去，桌遊助手的「抽題目」也用），`build.mjs` 的 `tokens()` 用 `wordsFor(lang, 'act')` 只嵌比得出來的，頁面上是 `window.CHARADES.words`（app.js 的 `CATS`）。`check()` 呼叫 `checkWords()`：代號各語言一樣、每類少於 25 題、類內重複都會擋。
 - **結束鍵**：要按住 0.8 秒（`HOLD_MS`），只在 draw 那段出現。題數比完會自動結束。
 - 沒有聲音、沒有計時（2026-10-28 改成比到猜中為止，見 CONCEPT.md 第二節）。
 

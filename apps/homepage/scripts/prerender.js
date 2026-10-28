@@ -11,7 +11,7 @@
 //   /{lang}/games/    找遊戲
 //   /{lang}/combo/    破冰組合
 //   /{lang}/tools/    桌遊助手（阿瓦隆＋小工具總覽，2026-10-22）
-//   /{lang}/tools/truth-or-dare/、metronome/、names/、recorder/、actions/   小工具（全站共用的帶領元件 window.Leader）
+//   /{lang}/tools/truth-or-dare/、metronome/、names/、recorder/、actions/、words/   小工具（全站共用的帶領元件 window.Leader）
 //   /{lang}/about/    關於我們＋聯絡表單（舊的 /contact/ 轉過來），/{lang}/terms/  服務條款，/{lang}/privacy/  隱私權政策（2026-10-22）
 // 舊網址只有 /{lang}/，維持不變；其他是新增的。
 
@@ -23,6 +23,7 @@ import { TOOLS, TOOL_KEYS, TOOL_GAMES } from '../src/tools-strings.mjs';
 import { SLOT } from '../src/slot-prompts.mjs';
 import { THEMES, groupsFor } from '../src/name-pools.mjs';
 import { actionsFor, checkActions } from '../src/action-cards.mjs';
+import { wordsFor, checkWords } from '../src/word-bank.mjs';
 
 import { ABOUT, FEEDBACK_TYPES } from '../src/about-strings.mjs';
 import { TERMS } from '../src/terms-strings.mjs';
@@ -30,6 +31,7 @@ import { TERMS } from '../src/terms-strings.mjs';
 // 小工具頁、關於／隱私頁的文案併進當頁語言的 STRINGS（s.tools、s.about），head／jsonLd／window.WOOHOP.t 都讀得到
 // 動作抽卡：每個動作代號都要有插圖（woohop-art.js 的 actionArt）
 checkActions(readFileSync(path.resolve('assets/woohop-art.js'), 'utf8'));
+checkWords();
 for (const lang of LANGS) Object.assign(STRINGS[lang], { tools: TOOLS[lang], about: { ...ABOUT[lang], terms: TERMS[lang] } });
 const isTool = (page) => TOOL_KEYS.includes(page);
 
@@ -38,7 +40,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-10-28j';
+const ASSET_VERSION = '2026-10-28k';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -431,6 +433,8 @@ const toolPage = (key) => (lang) => {
   const tool = { key };
   if (key === 'truthOrDare') tool.slot = SLOT[lang];
   if (key === 'actions') tool.actions = actionsFor(lang);
+  // 抽題目：跟比手畫腳同一份題庫，只拿比得出來的
+  if (key === 'words') tool.words = wordsFor(lang, 'act');
   if (key === 'names') tool.names = { themes: THEMES, groups: Object.fromEntries(THEMES.map((th) => [th, groupsFor(th, lang)])) };
   const games = TOOL_GAMES[key].filter((k) => gameInLang(k, lang));
   return `${head(s, lang, key, it.seoTitle, it.seoDesc, jsonLd(s, lang, key, it.seoTitle, it.seoDesc), ['game.css'])}

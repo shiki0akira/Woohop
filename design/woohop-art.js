@@ -206,6 +206,13 @@
       ${body('<circle cx="39" cy="95" r="10"/>', '#ffffff', '', false)}<circle cx="39" cy="95" r="4" fill="#22222c"/>
       ${burst(22, 62, '#FFC628')}`;
     },
+    // 抽題目（桌遊助手，2026-10-28）：一疊題卡，最上面那張畫三個方塊（跟比手畫腳蓋起來的題目一樣）
+    toolWords: () => `
+      ${ground}${burst(140, 22, '#FFC628')}${ring(22, 34, '#4FB59A')}${plus(144, 94, '#7489E6')}${dot(20, 94, '#EE7B6A')}
+      <g transform="rotate(-12 60 70)">${body('<rect x="33" y="34" width="54" height="72" rx="9"/>', '#fbbff5')}</g>
+      <g transform="rotate(10 100 70)">${body('<rect x="73" y="34" width="54" height="72" rx="9"/>', '#aebcf3')}</g>
+      ${body('<rect x="44" y="26" width="72" height="80" rx="10"/>', '#ffc27a', '<path d="M100 18h24v96h-24z" fill="#FF9419"/>')}
+      ${[-19, 0, 19].map((dx) => `<rect x="${80 + dx - 7.5}" y="58" width="15" height="15" rx="3.5" fill="#ffffff" stroke="#22222c" stroke-width="3"/>`).join('')}`,
     // 桌遊助手的小工具（2026-10-22）：拉霸機、節拍器（擺錘正中間、不放表情）、一疊名稱卡
     toolSlot: () => `
       ${ground}${burst(140, 22, '#FFC628')}${ring(22, 32, '#EE7B6A')}${dot(150, 96, '#7489E6', 4)}

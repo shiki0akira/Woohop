@@ -7,7 +7,7 @@ export const TYPE_LABEL = {
 };
 // 「跟哪個遊戲有關」：site 是網站整體；空字串是沒選
 export const GAMES = ['', 'site', 'match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'orchard', 'reverse', 'statue', 'charades', 'avalon',
-  'truthOrDare', 'metronome', 'names', 'recorder', 'actions'];
+  'truthOrDare', 'metronome', 'names', 'recorder', 'actions', 'words'];
 export const LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 
 export const MESSAGE_MIN = 5;
