@@ -57,7 +57,7 @@ export default {
   rulesTitle: 'Comment jouer à 1, 2, 3, soleil ! – version mimes',
   rulesIntro: 'Comme 1, 2, 3, soleil !, mais chacun tire d’abord une carte mime et doit avancer en la mimant. Bouger quand le meneur se retourne, ou ne pas mimer sa carte : on est pris.',
   rulesFacts: [
-    ['Joueurs', '5 à 30'],
+    ['Joueurs', '4 à 30'],
     ['Durée', 'Aussi longtemps que vous voulez'],
     ['Matériel', 'Un peu d’espace et le téléphone de l’animateur'],
   ],
