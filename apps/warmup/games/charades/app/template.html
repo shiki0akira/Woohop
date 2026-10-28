@@ -9,7 +9,7 @@
     {{header}}
 
     <main id="main" class="charades-main game-main">
-      <!-- 第 1 步：開場。選題目類型（可複選）、每題時間。上方的步驟頭是全站共用的 Leader.lead -->
+      <!-- 第 1 步：開場。選題目類型（可複選）、幾個人、每人比幾題。上方的步驟頭是全站共用的 Leader.lead -->
       <div class="view" id="view-setup">
         <div class="page-head">
           <nav class="crumbs" aria-label="breadcrumb">
@@ -26,8 +26,26 @@
           <p class="hint">{{categoryHint}}</p>
           <!-- 勾選卡（設計系統的 .choice），app.js 依 T.categories 產生 -->
           <div class="category-grid" id="category-grid"></div>
-          <span class="field-label field-label-gap">{{timeLabel}}</span>
-          <div class="seg seg-3" role="radiogroup" aria-label="{{timeLabel}}" id="time-seg"></div>
+          <!-- 人數和每人幾題並排，題數＝人數 × 每人題數（照倒放猜猜看） -->
+          <div class="setup-row">
+            <div>
+              <span class="field-label">{{countLabel}}</span>
+              <div class="stepper">
+                <button type="button" id="count-less" aria-label="{{countLess}}">−</button>
+                <output id="count-value" aria-live="polite"></output>
+                <button type="button" id="count-more" aria-label="{{countMore}}">+</button>
+              </div>
+            </div>
+            <div class="per-field">
+              <span class="field-label">{{perLabel}}</span>
+              <div class="seg seg-3" role="radiogroup" aria-label="{{perLabel}}">
+                <label class="seg-item"><input type="radio" name="per" value="1">{{per1}}</label>
+                <label class="seg-item"><input type="radio" name="per" value="2">{{per2}}</label>
+                <label class="seg-item"><input type="radio" name="per" value="free">{{perFree}}</label>
+              </div>
+            </div>
+          </div>
+          <p class="hint" id="rounds-hint"></p>
         </section>
 
         <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
@@ -43,10 +61,14 @@
 
       <!--
         第 3 步：上台。手機在比的人手上，不放步驟頭。分四段（data-phase），一次只露一段：
-          draw 抽題目 → ready 看題目（開始比／換一題）→ acting 倒數中（猜中了／換一題）→ result 猜中或時間到、下一個人 → draw
+          draw 抽題目 → ready 看題目（開始比／跳過這題）→ acting 比到有人猜中（猜中了／跳過這題／提示）→ result 猜中了、下一個人 → draw
       -->
       <div class="view" id="view-play" data-phase="draw" hidden>
-        <p class="turn-no" id="turn-no"></p>
+        <!-- 第幾題（設計系統的進度條）；不限題數時只有字 -->
+        <div class="round-progress">
+          <p class="round-no"><span id="round-no"></span> · <span id="turn-who"></span></p>
+          <div class="progress" id="round-progress"><div id="round-bar" style="--p:0%"></div></div>
+        </div>
         <div class="namer">
           <section class="panel name-card" id="card" data-stage="draw">
             <div class="name-stage stage-draw">
@@ -55,27 +77,29 @@
               <p class="hint">{{drawHint}}</p>
             </div>
             <div class="name-stage stage-reveal">
-              <div class="drawn-card" id="drawn">
+              <!-- 提示打開時題目藏起來、只露出幾個字（data-hint），比的人可以把手機轉給大家看 -->
+              <div class="drawn-card" id="drawn" data-hint="off">
                 <span class="badge" id="card-kind"></span>
                 <p class="drawn-name" id="card-text" aria-live="polite"></p>
-              </div>
-              <!-- 倒數（acting 才出現）：設計系統的進度條＋秒數 -->
-              <div class="timer phase-acting">
-                <div class="progress" id="timer-bar"><div style="--p:100%"></div></div>
-                <span class="timer-sec" id="timer-sec"></span>
+                <span class="badge hint-badge">{{hintLabel}}</span>
+                <p class="hint-mask" id="hint-mask" aria-live="polite"></p>
               </div>
               <div class="pass-row">
-                <!-- 主要鍵在左、換一題在右（跟倒放猜猜看一樣）。ready 是「開始比！」，acting 換成「猜中了！」 -->
+                <!-- 主要鍵在左、跳過在右（跟倒放猜猜看一樣）。ready 是「開始比！」，acting 換成「猜中了！」 -->
                 <button class="btn btn-lg btn-solid pass-bar phase-ready" id="act-start" type="button">{{startActing}}</button>
                 <button class="btn btn-lg btn-solid pass-bar phase-acting" id="got-it" type="button">{{gotIt}}</button>
                 <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
               </div>
+              <!-- 提示（acting 才有）：第一次按打開，之後每按一次多露一個字；收起回到題目 -->
+              <div class="hint-row phase-acting">
+                <button class="btn btn-secondary" id="hint-btn" type="button">{{hintButton}}</button>
+                <button class="link hint-hide" id="hint-hide" type="button" hidden>{{hintHide}}</button>
+              </div>
             </div>
-            <!-- result：猜中了，或時間到公布答案（大家都看得到） -->
             <div class="name-stage stage-result">
-              <p class="result-title" id="result-title"></p>
+              <p class="result-title">{{gotItResult}}</p>
               <p class="result-answer" id="result-answer"></p>
-              <p class="hint" id="result-hint"></p>
+              <p class="hint">{{gotItHint}}</p>
               <button class="btn btn-lg btn-solid btn-block" id="next-turn" type="button">{{nextTurn}}</button>
             </div>
           </section>

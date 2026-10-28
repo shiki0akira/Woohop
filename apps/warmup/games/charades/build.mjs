@@ -21,9 +21,7 @@ export function check({ LANGS, STRINGS, DEFAULT_LANG }) {
   }
 }
 
-export function gameBar({ page, strings }) {
-  return {
-    // 沒有「設定」分頁（開場就能選）；聲音開關（倒數的嗶聲）在遊戲頁的頂欄，玩法頁沒有聲音
-    musicLabel: page.dir === 'rules' ? '' : strings.soundLabel,
-  };
+export function gameBar() {
+  // 沒有聲音（不計時了）、沒有設定分頁（開場就能選）
+  return { musicLabel: '' };
 }

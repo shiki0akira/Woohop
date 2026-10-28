@@ -14,7 +14,19 @@
 /* ---------- 開場：題目類型（可複選的勾選卡）、每題時間 ---------- */
 .setup-panel .field-label:first-child { margin-top: 0; }
 .setup-panel .hint { margin: 2px 0 10px; }
-.field-label-gap { margin-top: 18px; }
+/* 人數和每人幾題並排（照倒放猜猜看的 .setup-row）；電腦版每人幾題自己一行 */
+.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 18px; }
+.setup-row .field-label { margin-top: 0; }
+.per-field { flex: 1 1 140px; }
+@media (min-width: 600px) {
+  .setup-row { gap: 18px 12px; }
+  .per-field { flex-basis: 100%; }
+}
+.setup-row .stepper button { width: 44px; height: 48px; }
+.setup-row .stepper button:disabled { opacity: .4; cursor: default; }
+.setup-row .stepper output { min-width: 48px; }
+.per-field .seg-item { padding: 0 2px; }
+#rounds-hint { margin: 10px 0 0; }
 /* 九類：共用 .choice 的最小高度 136px 排起來太長，改成三欄的小卡（例子只留一行，太長就省略） */
 .category-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .category-choice { min-height: 0; padding: 12px 6px 10px; gap: 2px; }
@@ -26,7 +38,12 @@
 #view-play:not([data-phase="draw"]) .phase-draw,
 #view-play:not([data-phase="ready"]) .phase-ready,
 #view-play:not([data-phase="acting"]) .phase-acting { display: none; }
-.turn-no { margin: 20px 0 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+
+/* 第幾題・輪到第幾個人＋進度條（照倒放猜猜看的 .round-progress） */
+.round-progress { display: grid; gap: 8px; margin-top: 20px; }
+.round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+.round-progress .progress { max-width: none; }
+.round-progress .progress[hidden] { display: none; }
 
 /*
  * 題卡：照抽卡取名（.namer 的樣式在 game.css）。抽卡取名只有 choose／own／reveal 三面，
@@ -40,12 +57,19 @@
 .charades-app .namer .drawn-name { color: var(--blue-text); word-break: normal; text-wrap: balance; }
 .charades-app .namer .drawn-card .badge { background: var(--surface); color: var(--blue-text); border-color: var(--blue-edge); }
 
-/* 倒數：進度條＋右邊的秒數，剩 5 秒變紅 */
-.timer { display: flex; align-items: center; gap: 12px; }
-.timer .progress { flex: 1; max-width: none; }
-.timer .progress > div { transition: none; }
-.timer-sec { flex: none; min-width: 2.2em; text-align: right; font-size: 28px; font-weight: 900; font-variant-numeric: tabular-nums; }
-.timer-sec.is-hurry { color: #e0503c; }
+/*
+ * 提示：打開時題目和類型藏起來，換成「提示」標籤＋只露出幾個字的題目（○○梯○），
+ * 比的人可以把手機轉給大家看（app.js 的 showHint）
+ */
+.charades-app .hint-badge, .hint-mask { display: none; }
+.charades-app .drawn-card[data-hint="on"] #card-kind,
+.charades-app .drawn-card[data-hint="on"] .drawn-name { display: none; }
+.charades-app .drawn-card[data-hint="on"] .hint-badge { display: inline-flex; background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
+.charades-app .drawn-card[data-hint="on"] .hint-mask { display: block; }
+.hint-mask { margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; letter-spacing: .08em; color: var(--blue-text); overflow-wrap: anywhere; }
+.hint-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.hint-hide { border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; padding: 4px 0; }
+.hint-hide[hidden] { display: none; }
 
 /* result：大字標題＋答案 */
 .stage-result { justify-items: center; text-align: center; }
@@ -61,6 +85,3 @@
 }
 .end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
-
-/* 頂欄的聲音開關（倒數的嗶聲）在第 1 步藏起來：還沒有聲音 */
-.charades-app[data-screen="setup"] .game-music { display: none; }
