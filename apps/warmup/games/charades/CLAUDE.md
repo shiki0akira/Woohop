@@ -6,7 +6,7 @@
 
 ## `app/app.js` 的結構
 
-- **一步一步帶**：`setup`（題目類型、每題時間）→ `rules` → `play` → `end`，用 `showScreen()` 切換。返回鍵一律回第一頁；已經比過題目就先確認。
+- **一步一步帶**：`setup`（題目類型、幾個人、每人比幾題）→ `rules` → `play` → `end`，用 `showScreen()` 切換。返回鍵一律回第一頁；已經比過題目就先確認。
 - **開場設定**存在 `localStorage`（`web100-charades-prep`）：`cats`（題目類型代號，可複選、至少一類）、`count`（2～30 人）、`per`（1／2／free）。題數＝人數 × 每人題數，照倒放猜猜看。
   - 題目類型是設計系統的 `.choice` 勾選卡，九類太長所以 app.css 改成三欄小卡（打勾移到角落外側，四個字的名稱才不會被擋）。
 - **play 分四段** `setPhase()`：`draw`（一疊卡）→ `ready`（翻出題目，開始比／跳過這題）→ `acting`（猜中了／跳過這題／提示）→ `result`（猜中了，下一個人；最後一題變「看結果」直接結束）。`renderRound()` 顯示第幾題、輪到第幾個人（人數取餘數輪下去）。CSS 看 `#view-play` 的 `data-phase`（`.phase-draw`／`.phase-ready`／`.phase-acting`），題卡自己的三面看 `data-stage`（draw／reveal／result）。
