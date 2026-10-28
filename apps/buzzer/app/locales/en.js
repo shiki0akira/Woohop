@@ -14,7 +14,7 @@ export default {
   "heroDesc": "A buzzer for parties, classrooms and company events. The host opens a room, everyone else scans the QR code, and the buzz order shows up live. No app to install, no account to create.",
   "createHeading": "Create a room",
   "maxPlayersLabel": "Expected players",
-  "maxPlayersHint": "2–30 players, not counting the host",
+  "maxPlayersHint": "2–50 players, not counting the host",
   "createButton": "Create room",
   "creating": "Creating…",
   "joinHeading": "Join an existing room",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "Players",
-      "2–30, plus one host"
+      "2–50, plus one host"
     ],
     [
       "Time",

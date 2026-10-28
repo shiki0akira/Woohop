@@ -18,7 +18,7 @@ export default {
   "heroDesc": "每个人一张宾果卡，格子里不是数字是描述。到现场找到符合的人，对方在自己手机上按确认才算数。连成主持人指定的条数就获胜。",
   "createHeading": "创建房间",
   "maxPlayersLabel": "预计人数",
-  "maxPlayersHint": "2～30 人，含你自己。两个人就玩得起来。",
+  "maxPlayersHint": "2～50 人，含你自己。两个人就玩得起来。",
   "createButton": "创建房间",
   "creating": "创建中…",
   "createFailed": "创建房间失败，再试一次。",
@@ -163,7 +163,7 @@ export default {
   "rulesFacts": [
     [
       "人数",
-      "2～30 人，8 人以上最好玩"
+      "2～50 人，8 人以上最好玩"
     ],
     [
       "时间",

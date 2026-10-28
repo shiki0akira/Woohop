@@ -14,7 +14,7 @@ export default {
   "heroDesc": "聚会、上课、公司活动用的抢答器。主持人开房间、其他人扫二维码加入，按下去就实时排名。不用下载 App，也不用注册账号。",
   "createHeading": "建立房间",
   "maxPlayersLabel": "预计人数",
-  "maxPlayersHint": "2～30 人，不含主持人自己",
+  "maxPlayersHint": "2～50 人，不含主持人自己",
   "createButton": "建立房间",
   "creating": "建立中…",
   "joinHeading": "加入现有房间",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "人数",
-      "2～30 人，另外一位主持人"
+      "2～50 人，另外一位主持人"
     ],
     [
       "时间",

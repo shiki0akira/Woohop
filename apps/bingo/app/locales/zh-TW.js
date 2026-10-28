@@ -19,7 +19,7 @@ export default {
   "heroDesc": "每個人一張賓果卡，格子裡不是數字是描述。到現場找到符合的人，對方在自己手機上按確認才算數。連成主持人指定的條數就獲勝。",
   "createHeading": "建立房間",
   "maxPlayersLabel": "預計人數",
-  "maxPlayersHint": "2～30 人，含你自己。兩個人就玩得起來。",
+  "maxPlayersHint": "2～50 人，含你自己。兩個人就玩得起來。",
   "createButton": "建立房間",
   "creating": "建立中…",
   "createFailed": "建立房間失敗，再試一次。",
@@ -164,7 +164,7 @@ export default {
   "rulesFacts": [
     [
       "人數",
-      "2～30 人，8 人以上最好玩"
+      "2～50 人，8 人以上最好玩"
     ],
     [
       "時間",

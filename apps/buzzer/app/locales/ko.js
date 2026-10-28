@@ -14,7 +14,7 @@ export default {
   "heroDesc": "모임, 수업, 사내 행사를 위한 버저입니다. 진행자가 방을 열면 나머지는 QR 코드만 스캔하면 되고, 누른 순서가 바로 표시됩니다. 설치할 앱도, 만들 계정도 없습니다.",
   "createHeading": "방 만들기",
   "maxPlayersLabel": "예상 인원",
-  "maxPlayersHint": "2~30명, 진행자 본인은 제외",
+  "maxPlayersHint": "2~50명, 진행자 본인은 제외",
   "createButton": "방 만들기",
   "creating": "만드는 중…",
   "joinHeading": "기존 방에 참여",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "인원",
-      "2~30명 + 진행자 1명"
+      "2~50명 + 진행자 1명"
     ],
     [
       "시간",

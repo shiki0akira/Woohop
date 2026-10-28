@@ -14,7 +14,7 @@ export default {
   "heroDesc": "パーティー、授業、社内イベント向けの早押しブザー。ホストがルームを開き、ほかの人はQRコードを読み取るだけ。押した順番がその場で表示されます。アプリのインストールもアカウント登録も要りません。",
   "createHeading": "ルームを作る",
   "maxPlayersLabel": "参加予定人数",
-  "maxPlayersHint": "2〜30人。ホスト自身は含みません",
+  "maxPlayersHint": "2〜50人。ホスト自身は含みません",
   "createButton": "ルームを作る",
   "creating": "作成中…",
   "joinHeading": "既存のルームに参加",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "人数",
-      "2〜30人＋ホスト1人"
+      "2〜50人＋ホスト1人"
     ],
     [
       "時間",

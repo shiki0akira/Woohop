@@ -30,7 +30,7 @@
 
   // 跟 src/worker.js 的同名常數一致，兩邊要一起改
   var MIN_PLAYERS = 2;
-  var MAX_PLAYERS = 30;
+  var MAX_PLAYERS = 50; // 2026-10-28 從 30 提高：尾牙、營會這類大型活動
 
   var CHEVRON =
     '<svg class="chevron" xmlns="http://www.w3.org/2000/svg" height="20" width="20" ' +

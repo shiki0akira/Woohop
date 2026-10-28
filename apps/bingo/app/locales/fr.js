@@ -17,7 +17,7 @@ export default {
   "heroDesc": "Chacun reçoit une carte de bingo. Dans les cases, pas de numéros mais des phrases comme « Quelqu’un qui vient au groupe pour la première fois cette année ». Trouve cette personne dans la salle : elle confirme sur son propre téléphone. Complète autant de lignes que l’animateur l’a demandé et tu gagnes.",
   "createHeading": "Ouvrir une salle",
   "maxPlayersLabel": "Nombre de participants prévu",
-  "maxPlayersHint": "2 à 30 personnes, toi compris. À deux, ça marche déjà.",
+  "maxPlayersHint": "2 à 50 personnes, toi compris. À deux, ça marche déjà.",
   "createButton": "Ouvrir une salle",
   "creating": "Création…",
   "createFailed": "Impossible d’ouvrir la salle. Réessaie.",
@@ -162,7 +162,7 @@ export default {
   "rulesFacts": [
     [
       "Joueurs",
-      "2 à 30, idéal à partir de 8"
+      "2 à 50, idéal à partir de 8"
     ],
     [
       "Durée",

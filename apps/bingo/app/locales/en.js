@@ -13,7 +13,7 @@ export default {
   "heroDesc": "Everyone gets a bingo card. The squares are not numbers — they say things like \"Someone at small group for the first time this year\". Find that person in the room and they confirm on their own phone. Complete as many lines as the host asks for and you win.",
   "createHeading": "Create room",
   "maxPlayersLabel": "Expected players",
-  "maxPlayersHint": "2–30 players, including you. Two is enough to play.",
+  "maxPlayersHint": "2–50 players, including you. Two is enough to play.",
   "createButton": "Create room",
   "creating": "Creating…",
   "createFailed": "Could not create the room. Try again.",
@@ -158,7 +158,7 @@ export default {
   "rulesFacts": [
     [
       "Players",
-      "2–30, best with 8 or more"
+      "2–50, best with 8 or more"
     ],
     [
       "Time",

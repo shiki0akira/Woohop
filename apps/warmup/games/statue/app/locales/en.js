@@ -57,7 +57,7 @@ export default {
   rulesTitle: 'How to play Red Light, Green Light: Action Edition',
   rulesIntro: 'It’s Red Light, Green Light, but everyone draws a move card first and has to move forward that way. Still moving when It turns around, or not moving the way your card says? You’re caught.',
   rulesFacts: [
-    ['Players', '4–30'],
+    ['Players', '4–50'],
     ['Time', 'As long as you like'],
     ['You need', 'Some open space and the host’s phone'],
   ],

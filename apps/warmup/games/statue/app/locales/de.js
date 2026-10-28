@@ -57,7 +57,7 @@ export default {
   rulesTitle: 'Ochs am Berg – Bewegungs-Edition: So wird’s gespielt',
   rulesIntro: 'Wie Ochs am Berg, nur ziehen alle zuerst eine Bewegungskarte und müssen sich genau so nach vorne bewegen. Wer sich beim Umdrehen des Ochs noch bewegt oder nicht wie auf der Karte geht, ist erwischt.',
   rulesFacts: [
-    ['Personen', '4–30'],
+    ['Personen', '4–50'],
     ['Dauer', 'So lange ihr wollt'],
     ['Material', 'Etwas Platz und das Handy der Spielleitung'],
   ],

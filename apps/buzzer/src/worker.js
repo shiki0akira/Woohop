@@ -25,7 +25,7 @@ const CODE_LENGTH = 4;
 const MAX_CREATE_ATTEMPTS = 5;
 
 const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 30;
+const MAX_PLAYERS = 50; // 2026-10-28 從 30 提高：尾牙、營會這類大型活動
 
 // 正式網域上的頁面由 Vercel 代理過來，但 API 與 WebSocket 是直連這個 Worker，
 // 所以建房那支 POST 會是跨來源請求，要放行。只放行正式網域，不用 *。

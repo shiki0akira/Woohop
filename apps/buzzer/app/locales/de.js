@@ -14,7 +14,7 @@ export default {
   "heroDesc": "Ein Buzzer für Partys, Unterricht und Firmenevents. Die Spielleitung öffnet einen Raum, alle anderen scannen den QR-Code, und die Reihenfolge erscheint sofort. Keine App, kein Konto.",
   "createHeading": "Raum erstellen",
   "maxPlayersLabel": "Erwartete Teilnehmerzahl",
-  "maxPlayersHint": "2 bis 30 Personen, ohne die Spielleitung",
+  "maxPlayersHint": "2 bis 50 Personen, ohne die Spielleitung",
   "createButton": "Raum erstellen",
   "creating": "Wird erstellt …",
   "joinHeading": "Bestehendem Raum beitreten",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "Spieler",
-      "2–30, dazu eine Spielleitung"
+      "2–50, dazu eine Spielleitung"
     ],
     [
       "Dauer",

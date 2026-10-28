@@ -14,7 +14,7 @@ export default {
   "heroDesc": "Un buzzer pour les soirées, les cours et les événements d’entreprise. L’animateur ouvre une salle, les autres scannent le QR code, et l’ordre des buzz apparaît aussitôt. Rien à installer, aucun compte à créer.",
   "createHeading": "Créer une salle",
   "maxPlayersLabel": "Nombre de participants prévu",
-  "maxPlayersHint": "De 2 à 30 personnes, animateur non compris",
+  "maxPlayersHint": "De 2 à 50 personnes, animateur non compris",
   "createButton": "Créer la salle",
   "creating": "Création…",
   "joinHeading": "Rejoindre une salle existante",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "Joueurs",
-      "2 à 30, plus un animateur"
+      "2 à 50, plus un animateur"
     ],
     [
       "Durée",

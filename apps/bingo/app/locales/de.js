@@ -18,7 +18,7 @@ export default {
   "heroDesc": "Jeder bekommt eine Bingokarte. In den Feldern stehen keine Zahlen, sondern Sätze wie „Jemand, der dieses Jahr zum ersten Mal in der Gruppe war“. Finde diese Person im Raum — sie bestätigt auf ihrem eigenen Handy. Wer so viele Reihen schafft wie angesagt, hat gewonnen.",
   "createHeading": "Raum eröffnen",
   "maxPlayersLabel": "Erwartete Teilnehmerzahl",
-  "maxPlayersHint": "2–30 Personen, dich mitgezählt. Zu zweit geht es schon.",
+  "maxPlayersHint": "2–50 Personen, dich mitgezählt. Zu zweit geht es schon.",
   "createButton": "Raum eröffnen",
   "creating": "Wird eröffnet…",
   "createFailed": "Der Raum konnte nicht eröffnet werden. Versuch es noch einmal.",
@@ -163,7 +163,7 @@ export default {
   "rulesFacts": [
     [
       "Spieler",
-      "2–30, am schönsten ab 8"
+      "2–50, am schönsten ab 8"
     ],
     [
       "Dauer",

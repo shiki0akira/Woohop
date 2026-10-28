@@ -17,7 +17,7 @@ export default {
   "heroDesc": "Cada persona recibe un cartón de bingo. En las casillas no hay números, sino frases como «Alguien que vino al grupo por primera vez este año». Encuentra a esa persona en la sala: ella confirma en su propio móvil. Completa tantas líneas como pida quien dirige y ganas.",
   "createHeading": "Abrir sala",
   "maxPlayersLabel": "Personas previstas",
-  "maxPlayersHint": "De 2 a 30 personas, contándote a ti. Con dos ya se puede.",
+  "maxPlayersHint": "De 2 a 50 personas, contándote a ti. Con dos ya se puede.",
   "createButton": "Abrir sala",
   "creating": "Creando…",
   "createFailed": "No se pudo abrir la sala. Inténtalo otra vez.",
@@ -162,7 +162,7 @@ export default {
   "rulesFacts": [
     [
       "Jugadores",
-      "De 2 a 30, mejor a partir de 8"
+      "De 2 a 50, mejor a partir de 8"
     ],
     [
       "Tiempo",

@@ -43,16 +43,16 @@
    */
   const GAMES = [
     { key: 'match',   players: [5, 30], minutes: 8,  phones: 'each', purpose: ['know'],           color: '#F3A4FB' },
-    { key: 'bingo',   players: [8, 30], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
+    { key: 'bingo',   players: [8, 50], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
     { key: 'bomb',    players: [4, 15], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
-    { key: 'buzzer',  players: [5, 30], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
+    { key: 'buzzer',  players: [5, 50], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
     { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A', added: '2026-10-20' },
     { key: 'avalon',  players: [5, 10], minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器
     { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', added: '2026-10-22' },
     { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', added: '2026-10-21' },
     { key: 'reverse', players: [2, 20], minutes: 10, phones: 'one',  purpose: ['warmup'],         color: '#F3A4FB', added: '2026-10-23' },
-    { key: 'statue',  players: [4, 30], minutes: 10, phones: 'none', purpose: ['warmup'],         color: '#FFC628', added: '2026-10-28' },
+    { key: 'statue',  players: [4, 50], minutes: 10, phones: 'none', purpose: ['warmup'],         color: '#FFC628', added: '2026-10-28' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
@@ -85,6 +85,7 @@
    * 條件同步到網址（?people=5-15&phones=each），首頁的「看全部遊戲」帶著條件過去。
    */
   const FILTERS = {
+    // 最後一格顯示「30–50」（2026-10-28 賓果、搶答、木頭人提高到 50 人）；數值維持 31-99，舊的分享網址照樣能用
     people:  { label: t.fPeople,  type: 'one',  values: ['2-4', '5-15', '15-30', '31-99'], labels: t.oPeople },
     // 主持人有多少時間＝上限：一局在這之內的都列出來（5 分鐘、15 分鐘、15 分以上＝不限）
     time:    { label: t.fTime,    type: 'one',  values: ['0', '1', '2'],                  labels: t.oTime, max: [5, 15, Infinity] },

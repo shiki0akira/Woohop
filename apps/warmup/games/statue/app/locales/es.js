@@ -58,7 +58,7 @@ export default {
   rulesTitle: 'Cómo se juega a Luz roja, luz verde: versión acción',
   rulesIntro: 'Como luz roja, luz verde (o el escondite inglés), pero cada uno saca primero una carta de acción y tiene que avanzar así. Si te mueves cuando quien la queda se gira, o no haces tu acción, te pillan.',
   rulesFacts: [
-    ['Personas', 'De 4 a 30'],
+    ['Personas', 'De 4 a 50'],
     ['Duración', 'Lo que queráis'],
     ['Material', 'Un poco de espacio y el móvil de quien dirige'],
   ],

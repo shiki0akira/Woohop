@@ -14,7 +14,7 @@ export default {
   "heroDesc": "聚會、上課、公司活動用的搶答器。主持人開房間、其他人掃 QR code 加入，按下去就即時排名。不用下載 App，也不用註冊帳號。",
   "createHeading": "建立房間",
   "maxPlayersLabel": "預計人數",
-  "maxPlayersHint": "2～30 人，不含主持人自己",
+  "maxPlayersHint": "2～50 人，不含主持人自己",
   "createButton": "建立房間",
   "creating": "建立中…",
   "joinHeading": "加入現有房間",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "人數",
-      "2～30 人，另外一位主持人"
+      "2～50 人，另外一位主持人"
     ],
     [
       "時間",

@@ -27,7 +27,7 @@
 
   var CODE_RE = /^[A-Z0-9]{4}$/;
   var MIN_PLAYERS = 2;
-  var MAX_PLAYERS = 30;
+  var MAX_PLAYERS = 50; // 2026-10-28 從 30 提高：尾牙、營會這類大型活動
   var RECONNECT_MIN_MS = 500;
   var RECONNECT_MAX_MS = 8000;
 
@@ -349,7 +349,7 @@
   /*
    * 設計系統元件的行為（design/brand-exploration.html），跟喜好二選一同一套：
    *  - 房號四格：打一個字跳下一格、刪除退回上一格、貼上整組自動分格；組起來寫進隱藏的 #join-code
-   *  - 數量增減：2～30，寫進隱藏的 #max-players
+   *  - 數量增減：2～50，寫進隱藏的 #max-players
    *  - 分享：手機支援 navigator.share 才出現
    */
   function bindDesignControls() {

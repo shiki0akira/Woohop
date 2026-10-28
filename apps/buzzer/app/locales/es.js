@@ -14,7 +14,7 @@ export default {
   "heroDesc": "Un pulsador para fiestas, clases y eventos de empresa. El anfitrión abre una sala, los demás escanean el código QR y el orden aparece al instante. Nada que instalar, ninguna cuenta que crear.",
   "createHeading": "Crear sala",
   "maxPlayersLabel": "Participantes previstos",
-  "maxPlayersHint": "De 2 a 30 personas, sin contar al anfitrión",
+  "maxPlayersHint": "De 2 a 50 personas, sin contar al anfitrión",
   "createButton": "Crear sala",
   "creating": "Creando…",
   "joinHeading": "Entrar en una sala existente",
@@ -27,7 +27,7 @@ export default {
   "rulesFacts": [
     [
       "Jugadores",
-      "De 2 a 30, más un anfitrión"
+      "De 2 a 50, más un anfitrión"
     ],
     [
       "Tiempo",
