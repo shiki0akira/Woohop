@@ -63,10 +63,40 @@
       sheet.showModal();
       sheet.focus();
     });
-    // 每條關閉路徑自己關（不靠 dialog 的 close 事件，那個在部分 WebView 不會發）
+    // 每條關閉路徑自己關（不靠 dialog 的 close 事件，那個在部分 WebView 不會發）：點旁邊、點連結、往下拉
     sheet.addEventListener('click', function (e) {
       if (e.target === sheet || e.target.closest('[data-close]') || e.target.closest('a')) sheet.close();
     });
+    swipeToClose(sheet);
+  }
+
+  /*
+   * 底部面板往下拉就關（2026-10-23 拿掉「關閉」鍵，改成點旁邊或往下拉）。
+   * 手指跟著拉下去，放開時超過 80px 才關，不然彈回原位。site.js（導覽列的面板）、阿瓦隆的 GameBar.jsx 各有一份一樣的
+   */
+  function swipeToClose(panel) {
+    var y0 = null;
+    var dy = 0;
+    panel.addEventListener('touchstart', function (e) {
+      if (panel.scrollTop > 0) return; // 面板自己在捲的時候不攔
+      y0 = e.touches[0].clientY;
+      dy = 0;
+      panel.style.transition = 'none';
+    }, { passive: true });
+    panel.addEventListener('touchmove', function (e) {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      panel.style.transform = dy ? 'translateY(' + dy + 'px)' : '';
+    }, { passive: true });
+    var end = function () {
+      if (y0 === null) return;
+      y0 = null;
+      panel.style.transition = '';
+      panel.style.transform = '';
+      if (dy > 80) panel.close();
+    };
+    panel.addEventListener('touchend', end);
+    panel.addEventListener('touchcancel', end);
   }
 })();
 
@@ -1153,4 +1183,333 @@
   }
 
   window.Leader.metronome = metronome;
+})();
+
+/*
+ * 帶領元件之四：倒放錄音機 Leader.recorder（2026-10-23 從倒放猜猜看抽出來，桌遊助手的「錄音機」也用同一份）。
+ * 錄音只留在記憶體，不上傳、不存檔。共用文字（開始錄音、停止、麥克風錯誤⋯⋯）在 src/locales.mjs 的 rec*。
+ *
+ *   var rec = Leader.recorder(rootEl, { maxSec, onRecorded(sec) })
+ *       錄音鍵＋進度條（右邊是秒數）＋狀態列（處理中、錯誤才有字）。錄好的聲音在 rec.forward（原聲）、rec.backward（倒放）
+ *   rec.button(which, cls, icon, label, onPlay)   做一顆播放鍵（which：forward／backward），放哪裡由呼叫的人決定；
+ *       播放中變「停止」，點了、播完、或改播別段都變回原本的字。rec.plays 是錄音機底下現成的一排
+ *   rec.setRate(r)   播放速度（0.5～2，連音高一起變），正在播的也馬上跟著變
+ *   rec.start() 開始／停止錄音（要在使用者點擊裡呼叫，iOS 才給麥克風）、rec.isRecording()、rec.reset()
+ *   Leader.stopPlaying()   停掉正在播的那一段（換畫面時用）
+ */
+(function () {
+  'use strict';
+
+  var t = (window.WOOHOP && window.WOOHOP.t) || {};
+  var fill = function (s, v) {
+    return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in v ? v[k] : m; });
+  };
+
+  // 全頁只有一個 AudioContext、同時只播一段、只錄一段。AudioContext 要在使用者點擊裡才建立，iOS 才肯出聲
+  var ctx = null;
+  var playing = null; // { src, btn, label }
+  var recording = null; // { owner, stop }
+
+  function audio() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  function pickMime() {
+    // iOS Safari 只錄得出 mp4，Chrome／Android 是 webm
+    var types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+    for (var i = 0; i < types.length; i += 1) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported(types[i])) return types[i];
+    }
+    return '';
+  }
+
+  function copyBuffer(buf, start, end, reverse) {
+    var out = audio().createBuffer(buf.numberOfChannels, end - start, buf.sampleRate);
+    for (var c = 0; c < buf.numberOfChannels; c += 1) {
+      var part = buf.getChannelData(c).slice(start, end);
+      if (reverse) part.reverse();
+      out.copyToChannel(part, c);
+    }
+    return out;
+  }
+
+  // 頭尾音量低於門檻的部分剪掉，倒放時才不會先聽到一大段空白
+  function trimSilence(buf) {
+    var data = buf.getChannelData(0);
+    var win = Math.floor(buf.sampleRate * 0.02);
+    var peak = 0;
+    for (var i = 0; i < data.length; i += 1) peak = Math.max(peak, Math.abs(data[i]));
+    // 門檻跟著這段最大音量走；下限壓低，手機關掉自動增益後收音比較小聲，不然整段都會被當成空白剪掉
+    var th = Math.max(0.005, peak * 0.08);
+    var loud = function (at) {
+      for (var j = at; j < Math.min(at + win, data.length); j += 1) if (Math.abs(data[j]) > th) return true;
+      return false;
+    };
+    var start = 0;
+    var end = data.length;
+    while (start < end && !loud(start)) start += win;
+    while (end > start && !loud(Math.max(0, end - win))) end -= win;
+    var pad = Math.floor(buf.sampleRate * 0.08);
+    start = Math.max(0, start - pad);
+    end = Math.min(data.length, end + pad);
+    if (end - start < buf.sampleRate * 0.2) return buf;
+    return copyBuffer(buf, start, end, false);
+  }
+
+  function stopPlaying() {
+    if (!playing) return;
+    var p = playing;
+    playing = null;
+    try { p.src.stop(); } catch (e) { /* 已經停了 */ }
+    p.btn.querySelector('span').textContent = p.label;
+    p.btn.classList.remove('btn-danger', 'is-playing');
+  }
+
+  function play(buf, btn, rate) {
+    stopPlaying();
+    var src = audio().createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = rate || 1;
+    src.connect(ctx.destination);
+    var label = btn.querySelector('span');
+    playing = { src: src, btn: btn, label: label.textContent };
+    src.onended = function () { if (playing && playing.src === src) stopPlaying(); };
+    label.textContent = t.playStop || '';
+    // 播放中跟錄音中的「停止」一樣變紅色、圖示換成方塊
+    btn.classList.add('btn-danger', 'is-playing');
+    src.start();
+  }
+
+  function iconBtn(cls, icon, label) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn ' + cls;
+    b.innerHTML = (icon ? '<svg aria-hidden="true"><use href="#' + icon + '"/></svg>' : '<i class="rec-dot" aria-hidden="true"></i>') + '<span></span>';
+    b.querySelector('span').textContent = label;
+    return b;
+  }
+
+  function recorder(root, opts) {
+    opts = opts || {};
+    var maxSec = opts.maxSec || 15;
+    var wrap = document.createElement('div');
+    wrap.className = 'recorder';
+    var recBtn = iconBtn('btn-lg btn-solid btn-block rec-btn', '', t.recStart);
+    var bar = document.createElement('div');
+    bar.className = 'progress';
+    bar.innerHTML = '<div style="--p:0%"></div>';
+    var fillBar = bar.firstChild;
+    // 秒數放在進度條右邊：錄音中即時跳，錄好留著這段的長度
+    var meter = document.createElement('div');
+    meter.className = 'rec-meter';
+    var time = document.createElement('span');
+    time.className = 'rec-time';
+    meter.appendChild(bar);
+    meter.appendChild(time);
+    var status = document.createElement('p');
+    status.className = 'rec-status';
+    status.setAttribute('aria-live', 'polite');
+    var plays = document.createElement('div');
+    plays.className = 'rec-plays';
+    wrap.appendChild(recBtn);
+    wrap.appendChild(meter);
+    wrap.appendChild(status);
+    wrap.appendChild(plays);
+    root.appendChild(wrap);
+
+    var self = { forward: null, backward: null, buttons: [], plays: plays, wrap: wrap, rate: 1 };
+    var owner = {};
+
+    // look：solid（開始錄音，實心主要鍵）、danger（錄音中，紅色「停止」）、pastel（錄好了的「重錄」，主要・粉彩，不跟播放鍵搶）
+    function setRecLabel(text, look) {
+      recBtn.querySelector('span').textContent = text;
+      recBtn.classList.toggle('btn-danger', look === 'danger');
+      recBtn.classList.toggle('btn-solid', look === 'solid');
+    }
+    function sync() {
+      self.buttons.forEach(function (b) { b.disabled = !self.forward; });
+    }
+    function showTime(sec) {
+      fillBar.style.setProperty('--p', Math.min(100, (sec / maxSec) * 100) + '%');
+      time.textContent = fill(t.recTime, { sec: sec.toFixed(1) });
+    }
+    function stopRec() {
+      if (recording && recording.owner === owner) recording.stop();
+    }
+
+    function start() {
+      audio();
+      if (recording && recording.owner === owner) return stopRec();
+      if (recording) recording.stop();
+      stopPlaying();
+
+      if (!navigator.mediaDevices || !window.MediaRecorder) {
+        status.textContent = t.micInsecure;
+        return;
+      }
+      // 關掉降噪／回音消除：手機會把別支手機喇叭放出來的倒放聲當雜訊濾掉
+      navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+      }).then(function (stream) {
+        var mime = pickMime();
+        var rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+        var chunks = [];
+        var t0 = performance.now();
+        var timer = 0;
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+          clearInterval(timer);
+          stream.getTracks().forEach(function (tr) { tr.stop(); });
+          if (recording && recording.owner === owner) recording = null;
+          setRecLabel(t.recRedo, 'pastel');
+          status.textContent = t.recProcessing;
+          new Blob(chunks, { type: rec.mimeType || mime }).arrayBuffer()
+            .then(function (data) { return audio().decodeAudioData(data); })
+            .then(function (decoded) {
+              self.forward = trimSilence(decoded);
+              self.backward = copyBuffer(self.forward, 0, self.forward.length, true);
+              status.textContent = '';
+              showTime(self.forward.duration); // 剪掉頭尾空白後的長度
+              sync();
+              if (opts.onRecorded) opts.onRecorded(self.forward.duration);
+            })
+            .catch(function () { status.textContent = t.decodeFailed; });
+        };
+        recording = { owner: owner, stop: function () { if (rec.state !== 'inactive') rec.stop(); } };
+        rec.start();
+        setRecLabel(t.recStop, 'danger');
+        status.textContent = '';
+        showTime(0);
+        timer = setInterval(function () {
+          var s = (performance.now() - t0) / 1000;
+          showTime(Math.min(s, maxSec));
+          if (s >= maxSec) stopRec();
+        }, 50);
+      }).catch(function () {
+        status.textContent = t.micDenied;
+      });
+    }
+
+    recBtn.addEventListener('click', start);
+
+    self.button = function (which, cls, icon, label, onPlay) {
+      var b = iconBtn(cls, icon, label);
+      b.disabled = true;
+      b.addEventListener('click', function () {
+        if (playing && playing.btn === b) return stopPlaying();
+        if (!self[which]) return;
+        play(self[which], b, self.rate);
+        if (onPlay) onPlay();
+      });
+      self.buttons.push(b);
+      return b;
+    };
+    self.setRate = function (r) {
+      self.rate = r;
+      // 正在播的是這台錄音機的，也馬上換速度
+      if (playing && self.buttons.indexOf(playing.btn) >= 0) playing.src.playbackRate.value = r;
+    };
+    self.reset = function () {
+      stopRec();
+      if (playing && self.buttons.indexOf(playing.btn) >= 0) stopPlaying();
+      self.forward = self.backward = null;
+      setRecLabel(t.recStart, 'solid');
+      status.textContent = '';
+      fillBar.style.setProperty('--p', '0%');
+      time.textContent = '';
+      sync();
+    };
+    self.stop = stopRec;
+    self.start = start;
+    self.isRecording = function () { return Boolean(recording && recording.owner === owner); };
+    return self;
+  }
+
+  window.Leader.recorder = recorder;
+  window.Leader.stopPlaying = stopPlaying;
+})();
+
+/*
+ * 帶領元件之五：動作抽卡 Leader.actionCard（2026-10-28 從木頭人動作版抽出來，桌遊助手的「動作抽卡」也用同一份）。
+ * 一張動作卡（插圖在上、名稱在下）＋「隨機抽一個」。插圖是 woohop-art.js 的 Woohop.actionArt，
+ * 動作清單是 src/action-cards.mjs（build 時嵌進當頁語言的那份）。按鈕文字是 locales.mjs 的 actionDraw。
+ *
+ *   var card = Leader.actionCard(rootEl, { actions: [[代號, 名稱], ...], onDraw(action) })
+ *       第一次抽之前卡片藏著，只有按鈕；不會連續抽到同一個動作，小人顏色每抽一張換一個
+ *   card.draw()    抽一張（翻牌動畫）
+ *   card.reset()   收起卡片，回到還沒抽的樣子
+ *   Leader.actionArt(代號)   只要插圖（隨機換顏色）：木頭人抽卡那一步自己排版面時用
+ */
+(function () {
+  'use strict';
+
+  var t = (window.WOOHOP && window.WOOHOP.t) || {};
+
+  // 首頁主視覺那幾隻小人的顏色：[主色, 陰影色]
+  var CHARS = [
+    ['#fbbff5', '#ef9fe8'], // 粉
+    ['#aebcf3', '#8799E9'], // 藍（主持人）
+    ['#a8dccb', '#7cc9b1'], // 薄荷
+    ['#ffc27a', '#FF9419'], // 橘
+    ['#fbb3a8', '#EE7B6A'], // 珊瑚
+  ];
+  var lastChar = -1;
+
+  // 隨機換一個顏色（不會連續兩張同色）畫那個動作的插圖；沒有插圖就回空字串
+  function actionArt(key) {
+    var art = window.Woohop && window.Woohop.actionArt;
+    var draw = art && art[key];
+    if (!draw) return '';
+    var i = Math.floor(Math.random() * (CHARS.length - 1));
+    if (lastChar >= 0 && i >= lastChar) i += 1;
+    lastChar = i;
+    return draw(CHARS[i]);
+  }
+
+  function actionCard(rootEl, opts) {
+    var actions = opts.actions || [];
+    var wrap = document.createElement('div');
+    wrap.className = 'action-card';
+    wrap.innerHTML = '<div class="action-face" hidden><svg class="action-art" viewBox="0 0 120 128" aria-hidden="true"></svg>' +
+      '<p class="action-name" aria-live="polite"></p></div>';
+    var face = wrap.firstChild;
+    var artEl = face.querySelector('.action-art');
+    var nameEl = face.querySelector('.action-name');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-lg btn-secondary btn-block action-draw';
+    btn.innerHTML = '<svg aria-hidden="true"><use href="#i-dice"/></svg><span></span>';
+    btn.querySelector('span').textContent = t.actionDraw || '';
+    wrap.appendChild(btn);
+    rootEl.appendChild(wrap);
+
+    var lastKey = '';
+    var self = {};
+    self.draw = function () {
+      var n = actions.length;
+      if (!n) return;
+      var action;
+      do action = actions[Math.floor(Math.random() * n)]; while (n > 1 && action[0] === lastKey);
+      lastKey = action[0];
+      nameEl.textContent = action[1];
+      artEl.innerHTML = actionArt(action[0]);
+      face.hidden = false;
+      // 卡片從側面轉正（跟抽卡取名同一個動畫）
+      face.classList.remove('pop');
+      void face.offsetWidth;
+      face.classList.add('pop');
+      if (opts.onDraw) opts.onDraw(action);
+    };
+    self.reset = function () {
+      lastKey = '';
+      face.hidden = true;
+    };
+    btn.addEventListener('click', self.draw);
+    return self;
+  }
+
+  window.Leader.actionCard = actionCard;
+  window.Leader.actionArt = actionArt;
 })();

@@ -20,8 +20,9 @@
 
   // ---------- 卡片 ----------
   // 錄音機跟倒放猜猜看用同一張插圖
-  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse' };
-  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB' };
+  // 動作抽卡跟木頭人動作版用同一張插圖
+  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'statue' };
+  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB', actions: '#EE7B6A' };
   // 橫式卡：左邊插圖，右邊標題＋說明
   const hCard = ({ href, attr, art, color, name, desc }) => `<a class="game tool-card" href="${href}" ${attr}>
       <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${art}</svg></div>
@@ -65,6 +66,14 @@
     if (text != null) node.textContent = text;
     return node;
   };
+
+  // 動作抽卡：跟木頭人動作版「遊戲結束」那一步同一個（Leader.actionCard）
+  if (tool.key === 'actions') {
+    Leader.actionCard(root, {
+      actions: tool.actions,
+      onDraw: action => track('tool_action_drawn', { action: action[0] }),
+    });
+  }
 
   // 真心話大冒險拉霸：跟遊戲裡「誰輸了？」那一步同一個
   if (tool.key === 'truthOrDare') {

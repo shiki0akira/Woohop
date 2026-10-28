@@ -5,13 +5,14 @@
  * prerender 會把這份併進 STRINGS[lang].tools。各語言逐句照當地說法寫，不要丟翻譯 API。
  */
 
-export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names', 'recorder'];
+export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names', 'recorder', 'actions'];
 // 每個小工具在哪些遊戲裡也用得到（總覽頁與工具頁底下的「也用在這些遊戲」）
 export const TOOL_GAMES = {
   truthOrDare: ['bamboo', 'stairs', 'orchard', 'bomb'],
   metronome: ['stairs', 'orchard'],
   names: ['bamboo'],
   recorder: ['reverse'],
+  actions: ['statue'],
 };
 
 export const TOOLS = {
@@ -79,6 +80,18 @@ export const TOOLS = {
         speedLabel: '速度',
         mineLabel: '原聲',
         reverseLabel: '倒放',
+      },
+      actions: {
+        name: '動作抽卡',
+        short: '抽一個好笑的動作讓輸的人模仿，大家幫他三連拍。',
+        seoTitle: '動作抽卡｜懲罰遊戲抽動作，輸的人模仿、大家三連拍',
+        seoDesc: '手機按一下抽一個好笑的動作：騎摩托車、螃蟹走路、企鵝搖擺、殭屍跳⋯⋯ 28 種動作都有插圖。聚會、團康的懲罰最好用，輸的人照著模仿，大家拿手機三連拍。免下載、免註冊。',
+        lead: '輸的人抽一個動作照著做，大家幫他三連拍！',
+        how: [
+          '按「隨機抽一個」，抽到的動作就是輸的人要做的。',
+          '輸的人照著卡片模仿，其他人拿出手機幫他拍三連拍。',
+          '下一個人再按一次，不會連續抽到同一個動作。',
+        ],
       },
     },
   },
@@ -148,6 +161,18 @@ export const TOOLS = {
         mineLabel: '原声',
         reverseLabel: '倒放',
       },
+      actions: {
+        name: '动作抽卡',
+        short: '抽一个好笑的动作让输的人模仿，大家帮他拍三连拍。',
+        seoTitle: '动作抽卡｜惩罚游戏抽动作，输的人模仿、大家三连拍',
+        seoDesc: '手机按一下抽一个好笑的动作：骑摩托车、螃蟹走路、企鹅摇摆、僵尸跳…… 28 种动作都有插图。聚会、团建的惩罚最好用，输的人照着模仿，大家拿手机三连拍。免下载、免注册。',
+        lead: '输的人抽一个动作照着做，大家帮他三连拍！',
+        how: [
+          '按「随机抽一个」，抽到的动作就是输的人要做的。',
+          '输的人照着卡片模仿，其他人拿出手机帮他拍三连拍。',
+          '下一个人再按一次，不会连续抽到同一个动作。',
+        ],
+      },
     },
   },
 
@@ -215,6 +240,18 @@ export const TOOLS = {
         speedLabel: 'Speed',
         mineLabel: 'Original',
         reverseLabel: 'Play backwards',
+      },
+      actions: {
+        name: 'Action cards',
+        short: 'Draw a silly move for the loser to act out — then everyone grabs a photo burst.',
+        seoTitle: 'Action cards | Draw a silly forfeit for the loser to act out',
+        seoDesc: 'Tap to draw a silly move: ride a motorbike, crab walk, penguin waddle, zombie hop… 28 illustrated moves. The perfect forfeit for parties and group games — the loser acts it out while everyone grabs a photo burst. No download, no sign-up.',
+        lead: 'The loser draws a move and acts it out — photo burst time!',
+        how: [
+          'Tap “Draw one at random”. That’s the move the loser has to do.',
+          'The loser acts out the card while everyone else grabs their phones for a photo burst.',
+          'Next person taps again — you won’t get the same move twice in a row.',
+        ],
       },
     },
   },
@@ -284,6 +321,18 @@ export const TOOLS = {
         mineLabel: 'Original',
         reverseLabel: 'Rückwärts',
       },
+      actions: {
+        name: 'Bewegungskarten',
+        short: 'Zieh eine lustige Bewegung, die der Verlierer nachmachen muss – alle machen ein Serienfoto.',
+        seoTitle: 'Bewegungskarten | Lustige Strafaufgabe ziehen, der Verlierer macht sie nach',
+        seoDesc: 'Ein Tipp und du ziehst eine lustige Bewegung: Motorrad fahren, Krabbengang, Pinguin-Watscheln, Zombie-Hüpfer … 28 Bewegungen mit Illustration. Die perfekte Strafaufgabe für Partys und Gruppenspiele: Der Verlierer macht sie nach, alle anderen machen ein Serienfoto. Ohne Download, ohne Anmeldung.',
+        lead: 'Der Verlierer zieht eine Bewegung und macht sie nach – Serienfoto!',
+        how: [
+          'Tippe auf „Zufällig ziehen“. Diese Bewegung muss der Verlierer machen.',
+          'Der Verlierer macht die Karte nach, alle anderen machen mit dem Handy ein Serienfoto.',
+          'Die nächste Person tippt noch mal – dieselbe Bewegung kommt nie zweimal hintereinander.',
+        ],
+      },
     },
   },
 
@@ -351,6 +400,18 @@ export const TOOLS = {
         speedLabel: 'Vitesse',
         mineLabel: 'Original',
         reverseLabel: 'À l’envers',
+      },
+      actions: {
+        name: 'Cartes mimes',
+        short: 'Tirez un mime rigolo que le perdant doit faire, et tout le monde le prend en rafale.',
+        seoTitle: 'Cartes mimes | Tirez un gage rigolo que le perdant doit mimer',
+        seoDesc: 'Un tap et vous tirez un mime rigolo : faire de la moto, marcher en crabe, se dandiner comme un pingouin, sauter comme un zombie… 28 mimes illustrés. Le gage idéal pour les soirées et les jeux de groupe : le perdant mime, les autres le prennent en rafale. Sans téléchargement, sans inscription.',
+        lead: 'Le perdant tire un mime et le fait – rafale de photos !',
+        how: [
+          'Appuyez sur « Tirer au hasard ». C’est le mime que le perdant doit faire.',
+          'Le perdant mime la carte pendant que les autres sortent leur téléphone pour une rafale de photos.',
+          'La personne suivante appuie à nouveau : jamais deux fois le même mime d’affilée.',
+        ],
       },
     },
   },
@@ -420,6 +481,18 @@ export const TOOLS = {
         mineLabel: 'そのまま',
         reverseLabel: '逆再生',
       },
+      actions: {
+        name: 'ポーズお題カード',
+        short: 'おもしろい動きのお題を引いて負けた人がまねする。みんなで連写！',
+        seoTitle: 'ポーズお題カード｜罰ゲームの動きを引いて、負けた人がまねする',
+        seoDesc: 'タップでおもしろい動きのお題を 1 枚：バイクに乗る、カニ歩き、ペンギン歩き、キョンシー跳び……イラスト付きで 28 種類。パーティーやレクの罰ゲームにぴったり。負けた人がまねして、みんなでスマホで連写しよう。ダウンロード不要・登録不要。',
+        lead: '負けた人がお題を引いてまねする。みんなで連写！',
+        how: [
+          '「ランダムで引く」を押すと、負けた人がやる動きが出ます。',
+          '負けた人はカードのとおりにまねして、ほかの人はスマホで連写。',
+          '次の人がもう一度押せば別のお題。同じお題が続けて出ることはありません。',
+        ],
+      },
     },
   },
 
@@ -488,6 +561,18 @@ export const TOOLS = {
         mineLabel: '그대로',
         reverseLabel: '거꾸로 재생',
       },
+      actions: {
+        name: '동작 카드 뽑기',
+        short: '웃긴 동작을 뽑아 진 사람이 따라 하고, 다 같이 연속 촬영!',
+        seoTitle: '동작 카드 뽑기｜벌칙 동작 뽑고 진 사람이 따라 하기',
+        seoDesc: '한 번 누르면 웃긴 동작이 나와요: 오토바이 타기, 꽃게 걸음, 펭귄 걸음, 강시 점프…… 그림이 있는 동작 28가지. 모임·레크리에이션 벌칙으로 딱! 진 사람이 따라 하고 다 같이 휴대폰으로 연속 촬영해요. 설치·회원가입 없음.',
+        lead: '진 사람이 동작을 뽑아서 따라 해요. 다 같이 연속 촬영!',
+        how: [
+          '"랜덤으로 뽑기"를 누르면 진 사람이 할 동작이 나와요.',
+          '진 사람은 카드대로 따라 하고, 나머지는 휴대폰으로 연속 촬영해요.',
+          '다음 사람이 다시 누르면 돼요. 같은 동작이 연달아 나오지 않아요.',
+        ],
+      },
     },
   },
 
@@ -555,6 +640,18 @@ export const TOOLS = {
         speedLabel: 'Velocidad',
         mineLabel: 'Original',
         reverseLabel: 'Al revés',
+      },
+      actions: {
+        name: 'Cartas de acción',
+        short: 'Saca una acción divertida para que quien pierde la imite, y todos le sacan una ráfaga de fotos.',
+        seoTitle: 'Cartas de acción | Saca una prenda divertida para que quien pierde la imite',
+        seoDesc: 'Un toque y sale una acción divertida: ir en moto, andar como un cangrejo, caminar como un pingüino, saltar como un zombi… 28 acciones con ilustración. La prenda perfecta para fiestas y juegos en grupo: quien pierde la imita y los demás le sacan una ráfaga de fotos. Sin descargas y sin registro.',
+        lead: 'Quien pierde saca una acción y la imita: ¡ráfaga de fotos!',
+        how: [
+          'Pulsa «Sacar una al azar». Esa es la acción que tiene que hacer quien pierde.',
+          'Quien pierde imita la carta y los demás sacan el móvil para una ráfaga de fotos.',
+          'La siguiente persona vuelve a pulsar: nunca sale la misma acción dos veces seguidas.',
+        ],
       },
     },
   },

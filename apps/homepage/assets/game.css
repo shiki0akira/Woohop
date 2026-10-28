@@ -387,3 +387,18 @@ dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1
 .btn.is-playing svg { display: none; }
 .btn.is-playing::before { content: ''; width: 12px; height: 12px; border-radius: 3px; background: var(--coral-edge); flex: none; }
 .rec-plays:empty { display: none; }
+
+/* ---------- 帶領元件之五：動作抽卡（Leader.actionCard，木頭人動作版與桌遊助手共用，2026-10-28） ---------- */
+.action-card { display: grid; gap: 14px; }
+.action-face {
+  display: grid; justify-items: center; gap: 6px; padding: 16px 14px 18px; text-align: center;
+  border: 2px solid var(--yellow-edge); border-radius: var(--r-lg); background: var(--yellow-face); box-shadow: 0 5px 0 var(--yellow-edge);
+}
+.action-face[hidden] { display: none; }
+.action-face.pop { animation: card-flip .5s cubic-bezier(.2, 1.3, .4, 1) 1; }
+.action-art { display: block; width: 120px; height: auto; overflow: visible; --ill-sw: 3px; --arm-w: 5px; }
+/* 動作是一個詞組不是人名：不用 keep-all，長的才會平均斷成兩行 */
+.action-name { margin: 0; font-size: clamp(30px, 9vw, 48px); font-weight: 900; line-height: 1.2; color: var(--yellow-text); text-wrap: balance; overflow-wrap: anywhere; }
+.action-draw { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.action-draw svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) { .action-face.pop { animation: none; } }

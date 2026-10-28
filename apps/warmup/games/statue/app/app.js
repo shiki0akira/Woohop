@@ -13,6 +13,7 @@
   var LANG = window.STATUE.lang;
   var W = window.Woohop;
   var Leader = window.Leader;
+  var ACTIONS = window.STATUE.actions; // [插圖代號, 名稱]（apps/homepage/src/action-cards.mjs）
 
   var screen = 'setup';
   var phase = 'draw';
@@ -39,11 +40,7 @@
     allDrawn: $('all-drawn'),
     nextRound: $('next-round'),
     endBtn: $('end-btn'),
-    punish: $('punish'),
-    punishCard: $('punish-card'),
-    punishArt: $('punish-art'),
-    punishText: $('punish-text'),
-    punishRandom: $('punish-random'),
+    punishRoot: $('punish-root'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -90,33 +87,14 @@
       '<path d="M80 44v24" fill="none" ' + W.K + '/>' +
       '<circle cx="80" cy="80" r="3.4" fill="#22222c"/></g>';
   }
-  /*
-   * 動作卡的插圖：一個動作一張（public/action-art.js 的 window.STATUE_ART，2026-10-28 使用者要求），
-   * 角色是首頁主視覺那幾隻小人，每抽一張隨機換顏色（不會連續兩張同色）。
-   */
-  var CHARS = [
-    ['#fbbff5', '#ef9fe8'], // 粉
-    ['#aebcf3', '#8799E9'], // 藍（主持人）
-    ['#a8dccb', '#7cc9b1'], // 薄荷
-    ['#ffc27a', '#FF9419'], // 橘
-    ['#fbb3a8', '#EE7B6A'], // 珊瑚
-  ];
-  var lastChar = -1;
-
-  function actionArt(key) {
-    var draw = window.STATUE_ART && window.STATUE_ART[key];
-    if (!draw) return '';
-    var i = Math.floor(Math.random() * (CHARS.length - 1));
-    if (lastChar >= 0 && i >= lastChar) i += 1;
-    lastChar = i;
-    return draw(CHARS[i]);
-  }
+  // 動作卡的插圖：全站共用的 Leader.actionArt（woohop-art.js 的 Woohop.actionArt），每抽一張隨機換小人的顏色
+  var actionArt = Leader.actionArt;
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var drawing = false;
 
   function shuffleDeck() {
-    deck = T.actions.slice();
+    deck = ACTIONS.slice();
     for (var i = deck.length - 1; i > 0; i -= 1) {
       var j = Math.floor(Math.random() * (i + 1));
       var tmp = deck[i];
@@ -180,25 +158,11 @@
 
   // ---------- 遊戲結束：摸到鬼的人隨機抽一個動作讓鬼做，大家幫鬼三連拍（CONCEPT.md 2.3，不用拉霸、不列出全部） ----------
 
-  var punishKey = '';
-
-  function resetPunish() {
-    punishKey = '';
-    el.punishCard.hidden = true;
-  }
-
-  // 抽一個跟上一個不一樣的動作
-  function randomPunish() {
-    var n = T.actions.length;
-    var action;
-    do action = T.actions[Math.floor(Math.random() * n)]; while (n > 1 && action[0] === punishKey);
-    punishKey = action[0];
-    el.punishText.textContent = action[1];
-    el.punishArt.innerHTML = actionArt(action[0]);
-    el.punishCard.hidden = false;
-    flip(el.punishCard);
-    track('statue_punish_drawn', { action: action[0] });
-  }
+  // 動作卡＋隨機抽一個：全站共用的 Leader.actionCard（桌遊助手的動作抽卡也是這一個），不列出全部動作（使用者要求）
+  var punish = Leader.actionCard(el.punishRoot, {
+    actions: ACTIONS,
+    onDraw: function (action) { track('statue_punish_drawn', { action: action[0] }); },
+  });
 
   /*
    * 「說明規則」三張插圖卡的插圖（woohop-art.js 的畫法）：
@@ -232,7 +196,7 @@
     if (title) title.tabIndex = next === 'setup' ? 0 : -1;
 
     renderLead();
-    if (next === 'end') resetPunish();
+    if (next === 'end') punish.reset();
 
     window.scrollTo(0, 0);
     if (typeof window.trackPageView === 'function') window.trackPageView(BASE + '/' + LANG + '/' + next);
@@ -318,7 +282,6 @@
     newRound();
     window.scrollTo(0, 0);
   });
-  el.punishRandom.addEventListener('click', randomPunish);
 
   el.endBtn.addEventListener('click', function (event) {
     if (event.detail === 0) endGame(); // 鍵盤沒有「按住」可言

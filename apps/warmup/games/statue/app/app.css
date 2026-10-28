@@ -50,6 +50,3 @@
 /* ---------- 遊戲結束：選一個動作讓鬼做 ---------- */
 .punish-panel { display: grid; gap: 14px; }
 .punish-panel h2 { margin: 0; font-size: 17px; }
-.punish-panel .drawn-card { padding: 16px; }
-#punish-random { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-#punish-random svg { width: 18px; height: 18px; }

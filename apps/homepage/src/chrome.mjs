@@ -10,7 +10,7 @@ import { LANGS, LANG_NAMES } from './locales.mjs';
 // tools 是「桌遊助手」總覽（阿瓦隆＋小工具，2026-10-22），下面三頁是小工具
 export const PAGES = {
   home: '', games: 'games/', combo: 'combo/', tools: 'tools/', guides: 'guides/',
-  truthOrDare: 'tools/truth-or-dare/', metronome: 'tools/metronome/', names: 'tools/names/', recorder: 'tools/recorder/',
+  truthOrDare: 'tools/truth-or-dare/', metronome: 'tools/metronome/', names: 'tools/names/', recorder: 'tools/recorder/', actions: 'tools/actions/',
   // 關於我們、聯絡我們（意見表單）、服務條款、隱私權政策（2026-10-22）
   about: 'about/', terms: 'terms/', privacy: 'privacy/',
 };

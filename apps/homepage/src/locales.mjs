@@ -108,6 +108,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "拉一下！", slotPullAgain: "再拉一次", slotModeLabel: "要回答還是做動作", slotAsk: "真心話", slotMix: "隨機", slotDo: "大冒險",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "隨機抽一個",
     recStart: "開始錄音", recStop: "停止", recRedo: "重錄", recProcessing: "處理中⋯", recTime: "{sec} 秒", playStop: "停止", micDenied: "拿不到麥克風：請在瀏覽器設定允許這個網站使用麥克風。", micInsecure: "這個瀏覽器不支援錄音，請換 Chrome 或 Safari 試試。", decodeFailed: "這段錄音讀不出來，再錄一次試試。",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "取名主題", themeRandom: "隨機", themeRandomSub: "手機幫你挑", themeFood: "食物", themeDrink: "飲料", themeAnimal: "動物", themeFruit: "水果", themeDessert: "甜點", themeCartoon: "卡通角色", themeRealname: "用本名", themeRealnameSub: "不用取名", themeExample: "{a}、{b}⋯", nameTurn: "第 {n} 位", nameTheme: "主題：{theme}", rerollTheme: "換一個主題", drawButton: "抽一個", ownButton: "自己取一個", ownSay: "想一個名稱，大聲跟大家說：「我是＿＿＿！」說完就傳給下一個人。", ownCancel: "改用抽的", ownSlot: "自己取 {n}", youAre: "你是⋯⋯", redraw: "換一個", passNext: "傳給下一個人", revealHint: "記好了，就按「傳給下一個人」交出手機 👇", poolEmpty: "這個主題抽完了，自己取一個吧。", namedHeading: "已經取好的", removeName: "刪掉「{name}」", allDone: "大家都取好了，下一步", allDoneNeed: "至少要 {n} 個人才能開始。", listSep: "、",
@@ -205,6 +206,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "Pull!", slotPullAgain: "Pull again", slotModeLabel: "Truth or dare", slotAsk: "Truth", slotMix: "Random", slotDo: "Dare",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "Draw one at random",
     recStart: "Start recording", recStop: "Stop", recRedo: "Record again", recProcessing: "Processing…", recTime: "{sec}s", playStop: "Stop", micDenied: "Can’t use the microphone. Please allow this site to use it in your browser settings.", micInsecure: "This browser can’t record audio. Try Chrome or Safari.", decodeFailed: "Couldn’t read that recording. Please try again.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Name theme", themeRandom: "Random", themeRandomSub: "Phone picks one", themeFood: "Food", themeDrink: "Drinks", themeAnimal: "Animals", themeFruit: "Fruit", themeDessert: "Desserts", themeCartoon: "Cartoons", themeRealname: "Real names", themeRealnameSub: "No new names", themeExample: "{a}, {b}…", nameTurn: "Player {n}", nameTheme: "Theme: {theme}", rerollTheme: "Another theme", drawButton: "Draw a name", ownButton: "Make up my own", ownSay: "Think of a name and announce it: “I’m ___!” Then pass the phone on.", ownCancel: "Draw instead", ownSlot: "Own name {n}", youAre: "You are…", redraw: "Another", passNext: "Pass it on", revealHint: "Got it? Tap “Pass it on” and hand over the phone 👇", poolEmpty: "This theme is all used up — make up your own!", namedHeading: "Names so far", removeName: "Remove “{name}”", allDone: "Everyone has a name — next", allDoneNeed: "You need at least {n} players to start.", listSep: ", ",
@@ -302,6 +304,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "SCHRITT {n} / {total}", slotPull: "Ziehen!", slotPullAgain: "Nochmal ziehen", slotModeLabel: "Wahrheit oder Pflicht", slotAsk: "Wahrheit", slotMix: "Zufall", slotDo: "Pflicht",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "Zufällig ziehen",
     recStart: "Aufnahme starten", recStop: "Stopp", recRedo: "Neu aufnehmen", recProcessing: "Wird verarbeitet …", recTime: "{sec} s", playStop: "Stopp", micDenied: "Kein Zugriff aufs Mikrofon. Bitte erlaube es dieser Seite in den Browser-Einstellungen.", micInsecure: "Dieser Browser kann nicht aufnehmen. Probier es mit Chrome oder Safari.", decodeFailed: "Die Aufnahme konnte nicht gelesen werden. Bitte noch mal aufnehmen.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Thema der Namen", themeRandom: "Zufall", themeRandomSub: "Das Handy wählt", themeFood: "Essen", themeDrink: "Getränke", themeAnimal: "Tiere", themeFruit: "Obst", themeDessert: "Süßes", themeCartoon: "Trickfiguren", themeRealname: "Echte Namen", themeRealnameSub: "Keine neuen Namen", themeExample: "{a}, {b} …", nameTurn: "Person {n}", nameTheme: "Thema: {theme}", rerollTheme: "Anderes Thema", drawButton: "Namen ziehen", ownButton: "Selbst ausdenken", ownSay: "Denk dir einen Namen aus und sag ihn laut: „Ich bin ___!“ Dann gib das Handy weiter.", ownCancel: "Doch ziehen", ownSlot: "Eigener Name {n}", youAre: "Du bist …", redraw: "Neu ziehen", passNext: "Weitergeben", revealHint: "Gemerkt? Dann tippe auf „Weitergeben“ und reich das Handy weiter 👇", poolEmpty: "In diesem Thema sind alle Namen weg – denk dir selbst einen aus.", namedHeading: "Schon vergeben", removeName: "„{name}“ entfernen", allDone: "Alle haben einen Namen – weiter", allDoneNeed: "Ihr braucht mindestens {n} Personen.", listSep: ", ",
@@ -399,6 +402,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "ÉTAPE {n} / {total}", slotPull: "Tirer !", slotPullAgain: "Encore une fois", slotModeLabel: "Action ou vérité", slotAsk: "Vérité", slotMix: "Hasard", slotDo: "Action",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "Tirer au hasard",
     recStart: "Enregistrer", recStop: "Stop", recRedo: "Recommencer", recProcessing: "Traitement…", recTime: "{sec} s", playStop: "Stop", micDenied: "Impossible d’utiliser le micro. Autorise ce site dans les réglages du navigateur.", micInsecure: "Ce navigateur ne peut pas enregistrer. Essaie avec Chrome ou Safari.", decodeFailed: "Impossible de lire l’enregistrement. Réessaie.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Thème des noms", themeRandom: "Hasard", themeRandomSub: "Le téléphone choisit", themeFood: "Plats", themeDrink: "Boissons", themeAnimal: "Animaux", themeFruit: "Fruits", themeDessert: "Desserts", themeCartoon: "Dessins animés", themeRealname: "Vrais prénoms", themeRealnameSub: "Pas de nouveaux noms", themeExample: "{a}, {b}…", nameTurn: "Joueur {n}", nameTheme: "Thème : {theme}", rerollTheme: "Autre thème", drawButton: "Tirer un nom", ownButton: "Choisir le mien", ownSay: "Pense à un nom et annonce-le bien fort : « Je suis ___ ! » Puis passe le téléphone.", ownCancel: "Plutôt tirer", ownSlot: "Nom perso {n}", youAre: "Tu es…", redraw: "Un autre", passNext: "Passer au suivant", revealHint: "C’est retenu ? Appuie sur « Passer au suivant » et donne le téléphone 👇", poolEmpty: "Plus de noms dans ce thème : invente le tien !", namedHeading: "Noms déjà pris", removeName: "Retirer « {name} »", allDone: "Tout le monde a un nom, suivant", allDoneNeed: "Il faut au moins {n} joueurs pour commencer.", listSep: ", ",
@@ -496,6 +500,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "回す！", slotPullAgain: "もう一回", slotModeLabel: "本音か罰ゲームか", slotAsk: "本音", slotMix: "ランダム", slotDo: "罰ゲーム",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "ランダムで引く",
     recStart: "録音する", recStop: "停止", recRedo: "録り直す", recProcessing: "処理中…", recTime: "{sec} 秒", playStop: "停止", micDenied: "マイクが使えません。ブラウザの設定でこのサイトのマイクを許可してください。", micInsecure: "このブラウザは録音に対応していません。Chrome か Safari でお試しください。", decodeFailed: "録音を読み込めませんでした。もう一度録音してください。",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "名前のテーマ", themeRandom: "ランダム", themeRandomSub: "スマホにおまかせ", themeFood: "食べ物", themeDrink: "飲み物", themeAnimal: "動物", themeFruit: "くだもの", themeDessert: "スイーツ", themeCartoon: "キャラクター", themeRealname: "本名で", themeRealnameSub: "名前はそのまま", themeExample: "{a}、{b}…", nameTurn: "{n} 人目", nameTheme: "テーマ：{theme}", rerollTheme: "別のテーマにする", drawButton: "名前を引く", ownButton: "自分で決める", ownSay: "名前を考えて、みんなに大きな声で「わたしは＿＿＿！」と言ってね。言えたら次の人へ。", ownCancel: "引くほうにする", ownSlot: "自分で決めた {n}", youAre: "あなたは……", redraw: "引き直す", passNext: "次の人へ", revealHint: "覚えたら「次の人へ」を押してスマホを渡してね 👇", poolEmpty: "このテーマの名前はもうありません。自分で決めてね。", namedHeading: "決まった名前", removeName: "「{name}」を消す", allDone: "みんな決まった、次へ", allDoneNeed: "{n} 人以上いないと始められません。", listSep: "、",
@@ -593,6 +598,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "당기기!", slotPullAgain: "한 번 더", slotModeLabel: "진실 혹은 도전", slotAsk: "진실", slotMix: "랜덤", slotDo: "도전",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "랜덤으로 뽑기",
     recStart: "녹음 시작", recStop: "정지", recRedo: "다시 녹음", recProcessing: "처리 중…", recTime: "{sec}초", playStop: "정지", micDenied: "마이크를 쓸 수 없어요. 브라우저 설정에서 이 사이트의 마이크를 허용해 주세요.", micInsecure: "이 브라우저는 녹음을 지원하지 않아요. Chrome이나 Safari로 해 보세요.", decodeFailed: "녹음을 읽지 못했어요. 다시 녹음해 주세요.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "이름 주제", themeRandom: "랜덤", themeRandomSub: "휴대폰이 골라 줘요", themeFood: "음식", themeDrink: "음료", themeAnimal: "동물", themeFruit: "과일", themeDessert: "디저트", themeCartoon: "캐릭터", themeRealname: "본명으로", themeRealnameSub: "이름 그대로", themeExample: "{a}, {b}…", nameTurn: "{n}번째", nameTheme: "주제: {theme}", rerollTheme: "다른 주제로", drawButton: "이름 뽑기", ownButton: "내가 정할래요", ownSay: "이름을 하나 생각해서 크게 말해 주세요: “나는 ___!” 말했으면 다음 사람에게.", ownCancel: "뽑기로 할래요", ownSlot: "직접 정한 이름 {n}", youAre: "당신은……", redraw: "다시 뽑기", passNext: "다음 사람에게", revealHint: "외웠으면 「다음 사람에게」를 누르고 휴대폰을 넘겨 주세요 👇", poolEmpty: "이 주제는 다 뽑았어요. 직접 정해 주세요.", namedHeading: "정해진 이름", removeName: "「{name}」 지우기", allDone: "다 정했어요, 다음", allDoneNeed: "최소 {n}명이 있어야 시작할 수 있어요.", listSep: ", ",
@@ -690,6 +696,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "PASO {n} / {total}", slotPull: "¡Tira!", slotPullAgain: "Otra vez", slotModeLabel: "Verdad o reto", slotAsk: "Verdad", slotMix: "Al azar", slotDo: "Reto",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "Sacar una al azar",
     recStart: "Grabar", recStop: "Parar", recRedo: "Volver a grabar", recProcessing: "Procesando…", recTime: "{sec} s", playStop: "Parar", micDenied: "No se puede usar el micrófono. Permite que esta web lo use en los ajustes del navegador.", micInsecure: "Este navegador no puede grabar. Prueba con Chrome o Safari.", decodeFailed: "No se ha podido leer la grabación. Vuelve a intentarlo.",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "Tema de los nombres", themeRandom: "Al azar", themeRandomSub: "Elige el móvil", themeFood: "Comida", themeDrink: "Bebidas", themeAnimal: "Animales", themeFruit: "Frutas", themeDessert: "Postres", themeCartoon: "Dibujos", themeRealname: "Nombres reales", themeRealnameSub: "Sin nombres nuevos", themeExample: "{a}, {b}…", nameTurn: "Jugador {n}", nameTheme: "Tema: {theme}", rerollTheme: "Otro tema", drawButton: "Sacar un nombre", ownButton: "Elegir el mío", ownSay: "Piensa un nombre y dilo bien alto: «¡Soy ___!». Después pasa el móvil.", ownCancel: "Mejor sacar uno", ownSlot: "Nombre propio {n}", youAre: "Eres…", redraw: "Otro", passNext: "Pasar al siguiente", revealHint: "¿Lo tienes? Pulsa «Pasar al siguiente» y entrega el móvil 👇", poolEmpty: "Ya no quedan nombres de este tema: invéntate uno.", namedHeading: "Nombres ya elegidos", removeName: "Quitar «{name}»", allDone: "Todos tienen nombre, siguiente", allDoneNeed: "Hacen falta al menos {n} jugadores.", listSep: ", ",
@@ -787,6 +794,7 @@ export const STRINGS = {
     // 帶領元件（game.js 的 Leader：步驟頭、真心話大冒險拉霸），各遊戲共用
     leadStep: "STEP {n} / {total}", slotPull: "拉一下！", slotPullAgain: "再拉一次", slotModeLabel: "要回答还是做动作", slotAsk: "真心话", slotMix: "随机", slotDo: "大冒险",
     // 倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用）
+    actionDraw: "随机抽一个",
     recStart: "开始录音", recStop: "停止", recRedo: "重录", recProcessing: "处理中…", recTime: "{sec} 秒", playStop: "停止", micDenied: "拿不到麦克风：请在浏览器设置里允许这个网站使用麦克风。", micInsecure: "这个浏览器不支持录音，请换 Chrome 或 Safari 试试。", decodeFailed: "这段录音读不出来，再录一次试试。",
     // 抽卡取名、選主題（game.js 的 Leader.namer／Leader.themes），各遊戲共用
     themeHeading: "起名主题", themeRandom: "随机", themeRandomSub: "手机帮你选", themeFood: "美食", themeDrink: "饮料", themeAnimal: "动物", themeFruit: "水果", themeDessert: "甜点", themeCartoon: "动画角色", themeRealname: "用真名", themeRealnameSub: "不用起名", themeExample: "{a}、{b}⋯", nameTurn: "第 {n} 位", nameTheme: "主题：{theme}", rerollTheme: "换一个主题", drawButton: "抽一个", ownButton: "自己起一个", ownSay: "想一个名字，大声跟大家说：「我是＿＿＿！」说完就传给下一个人。", ownCancel: "改成抽的", ownSlot: "自己起的 {n}", youAre: "你是⋯⋯", redraw: "换一个", passNext: "传给下一个人", revealHint: "记住了，就按「传给下一个人」交出手机 👇", poolEmpty: "这个主题抽完了，自己起一个吧。", namedHeading: "已经起好的", removeName: "删掉「{name}」", allDone: "大家都起好了，下一步", allDoneNeed: "至少要 {n} 个人才能开始。", listSep: "、",

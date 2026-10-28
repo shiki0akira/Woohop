@@ -115,12 +115,12 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions)",
       "destination": "/:lang/tools/:tool/",
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions)/index.html",
       "destination": "/:lang/tools/:tool/",
       "permanent": true
     },
@@ -376,7 +376,7 @@
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/:page/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml|action-art.js)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:file"
     },
     {
@@ -452,7 +452,7 @@
       "destination": "/:lang/:page/index.html"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions)/",
       "destination": "/:lang/tools/:tool/index.html"
     },
     {

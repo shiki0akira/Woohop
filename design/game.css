@@ -40,6 +40,12 @@
 .game-menu { flex: none; }
 .game-menu > .btn { padding: 0; width: 44px; height: 44px; margin: 0; }
 .game-menu > .btn svg { width: 22px; height: 22px; transform: none !important; }
+/* 選單最後一項「回報問題」：圖示＋字，上面一條細線跟導覽連結分開（chrome.mjs 的 gameBar） */
+.nav-report { display: flex; align-items: center; gap: 8px; }
+.nav-report .nav-icon { flex: none; width: 18px; height: 18px; }
+.game-menu .nav-menu .nav-report { position: relative; margin-top: 9px; color: var(--text-2); }
+.game-menu .nav-menu .nav-report::before { content: ""; position: absolute; left: 8px; right: 8px; top: -6px; height: 2px; border-radius: 1px; background: var(--line); }
+.sheet-list .nav-report { justify-content: center; color: var(--text-2); }
 .game-bar-spacer { width: 44px; flex: none; display: none; }
 
 /* 窄的頂欄：字與左右留白縮小 */
@@ -356,3 +362,43 @@ dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1
 .metro-intro[hidden], .metro-beats[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .metro-intro span { transition: none; } .metro-intro span.on { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .metro-beats i { transition: none; } .metro-beats i.on { transform: none; } }
+
+/* ---------- 帶領元件之四：倒放錄音機（Leader.recorder，倒放猜猜看與桌遊助手共用，2026-10-23） ---------- */
+.recorder { display: grid; gap: 12px; }
+.rec-btn .rec-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--coral-edge); flex: none; }
+.rec-btn.btn-solid .rec-dot { background: var(--coral); }
+.rec-btn.btn-danger .rec-dot { border-radius: 3px; }
+/* 錄音中的進度條要即時跟上秒數，不用設計系統預設的 .4s 動畫 */
+.recorder .progress { max-width: none; }
+.recorder .progress > div { transition: none; }
+.rec-meter { display: flex; align-items: center; gap: 10px; }
+.rec-meter .progress { flex: 1; }
+.rec-time { flex: none; min-width: 3.6em; text-align: right; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.rec-time:empty { display: none; }
+.rec-status { margin: -4px 0 0; font-size: 13px; color: var(--muted); }
+.rec-status:empty { display: none; }
+.rec-plays { display: flex; flex-wrap: wrap; gap: 10px; }
+.rec-plays .btn { flex: 1 1 0; min-width: 120px; }
+.rec-plays .is-reverse { flex-grow: 2; }
+.rec-plays svg { width: 18px; height: 18px; }
+/* 倒放鍵的箭頭朝左：同一個播放圖示翻過來 */
+.is-reverse svg { transform: scaleX(-1); }
+/* 播放中變紅色「停止」，圖示跟錄音中的停止一樣是小方塊 */
+.btn.is-playing svg { display: none; }
+.btn.is-playing::before { content: ''; width: 12px; height: 12px; border-radius: 3px; background: var(--coral-edge); flex: none; }
+.rec-plays:empty { display: none; }
+
+/* ---------- 帶領元件之五：動作抽卡（Leader.actionCard，木頭人動作版與桌遊助手共用，2026-10-28） ---------- */
+.action-card { display: grid; gap: 14px; }
+.action-face {
+  display: grid; justify-items: center; gap: 6px; padding: 16px 14px 18px; text-align: center;
+  border: 2px solid var(--yellow-edge); border-radius: var(--r-lg); background: var(--yellow-face); box-shadow: 0 5px 0 var(--yellow-edge);
+}
+.action-face[hidden] { display: none; }
+.action-face.pop { animation: card-flip .5s cubic-bezier(.2, 1.3, .4, 1) 1; }
+.action-art { display: block; width: 120px; height: auto; overflow: visible; --ill-sw: 3px; --arm-w: 5px; }
+/* 動作是一個詞組不是人名：不用 keep-all，長的才會平均斷成兩行 */
+.action-name { margin: 0; font-size: clamp(30px, 9vw, 48px); font-weight: 900; line-height: 1.2; color: var(--yellow-text); text-wrap: balance; overflow-wrap: anywhere; }
+.action-draw { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.action-draw svg { width: 18px; height: 18px; }
+@media (prefers-reduced-motion: reduce) { .action-face.pop { animation: none; } }

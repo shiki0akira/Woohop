@@ -1430,3 +1430,86 @@
   window.Leader.recorder = recorder;
   window.Leader.stopPlaying = stopPlaying;
 })();
+
+/*
+ * 帶領元件之五：動作抽卡 Leader.actionCard（2026-10-28 從木頭人動作版抽出來，桌遊助手的「動作抽卡」也用同一份）。
+ * 一張動作卡（插圖在上、名稱在下）＋「隨機抽一個」。插圖是 woohop-art.js 的 Woohop.actionArt，
+ * 動作清單是 src/action-cards.mjs（build 時嵌進當頁語言的那份）。按鈕文字是 locales.mjs 的 actionDraw。
+ *
+ *   var card = Leader.actionCard(rootEl, { actions: [[代號, 名稱], ...], onDraw(action) })
+ *       第一次抽之前卡片藏著，只有按鈕；不會連續抽到同一個動作，小人顏色每抽一張換一個
+ *   card.draw()    抽一張（翻牌動畫）
+ *   card.reset()   收起卡片，回到還沒抽的樣子
+ *   Leader.actionArt(代號)   只要插圖（隨機換顏色）：木頭人抽卡那一步自己排版面時用
+ */
+(function () {
+  'use strict';
+
+  var t = (window.WOOHOP && window.WOOHOP.t) || {};
+
+  // 首頁主視覺那幾隻小人的顏色：[主色, 陰影色]
+  var CHARS = [
+    ['#fbbff5', '#ef9fe8'], // 粉
+    ['#aebcf3', '#8799E9'], // 藍（主持人）
+    ['#a8dccb', '#7cc9b1'], // 薄荷
+    ['#ffc27a', '#FF9419'], // 橘
+    ['#fbb3a8', '#EE7B6A'], // 珊瑚
+  ];
+  var lastChar = -1;
+
+  // 隨機換一個顏色（不會連續兩張同色）畫那個動作的插圖；沒有插圖就回空字串
+  function actionArt(key) {
+    var art = window.Woohop && window.Woohop.actionArt;
+    var draw = art && art[key];
+    if (!draw) return '';
+    var i = Math.floor(Math.random() * (CHARS.length - 1));
+    if (lastChar >= 0 && i >= lastChar) i += 1;
+    lastChar = i;
+    return draw(CHARS[i]);
+  }
+
+  function actionCard(rootEl, opts) {
+    var actions = opts.actions || [];
+    var wrap = document.createElement('div');
+    wrap.className = 'action-card';
+    wrap.innerHTML = '<div class="action-face" hidden><svg class="action-art" viewBox="0 0 120 128" aria-hidden="true"></svg>' +
+      '<p class="action-name" aria-live="polite"></p></div>';
+    var face = wrap.firstChild;
+    var artEl = face.querySelector('.action-art');
+    var nameEl = face.querySelector('.action-name');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-lg btn-secondary btn-block action-draw';
+    btn.innerHTML = '<svg aria-hidden="true"><use href="#i-dice"/></svg><span></span>';
+    btn.querySelector('span').textContent = t.actionDraw || '';
+    wrap.appendChild(btn);
+    rootEl.appendChild(wrap);
+
+    var lastKey = '';
+    var self = {};
+    self.draw = function () {
+      var n = actions.length;
+      if (!n) return;
+      var action;
+      do action = actions[Math.floor(Math.random() * n)]; while (n > 1 && action[0] === lastKey);
+      lastKey = action[0];
+      nameEl.textContent = action[1];
+      artEl.innerHTML = actionArt(action[0]);
+      face.hidden = false;
+      // 卡片從側面轉正（跟抽卡取名同一個動畫）
+      face.classList.remove('pop');
+      void face.offsetWidth;
+      face.classList.add('pop');
+      if (opts.onDraw) opts.onDraw(action);
+    };
+    self.reset = function () {
+      lastKey = '';
+      face.hidden = true;
+    };
+    btn.addEventListener('click', self.draw);
+    return self;
+  }
+
+  window.Leader.actionCard = actionCard;
+  window.Leader.actionArt = actionArt;
+})();

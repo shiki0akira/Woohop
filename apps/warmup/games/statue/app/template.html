@@ -73,14 +73,10 @@
       <!-- 第 4 步：遊戲結束。摸到鬼的人隨機抽一個動作讓鬼做（不列出全部，使用者要求），大家用自己的手機幫鬼三連拍（不用拉霸，網頁不碰相機） -->
       <div class="view" id="view-end" hidden>
         <div class="lead-slot"></div>
-        <section class="panel punish-panel namer" id="punish">
+        <section class="panel punish-panel" id="punish">
           <h2>{{punishHeading}}</h2>
-          <!-- 選了才出現：跟抽到的動作卡同一個樣子 -->
-          <div class="drawn-card" id="punish-card" hidden>
-            <svg class="illo drawn-art" id="punish-art" viewBox="0 0 120 128" aria-hidden="true"></svg>
-            <p class="drawn-name" id="punish-text" aria-live="polite"></p>
-          </div>
-          <button class="btn btn-secondary btn-block" id="punish-random" type="button"><svg aria-hidden="true"><use href="#i-dice"/></svg>{{punishRandom}}</button>
+          <!-- 動作卡＋隨機抽一個：全站共用的 Leader.actionCard（桌遊助手的動作抽卡也是這一個） -->
+          <div id="punish-root"></div>
         </section>
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
       </div>
@@ -104,10 +100,11 @@
         lang: '{{lang}}',
         base: '{{base}}',
         T: {{stringsJson}},
+        // 動作卡（apps/homepage/src/action-cards.mjs，只嵌這個語言的）：[插圖代號, 名稱]
+        actions: {{actionsJson}},
       };
     </script>
     <script src="{{base}}/header.js?v={{assetVersion}}"></script>
-    <script src="{{base}}/action-art.js?v={{assetVersion}}"></script>
     <script src="{{base}}/app.js?v={{assetVersion}}"></script>
   </body>
 </html>
