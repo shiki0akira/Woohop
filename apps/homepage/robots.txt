@@ -11,4 +11,5 @@ Sitemap: https://www.vibeweb100.com/bamboo-sitemap.xml
 Sitemap: https://www.vibeweb100.com/stairs-sitemap.xml
 Sitemap: https://www.vibeweb100.com/orchard-sitemap.xml
 Sitemap: https://www.vibeweb100.com/reverse-sitemap.xml
+Sitemap: https://www.vibeweb100.com/statue-sitemap.xml
 Sitemap: https://www.vibeweb100.com/happiness-sitemap.xml

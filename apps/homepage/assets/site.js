@@ -52,6 +52,7 @@
     { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', added: '2026-10-22' },
     { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', added: '2026-10-21' },
     { key: 'reverse', players: [2, 20], minutes: 10, phones: 'one',  purpose: ['warmup'],         color: '#F3A4FB', added: '2026-10-23' },
+    { key: 'statue',  players: [5, 30], minutes: 10, phones: 'one',  purpose: ['warmup'],         color: '#FFC628', added: '2026-10-28' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」

@@ -168,6 +168,19 @@
       <circle cx="62" cy="89" r="7" fill="none" ${K}/><circle cx="98" cy="89" r="7" fill="none" ${K}/>
       <path d="M69 89h22" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>
       <path d="M150 34l-8 7 8 7M140 34l-8 7 8 7" fill="none" stroke="#7489E6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+    // 木頭人動作版：後面一張黃色動作卡（驚嘆號），前面一隻首頁的小人擺螃蟹走路（兩手比 YA、左右箭頭）
+    statue: () => {
+      const arm = (d) => `<path d="${d}" fill="none" stroke="#22222c" stroke-width="13" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#aebcf3" stroke-width="6" stroke-linecap="round"/>`;
+      const ya = (x, y) => arm(`M${x} ${y}l-6 -13`) + arm(`M${x} ${y}l5 -14`) + `<circle cx="${x}" cy="${y}" r="6" fill="#aebcf3" ${K}/>`;
+      return `
+      ${ground}${burst(142, 22, '#EE7B6A')}${ring(20, 96, '#4FB59A')}${dot(150, 92, '#F3A4FB', 4)}
+      <g transform="rotate(-14 28 50)">${body('<rect x="8" y="20" width="40" height="56" rx="8"/>', '#FFC628', '', false)}
+      <path d="M28 33v17" fill="none" ${K}/><circle cx="28" cy="61" r="3.2" fill="#22222c"/></g>
+      ${arm('M68 86q-18 -10 -20 -34')}${arm('M104 86q18 -10 20 -34')}${ya(48, 52)}${ya(124, 52)}
+      ${body('<path d="M64 117V58A22 22 0 0 1 108 58V117Z"/>', '#aebcf3', '<path d="M94 26h44v100H94z" fill="#8799E9"/>')}
+      ${makeFace('happy', 86, 64, 2)}
+      <path d="M26 108h16m-6 -6 -6 6 6 6M146 108h-16m6 -6 6 6 -6 6" fill="none" stroke="#EE7B6A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    },
     // 桌遊助手的小工具（2026-10-22）：拉霸機、節拍器（擺錘正中間、不放表情）、一疊名稱卡
     toolSlot: () => `
       ${ground}${burst(140, 22, '#FFC628')}${ring(22, 32, '#EE7B6A')}${dot(150, 96, '#7489E6', 4)}
