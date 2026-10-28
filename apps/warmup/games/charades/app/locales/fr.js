@@ -54,7 +54,7 @@ export default {
   startActing: 'C’est parti !',
   skipButton: 'Un autre mot',
   gotIt: 'Trouvé !',
-  peekButton: 'Revenir voir le mot',
+  peekButton: 'Revoir',
   continueActing: 'Continuer !',
   hintKindButton: 'Donner la catégorie',
   hintCharButton: 'Donner une lettre',

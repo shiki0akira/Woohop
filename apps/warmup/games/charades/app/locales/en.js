@@ -53,7 +53,7 @@ export default {
   startActing: 'Start acting!',
   skipButton: 'Another one',
   gotIt: 'Got it!',
-  peekButton: 'Go back and see the word',
+  peekButton: 'Peek again',
   continueActing: 'Keep acting!',
   hintKindButton: 'Show category',
   hintCharButton: 'Reveal a letter',

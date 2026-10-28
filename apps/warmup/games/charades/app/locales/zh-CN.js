@@ -52,7 +52,7 @@ export default {
   startActing: '开始比！',
   skipButton: '换一题',
   gotIt: '猜中了！',
-  peekButton: '回上一步看题目',
+  peekButton: '再偷看一次',
   continueActing: '继续比！',
   hintKindButton: '提示类型',
   hintCharButton: '提示一个字',

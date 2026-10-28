@@ -54,7 +54,7 @@ export default {
   startActing: '¡A representar!',
   skipButton: 'Otra',
   gotIt: '¡Adivinada!',
-  peekButton: 'Volver a ver la palabra',
+  peekButton: 'Volver a mirar',
   continueActing: '¡Seguir!',
   hintKindButton: 'Decir la categoría',
   hintCharButton: 'Destapar una letra',

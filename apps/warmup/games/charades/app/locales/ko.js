@@ -53,7 +53,7 @@ export default {
   startActing: '시작!',
   skipButton: '다른 제시어',
   gotIt: '정답!',
-  peekButton: '이전으로 돌아가 제시어 보기',
+  peekButton: '다시 보기',
   continueActing: '계속하기!',
   hintKindButton: '분야 알려 주기',
   hintCharButton: '한 글자 알려 주기',

@@ -53,7 +53,7 @@ export default {
   startActing: 'スタート！',
   skipButton: 'ほかのお題',
   gotIt: '当たり！',
-  peekButton: '前に戻ってお題を見る',
+  peekButton: 'もう一度見る',
   continueActing: '続ける！',
   hintKindButton: 'ジャンルを教える',
   hintCharButton: '1文字教える',

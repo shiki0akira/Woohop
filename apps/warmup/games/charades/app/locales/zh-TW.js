@@ -62,7 +62,7 @@ export default {
   skipButton: '換一題',
   gotIt: '猜中了！',
   // 開始比之後題目蓋起來（手機會被大家看到），只畫方塊；比的人忘了可以回上一步看（使用者要求，按住偷看拿掉）
-  peekButton: '回上一步看題目',
+  peekButton: '再偷看一次',
   continueActing: '繼續比！',
   // 提示兩種（使用者要求）：類型（黃色標籤直接寫類型）、一個字（每按一次多露一個）。都顯示在蓋起來的卡片上
   hintKindButton: '提示類型',

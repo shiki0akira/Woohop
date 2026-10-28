@@ -53,7 +53,7 @@ export default {
   startActing: 'Los geht’s!',
   skipButton: 'Anderer Begriff',
   gotIt: 'Erraten!',
-  peekButton: 'Zurück und Begriff ansehen',
+  peekButton: 'Noch mal schauen',
   continueActing: 'Weiter darstellen!',
   hintKindButton: 'Kategorie verraten',
   hintCharButton: 'Buchstabe verraten',

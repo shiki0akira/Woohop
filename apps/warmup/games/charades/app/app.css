@@ -85,11 +85,8 @@ html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .mask-box { bord
 /* 一個單字一組不換行；單字之間的空白給固定寬度（flex 會把空白字吃掉） */
 .mask-word { display: inline-flex; align-items: center; gap: inherit; white-space: nowrap; }
 .mask-space { display: inline-block; width: .35em; }
-/* 按住偷看：不讓手機跳出選字、長按選單 */
-.peek-btn {
-  justify-self: center; border: 0; background: none; cursor: pointer; font: inherit; font-size: 15px; font-weight: 800; padding: 6px 0;
-  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
-}
+/* 再偷看一次：跟倒放猜猜看一樣的小按鈕，置中 */
+.peek-btn { justify-self: center; }
 
 /* result：大字標題＋答案 */
 .stage-result { justify-items: center; text-align: center; }
