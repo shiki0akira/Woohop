@@ -91,7 +91,7 @@ id 跟舊版一樣是那 10 種食物，房間裡已經存的頭像不用轉換�
 - `buzzer_player_joined` 只算第一次（`joinReported`），`welcome` 每次重連都會來
 - `buzzer_buzzed` 等伺服器把名次算回來才送，按了但被判 `too_early` 的不算；一輪一次，回合重置時解鎖（`buzzReported`）
 
-事件清單：`buzzer_room_created`（`max_players`）、`buzzer_player_joined`、`buzzer_game_started`（`player_count`）、`buzzer_round_started`、`buzzer_buzzed`（`place`）、`buzzer_room_closed`。
+在房間裡送的事件都帶 `room_id`（房號，2026-10-28，`track()` 自動補上；GA4 已註冊成自訂維度才看得到）。事件清單：`buzzer_room_created`（`max_players`）、`buzzer_player_joined`、`buzzer_game_started`（`player_count`）、`buzzer_round_started`、`buzzer_buzzed`（`place`）、`buzzer_room_closed`。
 
 ## SEO
 

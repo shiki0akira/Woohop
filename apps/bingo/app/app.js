@@ -1144,7 +1144,7 @@
     if (state.room.players.length < 2) return showError(el.startError, t('startBlockedPlayers'));
 
     send({ t: 'startGame' });
-    track('bingo_game_started', { size: state.size, target_lines: state.targetLines });
+    track('bingo_game_started', { size: state.size, target_lines: state.targetLines, player_count: state.room.players.length });
   }
 
   /* ---------- 進出房間 ---------- */
@@ -2303,8 +2303,13 @@
    * 搶答是 buzzer_、喜好二選一是 match_）——整個系列共用一個 GA4 資源，
    * 沒有前綴就分不出是哪個遊戲的。
    */
+  // 在房間裡送的事件一律帶 room_id（房號，2026-10-28）：GA4 才算得出一房幾個人、
+  // 20 人以上的房間佔幾成（docs/roadmap.md「活動模式」的需求訊號）。房號會重複使用，分析時跟日期一起看
   function track(name, params) {
-    if (typeof gtag === 'function') gtag('event', name, params || {});
+    if (typeof gtag !== 'function') return;
+    var p = params || {};
+    if (state.code && !p.room_id) p.room_id = state.code;
+    gtag('event', name, p);
   }
 
   function escapeHtml(value) {

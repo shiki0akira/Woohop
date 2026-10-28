@@ -308,9 +308,14 @@
   //
   // 只在「動作的那台裝置」上送：狀態是廣播給全場的，如果照著狀態送，
   // 一場 10 個人的遊戲會把同一個事件記 10 次。
+  //
+  // 在房間裡送的事件一律帶 room_id（房號，2026-10-28）：GA4 才算得出一房幾個人、
+  // 20 人以上的房間佔幾成（docs/roadmap.md「活動模式」的需求訊號）。房號會重複使用，分析時跟日期一起看
   function track(name, params) {
     if (typeof gtag !== 'function') return;
-    gtag('event', name, params || {});
+    var p = params || {};
+    if (roomCode && !p.room_id) p.room_id = roomCode;
+    gtag('event', name, p);
   }
 
   function showFieldError(node, message) {
@@ -435,7 +440,7 @@
         return res.json();
       })
       .then(function (data) {
-        track('buzzer_room_created', { max_players: maxPlayers });
+        track('buzzer_room_created', { max_players: maxPlayers, room_id: data.code });
         enterRoom(data.code);
       })
       .catch(function () {
