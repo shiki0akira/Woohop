@@ -53,6 +53,7 @@ export default {
   sentenceTask: '用「{word}」说一句话',
   roundNo: '第 {n} / {total} 题',
   roundNoFree: '第 {n} 题',
+  turnWho: '轮到第 {k} 个人出题',
   drawButton: '抽题目',
   drawHint: '只给出题的人看，别让别人偷看！',
   revealHint: '记住了就盖起来 👇',

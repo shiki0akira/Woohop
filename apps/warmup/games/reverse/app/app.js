@@ -58,6 +58,7 @@
     ruleCards: $('rule-cards'),
     rulesNext: $('rules-next'),
     roundNo: $('round-no'),
+    turnWho: $('turn-who'),
     roundBar: $('round-bar'),
     roundProgress: $('round-progress'),
     card: $('card'),
@@ -286,6 +287,8 @@
     copy.reset();
     drawCard(null);
     el.roundNo.textContent = limited() ? fill(T.roundNo, { n: roundNumber, total: totalRounds() }) : fill(T.roundNoFree, { n: roundNumber });
+    // 大家輪流出題：比完一圈再從第 1 個人開始
+    el.turnWho.textContent = fill(T.turnWho, { k: ((roundNumber - 1) % count) + 1 });
     el.roundProgress.hidden = !limited();
     el.roundBar.style.setProperty('--p', limited() ? (roundNumber / totalRounds()) * 100 + '%' : '0%');
     el.nextRound.textContent = isLast() ? T.lastRound : T.nextRound;

@@ -53,6 +53,7 @@ export default {
   sentenceTask: '「{word}」 넣어서 한마디',
   roundNo: '{n} / {total}번째 문제',
   roundNoFree: '{n}번째 문제',
+  turnWho: '{k}번째 사람이 출제',
   drawButton: '제시어 뽑기',
   drawHint: '출제자만 보세요. 다른 사람은 엿보기 금지!',
   revealHint: '외웠으면 덮어요 👇',

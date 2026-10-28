@@ -76,7 +76,8 @@
 
         <!-- 第幾題（設計系統的進度條）；不限題數時只有字 -->
         <div class="round-progress">
-          <p class="round-no" id="round-no"></p>
+          <!-- 第幾題 · 輪到第幾個人出題（2026-10-28 使用者要求，跟比手畫腳一樣） -->
+          <p class="round-no"><span id="round-no"></span> · <span id="turn-who"></span></p>
           <div class="progress" id="round-progress"><div id="round-bar" style="--p:0%"></div></div>
         </div>
 

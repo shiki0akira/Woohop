@@ -53,6 +53,7 @@ export default {
   sentenceTask: 'Sag einen Satz mit „{word}“',
   roundNo: 'Runde {n} / {total}',
   roundNoFree: 'Runde {n}',
+  turnWho: 'Person {k} ist dran',
   drawButton: 'Aufgabe ziehen',
   drawHint: 'Nur wer dran ist, darf schauen!',
   revealHint: 'Gemerkt? Verdecken 👇',

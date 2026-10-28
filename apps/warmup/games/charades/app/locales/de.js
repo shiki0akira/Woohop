@@ -51,7 +51,7 @@ export default {
   drawButton: 'Begriff ziehen',
   drawHint: 'Du bist dran! Zieh einen Begriff – nicht zeigen',
   startActing: 'Los geht’s!',
-  skipButton: 'Überspringen',
+  skipButton: 'Anderer Begriff',
   gotIt: 'Erraten!',
   peekButton: 'Zurück und Begriff ansehen',
   continueActing: 'Weiter darstellen!',

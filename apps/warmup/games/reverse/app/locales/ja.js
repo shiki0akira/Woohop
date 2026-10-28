@@ -53,6 +53,7 @@ export default {
   sentenceTask: '「{word}」を使ってひと言',
   roundNo: '第 {n} 問 / 全 {total} 問',
   roundNoFree: '第 {n} 問',
+  turnWho: '{k} 人目が出題',
   drawButton: 'お題を引く',
   drawHint: '出題者だけが見てね。ほかの人はのぞかないで！',
   revealHint: '覚えたら伏せよう 👇',

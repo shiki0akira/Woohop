@@ -53,6 +53,7 @@ export default {
   sentenceTask: 'Di una frase con «{word}»',
   roundNo: 'Ronda {n} / {total}',
   roundNoFree: 'Ronda {n}',
+  turnWho: 'Le toca a la persona {k}',
   drawButton: 'Sacar consigna',
   drawHint: '¡Solo mira quien le toca!',
   revealHint: '¿Te la sabes? Tápala 👇',

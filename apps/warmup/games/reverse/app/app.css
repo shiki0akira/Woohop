@@ -46,7 +46,8 @@
 .next-hint { margin: 0; text-align: center; }
 
 /* ---------- 第幾題：設計系統的進度條 ---------- */
-.round-progress { display: grid; gap: 8px; }
+/* 遊戲畫面最上面是這一行，不留空會貼著頂欄（2026-10-28 使用者回報），跟比手畫腳一樣空 20px */
+.round-progress { display: grid; gap: 8px; margin-top: 20px; }
 .round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
 .round-progress .progress { max-width: none; }
 

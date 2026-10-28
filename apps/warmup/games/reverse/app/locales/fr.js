@@ -53,6 +53,7 @@ export default {
   sentenceTask: 'Dis une phrase avec « {word} »',
   roundNo: 'Manche {n} / {total}',
   roundNoFree: 'Manche {n}',
+  turnWho: 'Au tour du joueur {k}',
   drawButton: 'Tirer une consigne',
   drawHint: 'Seule la personne dont c’est le tour regarde !',
   revealHint: 'Retenu ? Cache-la 👇',

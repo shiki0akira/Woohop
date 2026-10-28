@@ -52,7 +52,7 @@ export default {
   drawButton: 'Tirer un mot',
   drawHint: 'À toi ! Tire un mot – ne le montre à personne',
   startActing: 'C’est parti !',
-  skipButton: 'Passer ce mot',
+  skipButton: 'Un autre mot',
   gotIt: 'Trouvé !',
   peekButton: 'Revenir voir le mot',
   continueActing: 'Continuer !',

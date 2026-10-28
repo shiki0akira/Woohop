@@ -63,6 +63,7 @@ export default {
   sentenceTask: '用「{word}」說一句話',
   roundNo: '第 {n} / {total} 題',
   roundNoFree: '第 {n} 題',
+  turnWho: '輪到第 {k} 個人出題',
   drawButton: '抽題目',
   drawHint: '只給出題的人看，別讓別人偷看！',
   revealHint: '記好了就蓋起來 👇',

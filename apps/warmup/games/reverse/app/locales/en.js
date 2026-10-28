@@ -53,6 +53,7 @@ export default {
   sentenceTask: 'Say a sentence with “{word}”',
   roundNo: 'Round {n} / {total}',
   roundNoFree: 'Round {n}',
+  turnWho: 'Player {k} asks',
   drawButton: 'Draw a prompt',
   drawHint: 'Only the prompt giver should look!',
   revealHint: 'Got it? Hide it 👇',

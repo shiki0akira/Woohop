@@ -52,7 +52,7 @@ export default {
   drawButton: 'Sacar una palabra',
   drawHint: '¡Te toca! Saca una, que no la vea nadie',
   startActing: '¡A representar!',
-  skipButton: 'Pasar esta',
+  skipButton: 'Otra',
   gotIt: '¡Adivinada!',
   peekButton: 'Volver a ver la palabra',
   continueActing: '¡Seguir!',
