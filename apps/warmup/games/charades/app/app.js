@@ -2,7 +2,7 @@
  * 比手畫腳。手機不當裁判、不記分、不計時（CONCEPT.md 第二節），只做三件事：一步一步帶、出題、提示。
  *
  * 一步一步帶（跟木頭人動作版同一套，步驟頭、規則卡是全站共用的 window.Leader）：
- *   setup 開場（題目類型、幾個人、每人比幾題）→ rules 說明規則
+ *   setup 開場（幾個人、每人比幾題、題目類型）→ rules 說明規則
  *   → play（draw 抽題目 → ready 看題目 → acting 比到有人猜中 → result → 下一個人回 draw）
  *   → end 遊戲結束（題數比完自動進來；不限題數要按住結束）→ 再玩一次回 play
  * 返回鍵一律回第一頁；已經比過題目就先確認。
@@ -29,7 +29,7 @@
   var startedAt = 0;
   var deck = []; // 這一場還沒抽的題目 [類型名稱, 題目]（洗好的、去掉重複）
   var card = null;
-  var hint = null; // 這一題的提示：{ chars, shown: 已經露出的位置 }
+  var hint = null; // 這一題給過的提示：{ kind: 給了類型沒, chars, shown: 已經露出的字的位置 }
 
   var $ = function (id) { return document.getElementById(id); };
   var views = { setup: $('view-setup'), rules: $('view-rules'), play: $('view-play'), end: $('view-end') };
@@ -52,9 +52,11 @@
     drawn: $('drawn'),
     cardKind: $('card-kind'),
     cardText: $('card-text'),
+    hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
-    hintBtn: $('hint-btn'),
-    hintHide: $('hint-hide'),
+    hintKindBtn: $('hint-kind-btn'),
+    hintCharBtn: $('hint-char-btn'),
+    peek: $('peek'),
     actStart: $('act-start'),
     gotIt: $('got-it'),
     skip: $('skip'),
@@ -215,8 +217,8 @@
     card = deck.pop();
     el.cardKind.textContent = card[0];
     el.cardText.textContent = card[1];
-    hint = null;
-    showHint(false);
+    hint = { kind: false, chars: Array.from(card[1]), shown: [] };
+    syncCard();
   }
 
   // 卡片從側面轉正（game.css 的 .drawn-card.pop）
@@ -226,47 +228,61 @@
     el.drawn.classList.add('pop');
   }
 
-  // ---------- 提示：題目藏起來、只露出幾個字，每按一次隨機多露一個（最後一個字不露） ----------
+  // ---------- 題卡：ready 看得到題目；開始比之後蓋起來，只顯示給過的提示（使用者要求） ----------
 
-  // 用 Array.from 切字，表情符號、中日韓字都算一個；空白和標點直接顯示，不算要猜的字
+  var peeking = false;
+
+  // 用 Array.from 切字，中日韓字、表情符號都算一個；空白和標點直接顯示，不算要猜的字
   var isLetter = function (ch) { return /[\p{L}\p{N}]/u.test(ch); };
-
+  var hiddenLetters = function () {
+    var list = [];
+    hint.chars.forEach(function (ch, i) {
+      if (isLetter(ch) && hint.shown.indexOf(i) < 0) list.push(i);
+    });
+    return list;
+  };
   function maskText() {
     return hint.chars.map(function (ch, i) {
       if (!isLetter(ch)) return ch;
       return hint.shown.indexOf(i) >= 0 ? ch : '○';
     }).join('');
   }
-  function revealOne() {
-    var hidden = [];
-    hint.chars.forEach(function (ch, i) {
-      if (isLetter(ch) && hint.shown.indexOf(i) < 0) hidden.push(i);
-    });
-    if (hidden.length <= 1) return false;
-    hint.shown.push(hidden[Math.floor(Math.random() * hidden.length)]);
-    return true;
-  }
-  function showHint(on) {
-    el.drawn.setAttribute('data-hint', on ? 'on' : 'off');
-    el.hintHide.hidden = !on;
-    if (on) {
-      el.hintMask.textContent = maskText();
+
+  function syncCard() {
+    var covered = phase === 'acting' && !peeking;
+    el.drawn.setAttribute('data-view', covered ? 'covered' : 'word');
+    var anyHint = hint && (hint.kind || hint.shown.length > 0);
+    el.drawn.classList.toggle('has-hint', Boolean(anyHint));
+    el.hintKind.textContent = hint && hint.kind ? fill(T.hintKind, { kind: card[0] }) : '';
+    el.hintKind.hidden = !(hint && hint.kind);
+    el.hintMask.textContent = hint && hint.shown.length ? maskText() : '';
+    el.hintMask.hidden = !(hint && hint.shown.length);
+    if (hint) {
+      el.hintKindBtn.disabled = hint.kind;
       // 只剩最後一個字沒露出來，就不能再多給了
-      var left = hint.chars.filter(function (ch, i) { return isLetter(ch) && hint.shown.indexOf(i) < 0; }).length;
-      el.hintBtn.textContent = T.hintMore;
-      el.hintBtn.disabled = left <= 1;
-    } else {
-      el.hintBtn.textContent = T.hintButton;
-      el.hintBtn.disabled = false;
+      el.hintCharBtn.disabled = hiddenLetters().length <= 1;
     }
   }
-  function onHint() {
-    var first = !hint;
-    if (first) hint = { chars: Array.from(card[1]), shown: [] };
-    // 第一次按：如果題目只有一兩個字，打開時先不露字；之後每按一次多露一個
-    if (el.drawn.getAttribute('data-hint') === 'on' || first) revealOne();
-    showHint(true);
-    track('charades_hint_shown', { round_number: roundNumber, shown: hint.shown.length, category: card[0] });
+
+  function giveKind() {
+    hint.kind = true;
+    syncCard();
+    track('charades_hint_shown', { round_number: roundNumber, kind: 'category', category: card[0] });
+  }
+  // 每按一次隨機多露一個字（最後一個字不露）
+  function giveChar() {
+    var hidden = hiddenLetters();
+    if (hidden.length <= 1) return;
+    hint.shown.push(hidden[Math.floor(Math.random() * hidden.length)]);
+    syncCard();
+    track('charades_hint_shown', { round_number: roundNumber, kind: 'char', shown: hint.shown.length, category: card[0] });
+  }
+
+  // 按住偷看：放開（或手指滑出去）就蓋回去
+  function setPeek(on) {
+    if (phase !== 'acting') return;
+    peeking = on;
+    syncCard();
   }
 
   /*
@@ -275,8 +291,10 @@
    */
   function setPhase(next) {
     phase = next;
+    peeking = false;
     views.play.setAttribute('data-phase', next);
     el.card.setAttribute('data-stage', next === 'draw' ? 'draw' : next === 'result' ? 'result' : 'reveal');
+    if (card) syncCard();
   }
 
   // 第幾題、輪到第幾個人（每個人輪流，比完一圈再從第 1 個人開始）
@@ -314,7 +332,7 @@
     setPhase('result');
     // 題數比完：進度條補滿
     if (limited()) el.roundBar.style.setProperty('--p', (roundNumber / totalRounds()) * 100 + '%');
-    track('charades_guessed', { round_number: roundNumber, category: card[0], hints: hint ? hint.shown.length : 0 });
+    track('charades_guessed', { round_number: roundNumber, category: card[0], hint_kind: hint.kind, hint_chars: hint.shown.length });
   }
 
   /*
@@ -440,15 +458,27 @@
 
   el.draw.addEventListener('click', drawFromDeck);
   el.actStart.addEventListener('click', function () { setPhase('acting'); });
-  // 跳過這題：換一題，還是同一個人比（不算一題）
+  // 跳過這題：只有開始比之前可以（使用者要求），換一題、還是同一個人比（不算一題）
   el.skip.addEventListener('click', function () {
     track('charades_skipped', { round_number: roundNumber, category: card[0] });
     nextCard();
     flip();
   });
   el.gotIt.addEventListener('click', showResult);
-  el.hintBtn.addEventListener('click', onHint);
-  el.hintHide.addEventListener('click', function () { showHint(false); });
+  el.hintKindBtn.addEventListener('click', giveKind);
+  el.hintCharBtn.addEventListener('click', giveChar);
+  el.peek.addEventListener('pointerdown', function (event) {
+    if (event.button > 0) return;
+    setPeek(true);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (type) {
+    el.peek.addEventListener(type, function () { setPeek(false); });
+  });
+  el.peek.addEventListener('contextmenu', function (event) { event.preventDefault(); });
+  // 鍵盤：按一下看、再按一下蓋回去
+  el.peek.addEventListener('click', function (event) {
+    if (event.detail === 0) setPeek(!peeking);
+  });
   el.nextTurn.addEventListener('click', function () {
     if (isLast()) endGame();
     else startRound();

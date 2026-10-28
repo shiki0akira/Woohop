@@ -15,7 +15,7 @@
 .setup-panel .field-label:first-child { margin-top: 0; }
 .setup-panel .hint { margin: 2px 0 10px; }
 /* 人數和每人幾題並排（照倒放猜猜看的 .setup-row）；電腦版每人幾題自己一行 */
-.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 18px; }
+.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
 .setup-row .field-label { margin-top: 0; }
 .per-field { flex: 1 1 140px; }
 @media (min-width: 600px) {
@@ -27,6 +27,7 @@
 .setup-row .stepper output { min-width: 48px; }
 .per-field .seg-item { padding: 0 2px; }
 #rounds-hint { margin: 10px 0 0; }
+.setup-panel .field-label-gap { margin-top: 20px; }
 /* 九類：共用 .choice 的最小高度 136px 排起來太長，改成三欄的小卡（例子只留一行，太長就省略） */
 .category-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .category-choice { min-height: 0; padding: 12px 6px 10px; gap: 2px; }
@@ -58,18 +59,26 @@
 .charades-app .namer .drawn-card .badge { background: var(--surface); color: var(--blue-text); border-color: var(--blue-edge); }
 
 /*
- * 提示：打開時題目和類型藏起來，換成「提示」標籤＋只露出幾個字的題目（○○梯○），
- * 比的人可以把手機轉給大家看（app.js 的 showHint）
+ * 題卡兩種樣子（app.js 的 syncCard，#drawn 的 data-view）：
+ *   word 看得到題目（ready、按住偷看）；covered 開始比之後蓋起來，有給提示就顯示提示（類型、只露出幾個字）
  */
-.charades-app .hint-badge, .hint-mask { display: none; }
-.charades-app .drawn-card[data-hint="on"] #card-kind,
-.charades-app .drawn-card[data-hint="on"] .drawn-name { display: none; }
-.charades-app .drawn-card[data-hint="on"] .hint-badge { display: inline-flex; background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
-.charades-app .drawn-card[data-hint="on"] .hint-mask { display: block; }
+.charades-app .covered-text, .charades-app .hint-lines { display: none; }
+.charades-app .drawn-card[data-view="covered"] #card-kind,
+.charades-app .drawn-card[data-view="covered"] .drawn-name { display: none; }
+.charades-app .drawn-card[data-view="covered"]:not(.has-hint) .covered-text { display: block; }
+.charades-app .drawn-card[data-view="covered"].has-hint .hint-lines { display: grid; justify-items: center; gap: 6px; }
+.covered-text { margin: 0; padding: 18px 0; font-size: 20px; font-weight: 900; color: var(--blue-text); }
+.hint-badge { background: var(--yellow-face) !important; color: var(--yellow-text) !important; border-color: var(--yellow-edge) !important; }
+.hint-kind { margin: 0; font-size: 22px; font-weight: 900; color: var(--blue-text); }
 .hint-mask { margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; letter-spacing: .08em; color: var(--blue-text); overflow-wrap: anywhere; }
-.hint-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
-.hint-hide { border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; padding: 4px 0; }
-.hint-hide[hidden] { display: none; }
+.hint-kind[hidden], .hint-mask[hidden] { display: none; }
+.hint-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hint-row .btn:disabled { opacity: .45; cursor: default; }
+/* 按住偷看：不讓手機跳出選字、長按選單 */
+.peek-btn {
+  justify-self: center; border: 0; background: none; cursor: pointer; font: inherit; font-size: 15px; font-weight: 800; padding: 6px 0;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
 
 /* result：大字標題＋答案 */
 .stage-result { justify-items: center; text-align: center; }

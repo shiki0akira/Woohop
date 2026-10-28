@@ -9,7 +9,7 @@
     {{header}}
 
     <main id="main" class="charades-main game-main">
-      <!-- 第 1 步：開場。選題目類型（可複選）、幾個人、每人比幾題。上方的步驟頭是全站共用的 Leader.lead -->
+      <!-- 第 1 步：開場。先設幾個人、每人比幾題，再選題目類型（可複選）。上方的步驟頭是全站共用的 Leader.lead -->
       <div class="view" id="view-setup">
         <div class="page-head">
           <nav class="crumbs" aria-label="breadcrumb">
@@ -22,12 +22,8 @@
         <div class="lead-slot"></div>
 
         <section class="panel setup-panel">
-          <span class="field-label">{{categoryLabel}}</span>
-          <p class="hint">{{categoryHint}}</p>
-          <!-- 勾選卡（設計系統的 .choice），app.js 依 T.categories 產生 -->
-          <div class="category-grid" id="category-grid"></div>
           <!-- 人數和每人幾題並排，題數＝人數 × 每人題數（照倒放猜猜看） -->
-          <div class="setup-row">
+          <div class="setup-row setup-row-first">
             <div>
               <span class="field-label">{{countLabel}}</span>
               <div class="stepper">
@@ -46,6 +42,10 @@
             </div>
           </div>
           <p class="hint" id="rounds-hint"></p>
+          <span class="field-label field-label-gap">{{categoryLabel}}</span>
+          <p class="hint">{{categoryHint}}</p>
+          <!-- 勾選卡（設計系統的 .choice），app.js 依 T.categories 產生 -->
+          <div class="category-grid" id="category-grid"></div>
         </section>
 
         <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
@@ -77,24 +77,33 @@
               <p class="hint">{{drawHint}}</p>
             </div>
             <div class="name-stage stage-reveal">
-              <!-- 提示打開時題目藏起來、只露出幾個字（data-hint），比的人可以把手機轉給大家看 -->
-              <div class="drawn-card" id="drawn" data-hint="off">
+              <!--
+                題卡三種樣子（data-view，app.js 的 syncCard）：
+                  word 看得到題目（ready、按住偷看時）
+                  covered 開始比之後蓋起來：手機會被大家看到；有給提示就顯示提示（類型、只露出幾個字）
+              -->
+              <div class="drawn-card" id="drawn" data-view="word">
                 <span class="badge" id="card-kind"></span>
                 <p class="drawn-name" id="card-text" aria-live="polite"></p>
-                <span class="badge hint-badge">{{hintLabel}}</span>
-                <p class="hint-mask" id="hint-mask" aria-live="polite"></p>
+                <p class="covered-text">{{coveredText}}</p>
+                <div class="hint-lines" aria-live="polite">
+                  <span class="badge hint-badge">{{hintLabel}}</span>
+                  <p class="hint-kind" id="hint-kind"></p>
+                  <p class="hint-mask" id="hint-mask"></p>
+                </div>
               </div>
-              <div class="pass-row">
-                <!-- 主要鍵在左、跳過在右（跟倒放猜猜看一樣）。ready 是「開始比！」，acting 換成「猜中了！」 -->
-                <button class="btn btn-lg btn-solid pass-bar phase-ready" id="act-start" type="button">{{startActing}}</button>
-                <button class="btn btn-lg btn-solid pass-bar phase-acting" id="got-it" type="button">{{gotIt}}</button>
+              <!-- ready：開始比／跳過這題（開始比之後就不能跳過，使用者要求） -->
+              <div class="pass-row phase-ready">
+                <button class="btn btn-lg btn-solid pass-bar" id="act-start" type="button">{{startActing}}</button>
                 <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
               </div>
-              <!-- 提示（acting 才有）：第一次按打開，之後每按一次多露一個字；收起回到題目 -->
+              <!-- acting：猜中了；兩種提示；按住偷看題目 -->
+              <button class="btn btn-lg btn-solid btn-block pass-bar phase-acting" id="got-it" type="button">{{gotIt}}</button>
               <div class="hint-row phase-acting">
-                <button class="btn btn-secondary" id="hint-btn" type="button">{{hintButton}}</button>
-                <button class="link hint-hide" id="hint-hide" type="button" hidden>{{hintHide}}</button>
+                <button class="btn btn-secondary" id="hint-kind-btn" type="button">{{hintKindButton}}</button>
+                <button class="btn btn-secondary" id="hint-char-btn" type="button">{{hintCharButton}}</button>
               </div>
+              <button class="link peek-btn phase-acting" id="peek" type="button">{{peekButton}}</button>
             </div>
             <div class="name-stage stage-result">
               <p class="result-title">{{gotItResult}}</p>
