@@ -319,6 +319,8 @@
     el.roundNo.textContent = limited() ? fill(T.roundNo, { n: n, total: totalRounds() }) : fill(T.roundNoFree, { n: n });
     el.turnWho.textContent = fill(T.turnWho, { k: ((n - 1) % prep.count) + 1 });
     el.roundProgress.hidden = !limited();
+    // 結束遊戲只在不限題數時才有（使用者要求）：有設題數的話比完會自動結束
+    el.endBtn.hidden = limited();
     el.roundBar.style.setProperty('--p', limited() ? (roundNumber / totalRounds()) * 100 + '%' : '0%');
   }
 

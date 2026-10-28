@@ -108,3 +108,6 @@ html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .mask-box { bord
 
 /* 比到一半回來看題目時不能跳過（app.js 的 started）：按鈕樣式會蓋過 hidden，自己補 */
 #skip[hidden] { display: none; }
+
+/* 有設題數時藏起「結束遊戲」（app.js 的 renderRound）：按鈕樣式會蓋過 hidden，自己補 */
+.end-btn[hidden] { display: none; }
