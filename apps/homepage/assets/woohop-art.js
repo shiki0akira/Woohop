@@ -168,18 +168,22 @@
       <circle cx="62" cy="89" r="7" fill="none" ${K}/><circle cx="98" cy="89" r="7" fill="none" ${K}/>
       <path d="M69 89h22" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>
       <path d="M150 34l-8 7 8 7M140 34l-8 7 8 7" fill="none" stroke="#7489E6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`,
-    // 木頭人動作版：後面一張黃色動作卡（驚嘆號），前面一隻首頁的小人擺螃蟹走路（兩手比 YA、左右箭頭）
+    // 木頭人動作版（2026-10-28 改成有木頭人的意象，使用者要求）：右邊的鬼趴在樹上蒙眼（背對、看不到臉），
+    // 左邊的小人身體歪一邊、兩手亂擺，被喊「木頭人」定格在半空中（嘴巴 O 型、旁邊兩道定格線）
     statue: () => {
-      const arm = (d) => `<path d="${d}" fill="none" stroke="#22222c" stroke-width="13" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#aebcf3" stroke-width="6" stroke-linecap="round"/>`;
-      const ya = (x, y) => arm(`M${x} ${y}l-6 -13`) + arm(`M${x} ${y}l5 -14`) + `<circle cx="${x}" cy="${y}" r="6" fill="#aebcf3" ${K}/>`;
+      // 手臂跟身體的描邊一樣粗（不跟著縮放，同動作插圖的畫法），不然放大縮小時手臂的黑邊會比身體粗或細
+      const arm = (d, c) => `<path d="${d}" fill="none" stroke="#22222c" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:calc(var(--arm-w, 6px) + var(--ill-sw, 4px) * 2)"/><path d="${d}" fill="none" stroke="${c}" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:var(--arm-w, 6px)"/>`;
       return `
-      ${ground}${burst(142, 22, '#EE7B6A')}${ring(20, 96, '#4FB59A')}${dot(150, 92, '#F3A4FB', 4)}
-      <g transform="rotate(-14 28 50)">${body('<rect x="8" y="20" width="40" height="56" rx="8"/>', '#FFC628', '', false)}
-      <path d="M28 33v17" fill="none" ${K}/><circle cx="28" cy="61" r="3.2" fill="#22222c"/></g>
-      ${arm('M68 86q-18 -10 -20 -34')}${arm('M104 86q18 -10 20 -34')}${ya(48, 52)}${ya(124, 52)}
-      ${body('<path d="M64 117V58A22 22 0 0 1 108 58V117Z"/>', '#aebcf3', '<path d="M94 26h44v100H94z" fill="#8799E9"/>')}
-      ${makeFace('happy', 86, 64, 2)}
-      <path d="M26 108h16m-6 -6 -6 6 6 6M146 108h-16m6 -6 6 6 -6 6" fill="none" stroke="#EE7B6A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      ${ground}${burst(18, 24, '#FFC628')}${ring(96, 22, '#4FB59A')}${dot(80, 104, '#F3A4FB', 4)}
+      <rect x="128" y="46" width="14" height="72" rx="4" fill="#ffc27a" ${K}/>
+      ${body('<circle cx="135" cy="36" r="18"/>', '#a8dccb', '<path d="M141 12h20v50h-20z" fill="#7cc9b1"/>', false)}
+      ${body('<path d="M92 117V72A16 16 0 0 1 124 72V117Z"/>', '#fbbff5', '<path d="M112 50h20v76h-20z" fill="#ef9fe8"/>')}
+      ${arm('M118 80q10 -4 12 -14', '#fbbff5')}
+      ${arm('M36 82q-14 -8 -14 -26', '#aebcf3')}${arm('M64 80q14 -4 16 -20', '#aebcf3')}
+      <g transform="rotate(-8 50 90)">
+            ${body('<path d="M30 110V64A21 21 0 0 1 72 64V110Z"/>', '#aebcf3', '<path d="M58 36h24v80h-24z" fill="#8799E9"/>')}
+      ${makeFace('wow', 51, 70, 2)}</g>
+      <path d="M12 74l-7 -3M14 86h-8M82 44l6 -5M86 54l7 -1" fill="none" stroke="#EE7B6A" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:var(--ill-sw, 4px)"/>`;
     },
     // 比手畫腳：一隻小人在比動作（使用者要求不放題卡），左邊問號泡泡、右邊對話框裡三個方塊（像蓋起來的題目）（一手放耳邊、一手往外指），旁邊冒出問號泡泡
     charades: () => {
