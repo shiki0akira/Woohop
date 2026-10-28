@@ -249,7 +249,7 @@
   }
 
   // 抽卡取名（2026-10-28 改成跟抽題目一樣簡單）：一進來就能抽，主題收起來（預設隨機＝所有主題混著抽），
-  // 抽過的名字列在下面、不重複。名稱庫跟竹筍同一份（src/name-pools.mjs）；一組聽起來很像的名稱只會抽到其中一個。
+  // 抽過的名字列在下面，整個主題抽完才會重複。名稱庫跟竹筍同一份（src/name-pools.mjs）；一組聽起來很像的名稱只會抽到其中一個。
   // 遊戲裡的取名流程（Leader.namer：自己取、大家都取好了）小工具用不到，不用它；選主題還是共用的 Leader.themes
   if (tool.key === 'names') {
     const I = T.items.names;
@@ -320,23 +320,26 @@
 
     btn.addEventListener('click', () => {
       const themes = theme === 'random' ? pool.themes : [theme];
-      const free = [];
-      themes.forEach(th => pool.groups[th].forEach((g, i) => { if (!used.has(th + ':' + i)) free.push([th, i, g]); }));
-      face.hidden = false;
+      const freeGroups = () => {
+        const free = [];
+        themes.forEach(th => pool.groups[th].forEach((g, i) => { if (!used.has(th + ':' + i)) free.push([th, i, g]); }));
+        return free;
+      };
+      let free = freeGroups();
+      // 主題抽完了就從頭再來，可以重複（使用者要求，不叫人自己取）
       if (!free.length) {
-        kind.hidden = true;
-        nameEl.textContent = t.poolEmpty;
-      } else {
-        const [th, i, g] = free[Math.floor(Math.random() * free.length)];
-        const name = g[Math.floor(Math.random() * g.length)];
-        used.add(th + ':' + i);
-        drawn.push(name);
-        kind.hidden = false;
-        kind.textContent = Leader.themeLabel(th);
-        nameEl.textContent = name;
-        syncList();
-        track('tool_name_drawn', { theme: th, random: theme === 'random' });
+        themes.forEach(th => pool.groups[th].forEach((g, i) => used.delete(th + ':' + i)));
+        free = freeGroups();
       }
+      const [th, i, g] = free[Math.floor(Math.random() * free.length)];
+      const name = g[Math.floor(Math.random() * g.length)];
+      used.add(th + ':' + i);
+      drawn.push(name);
+      face.hidden = false;
+      kind.textContent = Leader.themeLabel(th);
+      nameEl.textContent = name;
+      syncList();
+      track('tool_name_drawn', { theme: th, random: theme === 'random' });
       face.classList.remove('pop');
       void face.offsetWidth;
       face.classList.add('pop');
