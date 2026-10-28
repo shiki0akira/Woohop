@@ -1,0 +1,55 @@
+/*
+ * 木頭人動作版自己的樣式。步驟頭、規則卡、拉霸、抽卡（.namer）、按鈕都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：黃 */
+.statue-app { --game-edge: var(--yellow-edge); }
+.statue-app .panel { padding: 20px; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 一輪分三段：只露這一段的區塊（app.js 的 setPhase） ---------- */
+#view-play[data-phase="go"] .phase-card,
+#view-play:not([data-phase="go"]) .phase-go { display: none; }
+
+/*
+ * ---------- 動作卡：照抽卡取名（.namer 的樣式在 game.css） ----------
+ * 抽卡取名只有 choose／own／reveal 三面，這裡多了 draw（同 choose），自己開。
+ */
+.statue-app .namer .name-card[data-stage="draw"] .stage-draw { display: grid; }
+/* 抽卡那段沒有步驟頭，面板會直接頂到頂欄：空出跟 go 那段步驟頭一樣的 20px */
+.statue-app .namer.phase-card { margin-top: 20px; }
+.statue-app .namer .stage-draw .hint { margin: 0; }
+/* 翻出來的卡換成這個遊戲的黃色 */
+.statue-app .namer .drawn-card { display: grid; justify-items: center; gap: 10px; border-color: var(--yellow-edge); background: var(--yellow-face); box-shadow: 0 5px 0 var(--yellow-edge); }
+/* 動作是一個詞組不是人名：拿掉 game.css 的 keep-all，長的（拄拐杖的老爺爺）才會平均斷成兩行，不會剩一個字 */
+.statue-app .namer .drawn-name { color: var(--yellow-text); word-break: normal; text-wrap: balance; }
+/* 插圖在卡片最上面 */
+.drawn-art { display: block; width: 120px; height: auto; overflow: visible; --ill-sw: 3px; --arm-w: 5px; }
+.statue-app .namer .drawn-card .badge { background: var(--surface); color: var(--yellow-text); border-color: var(--yellow-edge); }
+
+.draw-count { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
+#all-drawn:disabled { opacity: .45; cursor: default; }
+
+/* ---------- 這一輪 ---------- */
+.go-panel { display: grid; gap: 14px; }
+.go-panel p { margin: 0; font-weight: 700; text-wrap: balance; }
+
+/* 結束鍵：紅色、要按住 0.8 秒（跟果園菜園動物園的 .end-btn 同一個做法），按住時從左到右填滿 */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
+
+/* ---------- 遊戲結束：選一個動作讓鬼做 ---------- */
+.punish-panel { display: grid; gap: 14px; }
+.punish-panel h2 { margin: 0; font-size: 17px; }
+.punish-panel .drawn-card { padding: 16px; }
+#punish-random { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+#punish-random svg { width: 18px; height: 18px; }

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="statue-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="statue-main game-main">
+      <!-- 第 1 步：開場（不用設定人數）。上方的步驟頭是全站共用的 Leader.lead -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!--
+        第 3 步：開始。分三段（data-phase），一次只露一段：
+          draw 抽一張 → drawn 翻出動作、傳給下一個人（回 draw）⋯⋯ → go 這一輪開始（手機回主持人手上）→ 下一輪回 draw
+        draw／drawn 手機在大家手上傳，不放步驟頭；go 才放
+      -->
+      <div class="view" id="view-play" data-phase="draw" hidden>
+        <div class="namer phase-card">
+          <section class="panel name-card" id="card" data-stage="draw">
+            <div class="name-stage stage-draw">
+              <svg class="illo deck" id="deck" viewBox="0 0 160 126" aria-hidden="true"></svg>
+              <button class="btn btn-lg btn-solid btn-block draw-btn" id="card-draw" type="button">{{drawButton}}</button>
+              <p class="hint" id="draw-hint">{{drawHint}}</p>
+            </div>
+            <div class="name-stage stage-reveal">
+              <div class="drawn-card" id="drawn">
+                <!-- 插圖在上、名稱在下（使用者要求，不放「你的動作」標籤）。插圖是 app.js 的 actionArt，一個動作一張 -->
+                <svg class="illo drawn-art" id="card-art" viewBox="0 0 120 128" aria-hidden="true"></svg>
+                <p class="drawn-name" id="card-text" aria-live="polite"></p>
+              </div>
+              <p class="reveal-hint">{{drawnHint}}</p>
+              <button class="btn btn-lg btn-solid btn-block pass-bar" id="card-pass" type="button">{{passButton}}</button>
+            </div>
+          </section>
+        </div>
+        <p class="draw-count" id="draw-count" hidden></p>
+        <!-- 還沒有人抽之前不能按：不然大家沒有動作 -->
+        <button class="btn btn-lg btn-secondary btn-block phase-card" id="all-drawn" type="button" disabled>{{allDrawn}}</button>
+
+        <!-- go：這一輪開始。主持人念完就放著，有人摸到鬼再按下一輪 -->
+        <div class="lead-slot phase-go"></div>
+        <section class="panel phase-go go-panel">
+          <p>{{goHint}}</p>
+          <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button">{{nextRound}}</button>
+        </section>
+        <!-- 結束要按住，防手滑（跟果園同一個做法，app.js 的 HOLD_MS） -->
+        <button class="btn btn-lg btn-block end-btn phase-go" id="end-btn" type="button">{{endGame}}</button>
+      </div>
+
+      <!-- 第 4 步：遊戲結束。摸到鬼的人隨機抽一個動作讓鬼做（不列出全部，使用者要求），大家用自己的手機幫鬼三連拍（不用拉霸，網頁不碰相機） -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel punish-panel namer" id="punish">
+          <h2>{{punishHeading}}</h2>
+          <!-- 選了才出現：跟抽到的動作卡同一個樣子 -->
+          <div class="drawn-card" id="punish-card" hidden>
+            <svg class="illo drawn-art" id="punish-art" viewBox="0 0 120 128" aria-hidden="true"></svg>
+            <p class="drawn-name" id="punish-text" aria-live="polite"></p>
+          </div>
+          <button class="btn btn-secondary btn-block" id="punish-random" type="button"><svg aria-hidden="true"><use href="#i-dice"/></svg>{{punishRandom}}</button>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+    </main>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.STATUE = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/action-art.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>
