@@ -21,7 +21,8 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | 竹筍竹筍蹦蹦出 | [www.vibeweb100.com/bamboo](https://www.vibeweb100.com/bamboo/zh-TW/) | `apps/warmup/games/bamboo` | 已上線（2026-10-20） |
 | 上樓下樓 | [www.vibeweb100.com/stairs](https://www.vibeweb100.com/stairs/zh-TW/) | `apps/warmup/games/stairs` | 已上線（2026-10-21） |
 | 果園菜園動物園 | [www.vibeweb100.com/orchard](https://www.vibeweb100.com/orchard/zh-TW/) | `apps/warmup/games/orchard` | 已上線（2026-10-22） |
-| 倒放猜猜看 | [www.vibeweb100.com/reverse](https://www.vibeweb100.com/reverse/zh-TW/) | `apps/warmup/games/reverse` | 已上線（2026-10-23，先只有繁中） |
+| 倒放猜猜看 | [www.vibeweb100.com/reverse](https://www.vibeweb100.com/reverse/zh-TW/) | `apps/warmup/games/reverse` | 已上線（2026-10-23，8 語） |
+| 木頭人動作版 | [www.vibeweb100.com/statue](https://www.vibeweb100.com/statue/zh-TW/) | `apps/warmup/games/statue` | 已上線（2026-10-28，8 語） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
 ## 架構說明
