@@ -218,6 +218,7 @@
     el.cardKind.textContent = card[0];
     el.cardText.textContent = card[1];
     hint = { kind: false, chars: Array.from(card[1]), shown: [] };
+    started = false;
     syncCard();
   }
 
@@ -230,7 +231,7 @@
 
   // ---------- 題卡：ready 看得到題目；開始比之後蓋起來，只顯示給過的提示（使用者要求） ----------
 
-  var peeking = false;
+  var started = false; // 這一題按過「開始比！」了沒：回上一步看題目時不能再跳過
 
   // 用 Array.from 切字，中日韓字、表情符號都算一個；空白和標點直接顯示，不算要猜的字
   var isLetter = function (ch) { return /[\p{L}\p{N}]/u.test(ch); };
@@ -271,15 +272,14 @@
   }
 
   function syncCard() {
-    var covered = phase === 'acting' && !peeking;
-    el.drawn.setAttribute('data-view', covered ? 'covered' : 'word');
-    var anyHint = hint && (hint.kind || hint.shown.length > 0);
-    el.drawn.classList.toggle('has-hint', Boolean(anyHint));
-    el.hintKind.textContent = hint && hint.kind ? fill(T.hintKind, { kind: card[0] }) : '';
+    el.drawn.setAttribute('data-view', phase === 'acting' ? 'covered' : 'word');
+    // 蓋起來時一律畫方塊，大家看得出有幾個字；給了類型就多一個黃色標籤
+    if (hint) renderMask();
+    el.hintKind.textContent = hint && hint.kind ? card[0] : '';
     el.hintKind.hidden = !(hint && hint.kind);
-    if (hint && hint.shown.length) renderMask();
-    else el.hintMask.textContent = '';
-    el.hintMask.hidden = !(hint && hint.shown.length);
+    // 比到一半回來看題目：不能跳過，主要鍵寫「繼續比」
+    el.skip.hidden = started;
+    el.actStart.textContent = started ? T.continueActing : T.startActing;
     if (hint) {
       el.hintKindBtn.disabled = hint.kind;
       // 只剩最後一個字沒露出來，就不能再多給了
@@ -301,12 +301,6 @@
     track('charades_hint_shown', { round_number: roundNumber, kind: 'char', shown: hint.shown.length, category: card[0] });
   }
 
-  // 按住偷看：放開（或手指滑出去）就蓋回去
-  function setPeek(on) {
-    if (phase !== 'acting') return;
-    peeking = on;
-    syncCard();
-  }
 
   /*
    * 上台的四段。畫面上哪些區塊出現由 CSS 看 #view-play 的 data-phase 決定（app.css 的 .phase-*），
@@ -314,7 +308,6 @@
    */
   function setPhase(next) {
     phase = next;
-    peeking = false;
     views.play.setAttribute('data-phase', next);
     el.card.setAttribute('data-stage', next === 'draw' ? 'draw' : next === 'result' ? 'result' : 'reveal');
     if (card) syncCard();
@@ -480,7 +473,10 @@
   el.again.addEventListener('click', startPlay);
 
   el.draw.addEventListener('click', drawFromDeck);
-  el.actStart.addEventListener('click', function () { setPhase('acting'); });
+  el.actStart.addEventListener('click', function () {
+    started = true;
+    setPhase('acting');
+  });
   // 跳過這題：只有開始比之前可以（使用者要求），換一題、還是同一個人比（不算一題）
   el.skip.addEventListener('click', function () {
     track('charades_skipped', { round_number: roundNumber, category: card[0] });
@@ -490,17 +486,10 @@
   el.gotIt.addEventListener('click', showResult);
   el.hintKindBtn.addEventListener('click', giveKind);
   el.hintCharBtn.addEventListener('click', giveChar);
-  el.peek.addEventListener('pointerdown', function (event) {
-    if (event.button > 0) return;
-    setPeek(true);
-  });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (type) {
-    el.peek.addEventListener(type, function () { setPeek(false); });
-  });
-  el.peek.addEventListener('contextmenu', function (event) { event.preventDefault(); });
-  // 鍵盤：按一下看、再按一下蓋回去
-  el.peek.addEventListener('click', function (event) {
-    if (event.detail === 0) setPeek(!peeking);
+  // 回上一步看題目：回到 ready（看得到題目），看完按「繼續比」；提示保留
+  el.peek.addEventListener('click', function () {
+    setPhase('ready');
+    track('charades_peeked', { round_number: roundNumber });
   });
   el.nextTurn.addEventListener('click', function () {
     if (isLast()) endGame();

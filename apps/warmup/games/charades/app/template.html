@@ -85,14 +85,13 @@
               <div class="drawn-card" id="drawn" data-view="word">
                 <span class="badge" id="card-kind"></span>
                 <p class="drawn-name" id="card-text" aria-live="polite"></p>
-                <p class="covered-text">{{coveredText}}</p>
+                <!-- 蓋起來時：一個字一個方塊（看得出幾個字），給了類型就多一個黃色標籤寫類型（使用者要求不寫「提示」） -->
                 <div class="hint-lines" aria-live="polite">
-                  <span class="badge hint-badge">{{hintLabel}}</span>
-                  <p class="hint-kind" id="hint-kind"></p>
+                  <span class="badge hint-badge" id="hint-kind"></span>
                   <p class="hint-mask" id="hint-mask"></p>
                 </div>
               </div>
-              <!-- ready：開始比／跳過這題（開始比之後就不能跳過，使用者要求） -->
+              <!-- ready：開始比／跳過這題（開始比之後就不能跳過，使用者要求；比到一半回來看題目時也不能跳過，按鈕變「繼續比」） -->
               <div class="pass-row phase-ready">
                 <button class="btn btn-lg btn-solid pass-bar" id="act-start" type="button">{{startActing}}</button>
                 <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
@@ -103,6 +102,7 @@
                 <button class="btn btn-secondary" id="hint-kind-btn" type="button">{{hintKindButton}}</button>
                 <button class="btn btn-secondary" id="hint-char-btn" type="button">{{hintCharButton}}</button>
               </div>
+              <!-- 回上一步看題目（使用者要求：按住偷看沒反應，改成回上一步） -->
               <button class="link peek-btn phase-acting" id="peek" type="button">{{peekButton}}</button>
             </div>
             <div class="name-stage stage-result">

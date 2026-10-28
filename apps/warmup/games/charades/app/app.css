@@ -68,18 +68,16 @@ html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .mask-box { bord
  * 題卡兩種樣子（app.js 的 syncCard，#drawn 的 data-view）：
  *   word 看得到題目（ready、按住偷看）；covered 開始比之後蓋起來，有給提示就顯示提示（類型、只露出幾個字）
  */
-.charades-app .covered-text, .charades-app .hint-lines { display: none; }
+.charades-app .hint-lines { display: none; }
 .charades-app .drawn-card[data-view="covered"] #card-kind,
 .charades-app .drawn-card[data-view="covered"] .drawn-name { display: none; }
-.charades-app .drawn-card[data-view="covered"]:not(.has-hint) .covered-text { display: block; }
-.charades-app .drawn-card[data-view="covered"].has-hint .hint-lines { display: grid; justify-items: center; gap: 6px; }
-.covered-text { margin: 0; padding: 18px 0; font-size: 20px; font-weight: 900; color: var(--blue-text); }
-.hint-badge { background: var(--yellow-face) !important; color: var(--yellow-text) !important; border-color: var(--yellow-edge) !important; }
-.hint-kind { margin: 0; font-size: 22px; font-weight: 900; color: var(--blue-text); }
+.charades-app .drawn-card[data-view="covered"] .hint-lines { display: grid; justify-items: center; gap: 10px; padding: 6px 0; }
+/* 類型提示：黃色標籤直接寫類型，比一般標籤大（使用者要求） */
+.charades-app .namer .drawn-card .hint-badge { padding: 6px 16px; font-size: 18px; background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
+.charades-app .namer .drawn-card .hint-badge[hidden] { display: none; }
 .hint-mask { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .12em; margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; color: var(--blue-text); }
 /* 沒露出來的字：跟字一樣大的方塊，粗描邊＋淺色底（設計系統的 2px 線條） */
 .mask-box { display: inline-block; width: .9em; height: .9em; border: 3px solid currentColor; border-radius: 8px; background: var(--surface); opacity: .85; }
-.hint-kind[hidden], .hint-mask[hidden] { display: none; }
 .hint-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hint-row .btn:disabled { opacity: .45; cursor: default; }
 /* 外語的按鈕字比較長（Buchstabe verraten），讓它換行，不要把卡片撐出畫面 */
@@ -107,3 +105,6 @@ html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .charades-app .mask-box { bord
 }
 .end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
+
+/* 比到一半回來看題目時不能跳過（app.js 的 started）：按鈕樣式會蓋過 hidden，自己補 */
+#skip[hidden] { display: none; }
