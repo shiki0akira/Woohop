@@ -216,7 +216,7 @@
       "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/vendor/:path*"
     },
     {
-      "source": "/buzzer/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml|action-art.js)",
+      "source": "/buzzer/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
       "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/:file"
     },
     {
@@ -376,7 +376,7 @@
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/:page/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml|action-art.js)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:file"
     },
     {
