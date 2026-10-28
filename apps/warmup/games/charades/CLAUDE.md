@@ -28,5 +28,6 @@
 | `charades_game_started` | 進入上台（含再玩一次） | `game_number`、`players`、`per`、`categories` |
 | `charades_skipped` | 跳過這題 | `round_number`、`category` |
 | `charades_hint_shown` | 給提示 | `round_number`、`kind`（category／char）、`shown`、`category` |
+| `charades_peeked` | 再偷看一次（回上一步看題目） | `round_number` |
 | `charades_guessed` | 猜中了 | `round_number`、`category`、`hint_kind`、`hint_chars` |
 | `charades_game_ended` | 題數比完或按住結束 | `rounds`、`finished`、`duration_seconds` |
