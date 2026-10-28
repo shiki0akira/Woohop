@@ -186,13 +186,13 @@
       const arm = (d) => `<path d="${d}" fill="none" stroke="#22222c" stroke-width="13" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fbbff5" stroke-width="6" stroke-linecap="round"/>`;
       const hand = (x, y) => `<circle cx="${x}" cy="${y}" r="6" fill="#fbbff5" ${K}/>`;
       const bubble = (x, y) => `${body(`<path d="M${x - 13} ${y - 12}h26a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-14l-7 7v-7h-5a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z"/>`, '#ffffff', '', false)}<text x="${x}" y="${y + 3}" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>`;
-      const boxes = (x, y) => `${body(`<path d="M${x - 22} ${y - 12}h44a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-30l-8 7v-7h-6a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z"/>`, '#ffffff', '', false)}${[-13, 0, 13].map((dx) => `<rect x="${x + dx - 5}" y="${y - 5}" width="10" height="10" rx="2.5" fill="none" stroke="#22222c" stroke-width="2.5"/>`).join('')}`;
+      const boxes = (x, y) => `${body(`<path d="M${x - 28} ${y - 15}h56a7 7 0 0 1 7 7v20a7 7 0 0 1-7 7h-36l-9 8v-8h-11a7 7 0 0 1-7-7v-20a7 7 0 0 1 7-7z"/>`, '#ffffff', '', false)}${[-17, 0, 17].map((dx) => `<rect x="${x + dx - 6.5}" y="${y - 5.5}" width="13" height="13" rx="3" fill="none" stroke="#22222c" stroke-width="2.8"/>`).join('')}`;
       return `
       ${ground}${burst(30, 96, '#FFC628')}${ring(150, 70, '#4FB59A')}${dot(18, 40, '#EE7B6A', 4)}
       ${arm('M60 72q-14 -6 -12 -26')}${hand(48, 46)}${arm('M96 78q16 2 22 -8')}${hand(118, 70)}
       ${body('<path d="M56 117V60A22 22 0 0 1 100 60V117Z"/>', '#fbbff5', '<path d="M86 28h44v100H86z" fill="#ef9fe8"/>')}
       ${makeFace('wow', 78, 66, 2)}
-      ${bubble(30, 30)}${boxes(128, 26)}`;
+      ${bubble(30, 30)}${boxes(122, 26)}`;
     },
     // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
     toolActions: () => {
