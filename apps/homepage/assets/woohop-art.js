@@ -181,17 +181,13 @@
       ${makeFace('happy', 86, 64, 2)}
       <path d="M26 108h16m-6 -6 -6 6 6 6M146 108h-16m6 -6 6 6 -6 6" fill="none" stroke="#EE7B6A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
     },
-    // 動作抽卡（桌遊助手）：一疊動作卡，最上面那張是比 YA 的小人；左下角一台在閃光的相機（三連拍），跟木頭人的首頁插圖分開
+    // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
     toolActions: () => {
       const card = (x, y, c, a) => `<g transform="rotate(${a} ${x + 27} ${y + 36})">${body(`<rect x="${x}" y="${y}" width="54" height="72" rx="9"/>`, c, '', false)}</g>`;
-      const arm = (d) => `<path d="${d}" fill="none" stroke="#22222c" stroke-width="9" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#aebcf3" stroke-width="4" stroke-linecap="round"/>`;
       return `
       ${ground}${burst(146, 20, '#FFC628')}${ring(150, 84, '#4FB59A')}${dot(16, 30, '#F3A4FB', 4)}
       ${card(62, 30, '#fbb3a8', -14)}${card(96, 34, '#a8dccb', 12)}${card(78, 26, '#FFC628', 0)}
-      ${arm('M96 66q-8 -6 -10 -18')}${arm('M114 66q8 -6 10 -18')}
-      ${body('<path d="M95 92V58A10 10 0 0 1 115 58V92Z"/>', '#aebcf3', '<path d="M108 40h20v60h-20z" fill="#8799E9"/>')}
-      ${makeFace('happy', 105, 60, 1)}
-      <path d="M86 48l-3-7M86 48l3-7M124 48l-3-7M124 48l3-7" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>
+      <path d="M97 52q0-11 8-11t8 9.5q0 6-8 9v6" fill="none" ${K}/><circle cx="105" cy="78" r="3.4" fill="#22222c"/>
       ${body('<rect x="14" y="78" width="50" height="34" rx="7"/>', '#7489E6', '<path d="M50 70h20v50H50z" fill="#5d72d0"/>')}
       <path d="M26 78l4-7h14l4 7" fill="none" ${K}/>
       ${body('<circle cx="39" cy="95" r="10"/>', '#ffffff', '', false)}<circle cx="39" cy="95" r="4" fill="#22222c"/>
