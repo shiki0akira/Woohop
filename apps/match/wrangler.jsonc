@@ -21,5 +21,6 @@
   // SQLite backend 是新專案的預設，也是 Durable Object 免費方案唯一支援的儲存層
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["MatchRoom"] }],
 
-  "observability": { "enabled": true }
+  // 房間型每個 WebSocket 訊息都算一筆紀錄，全收會吃光每天 20 萬筆的免費額度（2026-10-29）：只隨機收 10%
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 }
 }
