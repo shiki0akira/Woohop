@@ -2260,9 +2260,15 @@
     if (gameTitle) gameTitle.tabIndex = inRoom ? -1 : 0;
 
     // 所有畫面共用同一個網址，page_view 靠自動送只會記到一筆，
-    // 分不出多少人真的開了房間，所以在這裡手動送
-    if (window.trackPageView) window.trackPageView(CFG.base + '/' + CFG.lang + '/' + name);
+    // 分不出多少人真的開了房間，所以在這裡手動送。
+    // 房間裡每收到一次廣播就會再呼叫一次 showView('room')，只有真的換畫面才送，
+    // 不然每抽一個號碼都多一次瀏覽
+    if (name !== trackedView) {
+      trackedView = name;
+      if (window.trackPageView) window.trackPageView(CFG.base + '/' + CFG.lang + '/' + name);
+    }
   }
+  var trackedView = null;
 
   function showFatal(title, desc) {
     el.errorTitle.textContent = title;
