@@ -35,10 +35,9 @@ export default {
 
   categoryLabel: 'Categorías',
   categoryHint: 'Elige las que quieras (al menos una)',
-  // 收起來時開關上寫「題目類型・全部」或「題目類型・3 類」
-  categoryAll: 'Todas',
-  categoryCount: '{n} elegidas',
-  selectAll: 'Seleccionar todas',
+  // 第一張類型卡：全部類型混著抽（跟竹筍選主題的「隨機」一樣）
+  categoryRandom: 'Al azar',
+  categoryRandomSub: 'Todo mezclado',
   listSep: ', ',
   countLabel: 'Cuántos jugáis',
   countLess: 'Una persona menos',

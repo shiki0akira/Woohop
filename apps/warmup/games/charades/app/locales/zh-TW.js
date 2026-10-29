@@ -40,10 +40,9 @@ export default {
   // ---------- 開場 ----------
   categoryLabel: '題目類型',
   categoryHint: '可以複選，至少選一類',
-  // 收起來時開關上寫「題目類型・全部」或「題目類型・3 類」
-  categoryAll: '全部',
-  categoryCount: '{n} 類',
-  selectAll: '全選',
+  // 第一張類型卡：全部類型混著抽（跟竹筍選主題的「隨機」一樣）
+  categoryRandom: '隨機',
+  categoryRandomSub: '全部混著抽',
   listSep: '、',
   // 幾個人、每人比幾題：題數＝人數 × 每人題數（跟倒放猜猜看一樣）
   countLabel: '幾個人玩',

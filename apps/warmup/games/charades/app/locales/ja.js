@@ -34,10 +34,9 @@ export default {
 
   categoryLabel: 'お題のジャンル',
   categoryHint: 'いくつでも選べます（1つ以上）',
-  // 收起來時開關上寫「題目類型・全部」或「題目類型・3 類」
-  categoryAll: 'すべて',
-  categoryCount: '{n} ジャンル',
-  selectAll: 'すべて選ぶ',
+  // 第一張類型卡：全部類型混著抽（跟竹筍選主題的「隨機」一樣）
+  categoryRandom: 'ランダム',
+  categoryRandomSub: '全部まぜて',
   listSep: '、',
   countLabel: '何人で遊ぶ',
   countLess: '1人減らす',

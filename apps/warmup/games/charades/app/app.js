@@ -44,7 +44,6 @@
     start: $('start'),
     categoryGrid: $('category-grid'),
     categoryToggle: $('category-toggle'),
-    categoryAll: $('category-all'),
     categoryPanel: $('category-panel'),
     countLess: $('count-less'),
     countMore: $('count-more'),
@@ -86,53 +85,66 @@
     if (typeof gtag === 'function') gtag('event', name, params || {});
   }
 
-  // 題目類型：可複選、至少一類（最後一個不能取消）
+  // 題目類型：第一張是「隨機」（全部類型混著抽，預設），跟竹筍選主題的「隨機」一樣（2026-10-29 使用者要求）。
+  // 選了隨機，其他卡都不打勾；點某一類就改成自己挑（從那一類開始），可以複選；最後一類取消掉就回到隨機
+  var ALL_CATS = CATS.map(function (c) { return c[0]; });
+  var randomCats = true;
+  function categoryCard(id, title, subText, cls) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'choice category-choice' + (cls ? ' ' + cls : '');
+    b.dataset.id = id;
+    var name = document.createElement('span');
+    name.className = 'choice-name';
+    name.textContent = title;
+    var sub = document.createElement('span');
+    sub.className = 'choice-sub';
+    sub.textContent = subText;
+    b.appendChild(name);
+    b.appendChild(sub);
+    el.categoryGrid.appendChild(b);
+    return b;
+  }
   function renderCategories() {
+    categoryCard('random', T.categoryRandom, T.categoryRandomSub, 'c-yellow').addEventListener('click', function () {
+      randomCats = true;
+      prep.cats = ALL_CATS.slice();
+      syncCategories();
+    });
     CATS.forEach(function (c) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'choice category-choice';
-      b.dataset.id = c[0];
-      var name = document.createElement('span');
-      name.className = 'choice-name';
-      name.textContent = c[1];
-      var sub = document.createElement('span');
-      sub.className = 'choice-sub';
-      sub.textContent = c[2].slice(0, 2).join(T.listSep || '、');
-      b.appendChild(name);
-      b.appendChild(sub);
-      b.addEventListener('click', function () {
-        var i = prep.cats.indexOf(c[0]);
-        if (i >= 0) {
-          if (prep.cats.length === 1) return;
-          prep.cats.splice(i, 1);
+      categoryCard(c[0], c[1], c[2].slice(0, 2).join(T.listSep || '、')).addEventListener('click', function () {
+        if (randomCats) {
+          randomCats = false;
+          prep.cats = [c[0]];
         } else {
-          prep.cats.push(c[0]);
+          var i = prep.cats.indexOf(c[0]);
+          if (i >= 0) prep.cats.splice(i, 1);
+          else prep.cats.push(c[0]);
+          if (!prep.cats.length) {
+            randomCats = true;
+            prep.cats = ALL_CATS.slice();
+          }
         }
         syncCategories();
       });
-      el.categoryGrid.appendChild(b);
     });
-    // 收合開關：打開才露出「全選」和勾選卡
+    // 收合開關：平常收起來，打開才有勾選卡
     el.categoryToggle.addEventListener('click', function () {
       var open = el.categoryPanel.hidden;
       el.categoryPanel.hidden = !open;
-      el.categoryAll.hidden = !open;
       el.categoryToggle.setAttribute('aria-expanded', String(open));
-    });
-    el.categoryAll.addEventListener('click', function () {
-      prep.cats = CATS.map(function (c) { return c[0]; });
-      syncCategories();
     });
     syncCategories();
   }
   function syncCategories() {
     Array.prototype.forEach.call(el.categoryGrid.children, function (b) {
-      b.setAttribute('aria-pressed', String(prep.cats.indexOf(b.dataset.id) >= 0));
+      var on = b.dataset.id === 'random' ? randomCats : !randomCats && prep.cats.indexOf(b.dataset.id) >= 0;
+      b.setAttribute('aria-pressed', String(on));
     });
-    var all = prep.cats.length === CATS.length;
-    el.categoryToggle.textContent = T.categoryLabel + '・' + (all ? T.categoryAll : fill(T.categoryCount, { n: prep.cats.length }));
-    el.categoryAll.disabled = all;
+    // 收起來時開關上寫現在選的：隨機，或挑了哪幾類
+    var names = randomCats ? T.categoryRandom : CATS.filter(function (c) { return prep.cats.indexOf(c[0]) >= 0; })
+      .map(function (c) { return c[1]; }).join(T.listSep || '、');
+    el.categoryToggle.textContent = T.categoryLabel + '・' + names;
   }
 
   // 幾個人、每人比幾題（照倒放猜猜看）：題數＝人數 × 每人題數
@@ -396,7 +408,7 @@
     shuffleDeck();
     showScreen('play');
     startRound();
-    track('charades_game_started', { game_number: gameNumber, players: prep.count, per: prep.per, categories: prep.cats.join(',') });
+    track('charades_game_started', { game_number: gameNumber, players: prep.count, per: prep.per, categories: randomCats ? 'random' : prep.cats.join(',') });
   }
 
   // ---------- 返回鍵：一律回第一頁；已經比過題目先確認 ----------
