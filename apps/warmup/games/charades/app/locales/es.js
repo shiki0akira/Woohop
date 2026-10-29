@@ -35,6 +35,11 @@ export default {
 
   categoryLabel: 'Categorías',
   categoryHint: 'Elige las que quieras (al menos una)',
+  // 收起來時開關上寫「題目類型・全部」或「題目類型・3 類」
+  categoryAll: 'Todas',
+  categoryCount: '{n} elegidas',
+  selectAll: 'Seleccionar todas',
+  listSep: ', ',
   countLabel: 'Cuántos jugáis',
   countLess: 'Una persona menos',
   countMore: 'Una persona más',

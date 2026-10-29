@@ -34,6 +34,11 @@ export default {
 
   categoryLabel: '제시어 분야',
   categoryHint: '여러 개 고를 수 있어요(1개 이상)',
+  // 收起來時開關上寫「題目類型・全部」或「題目類型・3 類」
+  categoryAll: '전체',
+  categoryCount: '{n}개 선택',
+  selectAll: '전체 선택',
+  listSep: ', ',
   countLabel: '몇 명이 하나요',
   countLess: '한 명 빼기',
   countMore: '한 명 더하기',

@@ -33,6 +33,11 @@ export default {
 
   categoryLabel: '题目类型',
   categoryHint: '可以多选，至少选一类',
+  // 收起來時開關上寫「題目類型・全部」或「題目類型・3 類」
+  categoryAll: '全部',
+  categoryCount: '{n} 类',
+  selectAll: '全选',
+  listSep: '、',
   countLabel: '几个人玩',
   countLess: '少一个人',
   countMore: '多一个人',

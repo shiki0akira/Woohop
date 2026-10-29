@@ -43,6 +43,9 @@
   var el = {
     start: $('start'),
     categoryGrid: $('category-grid'),
+    categoryToggle: $('category-toggle'),
+    categoryAll: $('category-all'),
+    categoryPanel: $('category-panel'),
     countLess: $('count-less'),
     countMore: $('count-more'),
     countValue: $('count-value'),
@@ -95,7 +98,7 @@
       name.textContent = c[1];
       var sub = document.createElement('span');
       sub.className = 'choice-sub';
-      sub.textContent = c[2].slice(0, 2).join('、');
+      sub.textContent = c[2].slice(0, 2).join(T.listSep || '、');
       b.appendChild(name);
       b.appendChild(sub);
       b.addEventListener('click', function () {
@@ -110,12 +113,26 @@
       });
       el.categoryGrid.appendChild(b);
     });
+    // 收合開關：打開才露出「全選」和勾選卡
+    el.categoryToggle.addEventListener('click', function () {
+      var open = el.categoryPanel.hidden;
+      el.categoryPanel.hidden = !open;
+      el.categoryAll.hidden = !open;
+      el.categoryToggle.setAttribute('aria-expanded', String(open));
+    });
+    el.categoryAll.addEventListener('click', function () {
+      prep.cats = CATS.map(function (c) { return c[0]; });
+      syncCategories();
+    });
     syncCategories();
   }
   function syncCategories() {
     Array.prototype.forEach.call(el.categoryGrid.children, function (b) {
       b.setAttribute('aria-pressed', String(prep.cats.indexOf(b.dataset.id) >= 0));
     });
+    var all = prep.cats.length === CATS.length;
+    el.categoryToggle.textContent = T.categoryLabel + '・' + (all ? T.categoryAll : fill(T.categoryCount, { n: prep.cats.length }));
+    el.categoryAll.disabled = all;
   }
 
   // 幾個人、每人比幾題（照倒放猜猜看）：題數＝人數 × 每人題數
