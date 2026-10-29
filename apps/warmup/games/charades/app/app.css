@@ -30,10 +30,7 @@
 .setup-panel .field-label-gap { margin-top: 20px; }
 /* 題目類型的收合開關（樣式在 site.css 的 .tool-toggle，跟抽題目一樣） */
 .category-bar { margin-top: 16px; }
-.category-bar .tool-toggle { font-size: 15px; max-width: 100%; }
-/* 挑了好幾類時開關上的類型名稱會很長：一行就好，太長「⋯」，箭頭留著 */
-.category-bar .tool-toggle { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; text-align: left; }
-.category-bar .tool-toggle::after { display: inline-block; margin-left: 6px; }
+.category-bar .tool-toggle { font-size: 15px; }
 #category-panel[hidden] { display: none; }
 /* 九類：共用 .choice 的最小高度 136px 排起來太長，改成三欄的小卡（例子只留一行，太長就省略） */
 .category-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }

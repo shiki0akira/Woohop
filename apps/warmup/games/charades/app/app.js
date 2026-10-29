@@ -141,10 +141,8 @@
       var on = b.dataset.id === 'random' ? randomCats : !randomCats && prep.cats.indexOf(b.dataset.id) >= 0;
       b.setAttribute('aria-pressed', String(on));
     });
-    // 收起來時開關上寫現在選的：隨機，或挑了哪幾類
-    var names = randomCats ? T.categoryRandom : CATS.filter(function (c) { return prep.cats.indexOf(c[0]) >= 0; })
-      .map(function (c) { return c[1]; }).join(T.listSep || '、');
-    el.categoryToggle.textContent = T.categoryLabel + '・' + names;
+    // 開關上只寫「題目類型」，不列選了什麼（使用者要求）
+    el.categoryToggle.textContent = T.categoryLabel;
   }
 
   // 幾個人、每人比幾題（照倒放猜猜看）：題數＝人數 × 每人題數
