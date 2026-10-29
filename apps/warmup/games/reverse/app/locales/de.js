@@ -66,21 +66,9 @@ export default {
   hintWord: '„{word}“',
   answerButton: 'Auflösen',
   prompts: {
-    sentence: [
-      // Nomen
-      'Banane', 'Brezel', 'Gewitter', 'Außerirdischer', 'Pizza', 'U-Bahn', 'Butterbrot', 'Katze', 'Dinosaurier', 'Eis',
-      'Zahnbürste', 'Wecker', 'Geburtstagskuchen', 'Fahrrad', 'Regenschirm', 'Ananas', 'Currywurst', 'Konzert', 'Kaffee', 'Pinguin',
-      'Handy', 'Lehrerin', 'Superheld', 'Aufzug', 'Wassermelone', 'Weihnachtsmann', 'Hamburger', 'Panda', 'Strand', 'Regenbogen',
-      'Föhn', 'Gummibärchen', 'Kühlschrank', 'Roboter', 'Schokolade',
-      // Verben
-      'schwimmen', 'niesen', 'tanzen', 'schlafen', 'Zähne putzen', 'duschen', 'singen', 'sich verlaufen', 'telefonieren', 'Schlange stehen',
-      'eine Diät machen', 'zu spät kommen', 'ein Selfie machen', 'streiten', 'umziehen',
-      // Adjektive und Gefühle
-      'wütend', 'müde', 'hungrig', 'eiskalt', 'überglücklich', 'nervös', 'peinlich', 'total erschöpft', 'lecker', 'viel zu scharf',
-      'schüchtern', 'gelangweilt',
-      // Situationen
-      'in der U-Bahn', 'beim ersten Date', 'am Wochenende', 'an einem Regentag', 'am Abend vor der Prüfung', 'an Silvester', 'auf dem Weihnachtsmarkt', 'an meinem Geburtstag', 'um drei Uhr nachts', 'am Montagmorgen',
-      // Bindewörter
+    // 造句用的詞（名詞、動詞、形容詞、情境）2026-10-29 併進全站共用題庫（apps/homepage/src/word-bank.mjs，標了 say 的），
+    // 這裡只留造樣造句常見的連接詞（只有倒放用得到），抽造句時約 15% 抽這裡
+    connectors: [
       'aber', 'wenn', 'weil', 'obwohl', 'während', 'immer mehr', 'nicht nur … sondern auch', 'plötzlich', 'endlich', 'eigentlich',
       'sobald', 'trotzdem',
     ],

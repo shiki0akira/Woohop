@@ -16,6 +16,9 @@
   var T = window.REVERSE.T;
   var BASE = window.REVERSE.base;
   var LANG = window.REVERSE.lang;
+  // 造句用的詞：全站共用題庫裡能造句的（apps/homepage/src/word-bank.mjs），再加上 locale 的連接詞
+  var WORDS = window.REVERSE.words;
+  var CONNECTOR_RATE = 0.15;
   var W = window.Woohop;
   var Leader = window.Leader;
 
@@ -167,7 +170,9 @@
       r -= WEIGHTS[kinds[i]];
       if (r < 0) { kind = kinds[i]; break; }
     }
-    var item = pick(T.prompts[kind], card && card.kind === kind ? card.item : null);
+    // 造句：大約 15% 抽連接詞（但是、如果⋯），其他從共用題庫抽
+    var list = kind !== 'sentence' ? T.prompts[kind] : Math.random() < CONNECTOR_RATE ? T.prompts.connectors : WORDS;
+    var item = pick(list, card && card.kind === kind ? card.item : null);
     // 造句的提示就是那個詞；哼歌、自由發揮的提示是題型本身
     card = kind === 'sentence'
       ? { kind: kind, item: item, text: fill(T.sentenceTask, { word: item }), hint: fill(T.hintWord, { word: item }) }

@@ -11,7 +11,7 @@
 - **錄音機** `recorder(root, opts)`：錄音鍵＋設計系統的 `.progress`＋狀態列；播放鍵用 `.button(which, ...)` 另外做（`forward` 原聲／`backward` 倒放）。全頁只播一段、只錄一段（`playing`、`recording`）。
   - `getUserMedia` 關掉降噪／回音消除；`MediaRecorder` 格式讓瀏覽器挑（iOS 是 mp4）；`trimSilence()` 剪頭尾。
   - 麥克風只在 https 或 localhost 能用：手機測試用 launch.json 的 `warmup-https`（`--local-protocol https`，自簽憑證，手機要先略過警告）。
-- **抽題** `drawCard(exclude)`：`WEIGHTS` 75／15／10，換一題傳現在的題型進去排除。題庫在 locale 的 `prompts`（`sentence`／`hum`／`free`），`build.mjs` 的 `check()` 擋空的題型。
+- **抽題** `drawCard(exclude)`：`WEIGHTS` 75／15／10，換一題傳現在的題型進去排除。造句用的詞是全站共用題庫 `apps/homepage/src/word-bank.mjs` 裡能造句的（`say`，2026-10-29 倒放原本的名詞、動詞、形容詞、情境併過去），`build.mjs` 的 `tokens()` 攤平嵌進 `window.REVERSE.words`；造句時約 15%（`CONNECTOR_RATE`）改抽 locale 的 `prompts.connectors`（連接詞，只有倒放用）。哼歌、自由發揮在 locale 的 `prompts.hum`／`free`，`check()` 擋空的題型。
 - QR code 用 `public/vendor/qrcode.js`（跟搶答同一份 qrcode-generator），畫成 `Woohop.qrSvg`。
 
 ## GA4

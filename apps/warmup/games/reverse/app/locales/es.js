@@ -66,21 +66,9 @@ export default {
   hintWord: '«{word}»',
   answerButton: 'Ver respuesta',
   prompts: {
-    sentence: [
-      // sustantivos
-      'plátano', 'churros', 'tormenta', 'extraterrestre', 'tortilla', 'metro', 'bocadillo', 'gatito', 'dinosaurio', 'helado',
-      'cepillo de dientes', 'despertador', 'tarta de cumpleaños', 'bicicleta', 'paraguas', 'piña', 'paella', 'concierto', 'café', 'pingüino',
-      'móvil', 'profe', 'superhéroe', 'ascensor', 'sandía', 'Papá Noel', 'hamburguesa', 'panda', 'playa', 'arcoíris',
-      'secador', 'palomitas', 'nevera', 'robot', 'chocolate',
-      // verbos
-      'nadar', 'estornudar', 'bailar', 'dormir', 'lavarse los dientes', 'ducharse', 'cantar', 'perderse', 'llamar por teléfono', 'hacer cola',
-      'ponerse a dieta', 'llegar tarde', 'hacerse un selfi', 'discutir', 'mudarse',
-      // adjetivos y sensaciones
-      'enfadado', 'con sueño', 'muerto de hambre', 'helado de frío', 'feliz', 'nervioso', 'incómodo', 'agotado', 'riquísimo', 'demasiado picante',
-      'tímido', 'aburrido',
-      // situaciones
-      'en el metro', 'en la primera cita', 'el fin de semana', 'un día de lluvia', 'la noche antes del examen', 'en Nochevieja', 'en las fiestas del pueblo', 'el día de mi cumpleaños', 'a las tres de la mañana', 'el lunes por la mañana',
-      // conectores
+    // 造句用的詞（名詞、動詞、形容詞、情境）2026-10-29 併進全站共用題庫（apps/homepage/src/word-bank.mjs，標了 say 的），
+    // 這裡只留造樣造句常見的連接詞（只有倒放用得到），抽造句時約 15% 抽這裡
+    connectors: [
       'pero', 'si', 'porque', 'aunque', 'mientras', 'cada vez más', 'no solo… sino también', 'de repente', 'por fin', 'en realidad',
       'en cuanto', 'sin embargo',
     ],

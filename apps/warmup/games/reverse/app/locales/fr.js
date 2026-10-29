@@ -66,21 +66,9 @@ export default {
   hintWord: '« {word} »',
   answerButton: 'Réponse',
   prompts: {
-    sentence: [
-      // noms
-      'banane', 'croissant', 'orage', 'extraterrestre', 'pizza', 'métro', 'baguette', 'chaton', 'dinosaure', 'glace',
-      'brosse à dents', 'réveil', 'gâteau d’anniversaire', 'vélo', 'parapluie', 'ananas', 'crêpe', 'concert', 'café', 'pingouin',
-      'téléphone', 'maîtresse', 'super-héros', 'ascenseur', 'pastèque', 'Père Noël', 'hamburger', 'panda', 'plage', 'arc-en-ciel',
-      'sèche-cheveux', 'fromage', 'frigo', 'robot', 'chocolat',
-      // verbes
-      'nager', 'éternuer', 'danser', 'dormir', 'se brosser les dents', 'prendre une douche', 'chanter', 'se perdre', 'téléphoner', 'faire la queue',
-      'faire un régime', 'être en retard', 'prendre un selfie', 'se disputer', 'déménager',
-      // adjectifs et sensations
-      'en colère', 'fatigué', 'affamé', 'gelé', 'super content', 'stressé', 'gêné', 'épuisé', 'délicieux', 'beaucoup trop épicé',
-      'timide', 'ennuyé',
-      // situations
-      'dans le métro', 'au premier rendez-vous', 'le week-end', 'un jour de pluie', 'la veille d’un examen', 'le soir du Nouvel An', 'au marché', 'le jour de mon anniversaire', 'à trois heures du matin', 'le lundi matin',
-      // mots de liaison
+    // 造句用的詞（名詞、動詞、形容詞、情境）2026-10-29 併進全站共用題庫（apps/homepage/src/word-bank.mjs，標了 say 的），
+    // 這裡只留造樣造句常見的連接詞（只有倒放用得到），抽造句時約 15% 抽這裡
+    connectors: [
       'mais', 'si', 'parce que', 'même si', 'pendant que', 'de plus en plus', 'non seulement… mais aussi', 'soudain', 'enfin', 'en fait',
       'dès que', 'pourtant',
     ],

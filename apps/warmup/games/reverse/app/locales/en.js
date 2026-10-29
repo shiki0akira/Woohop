@@ -66,21 +66,9 @@ export default {
   hintWord: '“{word}”',
   answerButton: 'Reveal answer',
   prompts: {
-    sentence: [
-      // nouns
-      'banana', 'pizza', 'thunderstorm', 'alien', 'pancakes', 'subway', 'lunchbox', 'kitten', 'dinosaur', 'ice cream',
-      'toothbrush', 'alarm clock', 'birthday cake', 'bicycle', 'umbrella', 'pineapple', 'hot dog', 'concert', 'coffee', 'penguin',
-      'smartphone', 'teacher', 'superhero', 'elevator', 'watermelon', 'Santa Claus', 'hamburger', 'panda', 'beach', 'rainbow',
-      'hair dryer', 'popcorn', 'sneakers', 'robot', 'cupcake',
-      // verbs
-      'swim', 'sneeze', 'dance', 'sleep', 'brush your teeth', 'take a shower', 'sing', 'get lost', 'call someone', 'wait in line',
-      'go on a diet', 'be late', 'take a selfie', 'argue', 'move house',
-      // adjectives and feelings
-      'angry', 'sleepy', 'starving', 'freezing', 'super happy', 'nervous', 'awkward', 'exhausted', 'delicious', 'way too spicy',
-      'shy', 'bored',
-      // situations
-      'on the subway', 'a first date', 'a snow day', 'the weekend', 'a rainy day', 'the night before an exam', 'New Year’s Eve', 'at the mall', 'my birthday', 'three in the morning',
-      // connectors
+    // 造句用的詞（名詞、動詞、形容詞、情境）2026-10-29 併進全站共用題庫（apps/homepage/src/word-bank.mjs，標了 say 的），
+    // 這裡只留造樣造句常見的連接詞（只有倒放用得到），抽造句時約 15% 抽這裡
+    connectors: [
       'but', 'if', 'because', 'although', 'while', 'more and more', 'not only… but also', 'suddenly', 'finally', 'actually',
       'as soon as', 'unless',
     ],

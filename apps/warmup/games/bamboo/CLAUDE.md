@@ -6,7 +6,7 @@
 
 建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）：共用的 `scripts/build.js` 為每個語言產生靜態頁，這個遊戲不一樣的部分在 `build.mjs`；全站共用的頂欄／頁尾／樣式從 `apps/homepage` 拿。返回鍵、`<dialog>`、AudioContext 的坑跟定時炸彈一樣，`games/bomb/CLAUDE.md` 有寫為什麼。
 
-- **8 種語言**（`app/strings.js` 的 `LANGS`；2026-10-20 先上 zh-TW，同一天補齊）。遊戲名用當地類似遊戲的名稱（CONCEPT.md 第五節），名稱庫在全站共用的 `apps/homepage/src/name-pools/{lang}.mjs`、各語言自己準備；拉霸題目在全站共用的 `apps/homepage/src/slot-prompts.mjs`（各語言自己寫，至少 30 題真心話、15 個大冒險）
+- **8 種語言**（`app/strings.js` 的 `LANGS`；2026-10-20 先上 zh-TW，同一天補齊）。遊戲名用當地類似遊戲的名稱（CONCEPT.md 第五節），名稱庫是全站共用題庫 `apps/homepage/src/word-bank.mjs` 裡標了 `name` 的題目（2026-10-29 併進去，`name-pools.mjs` 轉成主題與組）、各語言自己準備；拉霸題目在全站共用的 `apps/homepage/src/slot-prompts.mjs`（各語言自己寫，至少 30 題真心話、15 個大冒險）
 - 拉丁文字的語言（en/de/fr/es）用拉丁字型：2026-10-20 已改在全站共用的 `woohop.css`（原本微軟正黑體排前面，撇號會變全形 `C’ est`）
 - 口令的格子：中文一格一個字（正方形），其他語言一格一個音節（寬度跟著字走），七格在 375px 要放得下
 - 本機：`.claude/launch.json` 的 `warmup-dev`（port 8790），開 `/bamboo/zh-TW/`
