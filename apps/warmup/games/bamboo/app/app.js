@@ -137,10 +137,7 @@
   function loadSettings() {
     var saved = readJson(localStorage, SETTINGS_KEY, null);
     if (!saved || typeof saved !== 'object') return;
-    // 逐項檢查：存檔可能是舊版留下的，帶著已經不存在的主題
-    if (saved.theme === 'random' || saved.theme === 'realname' || NAMES.themes.indexOf(saved.theme) !== -1) {
-      settings.theme = saved.theme;
-    }
+    // 只記音樂開關。主題每次打開都是預設的隨機（2026-10-29 使用者要求：記住上次的選擇反而困擾）
     if (typeof saved.music === 'boolean') settings.music = saved.music;
   }
 

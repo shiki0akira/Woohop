@@ -53,7 +53,7 @@
 - **有兩題不能直譯**：`voice.dialectFruits`（台語）與 `quickfire.threeCities`（不能有重複的字），要換成當地等價的說法。`test/questions.test.js` 會擋下把它們改回直譯的修改
 - 漏翻、id 重複、分類不存在由 `checkQuestions()` 在 build 時擋；文字重複、分類題數、※ 題數由 `npm test` 擋
 
-自訂題目存在 `localStorage` 的 `web100-bomb-custom`（帶的是 `group`，不是 `category`），**只有輸入時的那一種語言**，不翻譯。設定存在 `web100-bomb-settings`。語言（`web100-lang` / `web100_lang` cookie）沿用系列共用的 key，不要自己發明（切換語言時由 Woohop 的 `site.js` 寫入）。
+自訂題目存在 `localStorage` 的 `web100-bomb-custom`（帶的是 `group`，不是 `category`），**只有輸入時的那一種語言**，不翻譯。設定存在 `web100-bomb-settings`，**只讀回聲音開關**：題型、引爆時間、自訂區間每次打開都是預設（2026-10-29 使用者要求，記住上次的選擇反而困擾）。語言（`web100-lang` / `web100_lang` cookie）沿用系列共用的 key，不要自己發明（切換語言時由 Woohop 的 `site.js` 寫入）。
 
 ## 引爆時間的選項在 `build.mjs`
 
@@ -62,7 +62,6 @@
 設定畫面平常**只露出 `presets` 那三顆區間**，最短／最長那兩排收在「自訂區間」底下（CONCEPT.md 2.2）。`checkTimer()` 一起守著三件事：每顆預設的 min/max 都真的在選項裡、max 不小於 min、而且 `defaultMin`/`defaultMax` 剛好等於其中一顆——最後這條漏了的話，一打開三顆都不亮，看起來像「還沒選」。
 
 - 預設按鈕上只寫區間本身（「30 秒–2 分」），不取名字，所以加一顆預設**不用動 locales**
-- 存檔的區間對不到任何預設時，`loadSettings()` 會強制把「自訂區間」展開
 - 「最長」小於「最短」的選項直接 `disabled`（壓扁樣式），不是選了再跳錯誤
 - ⚠️ 那一排是 `.seg-3`，字級與換行規則跟 `.seg-4` / `.seg-5` **不一樣**（見「配色 / UI」）
 

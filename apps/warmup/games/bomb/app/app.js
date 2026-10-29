@@ -183,24 +183,9 @@
 
   function loadSettings() {
     var saved = readJson(SETTINGS_KEY, null);
-    if (saved && typeof saved === 'object') {
-      // 逐項檢查而不是整包套用：存檔可能是舊版留下的，帶著已經不存在的分組或選項
-      if (Array.isArray(saved.groups)) {
-        var kept = saved.groups.filter(function (id) {
-          return DATA.groups.indexOf(id) !== -1;
-        });
-        if (kept.length) settings.groups = kept;
-      }
-      if (TIMER.minOptions.indexOf(saved.min) !== -1) settings.min = saved.min;
-      if (TIMER.maxOptions.indexOf(saved.max) !== -1) settings.max = saved.max;
-      if (typeof saved.timerCustom === 'boolean') settings.timerCustom = saved.timerCustom;
-      if (typeof saved.sound === 'boolean') settings.sound = saved.sound;
-    }
+    // 只記聲音開關。題型、爆炸時間、自訂區間每次打開都是預設（2026-10-29 使用者要求：記住上次的選擇反而困擾）
+    if (saved && typeof saved === 'object' && typeof saved.sound === 'boolean') settings.sound = saved.sound;
     clampRange();
-
-    // 存檔裡的區間對不到任何一顆預設時一定要展開，否則三顆都不亮，
-    // 而使用者完全看不到自己上次選的是什麼
-    if (!presetFor(settings.min, settings.max)) settings.timerCustom = true;
 
     var savedCustom = readJson(CUSTOM_KEY, []);
     if (Array.isArray(savedCustom)) {

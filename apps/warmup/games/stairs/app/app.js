@@ -57,8 +57,7 @@
     try {
       var saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
       if (!saved || typeof saved !== 'object') return;
-      if (typeof saved.count === 'number' && saved.count >= COUNT_MIN && saved.count <= COUNT_MAX) settings.count = saved.count;
-      // 擴充版（頂樓／地下室）不記：每次打開都從關著開始（使用者要求），要用再開
+      // 只記配樂開關。人數、擴充版（頂樓／地下室）每次打開都是預設（2026-10-29 使用者要求：記住上次的選擇反而困擾）
       if (typeof saved.sound === 'boolean') settings.sound = saved.sound;
     } catch (e) {
       /* 無痕模式或存檔壞了：照樣能玩，只是記不住 */
