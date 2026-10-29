@@ -96,9 +96,9 @@ export const TOOLS = {
       },
       words: {
         name: '抽題目',
-        short: '比手畫腳、你畫我猜的題目隨機抽，九種類型三百多題。',
-        seoTitle: '抽題目｜比手畫腳、你畫我猜題目產生器，300 多題免下載',
-        seoDesc: '比手畫腳、你畫我猜不知道出什麼題？手機按一下隨機抽一題：動物、職業、運動、日常生活、食物、交通、物品、搞笑情境、成語，九種類型三百多題，可以只選想要的類型，抽完一輪才會重複。免下載、免註冊。',
+        short: '比手畫腳、你畫我猜的題目隨機抽，十四種類型四百多題。',
+        seoTitle: '抽題目｜比手畫腳、你畫我猜題目產生器，400 多題免下載',
+        seoDesc: '比手畫腳、你畫我猜不知道出什麼題？手機按一下隨機抽一題：動物、職業、運動、日常生活、食物、交通、物品、搞笑情境、成語、飲料、水果、甜點、卡通角色等十四種類型四百多題，可以只選想要的類型，抽完一輪才會重複。免下載、免註冊。',
         lead: '選好類型，按一下抽一題，只給上台的人看。',
         how: [
           '勾選想要的題目類型（預設全選，至少留一類）。',
@@ -194,9 +194,9 @@ export const TOOLS = {
       },
       words: {
         name: '抽题目',
-        short: '你比我猜、你画我猜的题目随机抽，九种类型三百多题。',
-        seoTitle: '抽题目｜你比我猜、你画我猜题目生成器，300 多题免下载',
-        seoDesc: '你比我猜、你画我猜不知道出什么题？手机点一下随机抽一题：动物、职业、运动、日常生活、食物、交通、物品、搞笑情境、成语，九种类型三百多题，可以只选想要的类型，抽完一轮才会重复。免下载、免注册。',
+        short: '你比我猜、你画我猜的题目随机抽，十四种类型四百多题。',
+        seoTitle: '抽题目｜你比我猜、你画我猜题目生成器，400 多题免下载',
+        seoDesc: '你比我猜、你画我猜不知道出什么题？手机点一下随机抽一题：动物、职业、运动、日常生活、食物、交通、物品、搞笑情境、成语、饮料、水果、甜点、动画角色等十四种类型四百多题，可以只选想要的类型，抽完一轮才会重复。免下载、免注册。',
         lead: '选好类型，点一下抽一题，只给上台的人看。',
         how: [
           '勾选想要的题目类型（默认全选，至少留一类）。',
@@ -292,9 +292,9 @@ export const TOOLS = {
       },
       words: {
         name: 'Charades word generator',
-        short: 'Random words for charades or drawing games — 300+ in nine categories.',
-        seoTitle: 'Charades word generator: 300+ random words to act or draw',
-        seoDesc: 'Need words for charades or a drawing game? Tap once for a random word: animals, jobs, sports, everyday life, food, getting around, things, funny situations and idioms — 300+ words in nine categories. Pick only the ones you want; no repeats until the deck runs out. No app, no sign-up.',
+        short: 'Random words for charades or drawing games — 400+ in 14 categories.',
+        seoTitle: 'Charades word generator: 400+ random words to act or draw',
+        seoDesc: 'Need words for charades or a drawing game? Tap once for a random word: animals, jobs, sports, everyday life, food, getting around, things, funny situations, idioms, drinks, fruit, desserts, cartoons and more — 400+ words in 14 categories. Pick only the ones you want; no repeats until the deck runs out. No app, no sign-up.',
         lead: 'Pick your categories, tap for a word — only the actor looks.',
         how: [
           'Tick the categories you want (all are on by default; keep at least one).',
@@ -390,9 +390,9 @@ export const TOOLS = {
       },
       words: {
         name: 'Begriffe ziehen',
-        short: 'Zufällige Begriffe für Pantomime oder Montagsmaler – über 300 in neun Kategorien.',
-        seoTitle: 'Begriffe für Pantomime & Montagsmaler: über 300 zufällig ziehen',
-        seoDesc: 'Keine Idee, was ihr darstellen sollt? Ein Tipp und du bekommst einen zufälligen Begriff: Tiere, Berufe, Sport, Alltag, Essen, Unterwegs, Gegenstände, lustige Situationen und Redewendungen – über 300 Begriffe in neun Kategorien. Wähl nur, was du willst; Wiederholungen erst, wenn alle durch sind. Ohne App, ohne Anmeldung.',
+        short: 'Zufällige Begriffe für Pantomime oder Montagsmaler – über 400 in 14 Kategorien.',
+        seoTitle: 'Begriffe für Pantomime & Montagsmaler: über 400 zufällig ziehen',
+        seoDesc: 'Keine Idee, was ihr darstellen sollt? Ein Tipp und du bekommst einen zufälligen Begriff: Tiere, Berufe, Sport, Alltag, Essen, Unterwegs, Gegenstände, lustige Situationen, Redewendungen, Getränke, Obst, Süßes, Trickfiguren und mehr – über 400 Begriffe in 14 Kategorien. Wähl nur, was du willst; Wiederholungen erst, wenn alle durch sind. Ohne App, ohne Anmeldung.',
         lead: 'Kategorien wählen, Begriff ziehen – nur wer dran ist, schaut hin.',
         how: [
           'Hak die Kategorien an, die ihr wollt (anfangs alle; mindestens eine bleibt).',
@@ -488,9 +488,9 @@ export const TOOLS = {
       },
       words: {
         name: 'Générateur de mots à mimer',
-        short: 'Des mots au hasard pour mimer ou dessiner – plus de 300 en neuf catégories.',
-        seoTitle: 'Mots à mimer ou à dessiner : plus de 300 mots au hasard',
-        seoDesc: 'En panne d’idées pour un jeu de mimes ou de dessin ? Un toucher et voilà un mot au hasard : animaux, métiers, sports, vie quotidienne, nourriture, transports, objets, situations drôles et expressions – plus de 300 mots en neuf catégories. Choisissez seulement celles que vous voulez ; pas de doublon avant la fin du paquet. Sans appli, sans inscription.',
+        short: 'Des mots au hasard pour mimer ou dessiner – plus de 400 en 14 catégories.',
+        seoTitle: 'Mots à mimer ou à dessiner : plus de 400 mots au hasard',
+        seoDesc: 'En panne d’idées pour un jeu de mimes ou de dessin ? Un toucher et voilà un mot au hasard : animaux, métiers, sports, vie quotidienne, nourriture, transports, objets, situations drôles, expressions, boissons, fruits, desserts, dessins animés et plus – plus de 400 mots en 14 catégories. Choisissez seulement celles que vous voulez ; pas de doublon avant la fin du paquet. Sans appli, sans inscription.',
         lead: 'Choisissez les catégories, tirez un mot – seul le mime regarde.',
         how: [
           'Cochez les catégories voulues (toutes par défaut ; gardez-en au moins une).',
@@ -586,9 +586,9 @@ export const TOOLS = {
       },
       words: {
         name: 'お題ガチャ',
-        short: 'ジェスチャーゲームやお絵かきのお題をランダムに。9 ジャンル 300 以上。',
-        seoTitle: 'お題ガチャ｜ジェスチャーゲーム・お絵かきのお題を 300 以上からランダムに',
-        seoDesc: 'ジェスチャーゲームやお絵かきゲームのお題に困ったら、タップ一回でランダムにお題を出します。動物、職業、スポーツ、日常、食べもの、乗りもの、もの、おもしろシチュエーション、ことわざ・慣用句の 9 ジャンル 300 以上。ジャンルは選べて、一巡するまで同じお題は出ません。アプリ不要・登録不要。',
+        short: 'ジェスチャーゲームやお絵かきのお題をランダムに。14 ジャンル 400 以上。',
+        seoTitle: 'お題ガチャ｜ジェスチャーゲーム・お絵かきのお題を 400 以上からランダムに',
+        seoDesc: 'ジェスチャーゲームやお絵かきゲームのお題に困ったら、タップ一回でランダムにお題を出します。動物、職業、スポーツ、日常、食べもの、乗りもの、もの、おもしろシチュエーション、ことわざ・慣用句、飲み物、くだもの、スイーツ、キャラクターなど 14 ジャンル 400 以上。ジャンルは選べて、一巡するまで同じお題は出ません。アプリ不要・登録不要。',
         lead: 'ジャンルを選んでお題を引く。見るのは出題する人だけ。',
         how: [
           '使いたいジャンルにチェック（最初は全部、ひとつは残します）。',
@@ -684,9 +684,9 @@ export const TOOLS = {
       },
       words: {
         name: '제시어 뽑기',
-        short: '몸으로 말해요, 그림 퀴즈 제시어를 랜덤으로. 9가지 주제 300개 이상.',
-        seoTitle: '제시어 뽑기｜몸으로 말해요·그림 퀴즈 제시어 300개 이상 랜덤',
-        seoDesc: '몸으로 말해요, 그림 퀴즈 제시어가 고민이라면 한 번 누르면 랜덤으로 나와요. 동물, 직업, 스포츠, 일상, 음식, 탈것, 물건, 웃긴 상황, 속담·관용구까지 9가지 주제 300개 이상. 원하는 주제만 고를 수 있고, 한 바퀴 다 돌기 전엔 겹치지 않아요. 앱 설치·가입 없이 바로.',
+        short: '몸으로 말해요, 그림 퀴즈 제시어를 랜덤으로. 14가지 주제 400개 이상.',
+        seoTitle: '제시어 뽑기｜몸으로 말해요·그림 퀴즈 제시어 400개 이상 랜덤',
+        seoDesc: '몸으로 말해요, 그림 퀴즈 제시어가 고민이라면 한 번 누르면 랜덤으로 나와요. 동물, 직업, 스포츠, 일상, 음식, 탈것, 물건, 웃긴 상황, 속담·관용구, 음료, 과일, 디저트, 캐릭터까지 14가지 주제 400개 이상. 원하는 주제만 고를 수 있고, 한 바퀴 다 돌기 전엔 겹치지 않아요. 앱 설치·가입 없이 바로.',
         lead: '주제를 고르고 제시어를 뽑아요. 문제 내는 사람만 보세요.',
         how: [
           '원하는 주제를 체크하세요(처음엔 전부, 하나는 남겨야 해요).',
@@ -782,9 +782,9 @@ export const TOOLS = {
       },
       words: {
         name: 'Generador de palabras para mímica',
-        short: 'Palabras al azar para mímica o juegos de dibujo: más de 300 en nueve categorías.',
-        seoTitle: 'Palabras para mímica y Pictionary: más de 300 al azar',
-        seoDesc: '¿No sabes qué palabra poner en mímica o en un juego de dibujo? Toca una vez y sale una al azar: animales, oficios, deportes, día a día, comida, transporte, objetos, situaciones graciosas y refranes. Más de 300 palabras en nueve categorías; elige solo las que quieras y no se repiten hasta acabar el mazo. Sin app, sin registro.',
+        short: 'Palabras al azar para mímica o juegos de dibujo: más de 400 en 14 categorías.',
+        seoTitle: 'Palabras para mímica y Pictionary: más de 400 al azar',
+        seoDesc: '¿No sabes qué palabra poner en mímica o en un juego de dibujo? Toca una vez y sale una al azar: animales, oficios, deportes, día a día, comida, transporte, objetos, situaciones graciosas, refranes, bebidas, frutas, postres, dibujos y más: más de 400 palabras en 14 categorías; elige solo las que quieras y no se repiten hasta acabar el mazo. Sin app, sin registro.',
         lead: 'Elige las categorías y saca una palabra: solo la mira quien actúa.',
         how: [
           'Marca las categorías que quieras (todas por defecto; deja al menos una).',
