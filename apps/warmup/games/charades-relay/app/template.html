@@ -71,8 +71,8 @@
       <!--
         第 3 步：上場。手機一直在主持人手上。分五段（data-phase），一次只露一段：
           draw 這隊排好、抽題目 → word 給排頭看（開始傳／換一題）→ relay 一棒一棒傳（倒數）
-          → guess 最後一個人說答案 → reveal 公布答案、猜對了沒 → 下一題回 draw
-        步驟頭只在 draw／guess／reveal（主持人對大家說話）；word／relay 畫面留給題卡和倒數
+          → guess 最後一個人猜（字格＋提示、猜中了沒）→ reveal 答案揭曉 → 下一題回 draw
+        步驟頭只在 draw／reveal（主持人對大家說話）；word／relay／guess 畫面留給題卡
       -->
       <div class="view" id="view-play" data-phase="draw" hidden>
         <div class="round-progress">
@@ -120,23 +120,34 @@
               <button class="btn btn-lg btn-solid btn-block" id="pass-next" type="button">{{passNext}}</button>
             </div>
 
-            <!-- guess：最後一個人說答案；主持人可以先偷看（給看戲的隊伍看），再公布 -->
+            <!--
+              guess：最後一個人猜（照比手畫腳，老闆 11/02 要求）。一個字一個方塊（看得出幾個字），
+              卡片裡兩種提示：類型（黃色標籤）、隨機露一個字；「猜中了！」等按鈕在卡片下面
+            -->
             <div class="name-stage stage-guess">
-              <p class="peek-answer" id="peek-answer" hidden></p>
-              <button class="btn btn-lg btn-solid btn-block" id="reveal" type="button">{{revealButton}}</button>
-              <button class="btn btn-sm btn-secondary peek-btn" id="peek" type="button">{{peekButton}}</button>
-            </div>
-
-            <!-- reveal：答案、猜對了沒 -->
-            <div class="name-stage stage-reveal-answer">
-              <p class="result-title">{{answerIs}}</p>
-              <p class="result-answer" id="result-answer"></p>
-              <div class="pass-row">
-                <button class="btn btn-lg btn-solid pass-bar" id="got-right" type="button">{{gotRight}}</button>
-                <button class="btn btn-lg btn-secondary pass-bar" id="got-wrong" type="button">{{gotWrong}}</button>
+              <div class="drawn-card guess-card" aria-live="polite">
+                <span class="badge hint-badge" id="hint-kind" hidden></span>
+                <p class="hint-mask" id="hint-mask"></p>
+              </div>
+              <div class="hint-row">
+                <button class="btn btn-secondary" id="hint-kind-btn" type="button">{{hintKindButton}}</button>
+                <button class="btn btn-secondary" id="hint-char-btn" type="button">{{hintCharButton}}</button>
               </div>
             </div>
+
+            <!-- reveal：答案揭曉（猜中了／答案是），下一題 -->
+            <div class="name-stage stage-reveal-answer">
+              <p class="result-title" id="result-title"></p>
+              <p class="result-answer" id="result-answer"></p>
+              <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button"></button>
+            </div>
           </section>
+        </div>
+        <!-- guess：卡片下面是「猜中了！」「沒猜到，公布答案」，再下面小按鈕偷看答案（方塊換成字，再按一次蓋回去） -->
+        <div class="guess-actions phase-guess">
+          <button class="btn btn-lg btn-solid btn-block" id="got-right" type="button">{{gotRight}}</button>
+          <button class="btn btn-lg btn-secondary btn-block" id="give-up" type="button">{{giveUp}}</button>
+          <button class="btn btn-sm btn-secondary peek-btn" id="peek" type="button">{{peekButton}}</button>
         </div>
       </div>
 

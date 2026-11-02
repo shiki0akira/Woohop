@@ -74,12 +74,16 @@
     timerNum: $('timer-num'),
     timerHint: $('timer-hint'),
     passNext: $('pass-next'),
+    hintKind: $('hint-kind'),
+    hintMask: $('hint-mask'),
+    hintKindBtn: $('hint-kind-btn'),
+    hintCharBtn: $('hint-char-btn'),
     peek: $('peek'),
-    peekAnswer: $('peek-answer'),
-    reveal: $('reveal'),
-    resultAnswer: $('result-answer'),
     gotRight: $('got-right'),
-    gotWrong: $('got-wrong'),
+    giveUp: $('give-up'),
+    resultTitle: $('result-title'),
+    resultAnswer: $('result-answer'),
+    nextRound: $('next-round'),
     finalRight: $('final-right'),
     finalTime: $('final-time'),
     again: $('again'),
@@ -191,8 +195,8 @@
   // ---------- 帶領的步驟頭（Leader.lead） ----------
 
   var STEPS = ['setup', 'rules', 'play', 'end'];
-  // 上場那一步：主持人對大家說話的三段才放（draw／guess／reveal），word、relay 畫面留給題卡和倒數
-  var PLAY_LEAD = { draw: true, guess: true, reveal: true };
+  // 上場那一步：主持人對大家說話的兩段才放（draw 排好、reveal 答案揭曉後往前問），word、relay、guess 畫面留給題卡
+  var PLAY_LEAD = { draw: true, reveal: true };
 
   function renderLead() {
     var key = screen === 'play' ? phase : screen;
@@ -285,6 +289,73 @@
     card = deck.pop();
     el.cardKind.textContent = card[0];
     el.cardText.textContent = card[1];
+    hint = { kind: false, chars: Array.from(card[1]), shown: [] };
+  }
+
+  // ---------- 猜的時候的提示（照比手畫腳 games/charades/app/app.js）：一個字一個方塊、提示類型、提示一個字 ----------
+
+  var hint = null; // 這一題給過的提示：{ kind: 給了類型沒, chars, shown: 已經露出的字的位置 }
+  var peeking = false; // 主持人按了偷看答案：方塊全部換成字
+
+  // 用 Array.from 切字，中日韓字、表情符號都算一個；空白和標點直接顯示，不算要猜的字
+  var isLetter = function (ch) { return /[\p{L}\p{N}]/u.test(ch); };
+  var hiddenLetters = function () {
+    var list = [];
+    hint.chars.forEach(function (ch, i) {
+      if (isLetter(ch) && hint.shown.indexOf(i) < 0) list.push(i);
+    });
+    return list;
+  };
+  // 沒露出來的字畫成方塊：一個字一個 span；每個單字包成一組（.mask-word 不換行），換行只發生在單字之間
+  function renderMask() {
+    el.hintMask.textContent = '';
+    var word = null;
+    hint.chars.forEach(function (ch, i) {
+      if (/\s/.test(ch)) {
+        word = null;
+        var gap = document.createElement('span');
+        gap.className = 'mask-space';
+        el.hintMask.appendChild(gap);
+        return;
+      }
+      if (!word) {
+        word = document.createElement('span');
+        word.className = 'mask-word';
+        el.hintMask.appendChild(word);
+      }
+      var span = document.createElement('span');
+      if (!peeking && isLetter(ch) && hint.shown.indexOf(i) < 0) {
+        span.className = 'mask-box';
+        span.setAttribute('aria-hidden', 'true');
+      } else {
+        span.textContent = ch;
+      }
+      word.appendChild(span);
+    });
+  }
+
+  function syncHints() {
+    renderMask();
+    el.hintKind.textContent = hint.kind ? card[0] : '';
+    el.hintKind.hidden = !hint.kind;
+    el.hintKindBtn.disabled = hint.kind;
+    // 只剩最後一個字沒露出來，就不能再多給了
+    el.hintCharBtn.disabled = hiddenLetters().length <= 1;
+    el.peek.textContent = peeking ? T.hideButton : T.peekButton;
+  }
+
+  function giveKind() {
+    hint.kind = true;
+    syncHints();
+    track('charades_relay_hint_shown', { round_number: roundNumber, kind: 'category', category: card[0] });
+  }
+  // 每按一次隨機多露一個字（最後一個字不露）
+  function giveChar() {
+    var hidden = hiddenLetters();
+    if (hidden.length <= 1) return;
+    hint.shown.push(hidden[Math.floor(Math.random() * hidden.length)]);
+    syncHints();
+    track('charades_relay_hint_shown', { round_number: roundNumber, kind: 'char', shown: hint.shown.length, category: card[0] });
   }
 
   function flip() {
@@ -467,36 +538,33 @@
   }
 
   function toGuess() {
-    el.peekAnswer.hidden = true;
-    el.peekAnswer.textContent = card[1];
-    el.peek.textContent = T.peekButton;
+    peeking = false;
+    syncHints();
     sfx.guess();
     setPhase('guess');
     track('charades_relay_passed', { round_number: roundNumber, passes: pass, seconds: prep.sec });
   }
 
-  function showAnswer() {
-    el.resultAnswer.textContent = card[1];
-    el.gotRight.textContent = T.gotRight;
-    setPhase('reveal');
-  }
-
-  var judging = false; // 等音效那半秒，連點不會算兩次
+  // 猜中了／沒猜到：記下來、公布答案；下一題由主持人按（揭曉後要往前問「你以為是什麼」）
   function judge(ok) {
-    if (judging) return;
-    judging = true;
+    if (phase !== 'guess') return;
     if (ok) right += 1;
     if (ok) sfx.right();
     else sfx.wrong();
-    track('charades_relay_judged', { round_number: roundNumber, right: ok, passes: pass, category: card[0], skips: skips });
+    track('charades_relay_judged', {
+      round_number: roundNumber, right: ok, passes: pass, category: card[0], skips: skips,
+      hint_kind: hint.kind, hint_chars: hint.shown.length,
+    });
     el.roundBar.style.setProperty('--p', (roundNumber / totalRounds()) * 100 + '%');
-    // 猜對猜錯的音效響完再換畫面（結束的音效會蓋過去）
-    setTimeout(function () {
-      judging = false;
-      if (screen !== 'play') return;
-      if (isLast()) endGame();
-      else startRound();
-    }, reduceMotion ? 0 : 500);
+    el.resultTitle.textContent = ok ? T.resultRight : T.answerIs;
+    el.resultAnswer.textContent = card[1];
+    el.nextRound.textContent = isLast() ? T.seeResult : T.nextRound;
+    setPhase('reveal');
+  }
+
+  function afterReveal() {
+    if (isLast()) endGame();
+    else startRound();
   }
 
   /*
@@ -552,7 +620,6 @@
     startedAt = Date.now();
     finishedMs = 0;
     right = 0;
-    judging = false;
     ensureAudio(); // 在點擊裡先建好，之後的音效才不會被自動播放限制擋掉
     shuffleDeck();
     showScreen('play');
@@ -654,14 +721,16 @@
   });
   el.relayStart.addEventListener('click', startRelay);
   el.passNext.addEventListener('click', nextPass);
-  // 偷看答案：主持人自己看、或給看戲的隊伍看一眼，再按一次蓋起來
+  el.hintKindBtn.addEventListener('click', giveKind);
+  el.hintCharBtn.addEventListener('click', giveChar);
+  // 偷看答案：方塊換成字，主持人自己看、或給看戲的人看一眼，再按一次蓋起來
   el.peek.addEventListener('click', function () {
-    el.peekAnswer.hidden = !el.peekAnswer.hidden;
-    el.peek.textContent = el.peekAnswer.hidden ? T.peekButton : T.hideButton;
+    peeking = !peeking;
+    syncHints();
   });
-  el.reveal.addEventListener('click', showAnswer);
   el.gotRight.addEventListener('click', function () { judge(true); });
-  el.gotWrong.addEventListener('click', function () { judge(false); });
+  el.giveUp.addEventListener('click', function () { judge(false); });
+  el.nextRound.addEventListener('click', afterReveal);
 
   el.leaveCancel.addEventListener('click', function () { el.leaveModal.close(); });
   el.leaveConfirm.addEventListener('click', confirmLeave);

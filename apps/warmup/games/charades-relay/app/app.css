@@ -37,9 +37,10 @@
 .category-choice::after { width: 20px; height: 20px; top: -7px; right: -7px; background-size: 12px; }
 
 /* ---------- 上場 ---------- */
-/* 步驟頭只在主持人對大家說話的三段（app.js 的 PLAY_LEAD） */
+/* 步驟頭只在主持人對大家說話的兩段（app.js 的 PLAY_LEAD：draw、reveal） */
 #view-play[data-phase="word"] .play-lead,
-#view-play[data-phase="relay"] .play-lead { display: none; }
+#view-play[data-phase="relay"] .play-lead,
+#view-play[data-phase="guess"] .play-lead { display: none; }
 
 .round-progress { display: grid; gap: 8px; margin-top: 20px; }
 /* 第幾題｜碼錶 一行排開（猜中幾題只在結束畫面說） */
@@ -73,16 +74,27 @@
 .stage-relay .btn-block { width: 100%; }
 #pass-next { --h: 72px; font-size: 20px; }
 
-/* guess：偷看答案（小按鈕，置中）、公布答案 */
-.stage-guess { justify-items: center; }
-.stage-guess #reveal { --h: 72px; font-size: 20px; }
-.peek-btn { width: auto; }
-.peek-answer { margin: 0; font-size: 28px; font-weight: 900; color: var(--mint-text); }
-.peek-answer[hidden] { display: none; }
+/* guess：一個字一個方塊＋兩種提示（照比手畫腳 games/charades/app/app.css，顏色換成這個遊戲的綠） */
+.relay-app .namer .guess-card { min-height: 120px; padding: 18px 12px; align-content: center; }
+.relay-app .namer .guess-card .hint-badge { padding: 6px 16px; font-size: 18px; background: var(--yellow-face); color: var(--yellow-text); border-color: var(--yellow-edge); }
+.relay-app .namer .guess-card .hint-badge[hidden] { display: none; }
+.hint-mask { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .12em; margin: 0; font-size: clamp(36px, 11vw, 56px); font-weight: 900; line-height: 1.2; color: var(--mint-text); }
+.mask-box { display: inline-block; width: .9em; height: .9em; border: 3px solid currentColor; border-radius: 8px; background: var(--surface); opacity: .85; }
+.mask-word { display: inline-flex; align-items: center; gap: inherit; white-space: nowrap; }
+.mask-space { display: inline-block; width: .35em; }
+.hint-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hint-row .btn { min-width: 0; height: auto; min-height: var(--h, 48px); padding: 8px 10px; white-space: normal; line-height: 1.25; text-wrap: balance; }
+.hint-row .btn:disabled { opacity: .45; cursor: default; }
 
-/* reveal：大字答案＋猜對了沒 */
+/* 卡片下面：猜中了！、沒猜到，公布答案、偷看答案（只在 guess） */
+.guess-actions { display: grid; justify-items: center; gap: 12px; margin-top: 16px; }
+#view-play:not([data-phase="guess"]) .guess-actions { display: none; }
+#got-right { --h: 72px; font-size: 20px; }
+.peek-btn { width: auto; }
+
+/* reveal：猜中了／答案是＋大字答案＋下一題 */
 .stage-reveal-answer { justify-items: center; text-align: center; }
-.stage-reveal-answer .pass-row { width: 100%; }
+.stage-reveal-answer .btn-block { width: 100%; }
 .result-title { margin: 0; font-size: 18px; font-weight: 900; color: var(--muted); }
 .result-answer { margin: 0; font-size: clamp(32px, 10vw, 52px); font-weight: 900; line-height: 1.2; color: var(--mint-text); text-wrap: balance; }
 
