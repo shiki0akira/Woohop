@@ -18,7 +18,7 @@
   var Leader = window.Leader;
 
   var SIZE_MIN = 3; // 少於 3 人就只是比手畫腳，沒有「傳」
-  var SIZE_MAX = 15;
+  var SIZE_MAX = 10;
   var SETTINGS_KEY = 'woohop-charades-relay-settings';
 
   var CATS = window.RELAY.words; // [代號, 類型名稱, [題目...]]（全站共用的 apps/homepage/src/word-bank.mjs）

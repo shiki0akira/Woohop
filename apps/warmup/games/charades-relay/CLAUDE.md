@@ -11,7 +11,7 @@
 ## `app/app.js` 的結構
 
 - **一步一步帶**：`setup` → `rules` → `play` → `end`，用 `showScreen()` 切換。返回鍵一律回第一頁；已經抽過題目就先確認（照比手畫腳）。
-- **開場設定** `prep`：`size`（一隊幾人 3～15，預設 5，傳 `size - 1` 棒）、`per`（比幾題 1／2／3，預設 2）、`sec`（每人幾秒 10／20／0＝不計時，預設 20）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-charades-relay-settings']`（`{ sound }`）。
+- **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5，傳 `size - 1` 棒）、`per`（比幾題 1／2／3，預設 2）、`sec`（每人幾秒 10／20／0＝不計時，預設 20）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-charades-relay-settings']`（`{ sound }`）。
 - **play 分五段** `setPhase()`：`draw` → `word` → `relay` → `guess` → `reveal`。題卡 `#card[data-stage]` 跟 phase 同名（reveal 那面的 class 是 `.stage-reveal-answer`，避開 game.css 的 `.stage-reveal`）。
   - **步驟頭**：手機一直在主持人手上，所以 play 也有步驟頭，但只在 `PLAY_LEAD`（draw／guess／reveal）三段出現，文案是 locale 的 `lead.draw`／`lead.guess`／`lead.reveal`。word、relay 由 CSS 藏起 `.play-lead`。
   - **碼錶** `startClock()`：從規則講完、開始玩算起（`startedAt`），上方每秒更新；`endGame()` 記下 `finishedMs`，結束畫面和照著念（`resultLine()`）都用它。`right` 是猜中幾題。
