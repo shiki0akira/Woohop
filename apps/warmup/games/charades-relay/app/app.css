@@ -39,25 +39,12 @@
 #view-play[data-phase="relay"] .play-lead { display: none; }
 
 .round-progress { display: grid; gap: 8px; margin-top: 20px; }
-.round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+/* 第幾題｜猜中幾題｜碼錶 一行排開 */
+.round-meta { display: flex; align-items: baseline; gap: 12px; }
+.round-no, .right-count { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+.right-count { color: var(--mint-text); }
+.clock { margin: 0 0 0 auto; font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }
 .round-progress .progress { max-width: none; }
-
-/* 各隊分數：一隊一個小卡，輪到的那一隊用自己的顏色亮起來（2px 線＋4px 底，設計系統的線條） */
-.scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
-.team-score {
-  --tf: var(--surface); --te: var(--outline); --tt: var(--ink);
-  display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0;
-  padding: 8px 12px; border: 2px solid var(--te); border-radius: var(--r-md); background: var(--surface);
-  font-size: 15px; font-weight: 800;
-}
-.team-score .team-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.team-score b { flex: none; font-variant-numeric: tabular-nums; }
-.team-score.t-blue { --tf: var(--blue-face); --te: var(--blue-edge); --tt: var(--blue-text); }
-.team-score.t-yellow { --tf: var(--yellow-face); --te: var(--yellow-edge); --tt: var(--yellow-text); }
-.team-score.t-mint { --tf: var(--mint-face); --te: var(--mint-edge); --tt: var(--mint-text); }
-.team-score.t-pink { --tf: var(--pink-face); --te: var(--pink-edge); --tt: var(--pink-text); }
-.team-score.is-on, .final-scores .team-score { background: var(--tf); color: var(--tt); box-shadow: 0 4px 0 var(--te); }
-.scoreboard:not(.final-scores) .team-score:not(.is-on) { opacity: .6; }
 
 /* 題卡五面（app.js 的 setPhase 設 data-stage） */
 .relay-app .namer .name-card[data-stage="draw"] .stage-draw,
@@ -98,5 +85,13 @@
 .result-answer { margin: 0; font-size: clamp(32px, 10vw, 52px); font-weight: 900; line-height: 1.2; color: var(--mint-text); text-wrap: balance; }
 
 /* ---------- 遊戲結束 ---------- */
-.final-panel h2 { margin: 0 0 12px; font-size: 18px; }
-.final-scores .team-score { padding: 12px 14px; font-size: 18px; }
+/* 猜中幾題、總共花多久：兩格大數字（2px 線＋4px 底，設計系統的線條） */
+.final-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.final-stat {
+  display: grid; justify-items: center; gap: 4px; padding: 14px 8px;
+  border: 2px solid var(--mint-edge); border-radius: var(--r-md); background: var(--mint-face);
+  box-shadow: 0 4px 0 var(--mint-edge); color: var(--mint-text); text-align: center;
+}
+.final-stat span { font-size: 14px; font-weight: 800; }
+.final-stat b { font-size: clamp(22px, 7vw, 32px); font-weight: 900; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.final-stat-time { border-color: var(--yellow-edge); background: var(--yellow-face); box-shadow: 0 4px 0 var(--yellow-edge); color: var(--yellow-text); }

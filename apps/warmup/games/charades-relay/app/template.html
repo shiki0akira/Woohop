@@ -9,7 +9,7 @@
     {{header}}
 
     <main id="main" class="relay-main game-main">
-      <!-- 第 1 步：開場。幾隊、每隊比幾題、每個人比多久，題目類型收起來（照比手畫腳）。上方的步驟頭是全站共用的 Leader.lead -->
+      <!-- 第 1 步：開場。一隊幾人、比幾題、每個人比多久，題目類型收起來（照比手畫腳）。上方的步驟頭是全站共用的 Leader.lead -->
       <div class="view" id="view-setup">
         <div class="page-head">
           <nav class="crumbs" aria-label="breadcrumb">
@@ -24,11 +24,11 @@
         <section class="panel setup-panel">
           <div class="setup-row setup-row-first">
             <div>
-              <span class="field-label">{{teamLabel}}</span>
+              <span class="field-label">{{sizeLabel}}</span>
               <div class="stepper">
-                <button type="button" id="team-less" aria-label="{{teamLess}}">−</button>
-                <output id="team-value" aria-live="polite"></output>
-                <button type="button" id="team-more" aria-label="{{teamMore}}">+</button>
+                <button type="button" id="size-less" aria-label="{{sizeLess}}">−</button>
+                <output id="size-value" aria-live="polite"></output>
+                <button type="button" id="size-more" aria-label="{{sizeMore}}">+</button>
               </div>
             </div>
             <div class="per-field">
@@ -71,15 +71,18 @@
       <!--
         第 3 步：上場。手機一直在主持人手上。分五段（data-phase），一次只露一段：
           draw 這隊排好、抽題目 → word 給排頭看（開始傳／換一題）→ relay 一棒一棒傳（倒數）
-          → guess 最後一個人說答案 → reveal 公布答案、猜對了沒 → 下一隊回 draw
+          → guess 最後一個人說答案 → reveal 公布答案、猜對了沒 → 下一題回 draw
         步驟頭只在 draw／guess／reveal（主持人對大家說話）；word／relay 畫面留給題卡和倒數
       -->
       <div class="view" id="view-play" data-phase="draw" hidden>
         <div class="round-progress">
-          <p class="round-no" id="round-no"></p>
+          <div class="round-meta">
+            <p class="round-no" id="round-no"></p>
+            <p class="right-count" id="right-count"></p>
+            <!-- 從開始玩算起的總時間，結束畫面也是這個數字 -->
+            <p class="clock" id="clock" aria-label="{{clockLabel}}"></p>
+          </div>
           <div class="progress"><div id="round-bar" style="--p:0%"></div></div>
-          <!-- 各隊分數，輪到的那一隊亮起來 -->
-          <ul class="scoreboard" id="scoreboard"></ul>
         </div>
 
         <div class="lead-slot play-lead"></div>
@@ -114,8 +117,8 @@
                 <div class="num" id="timer-num"></div>
               </div>
               <p class="hint timer-hint" id="timer-hint" aria-live="polite"></p>
+              <!-- 最後一棒時文字換成「最後一個人看完了」（app.js renderPass） -->
               <button class="btn btn-lg btn-solid btn-block" id="pass-next" type="button">{{passNext}}</button>
-              <button class="btn btn-lg btn-secondary btn-block" id="last-seen" type="button">{{lastSeen}}</button>
             </div>
 
             <!-- guess：最後一個人說答案；主持人可以先偷看（給看戲的隊伍看），再公布 -->
@@ -138,12 +141,12 @@
         </div>
       </div>
 
-      <!-- 第 4 步：遊戲結束。各隊分數 -->
+      <!-- 第 4 步：遊戲結束。猜中幾題、總共花多久 -->
       <div class="view" id="view-end" hidden>
         <div class="lead-slot"></div>
         <section class="panel final-panel">
-          <h2>{{scoreHeading}}</h2>
-          <ul class="scoreboard final-scores" id="final-scores"></ul>
+          <div class="final-stat"><span>{{finalRightLabel}}</span><b id="final-right"></b></div>
+          <div class="final-stat final-stat-time"><span>{{finalTimeLabel}}</span><b id="final-time"></b></div>
         </section>
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
       </div>

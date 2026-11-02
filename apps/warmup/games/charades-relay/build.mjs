@@ -8,17 +8,13 @@ import { wordsFor, checkWords } from '../../../homepage/src/word-bank.mjs';
 export const CONTENT_UPDATED = '2026-11-02';
 
 // 每個語言長度要一樣的清單
-export const LIST_KEYS = ['ruleCards', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps', 'teamNames'];
+export const LIST_KEYS = ['ruleCards', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps'];
 
 // 題庫跟比手畫腳同一份（全站共用的 apps/homepage/src/word-bank.mjs），只嵌比得出來的（act）
 export const RAW_TOKENS = ['wordsJson'];
 
-export function check({ LANGS, STRINGS }) {
+export function check() {
   checkWords();
-  // 隊名最多 4 隊（app.js 的 TEAM_MAX），少一個就會出現 undefined 隊
-  for (const lang of LANGS) {
-    if (STRINGS[lang].teamNames.length < 4) throw new Error(`${lang} 的 teamNames 要有 4 個`);
-  }
 }
 
 export function tokens({ lang, toScriptJson }) {
