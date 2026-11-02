@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="relay-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="relay-main game-main">
+      <!-- 第 1 步：開場。幾隊、每隊比幾題、每個人比多久，題目類型收起來（照比手畫腳）。上方的步驟頭是全站共用的 Leader.lead -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <section class="panel setup-panel">
+          <div class="setup-row setup-row-first">
+            <div>
+              <span class="field-label">{{teamLabel}}</span>
+              <div class="stepper">
+                <button type="button" id="team-less" aria-label="{{teamLess}}">−</button>
+                <output id="team-value" aria-live="polite"></output>
+                <button type="button" id="team-more" aria-label="{{teamMore}}">+</button>
+              </div>
+            </div>
+            <div class="per-field">
+              <span class="field-label">{{perLabel}}</span>
+              <div class="seg seg-3" role="radiogroup" aria-label="{{perLabel}}">
+                <label class="seg-item"><input type="radio" name="per" value="1">{{per1}}</label>
+                <label class="seg-item"><input type="radio" name="per" value="2">{{per2}}</label>
+                <label class="seg-item"><input type="radio" name="per" value="3">{{per3}}</label>
+              </div>
+            </div>
+          </div>
+          <span class="field-label field-label-gap">{{secLabel}}</span>
+          <div class="seg seg-3" role="radiogroup" aria-label="{{secLabel}}">
+            <label class="seg-item"><input type="radio" name="sec" value="10">{{sec10}}</label>
+            <label class="seg-item"><input type="radio" name="sec" value="20">{{sec20}}</label>
+            <label class="seg-item"><input type="radio" name="sec" value="0">{{secFree}}</label>
+          </div>
+          <p class="hint" id="rounds-hint"></p>
+          <!-- 題目類型平常收起來，第一張「隨機」（照比手畫腳） -->
+          <div class="word-cats-bar category-bar">
+            <button class="link tool-toggle" id="category-toggle" type="button" aria-expanded="false" aria-controls="category-panel"></button>
+          </div>
+          <div id="category-panel" hidden>
+            <p class="hint">{{categoryHint}}</p>
+            <div class="category-grid" id="category-grid"></div>
+          </div>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!--
+        第 3 步：上場。手機一直在主持人手上。分五段（data-phase），一次只露一段：
+          draw 這隊排好、抽題目 → word 給排頭看（開始傳／換一題）→ relay 一棒一棒傳（倒數）
+          → guess 最後一個人說答案 → reveal 公布答案、猜對了沒 → 下一隊回 draw
+        步驟頭只在 draw／guess／reveal（主持人對大家說話）；word／relay 畫面留給題卡和倒數
+      -->
+      <div class="view" id="view-play" data-phase="draw" hidden>
+        <div class="round-progress">
+          <p class="round-no" id="round-no"></p>
+          <div class="progress"><div id="round-bar" style="--p:0%"></div></div>
+          <!-- 各隊分數，輪到的那一隊亮起來 -->
+          <ul class="scoreboard" id="scoreboard"></ul>
+        </div>
+
+        <div class="lead-slot play-lead"></div>
+
+        <div class="namer">
+          <section class="panel name-card" id="card" data-stage="draw">
+            <div class="name-stage stage-draw">
+              <svg class="illo deck" id="deck" viewBox="0 0 160 126" aria-hidden="true"></svg>
+              <button class="btn btn-lg btn-solid btn-block draw-btn" id="card-draw" type="button">{{drawButton}}</button>
+              <p class="hint">{{drawHint}}</p>
+            </div>
+
+            <!-- word：題目只給排頭看 -->
+            <div class="name-stage stage-word">
+              <div class="drawn-card" id="drawn">
+                <span class="badge" id="card-kind"></span>
+                <p class="drawn-name" id="card-text" aria-live="polite"></p>
+              </div>
+              <p class="hint">{{wordHint}}</p>
+              <div class="pass-row">
+                <button class="btn btn-lg btn-solid pass-bar" id="relay-start" type="button">{{startRelay}}</button>
+                <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
+              </div>
+            </div>
+
+            <!-- relay：題目蓋起來（排隊的人可能回頭），只顯示第幾棒和倒數 -->
+            <div class="name-stage stage-relay">
+              <p class="pass-no" id="pass-no"></p>
+              <p class="pass-who" id="pass-who"></p>
+              <div class="timer-ring" id="timer">
+                <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="50" fill="none" stroke-width="12"/><circle class="arc" id="timer-arc" cx="60" cy="60" r="50" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="0"/></svg>
+                <div class="num" id="timer-num"></div>
+              </div>
+              <p class="hint timer-hint" id="timer-hint" aria-live="polite"></p>
+              <button class="btn btn-lg btn-solid btn-block" id="pass-next" type="button">{{passNext}}</button>
+              <button class="btn btn-lg btn-secondary btn-block" id="last-seen" type="button">{{lastSeen}}</button>
+            </div>
+
+            <!-- guess：最後一個人說答案；主持人可以先偷看（給看戲的隊伍看），再公布 -->
+            <div class="name-stage stage-guess">
+              <p class="peek-answer" id="peek-answer" hidden></p>
+              <button class="btn btn-lg btn-solid btn-block" id="reveal" type="button">{{revealButton}}</button>
+              <button class="btn btn-sm btn-secondary peek-btn" id="peek" type="button">{{peekButton}}</button>
+            </div>
+
+            <!-- reveal：答案、猜對了沒 -->
+            <div class="name-stage stage-reveal-answer">
+              <p class="result-title">{{answerIs}}</p>
+              <p class="result-answer" id="result-answer"></p>
+              <div class="pass-row">
+                <button class="btn btn-lg btn-solid pass-bar" id="got-right" type="button">{{gotRight}}</button>
+                <button class="btn btn-lg btn-secondary pass-bar" id="got-wrong" type="button">{{gotWrong}}</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- 第 4 步：遊戲結束。各隊分數 -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel final-panel">
+          <h2>{{scoreHeading}}</h2>
+          <ul class="scoreboard final-scores" id="final-scores"></ul>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+    </main>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.RELAY = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+        words: {{wordsJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>
