@@ -64,7 +64,6 @@ export default {
 
   // ---------- 上場 ----------
   roundNo: '第 {n} / {total} 題',
-  rightCount: '猜中 {n} 題',
   clockLabel: '總共花的時間',
   drawButton: '抽題目',
   drawHint: '手機只給排頭看，別讓排隊的人看到',

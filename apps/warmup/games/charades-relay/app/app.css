@@ -42,10 +42,9 @@
 #view-play[data-phase="relay"] .play-lead { display: none; }
 
 .round-progress { display: grid; gap: 8px; margin-top: 20px; }
-/* 第幾題｜猜中幾題｜碼錶 一行排開 */
+/* 第幾題｜碼錶 一行排開（猜中幾題只在結束畫面說） */
 .round-meta { display: flex; align-items: baseline; gap: 12px; }
-.round-no, .right-count { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
-.right-count { color: var(--mint-text); }
+.round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
 .clock { margin: 0 0 0 auto; font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }
 .round-progress .progress { max-width: none; }
 

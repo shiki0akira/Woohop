@@ -59,7 +59,6 @@
     roundNo: $('round-no'),
     roundBar: $('round-bar'),
     clock: $('clock'),
-    rightCount: $('right-count'),
     card: $('card'),
     deck: $('deck'),
     draw: $('card-draw'),
@@ -416,7 +415,6 @@
   function renderRound() {
     el.roundNo.textContent = fill(T.roundNo, { n: Math.max(1, roundNumber), total: totalRounds() });
     el.roundBar.style.setProperty('--p', ((roundNumber - 1) / totalRounds()) * 100 + '%');
-    el.rightCount.textContent = fill(T.rightCount, { n: right });
   }
 
   // 知道一隊幾人，所以最後一棒的按鈕直接是「最後一個人看完了」，按了進猜答案
@@ -492,7 +490,6 @@
     else sfx.wrong();
     track('charades_relay_judged', { round_number: roundNumber, right: ok, passes: pass, category: card[0], skips: skips });
     el.roundBar.style.setProperty('--p', (roundNumber / totalRounds()) * 100 + '%');
-    el.rightCount.textContent = fill(T.rightCount, { n: right });
     // 猜對猜錯的音效響完再換畫面（結束的音效會蓋過去）
     setTimeout(function () {
       judging = false;
