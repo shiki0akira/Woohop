@@ -1,0 +1,758 @@
+/*
+ * 畫畫接力。一支手機在大家手上傳（CONCEPT.md 第二節）：
+ * 第 1 個人看題目畫 → 交給下一個人，他只看上一張圖 5 秒，再畫出他以為的東西 → ⋯⋯ → 最後一個人看最後一張圖猜
+ * → 答案揭曉，依序攤開每個人的畫（最好笑的地方）。
+ *
+ * 一步一步帶（跟比手畫腳接力賽同一套，步驟頭、規則卡是全站共用的 window.Leader）：
+ *   setup 開場（一隊幾人、每人畫幾秒、題目類型）→ rules 說明規則
+ *   → play（draw 抽題目 → word 給第 1 個人看 → paint 畫（倒數，時間到自動收）→ handoff 交給下一個人
+ *           → view 看上一張圖 5 秒 → paint ⋯⋯ → guess 最後一個人看最後一張圖猜 → reveal 答案＋每個人的畫）
+ *   → 「下一題」回 draw；「結束遊戲」→ end 猜中幾題
+ * 返回鍵一律回第一頁；已經抽過題目就先確認。只記聲音開關，其他設定每次都是預設。
+ */
+(function () {
+  'use strict';
+
+  var T = window.DRAWRELAY.T;
+  var BASE = window.DRAWRELAY.base;
+  var LANG = window.DRAWRELAY.lang;
+  var W = window.Woohop;
+  var Leader = window.Leader;
+
+  var SIZE_MIN = 3; // 至少一個人畫、一個人看圖再畫、一個人猜
+  var SIZE_MAX = 10;
+  var VIEW_SEC = 5; // 看上一張圖幾秒
+  var SETTINGS_KEY = 'woohop-drawing-relay-settings';
+
+  var CATS = window.DRAWRELAY.words; // [代號, 類型名稱, [題目...]]（全站共用的 apps/homepage/src/word-bank.mjs，用途 draw）
+  var ALL_CATS = CATS.map(function (c) { return c[0]; });
+
+  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、每人畫 30 秒、隨機題目
+  var prep = { size: 5, sec: 30, cats: ALL_CATS.slice() };
+  var randomCats = true;
+  // 只記聲音開關（跟比手畫腳接力賽一樣）
+  var settings = { sound: true };
+
+  var screen = 'setup';
+  var phase = 'draw';
+  var roundNumber = 0; // 這一場比到第幾題
+  var gameNumber = 0;
+  var startedAt = 0;
+  var right = 0; // 猜中幾題
+  var judged = 0; // 揭曉過幾題
+  var finished = false;
+  var deck = [];
+  var card = null;
+  var painter = 1; // 現在輪到第幾個人（1 號看題目畫；最後一號猜）
+  var drawings = []; // 這一題每個人畫的圖（dataURL），第 i 張是第 i+1 個人畫的
+  var skips = 0;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var views = { setup: $('view-setup'), rules: $('view-rules'), play: $('view-play'), end: $('view-end') };
+  var el = {
+    start: $('start'),
+    sizeLess: $('size-less'),
+    sizeMore: $('size-more'),
+    sizeValue: $('size-value'),
+    roundsHint: $('rounds-hint'),
+    categoryGrid: $('category-grid'),
+    categoryToggle: $('category-toggle'),
+    categoryPanel: $('category-panel'),
+    ruleCards: $('rule-cards'),
+    rulesNext: $('rules-next'),
+    roundNo: $('round-no'),
+    rightCount: $('right-count'),
+    card: $('card'),
+    deck: $('deck'),
+    draw: $('card-draw'),
+    drawn: $('drawn'),
+    cardKind: $('card-kind'),
+    cardText: $('card-text'),
+    paintStart: $('paint-start'),
+    skip: $('skip'),
+    painterNo: $('painter-no'),
+    timer: $('timer'),
+    timerArc: $('timer-arc'),
+    timerNum: $('timer-num'),
+    canvas: $('canvas'),
+    undo: $('undo'),
+    clear: $('clear'),
+    paintDone: $('paint-done'),
+    handoffTitle: $('handoff-title'),
+    handoffGo: $('handoff-go'),
+    viewImg: $('view-img'),
+    viewNum: $('view-num'),
+    guessImg: $('guess-img'),
+    gotRight: $('got-right'),
+    giveUp: $('give-up'),
+    resultTitle: $('result-title'),
+    resultAnswer: $('result-answer'),
+    gallery: $('gallery'),
+    nextRound: $('next-round'),
+    endGame: $('end-game'),
+    finalRight: $('final-right'),
+    finalPlayed: $('final-played'),
+    again: $('again'),
+    leaveModal: $('leave-modal'),
+    leaveCancel: $('leave-cancel'),
+    leaveConfirm: $('leave-confirm'),
+  };
+
+  function fill(s, v) {
+    return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in v ? v[k] : m; });
+  }
+  function track(name, params) {
+    if (typeof gtag === 'function') gtag('event', name, params || {});
+  }
+  function readJson(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback; // 無痕模式、封鎖 storage：照樣能玩，只是記不住
+    }
+  }
+  function writeJson(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      /* 同上 */
+    }
+  }
+
+  // ---------- 開場：一隊幾人、每人畫幾秒 ----------
+
+  var lastPainter = function () { return prep.size - 1; }; // 畫的人數；最後一個人只猜
+
+  function syncSetup() {
+    el.sizeValue.textContent = prep.size;
+    el.sizeLess.disabled = prep.size <= SIZE_MIN;
+    el.sizeMore.disabled = prep.size >= SIZE_MAX;
+    document.querySelectorAll('input[name="sec"]').forEach(function (input) {
+      input.checked = input.value === String(prep.sec);
+    });
+    el.roundsHint.textContent = fill(T.roundsHint, { painters: lastPainter(), sec: prep.sec });
+  }
+  function setSize(n) {
+    prep.size = Math.max(SIZE_MIN, Math.min(SIZE_MAX, n));
+    syncSetup();
+  }
+
+  // 題目類型：照比手畫腳（第一張「隨機」，點某一類改成自己挑、可複選，最後一類取消掉回到隨機）
+  function categoryCard(id, title, subText, cls) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'choice category-choice' + (cls ? ' ' + cls : '');
+    b.dataset.id = id;
+    var name = document.createElement('span');
+    name.className = 'choice-name';
+    name.textContent = title;
+    var sub = document.createElement('span');
+    sub.className = 'choice-sub';
+    sub.textContent = subText;
+    b.appendChild(name);
+    b.appendChild(sub);
+    el.categoryGrid.appendChild(b);
+    return b;
+  }
+  function renderCategories() {
+    categoryCard('random', T.categoryRandom, T.categoryRandomSub, 'c-yellow').addEventListener('click', function () {
+      randomCats = true;
+      prep.cats = ALL_CATS.slice();
+      syncCategories();
+    });
+    CATS.forEach(function (c) {
+      categoryCard(c[0], c[1], c[2].slice(0, 2).join(T.listSep)).addEventListener('click', function () {
+        if (randomCats) {
+          randomCats = false;
+          prep.cats = [c[0]];
+        } else {
+          var i = prep.cats.indexOf(c[0]);
+          if (i >= 0) prep.cats.splice(i, 1);
+          else prep.cats.push(c[0]);
+          if (!prep.cats.length) {
+            randomCats = true;
+            prep.cats = ALL_CATS.slice();
+          }
+        }
+        syncCategories();
+      });
+    });
+    el.categoryToggle.addEventListener('click', function () {
+      var open = el.categoryPanel.hidden;
+      el.categoryPanel.hidden = !open;
+      el.categoryToggle.setAttribute('aria-expanded', String(open));
+    });
+    el.categoryToggle.textContent = T.categoryLabel;
+    syncCategories();
+  }
+  function syncCategories() {
+    Array.prototype.forEach.call(el.categoryGrid.children, function (b) {
+      var on = b.dataset.id === 'random' ? randomCats : !randomCats && prep.cats.indexOf(b.dataset.id) >= 0;
+      b.setAttribute('aria-pressed', String(on));
+    });
+  }
+
+  // ---------- 帶領的步驟頭（Leader.lead） ----------
+
+  var STEPS = ['setup', 'rules', 'play', 'end'];
+  // 上場那一步：主持人對大家說話的兩段才放（draw 排好、reveal 攤開大家的畫），其他畫面手機在畫的人手上
+  var PLAY_LEAD = { draw: true, reveal: true };
+
+  function renderLead() {
+    var key = screen === 'play' ? phase : screen;
+    if (screen === 'play' && !PLAY_LEAD[phase]) return;
+    var line = T.lead[key];
+    if (!line) return;
+    var v = { result: resultLine() };
+    Leader.lead(views[screen].querySelector('.lead-slot'), {
+      index: STEPS.indexOf(screen),
+      total: STEPS.length,
+      title: fill(line[0], v),
+      say: fill(line[1], v),
+    });
+    // 照著念是空的就收起來；排好了嗎只在第 1 題念（跟比手畫腳接力賽一樣）
+    Leader.hideSay(!line[1] || (screen === 'play' && phase === 'draw' && roundNumber > 1));
+  }
+
+  function resultLine() {
+    if (!finished) return '';
+    return fill(right ? T.resultLine : T.resultNone, { n: right, total: judged });
+  }
+
+  // ---------- 題目 ----------
+
+  // 一疊卡的插圖（跟比手畫腳同一張），最上面換成這個遊戲的黃色、畫一枝筆
+  function deckArt() {
+    var c = function (x, y, color, angle) {
+      return '<g transform="rotate(' + angle + ' ' + (x + 27) + ' ' + (y + 36) + ')">' +
+        W.body('<rect x="' + x + '" y="' + y + '" width="54" height="72" rx="9"/>', color) + '</g>';
+    };
+    return W.ground + W.burst(138, 24, '#FF9419') + W.ring(22, 34, '#7489E6') + W.plus(142, 92, '#4FB59A') + W.dot(20, 92, '#F3A4FB') +
+      c(36, 34, '#4FB59A', -14) + c(70, 34, '#F3A4FB', 12) +
+      '<g class="deck-top">' + c(53, 28, '#FFC628', 0) +
+      '<path d="M72 54q0-11 8-11t8 9.5q0 6-8 9v6" fill="none" ' + W.K + '/>' +
+      '<circle cx="80" cy="80" r="3.4" fill="#22222c"/></g>';
+  }
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var drawing = false;
+
+  // 選了的類型洗成一副；同一個詞出現在兩類只留一個；整副抽完才重洗
+  function shuffleDeck() {
+    var seen = {};
+    deck = [];
+    CATS.forEach(function (c) {
+      if (prep.cats.indexOf(c[0]) < 0) return;
+      c[2].forEach(function (word) {
+        if (seen[word]) return;
+        seen[word] = true;
+        deck.push([c[1], word]);
+      });
+    });
+    for (var i = deck.length - 1; i > 0; i -= 1) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = deck[i];
+      deck[i] = deck[j];
+      deck[j] = tmp;
+    }
+  }
+
+  function nextCard() {
+    if (!deck.length) shuffleDeck();
+    card = deck.pop();
+    el.cardKind.textContent = card[0];
+    el.cardText.textContent = card[1];
+  }
+
+  function flip() {
+    el.drawn.classList.remove('pop');
+    void el.drawn.offsetWidth;
+    el.drawn.classList.add('pop');
+  }
+
+  // ---------- 畫布：手指畫黑線，可以復原一筆、清掉重畫 ----------
+  // 筆畫存成 0～1 的座標，畫布大小變了（轉螢幕）也能重畫；交出去時壓成白底 PNG 存進 drawings
+
+  var ctx = el.canvas.getContext('2d');
+  var strokes = [];
+  var current = null;
+  var locked = true;
+  var INK = '#22222c';
+
+  function fitCanvas() {
+    var r = el.canvas.getBoundingClientRect();
+    if (!r.width) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    el.canvas.width = Math.round(r.width * dpr);
+    el.canvas.height = Math.round(r.height * dpr);
+    redraw();
+  }
+  function redraw() {
+    var w = el.canvas.width;
+    var h = el.canvas.height;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = Math.max(3, w * 0.012);
+    strokes.forEach(function (s) {
+      ctx.beginPath();
+      s.forEach(function (p, i) {
+        if (i) ctx.lineTo(p[0] * w, p[1] * h);
+        else ctx.moveTo(p[0] * w, p[1] * h);
+      });
+      if (s.length === 1) ctx.lineTo(s[0][0] * w + 0.1, s[0][1] * h); // 只點一下也畫出一個點
+      ctx.stroke();
+    });
+    syncTools();
+  }
+  function point(e) {
+    var r = el.canvas.getBoundingClientRect();
+    return [Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), Math.max(0, Math.min(1, (e.clientY - r.top) / r.height))];
+  }
+  function syncTools() {
+    el.undo.disabled = locked || !strokes.length;
+    el.clear.disabled = locked || !strokes.length;
+  }
+  el.canvas.addEventListener('pointerdown', function (e) {
+    if (locked) return;
+    e.preventDefault();
+    el.canvas.setPointerCapture(e.pointerId);
+    current = [point(e)];
+    strokes.push(current);
+    redraw();
+  });
+  el.canvas.addEventListener('pointermove', function (e) {
+    if (!current) return;
+    current.push(point(e));
+    redraw();
+  });
+  ['pointerup', 'pointercancel'].forEach(function (type) {
+    el.canvas.addEventListener(type, function () { current = null; });
+  });
+  window.addEventListener('resize', function () {
+    if (phase === 'paint') fitCanvas();
+  });
+
+  // ---------- 倒數：畫的時候每秒輕滴、最後三秒嗶，到 0 自動收畫、交給下一個人 ----------
+
+  var timerId = 0;
+  var endsAt = 0;
+  var lastBeep = -1;
+  var RING = 314.16;
+
+  function stopTimer() {
+    clearInterval(timerId);
+    timerId = 0;
+  }
+  function startTimer() {
+    stopTimer();
+    el.timer.classList.remove('is-urgent');
+    endsAt = Date.now() + prep.sec * 1000;
+    lastBeep = -1;
+    tickTimer();
+    timerId = setInterval(tickTimer, 100);
+  }
+  function tickTimer() {
+    var left = Math.max(0, endsAt - Date.now());
+    var sec = Math.ceil(left / 1000);
+    el.timerNum.textContent = sec;
+    el.timerArc.style.strokeDashoffset = String(RING * (1 - left / (prep.sec * 1000)));
+    el.timer.classList.toggle('is-urgent', sec <= 3 && left > 0);
+    if (sec > 0 && sec !== lastBeep) {
+      if (lastBeep !== -1) {
+        if (sec <= 3) beep(880, 0.08, 0.14);
+        else if (sec <= 10) beep(1200, 0.03, 0.05);
+      }
+      lastBeep = sec;
+    }
+    if (left <= 0) {
+      stopTimer();
+      if (navigator.vibrate) navigator.vibrate(200);
+      finishPainting(true);
+    }
+  }
+
+  // 看上一張圖：VIEW_SEC 秒後自動換成空白畫布
+  var viewId = 0;
+  function startView() {
+    clearInterval(viewId);
+    var until = Date.now() + VIEW_SEC * 1000;
+    var tick = function () {
+      var left = Math.max(0, until - Date.now());
+      el.viewNum.textContent = Math.ceil(left / 1000);
+      if (left <= 0) {
+        clearInterval(viewId);
+        viewId = 0;
+        startPainting();
+      }
+    };
+    tick();
+    viewId = setInterval(tick, 100);
+  }
+  function stopView() {
+    clearInterval(viewId);
+    viewId = 0;
+  }
+
+  // ---------- 聲音：抽題、開始畫、倒數滴答、時間到換人、猜對猜錯、結束。頂欄音符鍵開關，只記這一個 ----------
+
+  var audio = null;
+  function ensureAudio() {
+    try {
+      if (!audio) {
+        var C = window.AudioContext || window.webkitAudioContext;
+        if (!C) return null;
+        audio = new C();
+      }
+      if (audio.state === 'suspended') audio.resume();
+      return audio;
+    } catch (e) {
+      return null;
+    }
+  }
+  function beep(freq, seconds, peak, delay, type) {
+    if (!settings.sound) return;
+    var c = ensureAudio();
+    if (!c) return;
+    var t0 = c.currentTime + 0.01 + (delay || 0);
+    var osc = c.createOscillator();
+    var gain = c.createGain();
+    osc.type = type || 'square';
+    osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + seconds);
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start(t0);
+    osc.stop(t0 + seconds + 0.05);
+  }
+  // 幾個音接著響（[頻率, 長度, 隔多久]），三角波比方波柔，當提示音
+  function tune(notes, peak) {
+    var at = 0;
+    notes.forEach(function (n) {
+      beep(n[0], n[1], peak || 0.18, at, 'triangle');
+      at += n[2];
+    });
+  }
+  var sfx = {
+    draw: function () { tune([[660, 0.08, 0.07], [990, 0.12, 0]]); },
+    go: function () { tune([[523, 0.07, 0.06], [784, 0.1, 0]]); },
+    // 時間到、收畫：低一點、長一點
+    swap: function () { beep(440, 0.4, 0.22); },
+    guess: function () { tune([[392, 0.1, 0.1], [523, 0.1, 0.1], [659, 0.18, 0]]); },
+    right: function () { tune([[523, 0.1, 0.09], [659, 0.1, 0.09], [784, 0.1, 0.09], [1047, 0.3, 0]], 0.22); },
+    wrong: function () { beep(196, 0.35, 0.16, 0, 'sawtooth'); },
+    end: function () { tune([[523, 0.12, 0.12], [659, 0.12, 0.12], [784, 0.12, 0.12], [1047, 0.12, 0.16], [784, 0.12, 0.12], [1047, 0.5, 0]], 0.22); },
+  };
+
+  var soundButton = document.getElementById('game-music');
+  function syncSoundButton() {
+    if (soundButton) soundButton.setAttribute('aria-pressed', String(settings.sound));
+  }
+  window.toggleMusic = function () {
+    settings.sound = !settings.sound;
+    writeJson(SETTINGS_KEY, { sound: settings.sound });
+    syncSoundButton();
+    if (settings.sound) sfx.go(); // 打開時響一下，順便在點擊裡把 AudioContext 叫醒
+  };
+
+  // ---------- 上場的七段 ----------
+
+  function setPhase(next) {
+    phase = next;
+    views.play.setAttribute('data-phase', next);
+    el.card.setAttribute('data-stage', next);
+    if (next !== 'paint') stopTimer();
+    if (next !== 'view') stopView();
+    renderLead();
+    window.scrollTo(0, 0);
+  }
+
+  function renderRound() {
+    el.roundNo.textContent = fill(T.roundNo, { n: Math.max(1, roundNumber) });
+    el.rightCount.textContent = judged ? fill(T.rightCount, { n: right, total: judged }) : '';
+  }
+
+  function startRound() {
+    roundNumber += 1;
+    skips = 0;
+    drawings = [];
+    painter = 1;
+    renderRound();
+    setPhase('draw');
+  }
+
+  function drawFromDeck() {
+    if (drawing) return;
+    drawing = true;
+    nextCard();
+    el.deck.classList.add('is-drawing');
+    sfx.draw();
+    setTimeout(function () {
+      drawing = false;
+      el.deck.classList.remove('is-drawing');
+      setPhase('word');
+      flip();
+    }, reduceMotion ? 0 : 380);
+  }
+
+  // 第 painter 個人開始畫：空白畫布、倒數
+  function startPainting() {
+    strokes = [];
+    current = null;
+    locked = false;
+    el.painterNo.textContent = fill(T.painterNo, { k: painter, total: lastPainter() });
+    sfx.go();
+    setPhase('paint');
+    fitCanvas();
+    startTimer();
+  }
+
+  // 畫好了（時間到或自己按）：收畫、交給下一個人
+  function finishPainting(auto) {
+    if (phase !== 'paint') return;
+    locked = true;
+    current = null;
+    redraw();
+    drawings.push(el.canvas.toDataURL('image/png'));
+    if (auto) sfx.swap();
+    painter += 1;
+    el.handoffTitle.textContent = painter > lastPainter() ? T.handoffLast : fill(T.handoffTo, { k: painter });
+    el.handoffGo.textContent = painter > lastPainter() ? T.handoffGoLast : fill(T.handoffGo, { k: painter });
+    setPhase('handoff');
+  }
+
+  // 下一個人拿到手機：看上一張圖（最後一個人直接看最後一張圖猜）
+  function takeOver() {
+    var last = drawings[drawings.length - 1];
+    if (painter > lastPainter()) {
+      el.guessImg.src = last;
+      sfx.guess();
+      setPhase('guess');
+      return;
+    }
+    el.viewImg.src = last;
+    setPhase('view');
+    startView();
+  }
+
+  // 猜中了／沒猜到：記下來、揭曉答案、攤開每個人的畫
+  function judge(ok) {
+    if (phase !== 'guess') return;
+    judged += 1;
+    if (ok) right += 1;
+    if (ok) sfx.right();
+    else sfx.wrong();
+    track('drawing_relay_judged', { round_number: roundNumber, right: ok, painters: drawings.length, category: card[0], skips: skips });
+    el.resultTitle.textContent = ok ? T.resultRight : T.answerIs;
+    el.resultAnswer.textContent = card[1];
+    renderGallery();
+    renderRound();
+    setPhase('reveal');
+  }
+
+  function renderGallery() {
+    el.gallery.textContent = '';
+    drawings.forEach(function (src, i) {
+      var li = document.createElement('li');
+      li.className = 'gallery-item';
+      var label = document.createElement('span');
+      label.className = 'gallery-label';
+      label.textContent = fill(T.galleryLabel, { k: i + 1 });
+      var img = document.createElement('img');
+      img.className = 'paint-img';
+      img.src = src;
+      img.alt = label.textContent;
+      li.appendChild(label);
+      li.appendChild(img);
+      el.gallery.appendChild(li);
+    });
+  }
+
+  /*
+   * 「說明規則」三張插圖卡的插圖（woohop-art.js 的畫法）：
+   * 看題目畫（一張紙＋筆）、只看上一張圖（眼睛＋箭頭）、最後一個人猜（問號泡泡）
+   */
+  var bubble = function (x, y, text) {
+    return '<g><rect x="' + (x - 16) + '" y="' + (y - 14) + '" width="32" height="28" rx="8" fill="#fff" ' + W.K + '/>' +
+      '<text x="' + x + '" y="' + (y + 1) + '" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">' + text + '</text></g>';
+  };
+  var head = function (x, y, r, color, face) {
+    return W.body('<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/>', color) + (face ? W.makeFace(face, x, y, r / 24) : '');
+  };
+  var paper = function (x, y, w, h) {
+    return W.body('<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="6"/>', '#ffffff', '', false);
+  };
+  var RULE_ART = [
+    function () {
+      return W.ground + W.burst(140, 22, '#FFC628') + W.dot(18, 30, '#4FB59A', 4) +
+        paper(54, 34, 60, 70) +
+        '<path d="M66 82q8-22 18-6t20-10" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round"/>' +
+        '<g transform="rotate(35 120 50)">' + W.body('<rect x="114" y="22" width="12" height="52" rx="4"/>', '#FF9419', '', false) + '</g>' +
+        head(30, 86, 16, '#F3A4FB', 'grin');
+    },
+    function () {
+      return W.ground + W.ring(144, 28, '#7489E6') + W.plus(18, 36, '#EE7B6A') +
+        paper(28, 40, 48, 56) + '<path d="M38 80q8-18 16-4t14-8" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M84 68h14m-5-5l5 5l-5 5" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        paper(104, 40, 48, 56) + '<path d="M114 84q10-26 20-2" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>';
+    },
+    function () {
+      return W.ground + W.burst(140, 24, '#FFC628') + W.ring(22, 34, '#EE7B6A') +
+        head(72, 80, 32, '#a8dccb', 'wow') + bubble(122, 40, '?');
+    },
+  ];
+
+  // ---------- 畫面切換 ----------
+
+  function showScreen(next) {
+    screen = next;
+    Object.keys(views).forEach(function (key) { views[key].hidden = key !== next; });
+    document.body.setAttribute('data-screen', next);
+    document.body.setAttribute('data-game-mode', next === 'setup' ? 'browse' : 'play');
+    var title = document.querySelector('.game-bar .title');
+    if (title) title.tabIndex = next === 'setup' ? 0 : -1;
+    if (next !== 'play') {
+      stopTimer();
+      stopView();
+    }
+    renderLead();
+    window.scrollTo(0, 0);
+    if (typeof window.trackPageView === 'function') window.trackPageView(BASE + '/' + LANG + '/' + next);
+  }
+
+  function startPlay() {
+    gameNumber += 1;
+    roundNumber = 0;
+    right = 0;
+    judged = 0;
+    finished = false;
+    startedAt = Date.now();
+    ensureAudio(); // 在點擊裡先建好，之後的音效才不會被自動播放限制擋掉
+    shuffleDeck();
+    showScreen('play');
+    startRound();
+    track('drawing_relay_game_started', {
+      game_number: gameNumber,
+      size: prep.size,
+      seconds: prep.sec,
+      categories: randomCats ? 'random' : prep.cats.join(','),
+    });
+  }
+
+  function endGame() {
+    stopTimer();
+    stopView();
+    finished = true;
+    track('drawing_relay_game_ended', {
+      rounds: judged,
+      right: right,
+      size: prep.size,
+      seconds: prep.sec,
+      duration_seconds: Math.round((Date.now() - startedAt) / 1000),
+    });
+    el.finalRight.textContent = fill(T.finalCount, { n: right });
+    el.finalPlayed.textContent = fill(T.finalCount, { n: judged });
+    sfx.end();
+    showScreen('end');
+  }
+
+  // ---------- 返回鍵：一律回第一頁；已經抽過題目先確認（照比手畫腳接力賽） ----------
+
+  function pushGameState() {
+    history.pushState({ drawrelay: 'game' }, '');
+  }
+
+  function backToSetup() {
+    showScreen('setup');
+  }
+
+  function goBack(fromPop) {
+    if (el.leaveModal.open) {
+      el.leaveModal.close();
+      if (fromPop) pushGameState();
+      return;
+    }
+    if (screen === 'setup') {
+      if (!fromPop) location.href = '/' + LANG + '/games/';
+      return;
+    }
+    if (screen === 'play' && (roundNumber > 1 || phase !== 'draw')) {
+      if (fromPop) pushGameState();
+      if (typeof el.leaveModal.showModal === 'function') el.leaveModal.showModal();
+      else confirmLeave();
+      return;
+    }
+    backToSetup();
+    if (!fromPop) history.back();
+  }
+
+  function confirmLeave() {
+    if (el.leaveModal.open) el.leaveModal.close();
+    backToSetup();
+    history.back();
+  }
+
+  // ---------- 綁定 ----------
+
+  el.sizeLess.addEventListener('click', function () { setSize(prep.size - 1); });
+  el.sizeMore.addEventListener('click', function () { setSize(prep.size + 1); });
+  document.querySelectorAll('input[name="sec"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+      prep.sec = Number(input.value);
+      syncSetup();
+    });
+  });
+
+  el.start.addEventListener('click', function () {
+    pushGameState();
+    showScreen('rules');
+  });
+  el.rulesNext.addEventListener('click', startPlay);
+  el.again.addEventListener('click', startPlay);
+
+  el.draw.addEventListener('click', drawFromDeck);
+  // 換一題：只有開始畫之前可以，不算一題
+  el.skip.addEventListener('click', function () {
+    skips += 1;
+    sfx.draw();
+    track('drawing_relay_skipped', { round_number: roundNumber, category: card[0] });
+    nextCard();
+    flip();
+  });
+  el.paintStart.addEventListener('click', startPainting);
+  el.undo.addEventListener('click', function () {
+    strokes.pop();
+    redraw();
+  });
+  el.clear.addEventListener('click', function () {
+    strokes = [];
+    redraw();
+  });
+  el.paintDone.addEventListener('click', function () { finishPainting(false); });
+  el.handoffGo.addEventListener('click', takeOver);
+  el.gotRight.addEventListener('click', function () { judge(true); });
+  el.giveUp.addEventListener('click', function () { judge(false); });
+  el.nextRound.addEventListener('click', startRound);
+  el.endGame.addEventListener('click', endGame);
+
+  el.leaveCancel.addEventListener('click', function () { el.leaveModal.close(); });
+  el.leaveConfirm.addEventListener('click', confirmLeave);
+
+  window.gameBack = function () { goBack(false); };
+  window.addEventListener('popstate', function () { goBack(true); });
+
+  // ---------- 起手 ----------
+
+  var saved = readJson(SETTINGS_KEY, null);
+  if (saved && typeof saved === 'object' && typeof saved.sound === 'boolean') settings.sound = saved.sound;
+  syncSoundButton();
+  renderCategories();
+  syncSetup();
+  el.deck.innerHTML = deckArt();
+  Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);
+  showScreen('setup');
+})();
