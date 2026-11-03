@@ -37,9 +37,7 @@
 #view-play:not([data-phase="draw"]):not([data-phase="reveal"]) .play-lead { display: none; }
 
 .round-progress { margin-top: 20px; }
-.round-meta { display: flex; align-items: baseline; gap: 12px; }
-.round-no, .right-count { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
-.right-count { margin-left: auto; color: var(--yellow-text); }
+.round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
 
 /* 題卡七面（app.js 的 setPhase 設 data-stage） */
 .drawrelay-app .namer .name-card[data-stage="draw"] .stage-draw,
@@ -83,12 +81,16 @@
 .view-count { margin: 0; font-size: 16px; font-weight: 800; color: var(--muted); }
 .view-count span { font-size: 28px; color: var(--yellow-text); font-variant-numeric: tabular-nums; }
 
-/* 卡片下面：猜中了！、沒猜到，公布答案（只在 guess） */
+/* 卡片下面：公布答案（只在 guess） */
 .guess-actions { display: grid; gap: 12px; margin-top: 16px; }
 #view-play:not([data-phase="guess"]) .guess-actions { display: none; }
-#got-right { --h: 72px; font-size: 20px; }
+#reveal-answer { --h: 72px; font-size: 20px; }
 
-/* reveal：猜中了／答案是＋大字答案＋每個人的畫 */
+/* 卡片外面下面：結束遊戲（只在 reveal） */
+.reveal-actions { margin-top: 16px; }
+#view-play:not([data-phase="reveal"]) .reveal-actions { display: none; }
+
+/* reveal：答案是＋大字答案＋每個人的畫 */
 .stage-reveal-answer { justify-items: center; text-align: center; gap: 10px; }
 .stage-reveal-answer .btn-block { width: 100%; }
 .result-title { margin: 0; font-size: 18px; font-weight: 900; color: var(--muted); }
@@ -100,7 +102,7 @@
 .gallery-item .paint-img { box-shadow: 0 3px 0 var(--outline); }
 
 /* ---------- 遊戲結束 ---------- */
-/* 猜中幾題、比了幾題：兩格大數字（2px 線＋4px 底，設計系統的線條） */
+/* 比了幾題、畫了幾張：兩格大數字（2px 線＋4px 底，設計系統的線條） */
 .final-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .final-stat {
   display: grid; justify-items: center; gap: 4px; padding: 14px 8px;

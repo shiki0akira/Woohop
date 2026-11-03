@@ -6,8 +6,9 @@
  * 一步一步帶（跟比手畫腳接力賽同一套，步驟頭、規則卡是全站共用的 window.Leader）：
  *   setup 開場（一隊幾人、每人畫幾秒、題目類型）→ rules 說明規則
  *   → play（draw 抽題目 → word 給第 1 個人看 → paint 畫（倒數，時間到自動收）→ handoff 交給下一個人
- *           → view 看上一張圖 5 秒 → paint ⋯⋯ → guess 最後一個人看最後一張圖猜 → reveal 答案＋每個人的畫）
- *   → 「下一題」回 draw；「結束遊戲」→ end 猜中幾題
+ *           → view 看上一張圖 5 秒 → paint ⋯⋯ → guess 最後一個人看最後一張圖猜 → 公布答案 → reveal 答案＋每個人的畫）
+ *   → 「下一題」回 draw；「結束遊戲」→ end 比了幾題、畫了幾張
+ * 不記猜中沒（老闆 11/03：猜的時候只要一顆「公布答案」），重點是揭曉時大家一起看圖怎麼走樣。
  * 返回鍵一律回第一頁；已經抽過題目就先確認。只記聲音開關，其他設定每次都是預設。
  */
 (function () {
@@ -38,8 +39,8 @@
   var roundNumber = 0; // 這一場比到第幾題
   var gameNumber = 0;
   var startedAt = 0;
-  var right = 0; // 猜中幾題
   var judged = 0; // 揭曉過幾題
+  var drawn = 0; // 這一場大家總共畫了幾張
   var finished = false;
   var deck = [];
   var card = null;
@@ -61,7 +62,6 @@
     ruleCards: $('rule-cards'),
     rulesNext: $('rules-next'),
     roundNo: $('round-no'),
-    rightCount: $('right-count'),
     card: $('card'),
     deck: $('deck'),
     draw: $('card-draw'),
@@ -83,15 +83,13 @@
     viewImg: $('view-img'),
     viewNum: $('view-num'),
     guessImg: $('guess-img'),
-    gotRight: $('got-right'),
-    giveUp: $('give-up'),
-    resultTitle: $('result-title'),
+    revealAnswer: $('reveal-answer'),
     resultAnswer: $('result-answer'),
     gallery: $('gallery'),
     nextRound: $('next-round'),
     endGame: $('end-game'),
-    finalRight: $('final-right'),
     finalPlayed: $('final-played'),
+    finalDrawn: $('final-drawn'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -217,7 +215,7 @@
 
   function resultLine() {
     if (!finished) return '';
-    return fill(right ? T.resultLine : T.resultNone, { n: right, total: judged });
+    return fill(T.resultLine, { n: judged, d: drawn });
   }
 
   // ---------- 題目 ----------
@@ -443,8 +441,7 @@
     // 時間到、收畫：低一點、長一點
     swap: function () { beep(440, 0.4, 0.22); },
     guess: function () { tune([[392, 0.1, 0.1], [523, 0.1, 0.1], [659, 0.18, 0]]); },
-    right: function () { tune([[523, 0.1, 0.09], [659, 0.1, 0.09], [784, 0.1, 0.09], [1047, 0.3, 0]], 0.22); },
-    wrong: function () { beep(196, 0.35, 0.16, 0, 'sawtooth'); },
+    reveal: function () { tune([[523, 0.1, 0.09], [659, 0.1, 0.09], [784, 0.1, 0.09], [1047, 0.3, 0]], 0.22); },
     end: function () { tune([[523, 0.12, 0.12], [659, 0.12, 0.12], [784, 0.12, 0.12], [1047, 0.12, 0.16], [784, 0.12, 0.12], [1047, 0.5, 0]], 0.22); },
   };
 
@@ -473,7 +470,6 @@
 
   function renderRound() {
     el.roundNo.textContent = fill(T.roundNo, { n: Math.max(1, roundNumber) });
-    el.rightCount.textContent = judged ? fill(T.rightCount, { n: right, total: judged }) : '';
   }
 
   function startRound() {
@@ -539,15 +535,13 @@
     startView();
   }
 
-  // 猜中了／沒猜到：記下來、揭曉答案、攤開每個人的畫
-  function judge(ok) {
+  // 公布答案：揭曉答案、攤開每個人的畫（不記猜中沒）
+  function revealAnswer() {
     if (phase !== 'guess') return;
     judged += 1;
-    if (ok) right += 1;
-    if (ok) sfx.right();
-    else sfx.wrong();
-    track('drawing_relay_judged', { round_number: roundNumber, right: ok, painters: drawings.length, category: card[0], skips: skips });
-    el.resultTitle.textContent = ok ? T.resultRight : T.answerIs;
+    drawn += drawings.length;
+    sfx.reveal();
+    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips });
     el.resultAnswer.textContent = card[1];
     renderGallery();
     renderRound();
@@ -627,8 +621,8 @@
   function startPlay() {
     gameNumber += 1;
     roundNumber = 0;
-    right = 0;
     judged = 0;
+    drawn = 0;
     finished = false;
     startedAt = Date.now();
     ensureAudio(); // 在點擊裡先建好，之後的音效才不會被自動播放限制擋掉
@@ -649,13 +643,13 @@
     finished = true;
     track('drawing_relay_game_ended', {
       rounds: judged,
-      right: right,
+      drawings: drawn,
       size: prep.size,
       seconds: prep.sec,
       duration_seconds: Math.round((Date.now() - startedAt) / 1000),
     });
-    el.finalRight.textContent = fill(T.finalCount, { n: right });
-    el.finalPlayed.textContent = fill(T.finalCount, { n: judged });
+    el.finalPlayed.textContent = fill(T.finalRounds, { n: judged });
+    el.finalDrawn.textContent = fill(T.finalDrawings, { n: drawn });
     sfx.end();
     showScreen('end');
   }
@@ -734,8 +728,7 @@
   });
   el.paintDone.addEventListener('click', function () { finishPainting(false); });
   el.handoffGo.addEventListener('click', takeOver);
-  el.gotRight.addEventListener('click', function () { judge(true); });
-  el.giveUp.addEventListener('click', function () { judge(false); });
+  el.revealAnswer.addEventListener('click', revealAnswer);
   el.nextRound.addEventListener('click', startRound);
   el.endGame.addEventListener('click', endGame);
 

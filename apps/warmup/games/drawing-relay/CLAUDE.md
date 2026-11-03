@@ -17,9 +17,9 @@
   - **畫布** `#canvas`：筆畫存成 0～1 的座標（`strokes`），`redraw()` 每次整張重畫（白底黑線，線寬跟著畫布寬），`fitCanvas()` 依顯示大小×devicePixelRatio（最多 2）設解析度；`locked` 時不收指標。工具只有復原一筆、清掉重畫、畫好了（不給顏色，題目是看形狀猜）。
   - **收畫** `finishPainting(auto)`：時間到（`tickTimer()` 到 0）或按「畫好了」，把畫布 `toDataURL('image/png')` 存進 `drawings`，交給下一個人。`painter` 是現在輪到第幾個人。
   - **倒數**：畫的時候最後 10 秒每秒輕滴、最後三秒高音嗶，到 0 震動＋`sfx.swap`。倒數圈是設計系統的 `.timer-ring`（小號 `.timer-sm`）。離開 paint 一律 `stopTimer()`，離開 view 一律 `stopView()`。
-  - **揭曉** `judge()`：猜中了／沒猜到都進 reveal，`renderGallery()` 兩張一排列出每個人的畫（`.paint-img`，欄寬用 `minmax(0, 1fr)` 鎖住，圖片原始尺寸很大）。主持人按「下一題」或「結束遊戲」。
+  - **揭曉** `revealAnswer()`：猜的時候只有一顆「公布答案」，**不記猜中沒**（11/03 老闆要求），`judged` 數比了幾題、`drawn` 數這場畫了幾張；進 reveal 後`renderGallery()` 兩張一排列出每個人的畫（`.paint-img`，欄寬用 `minmax(0, 1fr)` 鎖住，圖片原始尺寸很大）。主持人按「下一題」（卡片裡）或「結束遊戲」（卡片外面下面的 `.reveal-actions`，11/03 老闆要求）。
 - **題庫**：全站共用的 `apps/homepage/src/word-bank.mjs`，`build.mjs` 用 `wordsFor(lang, 'draw')`，頁面上是 `window.DRAWRELAY.words`。`shuffleDeck()` 照比手畫腳（去重複、整副抽完才重洗）。
-- **結束畫面**：猜中幾題、比了幾題兩格大數字；照著念是 `resultLine()`。
+- **結束畫面**：比了幾題、畫了幾張兩格大數字；照著念是 `resultLine()`。
 - **聲音** `sfx.*`：Web Audio 合成，`ensureAudio()` 在按「下一步：開始玩」時先建好。頂欄音符鍵由 game.js 呼叫 `window.toggleMusic`，開場時藏起來。
 
 ## GA4
@@ -30,5 +30,5 @@
 |---|---|---|
 | `drawing_relay_game_started` | 進入上場（含再玩一次） | `game_number`、`size`、`seconds`、`categories` |
 | `drawing_relay_skipped` | 換一題 | `round_number`、`category` |
-| `drawing_relay_judged` | 猜中了！／沒猜到，公布答案 | `round_number`、`right`、`painters`、`category`、`skips` |
-| `drawing_relay_game_ended` | 結束遊戲 | `rounds`、`right`、`size`、`seconds`、`duration_seconds` |
+| `drawing_relay_revealed` | 公布答案 | `round_number`、`painters`、`category`、`skips` |
+| `drawing_relay_game_ended` | 結束遊戲 | `rounds`、`drawings`、`size`、`seconds`、`duration_seconds` |
