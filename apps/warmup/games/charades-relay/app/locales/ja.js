@@ -78,7 +78,7 @@ export default {
   finalRightLabel: '正解',
   finalPlayedLabel: '出題',
   finalCount: '{n}問',
-  historyHeading: '今回のお題',
+  historyHeading: '{total}問中{n}問正解',
   historyRight: '正解',
   historyWrong: '不正解',
 

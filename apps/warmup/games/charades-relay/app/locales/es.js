@@ -78,7 +78,7 @@ export default {
   finalRightLabel: 'Acertadas',
   finalPlayedLabel: 'Jugadas',
   finalCount: '{n}',
-  historyHeading: 'Las palabras de esta ronda',
+  historyHeading: '{n} de {total} acertadas',
   historyRight: 'Acertada',
   historyWrong: 'No acertada',
 

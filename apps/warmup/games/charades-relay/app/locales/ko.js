@@ -78,7 +78,7 @@ export default {
   finalRightLabel: '정답',
   finalPlayedLabel: '출제',
   finalCount: '{n}개',
-  historyHeading: '이번 제시어',
+  historyHeading: '{total}문제 중 {n}문제 정답',
   historyRight: '정답',
   historyWrong: '못 맞힘',
 

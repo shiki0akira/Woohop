@@ -102,27 +102,15 @@
 .result-answer { margin: 0; font-size: clamp(32px, 10vw, 52px); font-weight: 900; line-height: 1.2; color: var(--mint-text); text-wrap: balance; }
 
 /* ---------- 遊戲結束 ---------- */
-/* 猜中幾題、總共花多久：兩格大數字（2px 線＋4px 底，設計系統的線條） */
-.final-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.final-stat {
-  display: grid; justify-items: center; gap: 4px; padding: 14px 8px;
-  border: 2px solid var(--mint-edge); border-radius: var(--r-md); background: var(--mint-face);
-  box-shadow: 0 4px 0 var(--mint-edge); color: var(--mint-text); text-align: center;
-}
-.final-stat span { font-size: 14px; font-weight: 800; }
-.final-stat b { font-size: clamp(22px, 7vw, 32px); font-weight: 900; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.final-stat-time { border-color: var(--yellow-edge); background: var(--yellow-face); box-shadow: 0 4px 0 var(--yellow-edge); color: var(--yellow-text); }
-
-/* 這次的題目：一題一列，猜中綠底、沒猜到紅底（11/03 老闆要求），後面的標籤兩種樣式一樣、只換顏色 */
-.history-panel { margin-top: 14px; }
+/* 這次的題目：標題寫猜中幾題；一題一列白底，前面猜中綠色圈圈、沒猜到紅色叉叉（11/03 老闆要求：底色不用紅綠），後面的標籤一樣樣式 */
 .history-panel[hidden] { display: none; }
 .history-panel h2 { margin: 0 0 10px; font-size: 18px; }
 .history { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .history-item {
-  --hf: var(--coral-face); --he: var(--coral-edge); --ht: var(--coral-text);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px;
-  border: 2px solid var(--he); border-radius: var(--r-md); background: var(--hf);
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface);
 }
-.history-item.is-right { --hf: var(--mint-face); --he: var(--mint-edge); --ht: var(--mint-text); }
-.history-word { min-width: 0; font-size: 17px; font-weight: 800; color: var(--ht); text-wrap: balance; }
-.history-mark { flex: none; padding: 2px 10px; border-radius: 999px; background: var(--surface); color: var(--ht); font-size: 14px; font-weight: 800; }
+.history-icon { flex: none; width: 1.4em; font-size: 22px; font-weight: 900; line-height: 1; text-align: center; color: var(--danger); }
+.history-item.is-right .history-icon { box-sizing: border-box; width: 22px; height: 22px; margin: 0 4px; border: 4px solid #2E9C78; border-radius: 50%; }
+.history-word { flex: 1; min-width: 0; font-size: 17px; font-weight: 800; text-wrap: balance; }
+.history-mark { flex: none; padding: 2px 10px; border-radius: 999px; background: var(--track); color: var(--muted); font-size: 14px; font-weight: 800; }

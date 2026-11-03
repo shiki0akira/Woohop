@@ -78,7 +78,7 @@ export default {
   finalRightLabel: 'Got right',
   finalPlayedLabel: 'Played',
   finalCount: '{n}',
-  historyHeading: 'This round’s words',
+  historyHeading: '{n} of {total} right',
   historyRight: 'Got it',
   historyWrong: 'Missed',
 

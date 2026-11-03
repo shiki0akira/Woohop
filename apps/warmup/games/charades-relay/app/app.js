@@ -84,8 +84,7 @@
     resultTitle: $('result-title'),
     resultAnswer: $('result-answer'),
     nextRound: $('next-round'),
-    finalRight: $('final-right'),
-    finalPlayed: $('final-played'),
+    historyHeading: $('history-heading'),
     history: $('history'),
     historyPanel: $('history-panel'),
     again: $('again'),
@@ -746,9 +745,16 @@
   function renderHistory() {
     el.history.textContent = '';
     el.historyPanel.hidden = !playedWords.length;
+    el.historyHeading.textContent = fill(T.historyHeading, { n: right, total: judged });
     playedWords.forEach(function (h) {
       var li = document.createElement('li');
       li.className = 'history-item' + (h.ok ? ' is-right' : '');
+      // 前面一個記號：猜中綠色圈圈、沒猜到紅色叉叉（11/03 老闆要求，底色不用紅綠）
+      var icon = document.createElement('span');
+      icon.className = 'history-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = h.ok ? '' : '✕'; // 圈圈用 CSS 畫（字型裡的 ○ 太細）
+      li.appendChild(icon);
       var word = document.createElement('span');
       word.className = 'history-word';
       word.textContent = h.word;
@@ -772,8 +778,6 @@
       minutes: prep.min,
       seconds: prep.sec,
     });
-    el.finalRight.textContent = fill(T.finalCount, { n: right });
-    el.finalPlayed.textContent = fill(T.finalCount, { n: judged });
     renderHistory();
     setTimeout(sfx.end, reduceMotion ? 0 : 900); // 時間到那兩聲先響完
     showScreen('end');

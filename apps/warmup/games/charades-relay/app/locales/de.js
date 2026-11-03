@@ -78,7 +78,7 @@ export default {
   finalRightLabel: 'Richtig',
   finalPlayedLabel: 'Gespielt',
   finalCount: '{n}',
-  historyHeading: 'Die Begriffe dieser Runde',
+  historyHeading: '{n} von {total} richtig',
   historyRight: 'Richtig',
   historyWrong: 'Nicht erraten',
 

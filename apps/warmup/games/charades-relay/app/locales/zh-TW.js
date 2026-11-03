@@ -91,7 +91,7 @@ export default {
   finalRightLabel: '猜中',
   finalPlayedLabel: '比了',
   finalCount: '{n} 題',
-  historyHeading: '這次的題目',
+  historyHeading: '猜中 {n} / {total} 題',
   historyRight: '猜中',
   historyWrong: '沒猜到',
 

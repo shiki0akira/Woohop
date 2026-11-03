@@ -78,7 +78,7 @@ export default {
   finalRightLabel: 'Trouvés',
   finalPlayedLabel: 'Joués',
   finalCount: '{n}',
-  historyHeading: 'Les mots de cette partie',
+  historyHeading: '{n} sur {total} trouvés',
   historyRight: 'Trouvé',
   historyWrong: 'Pas trouvé',
 
