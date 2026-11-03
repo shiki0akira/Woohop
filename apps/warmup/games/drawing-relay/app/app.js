@@ -85,6 +85,9 @@
     viewImg: $('view-img'),
     viewNum: $('view-num'),
     guessImg: $('guess-img'),
+    hintKind: $('hint-kind'),
+    hintMask: $('hint-mask'),
+    hintNext: $('hint-next'),
     revealAnswer: $('reveal-answer'),
     resultAnswer: $('result-answer'),
     gallery: $('gallery'),
@@ -480,6 +483,67 @@
     if (settings.sound) sfx.go(); // 打開時響一下，順便在點擊裡把 AudioContext 叫醒
   };
 
+  // ---------- 猜的時候：一個字一個方塊，猜 HINT_KIND_AT 秒還沒中自動亮類型（照比手畫腳接力賽，不露字） ----------
+
+  var HINT_KIND_AT = 10;
+  var guessId = 0;
+  var guessSince = 0;
+  var kindShown = false;
+
+  // 用 Array.from 切字，中日韓字、表情符號都算一個；空白和標點直接顯示，不算要猜的字
+  var isLetter = function (ch) { return /[\p{L}\p{N}]/u.test(ch); };
+  function renderMask() {
+    el.hintMask.textContent = '';
+    var word = null;
+    Array.from(card[1]).forEach(function (ch) {
+      if (/\s/.test(ch)) {
+        word = null;
+        var gap = document.createElement('span');
+        gap.className = 'mask-space';
+        el.hintMask.appendChild(gap);
+        return;
+      }
+      if (!word) {
+        word = document.createElement('span');
+        word.className = 'mask-word';
+        el.hintMask.appendChild(word);
+      }
+      var span = document.createElement('span');
+      if (isLetter(ch)) {
+        span.className = 'mask-box';
+        span.setAttribute('aria-hidden', 'true');
+      } else {
+        span.textContent = ch;
+      }
+      word.appendChild(span);
+    });
+  }
+  function stopGuessTimer() {
+    clearInterval(guessId);
+    guessId = 0;
+  }
+  function startGuessTimer() {
+    stopGuessTimer();
+    kindShown = false;
+    el.hintKind.hidden = true;
+    el.hintKind.textContent = card[0];
+    renderMask();
+    guessSince = Date.now();
+    tickGuess();
+    guessId = setInterval(tickGuess, 200);
+  }
+  function tickGuess() {
+    var s = (Date.now() - guessSince) / 1000;
+    if (!kindShown && s >= HINT_KIND_AT) {
+      kindShown = true;
+      el.hintKind.hidden = false;
+      sfx.go();
+      track('drawing_relay_hint_shown', { round_number: roundNumber, category: card[0] });
+    }
+    el.hintNext.textContent = kindShown ? '' : fill(T.hintKindIn, { s: Math.ceil(HINT_KIND_AT - s) });
+    if (kindShown) stopGuessTimer();
+  }
+
   // ---------- 上場的七段 ----------
 
   function setPhase(next) {
@@ -488,6 +552,7 @@
     el.card.setAttribute('data-stage', next);
     if (next !== 'paint') stopTimer();
     if (next !== 'view') stopView();
+    if (next !== 'guess') stopGuessTimer();
     renderLead();
     window.scrollTo(0, 0);
   }
@@ -554,6 +619,7 @@
       el.guessImg.src = last;
       sfx.guess();
       setPhase('guess');
+      startGuessTimer();
       return;
     }
     el.viewImg.src = last;
@@ -568,7 +634,7 @@
     drawn += drawings.length;
     playedWords.push({ word: card[1], last: drawings[drawings.length - 1] });
     sfx.reveal();
-    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips });
+    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown });
     el.resultAnswer.textContent = card[1];
     renderGallery();
     renderRound();

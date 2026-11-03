@@ -131,6 +131,12 @@
             <div class="name-stage stage-guess">
               <p class="view-title">{{guessTitle}}</p>
               <img class="paint-img" id="guess-img" alt="{{guessTitle}}">
+              <!-- 答案有幾個字（一個字一個方塊），猜 10 秒還沒中自動亮類型（照比手畫腳接力賽；不露字，11/03 討論：露字會繞過那些畫） -->
+              <div class="drawn-card guess-card" aria-live="polite">
+                <span class="badge hint-badge" id="hint-kind" hidden></span>
+                <p class="hint-mask" id="hint-mask"></p>
+              </div>
+              <p class="hint hint-next" id="hint-next"></p>
             </div>
 
             <!-- reveal：答案揭曉＋每個人的畫，下一題／結束 -->

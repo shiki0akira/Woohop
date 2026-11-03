@@ -81,6 +81,7 @@ export default {
   viewTitle: '記住這張圖！',
   viewCountUnit: ' 秒後換你畫',
   guessTitle: '這張圖畫的是什麼？大聲說出來！',
+  hintKindIn: '{s} 秒後提示類型',
   revealButton: '公布答案',
   answerIs: '答案是',
   galleryLabel: '第 {k} 個人畫的',

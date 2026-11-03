@@ -88,6 +88,16 @@
 .view-count { margin: 0; font-size: 16px; font-weight: 800; color: var(--muted); }
 .view-count span { font-size: 28px; color: var(--yellow-text); font-variant-numeric: tabular-nums; }
 
+/* guess：圖下面一個字一個方塊＋類型提示（照比手畫腳接力賽，顏色換成這個遊戲的黃） */
+.drawrelay-app .namer .guess-card { display: grid; justify-items: center; gap: 8px; width: 100%; padding: 12px; }
+.drawrelay-app .namer .guess-card .hint-badge { padding: 6px 16px; font-size: 18px; background: var(--surface); color: var(--yellow-text); border-color: var(--yellow-edge); }
+.drawrelay-app .namer .guess-card .hint-badge[hidden] { display: none; }
+.hint-mask { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .12em; margin: 0; font-size: clamp(28px, 9vw, 44px); font-weight: 900; line-height: 1.2; color: var(--yellow-text); }
+.mask-box { display: inline-block; width: .9em; height: .9em; border: 3px solid currentColor; border-radius: 8px; background: var(--surface); opacity: .85; }
+.mask-word { display: inline-flex; align-items: center; gap: inherit; white-space: nowrap; }
+.mask-space { display: inline-block; width: .35em; }
+.hint-next { min-height: 1.4em; font-weight: 800; }
+
 /* 卡片下面：公布答案（只在 guess） */
 .guess-actions { display: grid; gap: 12px; margin-top: 16px; }
 #view-play:not([data-phase="guess"]) .guess-actions { display: none; }

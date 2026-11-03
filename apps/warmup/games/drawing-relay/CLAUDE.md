@@ -17,6 +17,7 @@
   - **畫布** `#canvas`：筆畫存成 0～1 的座標（`strokes`），`redraw()` 每次整張重畫（白底黑線，線寬跟著畫布寬），`fitCanvas()` 依顯示大小×devicePixelRatio（最多 2）設解析度；`locked` 時不收指標。筆有五種顏色（`INKS`：黑、藍、紅、黃、綠，11/03 老闆要求；名稱在 locale 的 `colorNames`，順序一樣），一筆存成 `{ c, p }`，每個人開始畫時回到黑色；工具是復原一筆、清掉重畫、畫好了。
   - **收畫** `finishPainting(auto)`：時間到（`tickTimer()` 到 0）或按「畫好了」，把畫布 `toDataURL('image/png')` 存進 `drawings`，交給下一個人。`painter` 是現在輪到第幾個人。
   - **倒數**：畫的時候最後 10 秒每秒輕滴、最後三秒高音嗶，到 0 震動＋`sfx.swap`。倒數圈是設計系統的 `.timer-ring`（小號 `.timer-sm`）。離開 paint 一律 `stopTimer()`，離開 view 一律 `stopView()`。
+  - **猜的提示**（11/03）：`startGuessTimer()` 在圖下面畫字格（`renderMask()`，一個字一個方塊），猜 `HINT_KIND_AT`（10）秒自動亮類型；**不露字**（露字會繞過那些畫）。離開 guess 一律 `stopGuessTimer()`。
   - **揭曉** `revealAnswer()`：猜的時候只有一顆「公布答案」，**不記猜中沒**（11/03 老闆要求），`judged` 數比了幾題、`drawn` 數這場畫了幾張；進 reveal 後`renderGallery()` 兩張一排列出每個人的畫（`.paint-img`，欄寬用 `minmax(0, 1fr)` 鎖住，圖片原始尺寸很大）。主持人按「下一題」（卡片裡）或「結束遊戲」（卡片外面下面的 `.reveal-actions`，11/03 老闆要求）。
 - **題庫**：全站共用的 `apps/homepage/src/word-bank.mjs`，`build.mjs` 用 `wordsFor(lang, 'draw')`，頁面上是 `window.DRAWRELAY.words`。`shuffleDeck()` 照比手畫腳（去重複、整副抽完才重洗）。
 - **結束畫面**：`renderHistory()` 列出這次的題目，每題附最後一張圖（`playedWords`；**變數不要叫 history**，會蓋掉 window.history、返回鍵壞掉）；照著念是 `resultLine()`（比了幾題、畫了幾張）。
