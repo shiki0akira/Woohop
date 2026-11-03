@@ -11,7 +11,7 @@
 ## `app/app.js` 的結構
 
 - **一步一步帶**：`setup` → `rules` → `play` → `end`，用 `showScreen()` 切換。返回鍵一律回第一頁；已經抽過題目就先確認。
-- **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5；畫的人 `size - 1`，最後一個人只猜）、`sec`（每人畫幾秒 20／30／45，預設 30）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-drawing-relay-settings']`（`{ sound }`）。
+- **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5；畫的人 `size - 1`，最後一個人只猜）、`sec`（每人畫幾秒 20／30／45／60，預設 30）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-drawing-relay-settings']`（`{ sound }`）。
 - **play 分七段** `setPhase()`：`draw`（抽題目）→ `word`（給第 1 個人看，開始畫／換一題）→ `paint`（畫）→ `handoff`（交給下一個人）→ `view`（看上一張圖 `VIEW_SEC`＝5 秒，倒數完自動進 paint）→ ⋯⋯ → `guess`（最後一個人看最後一張圖）→ `reveal`（答案＋每個人的畫）。題卡 `#card[data-stage]` 跟 phase 同名（reveal 那面的 class 是 `.stage-reveal-answer`）。
   - **步驟頭**只在 `PLAY_LEAD`（draw／reveal），其他時候手機在畫的人手上。reveal 只有標題，draw 的照著念只在第 1 題出現（`Leader.hideSay()`，跟比手畫腳接力賽一樣）。
   - **畫布** `#canvas`：筆畫存成 0～1 的座標（`strokes`），`redraw()` 每次整張重畫（白底黑線，線寬跟著畫布寬），`fitCanvas()` 依顯示大小×devicePixelRatio（最多 2）設解析度；`locked` 時不收指標。工具只有復原一筆、清掉重畫、畫好了（不給顏色，題目是看形狀猜）。

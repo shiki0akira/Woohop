@@ -49,6 +49,7 @@ export default {
   sec20: '20 秒',
   sec30: '30 秒',
   sec45: '45 秒',
+  sec60: '60 秒',
   roundsHint: '每題 {painters} 個人畫、最後一個人猜，每人畫 {sec} 秒，時間到自動換人。',
   categoryLabel: '題目類型',
   categoryHint: '可以複選，至少選一類',
