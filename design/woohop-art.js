@@ -218,10 +218,10 @@
       <text x="119" y="92" text-anchor="middle" dominant-baseline="middle" font-size="36" font-weight="900" fill="#E0483B" font-family="Fredoka, Nunito, sans-serif">?</text>
       <path d="M74 92h12m-5-5l5 5l-5 5" fill="none" ${K}/>
       <g transform="translate(6 -16) rotate(32 64 54)">
-        ${body('<path d="M54 14h20v66l-10 16-10-16z"/>', '#FFC628', '<path d="M66 8h14v90H66z" fill="#eeb100"/>')}
+        ${body('<path d="M54 26h20v54l-10 16-10-16z"/>', '#FFC628', '<path d="M66 20h14v78H66z" fill="#eeb100"/>')}
         <path d="M54 80h20l-10 16z" fill="#f6d8a8" ${K}/><path d="M60.5 90.5h7l-3.5 5.5z" fill="#22222c"/>
-        <path d="M54 22h20" fill="none" ${K}/>
-        ${makeFace('grin', 64, 50, 1.3)}
+        <path d="M54 34h20" fill="none" ${K}/>
+        ${makeFace('grin', 64, 56, 1.3)}
       </g>`;
     },
     // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
