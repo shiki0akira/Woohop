@@ -76,6 +76,9 @@ export default {
   finalRightLabel: '정답',
   finalPlayedLabel: '출제',
   finalCount: '{n}개',
+  historyHeading: '이번 제시어',
+  historyRight: '정답',
+  historyWrong: '못 맞힘',
 
   leaveTitle: '처음으로 돌아갈까요?',
   leaveDesc: '게임이 처음부터 시작되고, 맞힌 개수는 남지 않아요.',

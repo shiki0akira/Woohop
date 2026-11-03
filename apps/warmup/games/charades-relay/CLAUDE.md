@@ -20,7 +20,7 @@
   - **聲音** `sfx.*`：抽題、傳棒、進猜答案、猜對、猜錯、結束各一段（Web Audio 合成，不用音檔）。自己一個 AudioContext，`ensureAudio()` 在按「下一步：開始玩」時先建好，避開自動播放限制。頂欄音符鍵由 game.js 呼叫 `window.toggleMusic`。`judge()` 只在 guess 有效，連點不會算兩次。
   - `pass`：第幾棒（第 k 個人比給第 k+1 個人），共 `size - 1` 棒；最後一棒寫「比給最後一個人看」，時間到進 guess。
 - **題庫**：全站共用的 `apps/homepage/src/word-bank.mjs`，`build.mjs` 用 `wordsFor(lang, 'act')`，頁面上是 `window.RELAY.words`。`shuffleDeck()` 照比手畫腳（去重複、整副抽完才重洗）。
-- **結束畫面**（時間到）：猜中幾題、比了幾題兩格大數字；照著念是 `resultLine()`（有猜中／一題都沒中兩種）。「再玩一次（下一隊）」重新開始，下一隊就是這樣接。
+- **結束畫面**（時間到）：猜中幾題、比了幾題兩格大數字，下面 `renderHistory()` 列出這次的題目＋猜中／沒猜到（`playedWords`，11/03 老闆要求；**變數不要叫 history**，會蓋掉 window.history、返回鍵壞掉）；照著念是 `resultLine()`（有猜中／一題都沒中兩種）。「再玩一次（下一隊）」重新開始，下一隊就是這樣接。
 
 ## GA4
 

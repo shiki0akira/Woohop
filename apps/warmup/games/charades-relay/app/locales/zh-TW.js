@@ -89,6 +89,9 @@ export default {
   finalRightLabel: '猜中',
   finalPlayedLabel: '比了',
   finalCount: '{n} 題',
+  historyHeading: '這次的題目',
+  historyRight: '猜中',
+  historyWrong: '沒猜到',
 
   // ---------- 回到開頭的確認 ----------
   leaveTitle: '要回到開頭嗎？',

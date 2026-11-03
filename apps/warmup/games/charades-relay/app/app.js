@@ -39,6 +39,7 @@
   var finished = false; // 時間到了沒（結束畫面的照著念要用）
   var right = 0; // 猜中幾題
   var judged = 0; // 比完（猜中或沒猜到）幾題；時間到時正在傳的那題不算
+  var playedWords = []; // 這一場比完的題目：[{ word, ok }]，結束畫面列出來
   var deck = [];
   var card = null;
   var pass = 1; // 第幾棒：第 k 個人比給第 k+1 個人看
@@ -84,6 +85,8 @@
     nextRound: $('next-round'),
     finalRight: $('final-right'),
     finalPlayed: $('final-played'),
+    history: $('history'),
+    historyPanel: $('history-panel'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -619,6 +622,7 @@
     if (phase !== 'guess') return;
     judged += 1;
     if (ok) right += 1;
+    playedWords.push({ word: card[1], ok: ok });
     if (ok) sfx.right();
     else sfx.wrong();
     track('charades_relay_judged', {
@@ -691,6 +695,7 @@
     finished = false;
     right = 0;
     judged = 0;
+    playedWords = [];
     ensureAudio(); // 在點擊裡先建好，之後的音效才不會被自動播放限制擋掉
     shuffleDeck();
     showScreen('play');
@@ -702,6 +707,25 @@
       minutes: prep.min,
       seconds: prep.sec,
       categories: randomCats ? 'random' : prep.cats.join(','),
+    });
+  }
+
+  // 結束畫面：這次的題目，一題一列，後面標猜中／沒猜到
+  function renderHistory() {
+    el.history.textContent = '';
+    el.historyPanel.hidden = !playedWords.length;
+    playedWords.forEach(function (h) {
+      var li = document.createElement('li');
+      li.className = 'history-item' + (h.ok ? ' is-right' : '');
+      var word = document.createElement('span');
+      word.className = 'history-word';
+      word.textContent = h.word;
+      var mark = document.createElement('span');
+      mark.className = 'history-mark';
+      mark.textContent = h.ok ? T.historyRight : T.historyWrong;
+      li.appendChild(word);
+      li.appendChild(mark);
+      el.history.appendChild(li);
     });
   }
 
@@ -718,6 +742,7 @@
     });
     el.finalRight.textContent = fill(T.finalCount, { n: right });
     el.finalPlayed.textContent = fill(T.finalCount, { n: judged });
+    renderHistory();
     setTimeout(sfx.end, reduceMotion ? 0 : 900); // 時間到那兩聲先響完
     showScreen('end');
   }

@@ -93,8 +93,15 @@
 #view-play:not([data-phase="guess"]) .guess-actions { display: none; }
 #reveal-answer { --h: 72px; font-size: 20px; }
 
-/* 卡片外面下面：結束遊戲（只在 reveal） */
+/* 卡片外面下面：結束遊戲（只在 reveal）。紅色、要按住 0.8 秒（跟比手畫腳的 .end-btn 同一個做法），按住時從左到右填滿 */
 .reveal-actions { margin-top: 16px; }
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
 #view-play:not([data-phase="reveal"]) .reveal-actions { display: none; }
 
 /* reveal：答案是＋大字答案＋每個人的畫 */
@@ -109,13 +116,9 @@
 .gallery-item .paint-img { box-shadow: 0 3px 0 var(--outline); }
 
 /* ---------- 遊戲結束 ---------- */
-/* 比了幾題、畫了幾張：兩格大數字（2px 線＋4px 底，設計系統的線條） */
-.final-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.final-stat {
-  display: grid; justify-items: center; gap: 4px; padding: 14px 8px;
-  border: 2px solid var(--yellow-edge); border-radius: var(--r-md); background: var(--yellow-face);
-  box-shadow: 0 4px 0 var(--yellow-edge); color: var(--yellow-text); text-align: center;
-}
-.final-stat span { font-size: 14px; font-weight: 800; }
-.final-stat b { font-size: clamp(22px, 7vw, 32px); font-weight: 900; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.final-stat-time { border-color: var(--mint-edge); background: var(--mint-face); box-shadow: 0 4px 0 var(--mint-edge); color: var(--mint-text); }
+/* 這次的題目：一題一列，左邊題目、右邊最後一張圖（傳到最後變成什麼） */
+.final-panel h2 { margin: 0 0 12px; font-size: 18px; }
+.history { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.history-item { display: grid; grid-template-columns: minmax(0, 1fr) 120px; align-items: center; gap: 12px; }
+.history-word { font-size: 20px; font-weight: 900; color: var(--yellow-text); text-wrap: balance; }
+.history-item .paint-img { box-shadow: 0 3px 0 var(--outline); }

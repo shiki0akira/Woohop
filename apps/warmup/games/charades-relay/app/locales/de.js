@@ -76,6 +76,9 @@ export default {
   finalRightLabel: 'Richtig',
   finalPlayedLabel: 'Gespielt',
   finalCount: '{n}',
+  historyHeading: 'Die Begriffe dieser Runde',
+  historyRight: 'Richtig',
+  historyWrong: 'Nicht erraten',
 
   leaveTitle: 'Zurück zum Anfang?',
   leaveDesc: 'Das Spiel beginnt von vorn, die Punkte dieses Teams werden nicht gespeichert.',

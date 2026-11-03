@@ -76,6 +76,9 @@ export default {
   finalRightLabel: '猜中',
   finalPlayedLabel: '比了',
   finalCount: '{n} 题',
+  historyHeading: '这次的题目',
+  historyRight: '猜中',
+  historyWrong: '没猜到',
 
   leaveTitle: '要回到开头吗？',
   leaveDesc: '游戏会从头开始，猜中几题不会保留。',

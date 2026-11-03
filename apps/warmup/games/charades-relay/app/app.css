@@ -107,3 +107,15 @@
 .final-stat span { font-size: 14px; font-weight: 800; }
 .final-stat b { font-size: clamp(22px, 7vw, 32px); font-weight: 900; line-height: 1.2; font-variant-numeric: tabular-nums; }
 .final-stat-time { border-color: var(--yellow-edge); background: var(--yellow-face); box-shadow: 0 4px 0 var(--yellow-edge); color: var(--yellow-text); }
+
+/* 這次的題目：一題一列，後面標猜中（綠）／沒猜到（灰） */
+.history-panel { margin-top: 14px; }
+.history-panel[hidden] { display: none; }
+.history-panel h2 { margin: 0 0 10px; font-size: 18px; }
+.history { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.history-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; border: 2px solid var(--outline); border-radius: var(--r-md); }
+.history-word { min-width: 0; font-size: 17px; font-weight: 800; text-wrap: balance; }
+.history-mark { flex: none; padding: 2px 10px; border-radius: 999px; background: var(--track); color: var(--muted); font-size: 14px; font-weight: 800; }
+.history-item.is-right { border-color: var(--mint-edge); background: var(--mint-face); }
+.history-item.is-right .history-word { color: var(--mint-text); }
+.history-item.is-right .history-mark { background: var(--surface); color: var(--mint-text); }

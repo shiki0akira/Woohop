@@ -148,16 +148,17 @@
         </div>
         <!-- reveal：「結束遊戲」放在卡片外面下面（老闆 11/03 要求），跟「下一題」分開，不會手滑 -->
         <div class="reveal-actions">
-          <button class="btn btn-lg btn-secondary btn-block" id="end-game" type="button">{{endButton}}</button>
+          <!-- 紅色、要按住 0.8 秒才結束（跟比手畫腳、果園的 .end-btn 同一個做法），不確定玩幾輪，防手滑 -->
+          <button class="btn btn-lg btn-block end-btn" id="end-game" type="button">{{endButton}}</button>
         </div>
       </div>
 
-      <!-- 第 4 步：遊戲結束。比了幾題、畫了幾張 -->
+      <!-- 第 4 步：遊戲結束。列出這次的題目，每題附最後一張圖（傳到最後變成什麼） -->
       <div class="view" id="view-end" hidden>
         <div class="lead-slot"></div>
         <section class="panel final-panel">
-          <div class="final-stat"><span>{{finalPlayedLabel}}</span><b id="final-played"></b></div>
-          <div class="final-stat final-stat-time"><span>{{finalDrawnLabel}}</span><b id="final-drawn"></b></div>
+          <h2>{{historyHeading}}</h2>
+          <ol class="history" id="history"></ol>
         </section>
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
       </div>

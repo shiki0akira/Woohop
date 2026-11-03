@@ -76,6 +76,9 @@ export default {
   finalRightLabel: '正解',
   finalPlayedLabel: '出題',
   finalCount: '{n}問',
+  historyHeading: '今回のお題',
+  historyRight: '正解',
+  historyWrong: '不正解',
 
   leaveTitle: '最初に戻りますか？',
   leaveDesc: 'ゲームは最初からになり、正解数は残りません。',

@@ -85,15 +85,13 @@ export default {
   answerIs: '答案是',
   galleryLabel: '第 {k} 個人畫的',
   nextRound: '下一題',
-  endButton: '結束遊戲',
+  endButton: '按住，結束遊戲',
   againButton: '再玩一次',
 
   // ---------- 遊戲結束 ----------
   resultLine: '比了 {n} 題，大家一共畫了 {d} 張圖！最走樣的是哪一張？',
-  finalPlayedLabel: '比了',
-  finalRounds: '{n} 題',
-  finalDrawnLabel: '畫了',
-  finalDrawings: '{n} 張',
+  historyHeading: '這次的題目',
+  historyLast: '「{word}」最後變成這張圖',
 
   // ---------- 回到開頭的確認 ----------
   leaveTitle: '要回到開頭嗎？',

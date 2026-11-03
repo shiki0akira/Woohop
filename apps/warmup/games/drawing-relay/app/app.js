@@ -41,6 +41,7 @@
   var startedAt = 0;
   var judged = 0; // 揭曉過幾題
   var drawn = 0; // 這一場大家總共畫了幾張
+  var playedWords = []; // 這一場的題目：[{ word, last: 最後一張圖 }]，結束畫面列出來
   var finished = false;
   var deck = [];
   var card = null;
@@ -89,8 +90,7 @@
     gallery: $('gallery'),
     nextRound: $('next-round'),
     endGame: $('end-game'),
-    finalPlayed: $('final-played'),
-    finalDrawn: $('final-drawn'),
+    history: $('history'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -566,6 +566,7 @@
     if (phase !== 'guess') return;
     judged += 1;
     drawn += drawings.length;
+    playedWords.push({ word: card[1], last: drawings[drawings.length - 1] });
     sfx.reveal();
     track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips });
     el.resultAnswer.textContent = card[1];
@@ -649,6 +650,7 @@
     roundNumber = 0;
     judged = 0;
     drawn = 0;
+    playedWords = [];
     finished = false;
     startedAt = Date.now();
     ensureAudio(); // 在點擊裡先建好，之後的音效才不會被自動播放限制擋掉
@@ -663,7 +665,36 @@
     });
   }
 
+  // 結束畫面：這次的題目，每題附最後一張圖（傳到最後變成什麼）
+  function renderHistory() {
+    el.history.textContent = '';
+    playedWords.forEach(function (h) {
+      var li = document.createElement('li');
+      li.className = 'history-item';
+      var word = document.createElement('span');
+      word.className = 'history-word';
+      word.textContent = h.word;
+      var img = document.createElement('img');
+      img.className = 'paint-img';
+      img.src = h.last;
+      img.alt = fill(T.historyLast, { word: h.word });
+      li.appendChild(word);
+      li.appendChild(img);
+      el.history.appendChild(li);
+    });
+  }
+
+  // 結束遊戲要按住 HOLD_MS（跟比手畫腳、果園同一個做法，防手滑）
+  var HOLD_MS = 800;
+  var holdId = 0;
+  function cancelHold() {
+    clearTimeout(holdId);
+    holdId = 0;
+    el.endGame.classList.remove('is-holding');
+  }
+
   function endGame() {
+    cancelHold();
     stopTimer();
     stopView();
     finished = true;
@@ -674,8 +705,7 @@
       seconds: prep.sec,
       duration_seconds: Math.round((Date.now() - startedAt) / 1000),
     });
-    el.finalPlayed.textContent = fill(T.finalRounds, { n: judged });
-    el.finalDrawn.textContent = fill(T.finalDrawings, { n: drawn });
+    renderHistory();
     sfx.end();
     showScreen('end');
   }
@@ -756,7 +786,19 @@
   el.handoffGo.addEventListener('click', takeOver);
   el.revealAnswer.addEventListener('click', revealAnswer);
   el.nextRound.addEventListener('click', startRound);
-  el.endGame.addEventListener('click', endGame);
+  el.endGame.addEventListener('click', function (event) {
+    if (event.detail === 0) endGame(); // 鍵盤沒有「按住」可言
+  });
+  el.endGame.addEventListener('pointerdown', function (event) {
+    if (event.button > 0) return;
+    cancelHold();
+    el.endGame.classList.add('is-holding');
+    holdId = setTimeout(endGame, HOLD_MS);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (type) {
+    el.endGame.addEventListener(type, cancelHold);
+  });
+  el.endGame.addEventListener('contextmenu', function (event) { event.preventDefault(); });
 
   el.leaveCancel.addEventListener('click', function () { el.leaveModal.close(); });
   el.leaveConfirm.addEventListener('click', confirmLeave);

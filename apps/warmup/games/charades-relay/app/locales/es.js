@@ -76,6 +76,9 @@ export default {
   finalRightLabel: 'Acertadas',
   finalPlayedLabel: 'Jugadas',
   finalCount: '{n}',
+  historyHeading: 'Las palabras de esta ronda',
+  historyRight: 'Acertada',
+  historyWrong: 'No acertada',
 
   leaveTitle: '¿Volver al principio?',
   leaveDesc: 'La partida empieza de nuevo y no se guardan los aciertos de este equipo.',

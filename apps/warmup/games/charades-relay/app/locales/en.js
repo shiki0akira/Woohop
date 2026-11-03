@@ -76,6 +76,9 @@ export default {
   finalRightLabel: 'Got right',
   finalPlayedLabel: 'Played',
   finalCount: '{n}',
+  historyHeading: 'This round’s words',
+  historyRight: 'Got it',
+  historyWrong: 'Missed',
 
   leaveTitle: 'Back to the start?',
   leaveDesc: 'The game starts over and this team’s score won’t be kept.',

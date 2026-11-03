@@ -142,12 +142,16 @@
         </div>
       </div>
 
-      <!-- 第 4 步：時間到。猜中幾題、比了幾題 -->
+      <!-- 第 4 步：時間到。猜中幾題、比了幾題，下面列出這次的題目和猜中沒（11/03 老闆要求） -->
       <div class="view" id="view-end" hidden>
         <div class="lead-slot"></div>
         <section class="panel final-panel">
           <div class="final-stat"><span>{{finalRightLabel}}</span><b id="final-right"></b></div>
           <div class="final-stat final-stat-time"><span>{{finalPlayedLabel}}</span><b id="final-played"></b></div>
+        </section>
+        <section class="panel history-panel" id="history-panel">
+          <h2>{{historyHeading}}</h2>
+          <ol class="history" id="history"></ol>
         </section>
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
       </div>

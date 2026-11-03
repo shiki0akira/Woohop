@@ -76,6 +76,9 @@ export default {
   finalRightLabel: 'Trouvés',
   finalPlayedLabel: 'Joués',
   finalCount: '{n}',
+  historyHeading: 'Les mots de cette partie',
+  historyRight: 'Trouvé',
+  historyWrong: 'Pas trouvé',
 
   leaveTitle: 'Revenir au début ?',
   leaveDesc: 'La partie recommence et le score de cette équipe ne sera pas gardé.',
