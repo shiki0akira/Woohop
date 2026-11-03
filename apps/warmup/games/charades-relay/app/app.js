@@ -78,7 +78,6 @@
     hintMask: $('hint-mask'),
     hintKindBtn: $('hint-kind-btn'),
     hintCharBtn: $('hint-char-btn'),
-    peek: $('peek'),
     gotRight: $('got-right'),
     giveUp: $('give-up'),
     resultTitle: $('result-title'),
@@ -295,7 +294,6 @@
   // ---------- 猜的時候的提示（照比手畫腳 games/charades/app/app.js）：一個字一個方塊、提示類型、提示一個字 ----------
 
   var hint = null; // 這一題給過的提示：{ kind: 給了類型沒, chars, shown: 已經露出的字的位置 }
-  var peeking = false; // 主持人按了偷看答案：方塊全部換成字
 
   // 用 Array.from 切字，中日韓字、表情符號都算一個；空白和標點直接顯示，不算要猜的字
   var isLetter = function (ch) { return /[\p{L}\p{N}]/u.test(ch); };
@@ -324,7 +322,7 @@
         el.hintMask.appendChild(word);
       }
       var span = document.createElement('span');
-      if (!peeking && isLetter(ch) && hint.shown.indexOf(i) < 0) {
+      if (isLetter(ch) && hint.shown.indexOf(i) < 0) {
         span.className = 'mask-box';
         span.setAttribute('aria-hidden', 'true');
       } else {
@@ -341,7 +339,6 @@
     el.hintKindBtn.disabled = hint.kind;
     // 只剩最後一個字沒露出來，就不能再多給了
     el.hintCharBtn.disabled = hiddenLetters().length <= 1;
-    el.peek.textContent = peeking ? T.hideButton : T.peekButton;
   }
 
   function giveKind() {
@@ -538,7 +535,6 @@
   }
 
   function toGuess() {
-    peeking = false;
     syncHints();
     sfx.guess();
     setPhase('guess');
@@ -723,11 +719,6 @@
   el.passNext.addEventListener('click', nextPass);
   el.hintKindBtn.addEventListener('click', giveKind);
   el.hintCharBtn.addEventListener('click', giveChar);
-  // 偷看答案：方塊換成字，主持人自己看、或給看戲的人看一眼，再按一次蓋起來
-  el.peek.addEventListener('click', function () {
-    peeking = !peeking;
-    syncHints();
-  });
   el.gotRight.addEventListener('click', function () { judge(true); });
   el.giveUp.addEventListener('click', function () { judge(false); });
   el.nextRound.addEventListener('click', afterReveal);

@@ -83,8 +83,6 @@ export default {
   hintCharButton: '提示一個字',
   gotRight: '猜中了！',
   giveUp: '沒猜到，公布答案',
-  peekButton: '偷看答案',
-  hideButton: '蓋起來',
   resultRight: '猜中了！答案是',
   answerIs: '答案是',
   nextRound: '下一題',

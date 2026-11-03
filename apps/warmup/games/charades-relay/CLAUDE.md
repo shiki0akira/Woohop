@@ -14,7 +14,7 @@
 - **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5，傳 `size - 1` 棒）、`per`（比幾題 1／2／3，預設 2）、`sec`（每人幾秒 10／20／0＝不計時，預設 20）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-charades-relay-settings']`（`{ sound }`）。
 - **play 分五段** `setPhase()`：`draw` → `word` → `relay` → `guess` → `reveal`。題卡 `#card[data-stage]` 跟 phase 同名（reveal 那面的 class 是 `.stage-reveal-answer`，避開 game.css 的 `.stage-reveal`）。
   - **步驟頭**：手機一直在主持人手上，所以 play 也有步驟頭，但只在 `PLAY_LEAD`（draw／reveal）兩段出現，文案是 locale 的 `lead.draw`／`lead.reveal`（reveal 是「從最後一個人往前問：你以為是什麼？」）。word、relay、guess 由 CSS 藏起 `.play-lead`。
-  - **guess 照比手畫腳**（11/02 老闆要求）：`hint` 記這一題給過的提示，`renderMask()` 一個字一個方塊，`giveKind()` 黃色類型標籤、`giveChar()` 隨機露一個字（最後一個字不露），「偷看答案」把方塊全換成字（`peeking`）。卡片下面「猜中了！」／「沒猜到，公布答案」都會 `judge()` 記下來、進 reveal 顯示答案，主持人按「下一題」／「看結果」才往下（`afterReveal()`）。
+  - **guess 照比手畫腳**（11/02 老闆要求）：`hint` 記這一題給過的提示，`renderMask()` 一個字一個方塊，`giveKind()` 黃色類型標籤、`giveChar()` 隨機露一個字（最後一個字不露）。沒有偷看答案（11/03 老闆拿掉）。卡片下面「猜中了！」／「沒猜到，公布答案」都會 `judge()` 記下來、進 reveal 顯示答案，主持人按「下一題」／「看結果」才往下（`afterReveal()`）。
   - **碼錶** `startClock()`：從規則講完、開始玩算起（`startedAt`），上方每秒更新；`endGame()` 記下 `finishedMs`，結束畫面和照著念（`resultLine()`）都用它。`right` 是猜中幾題。
   - **倒數** `startTimer()`／`tickTimer()`：每一棒重新算，每秒輕滴一聲、最後三秒高音嗶，到 0 長嗶＋震動＋紅字「時間到！換下一個人」，**不自動換人**。倒數圈是設計系統的 `.timer-ring`。`sec` 是 0 就不顯示倒數圈。離開 relay 一律 `stopTimer()`。
   - **聲音** `sfx.*`：抽題、傳棒、進猜答案、猜對、猜錯、結束各一段（Web Audio 合成，不用音檔）。自己一個 AudioContext，`ensureAudio()` 在按「下一步：開始玩」時先建好，避開自動播放限制。頂欄音符鍵由 game.js 呼叫 `window.toggleMusic`。`judge()` 只在 guess 有效，連點不會算兩次。

@@ -86,11 +86,10 @@
 .hint-row .btn { min-width: 0; height: auto; min-height: var(--h, 48px); padding: 8px 10px; white-space: normal; line-height: 1.25; text-wrap: balance; }
 .hint-row .btn:disabled { opacity: .45; cursor: default; }
 
-/* 卡片下面：猜中了！、沒猜到，公布答案、偷看答案（只在 guess） */
+/* 卡片下面：猜中了！、沒猜到，公布答案（只在 guess） */
 .guess-actions { display: grid; justify-items: center; gap: 12px; margin-top: 16px; }
 #view-play:not([data-phase="guess"]) .guess-actions { display: none; }
 #got-right { --h: 72px; font-size: 20px; }
-.peek-btn { width: auto; }
 
 /* reveal：猜中了／答案是＋大字答案＋下一題 */
 .stage-reveal-answer { justify-items: center; text-align: center; }
