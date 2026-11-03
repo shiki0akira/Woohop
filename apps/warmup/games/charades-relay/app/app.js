@@ -1,11 +1,12 @@
 /*
- * 比手畫腳接力賽。手機一直在主持人手上：出題、每一棒倒數、記猜中幾題和總共花多久（CONCEPT.md 第二節）。
+ * 比手畫腳接力賽。手機一直在主持人手上：出題、整隊的總倒數、每一棒倒數（時間到自動換人）、記猜中幾題（CONCEPT.md 二之一）。
  *
  * 一步一步帶（跟比手畫腳同一套，步驟頭、規則卡是全站共用的 window.Leader）：
- *   setup 開場（一隊幾人、比幾題、每個人比多久、題目類型）→ rules 說明規則
- *   → play（draw 排好、抽題目 → word 給排頭看 → relay 一棒一棒傳（人數 - 1 棒）→ guess 最後一個人說答案
- *           → reveal 公布答案、猜對了沒 → 下一題回 draw）
- *   → end 猜中幾題、總共花多久（題數比完自動進來）→ 再玩一次回 play
+ *   setup 開場（一隊幾人、每隊幾分鐘、每個人比多久、題目類型）→ rules 說明規則
+ *   → play（draw 排好、抽題目 → word 給排頭看 → relay 一棒一棒傳（人數 - 1 棒，每棒時間到自動換人）
+ *           → guess 最後一個人猜（字格＋提示）→ reveal 答案揭曉 → 下一題回 draw）
+ *   → end 時間到，猜中幾題 → 再玩一次回 play（下一隊上場也是按這個）
+ * 總倒數只在 word／relay／guess 跑，抽題目和答案揭曉（往前問「你以為是什麼」）時停住。
  * 返回鍵一律回第一頁；已經抽過題目就先確認。只記聲音開關，其他設定每次都是預設。
  */
 (function () {
@@ -24,9 +25,9 @@
   var CATS = window.RELAY.words; // [代號, 類型名稱, [題目...]]（全站共用的 apps/homepage/src/word-bank.mjs）
   var ALL_CATS = CATS.map(function (c) { return c[0]; });
 
-  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、比 2 題、每人 20 秒、隨機題目
+  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、每隊 5 分鐘、每人 10 秒、隨機題目
   // 一隊幾人決定要傳幾棒（size - 1），最後一棒傳完自動進猜答案
-  var prep = { size: 5, per: 2, sec: 20, cats: ALL_CATS.slice() };
+  var prep = { size: 5, min: 5, sec: 10, cats: ALL_CATS.slice() };
   var randomCats = true;
   // 只記聲音開關（跟定時炸彈一樣）
   var settings = { sound: true };
@@ -35,9 +36,9 @@
   var phase = 'draw';
   var roundNumber = 0; // 這一場比到第幾題
   var gameNumber = 0;
-  var startedAt = 0;
-  var finishedMs = 0; // 結束時總共花了多久（從規則講完、開始玩算起）
+  var finished = false; // 時間到了沒（結束畫面的照著念要用）
   var right = 0; // 猜中幾題
+  var judged = 0; // 比完（猜中或沒猜到）幾題；時間到時正在傳的那題不算
   var deck = [];
   var card = null;
   var pass = 1; // 第幾棒：第 k 個人比給第 k+1 個人看
@@ -72,7 +73,6 @@
     timer: $('timer'),
     timerArc: $('timer-arc'),
     timerNum: $('timer-num'),
-    timerHint: $('timer-hint'),
     passNext: $('pass-next'),
     hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
@@ -84,7 +84,7 @@
     resultAnswer: $('result-answer'),
     nextRound: $('next-round'),
     finalRight: $('final-right'),
-    finalTime: $('final-time'),
+    finalPlayed: $('final-played'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -113,23 +113,21 @@
     }
   }
 
-  // ---------- 開場：一隊幾人、比幾題、每個人比多久 ----------
+  // ---------- 開場：一隊幾人、每隊幾分鐘、每個人比多久 ----------
 
-  var totalRounds = function () { return prep.per; };
   var totalPasses = function () { return prep.size - 1; };
-  var isLast = function () { return roundNumber >= totalRounds(); };
 
   function syncSetup() {
     el.sizeValue.textContent = prep.size;
     el.sizeLess.disabled = prep.size <= SIZE_MIN;
     el.sizeMore.disabled = prep.size >= SIZE_MAX;
-    document.querySelectorAll('input[name="per"]').forEach(function (input) {
-      input.checked = input.value === String(prep.per);
+    document.querySelectorAll('input[name="min"]').forEach(function (input) {
+      input.checked = input.value === String(prep.min);
     });
     document.querySelectorAll('input[name="sec"]').forEach(function (input) {
       input.checked = input.value === String(prep.sec);
     });
-    el.roundsHint.textContent = fill(T.roundsHint, { total: totalRounds(), passes: totalPasses() });
+    el.roundsHint.textContent = fill(T.roundsHint, { min: prep.min, passes: totalPasses(), sec: prep.sec });
   }
   function setSize(n) {
     prep.size = Math.max(SIZE_MIN, Math.min(SIZE_MAX, n));
@@ -211,39 +209,55 @@
     });
   }
 
-  // ---------- 猜中幾題、總共花多久 ----------
+  // ---------- 整隊的總倒數：只在 word／relay／guess 跑，抽題目、答案揭曉時停住 ----------
 
-  // 上方的碼錶 1:05；結束畫面 1 分 5 秒
+  var RUNNING = { word: true, relay: true, guess: true };
+  var usedMs = 0; // 已經用掉的時間（不含停住的時候）
+  var runningSince = 0; // 這一段開始跑的時間；0 是停住
+  var clockId = 0;
+
+  var totalMs = function () { return prep.min * 60000; };
+  var leftMs = function () {
+    return Math.max(0, totalMs() - usedMs - (runningSince ? Date.now() - runningSince : 0));
+  };
+  // 上方的倒數 4:05
   function clockText(ms) {
-    var s = Math.floor(ms / 1000);
+    var s = Math.ceil(ms / 1000);
     var sec = s % 60;
     return Math.floor(s / 60) + ':' + (sec < 10 ? '0' : '') + sec;
   }
-  function durationText(ms) {
-    var s = Math.round(ms / 1000);
-    var m = Math.floor(s / 60);
-    return m ? fill(T.durationMin, { m: m, s: s % 60 }) : fill(T.durationSec, { s: s });
-  }
-
-  var clockId = 0;
   function tickClock() {
-    el.clock.textContent = clockText(Date.now() - startedAt);
+    var left = leftMs();
+    el.clock.textContent = clockText(left);
+    el.clock.classList.toggle('is-urgent', left <= 10000);
+    el.clock.classList.toggle('is-paused', !runningSince);
+    el.roundBar.style.setProperty('--p', (1 - left / totalMs()) * 100 + '%');
+    if (left <= 0) timeUp();
+  }
+  function setRunning(on) {
+    if (on && !runningSince) runningSince = Date.now();
+    if (!on && runningSince) {
+      usedMs += Date.now() - runningSince;
+      runningSince = 0;
+    }
   }
   function startClock() {
     clearInterval(clockId);
+    usedMs = 0;
+    runningSince = 0;
     tickClock();
-    clockId = setInterval(tickClock, 1000);
+    clockId = setInterval(tickClock, 200);
   }
   function stopClock() {
+    setRunning(false);
     clearInterval(clockId);
     clockId = 0;
   }
 
-  // 結束時照著念的那一句：猜中幾題＋總共花多久；一題都沒中另一句
+  // 結束時照著念的那一句：幾分鐘猜中幾題；一題都沒中另一句
   function resultLine() {
-    if (!finishedMs) return '';
-    var v = { n: right, total: totalRounds(), time: durationText(finishedMs) };
-    return fill(right ? T.resultLine : T.resultNone, v);
+    if (!finished) return '';
+    return fill(right ? T.resultLine : T.resultNone, { n: right, min: prep.min });
   }
 
   // ---------- 題目 ----------
@@ -361,7 +375,7 @@
     el.drawn.classList.add('pop');
   }
 
-  // ---------- 倒數：每一棒重新算，時間到只提醒、不自動換人（主持人看大家比完了再按） ----------
+  // ---------- 每一棒的倒數：時間到響一聲、自動換下一棒（比完的可以提早按）；最後一棒時間到就進猜答案 ----------
 
   var timerId = 0;
   var endsAt = 0;
@@ -374,13 +388,7 @@
   }
   function startTimer() {
     stopTimer();
-    el.timer.classList.remove('is-urgent', 'is-up');
-    el.timer.hidden = !prep.sec;
-    if (!prep.sec) {
-      el.timerHint.textContent = T.noTimer;
-      return;
-    }
-    el.timerHint.textContent = '';
+    el.timer.classList.remove('is-urgent');
     endsAt = Date.now() + prep.sec * 1000;
     lastBeep = -1;
     tickTimer();
@@ -402,10 +410,8 @@
     }
     if (left <= 0) {
       stopTimer();
-      el.timer.classList.add('is-up');
-      el.timerHint.textContent = T.timeUp;
-      beep(440, 0.5, 0.25);
       if (navigator.vibrate) navigator.vibrate(200);
+      nextPass(true);
     }
   }
 
@@ -453,6 +459,10 @@
   var sfx = {
     draw: function () { tune([[660, 0.08, 0.07], [990, 0.12, 0]]); },
     pass: function () { tune([[523, 0.07, 0.06], [784, 0.1, 0]]); },
+    // 這一棒時間到、自動換人：低一點、長一點，跟自己按的那一聲分得出來
+    swap: function () { beep(440, 0.4, 0.22); },
+    // 整隊時間到
+    timeUp: function () { beep(330, 0.25, 0.25, 0); beep(330, 0.6, 0.25, 0.32); },
     guess: function () { tune([[392, 0.1, 0.1], [523, 0.1, 0.1], [659, 0.18, 0]]); },
     right: function () { tune([[523, 0.1, 0.09], [659, 0.1, 0.09], [784, 0.1, 0.09], [1047, 0.3, 0]], 0.22); },
     wrong: function () { beep(196, 0.35, 0.16, 0, 'sawtooth'); },
@@ -477,12 +487,13 @@
     views.play.setAttribute('data-phase', next);
     el.card.setAttribute('data-stage', next);
     if (next !== 'relay') stopTimer();
+    setRunning(!!RUNNING[next]);
+    tickClock();
     renderLead();
   }
 
   function renderRound() {
-    el.roundNo.textContent = fill(T.roundNo, { n: Math.max(1, roundNumber), total: totalRounds() });
-    el.roundBar.style.setProperty('--p', ((roundNumber - 1) / totalRounds()) * 100 + '%');
+    el.roundNo.textContent = fill(T.roundNo, { n: Math.max(1, roundNumber) });
   }
 
   // 知道一隊幾人，所以最後一棒的按鈕直接是「最後一個人看完了」，按了進猜答案
@@ -523,19 +534,23 @@
     renderPass();
   }
 
-  function nextPass() {
+  // auto：這一棒時間到自動換的（響換人的聲音）；沒帶就是主持人自己按的
+  function nextPass(auto) {
+    if (screen !== 'play' || phase !== 'relay') return;
     if (pass >= totalPasses()) {
-      toGuess();
+      toGuess(auto);
       return;
     }
     pass += 1;
-    sfx.pass();
+    if (auto) sfx.swap();
+    else sfx.pass();
     renderPass();
     window.scrollTo(0, 0);
   }
 
-  function toGuess() {
+  function toGuess(auto) {
     syncHints();
+    if (auto) sfx.swap();
     sfx.guess();
     setPhase('guess');
     track('charades_relay_passed', { round_number: roundNumber, passes: pass, seconds: prep.sec });
@@ -544,6 +559,7 @@
   // 猜中了／沒猜到：記下來、公布答案；下一題由主持人按（揭曉後要往前問「你以為是什麼」）
   function judge(ok) {
     if (phase !== 'guess') return;
+    judged += 1;
     if (ok) right += 1;
     if (ok) sfx.right();
     else sfx.wrong();
@@ -551,16 +567,17 @@
       round_number: roundNumber, right: ok, passes: pass, category: card[0], skips: skips,
       hint_kind: hint.kind, hint_chars: hint.shown.length,
     });
-    el.roundBar.style.setProperty('--p', (roundNumber / totalRounds()) * 100 + '%');
     el.resultTitle.textContent = ok ? T.resultRight : T.answerIs;
     el.resultAnswer.textContent = card[1];
-    el.nextRound.textContent = isLast() ? T.seeResult : T.nextRound;
     setPhase('reveal');
   }
 
-  function afterReveal() {
-    if (isLast()) endGame();
-    else startRound();
+  // 整隊時間到：正在傳、正在猜的那題不算，直接結束
+  function timeUp() {
+    if (screen !== 'play' || finished) return;
+    sfx.timeUp();
+    if (navigator.vibrate) navigator.vibrate([200, 100, 400]);
+    endGame();
   }
 
   /*
@@ -613,9 +630,9 @@
   function startPlay() {
     gameNumber += 1;
     roundNumber = 0;
-    startedAt = Date.now();
-    finishedMs = 0;
+    finished = false;
     right = 0;
+    judged = 0;
     ensureAudio(); // 在點擊裡先建好，之後的音效才不會被自動播放限制擋掉
     shuffleDeck();
     showScreen('play');
@@ -624,7 +641,7 @@
     track('charades_relay_game_started', {
       game_number: gameNumber,
       size: prep.size,
-      per: prep.per,
+      minutes: prep.min,
       seconds: prep.sec,
       categories: randomCats ? 'random' : prep.cats.join(','),
     });
@@ -633,16 +650,17 @@
   function endGame() {
     stopTimer();
     stopClock();
-    finishedMs = Date.now() - startedAt;
+    finished = true;
     track('charades_relay_game_ended', {
-      rounds: roundNumber,
+      rounds: judged,
       size: prep.size,
       right: right,
-      duration_seconds: Math.round(finishedMs / 1000),
+      minutes: prep.min,
+      seconds: prep.sec,
     });
-    el.finalRight.textContent = fill(T.finalRight, { n: right, total: totalRounds() });
-    el.finalTime.textContent = durationText(finishedMs);
-    sfx.end();
+    el.finalRight.textContent = fill(T.finalCount, { n: right });
+    el.finalPlayed.textContent = fill(T.finalCount, { n: judged });
+    setTimeout(sfx.end, reduceMotion ? 0 : 900); // 時間到那兩聲先響完
     showScreen('end');
   }
 
@@ -686,9 +704,9 @@
 
   el.sizeLess.addEventListener('click', function () { setSize(prep.size - 1); });
   el.sizeMore.addEventListener('click', function () { setSize(prep.size + 1); });
-  document.querySelectorAll('input[name="per"]').forEach(function (input) {
+  document.querySelectorAll('input[name="min"]').forEach(function (input) {
     input.addEventListener('change', function () {
-      prep.per = Number(input.value);
+      prep.min = Number(input.value);
       syncSetup();
     });
   });
@@ -716,12 +734,12 @@
     flip();
   });
   el.relayStart.addEventListener('click', startRelay);
-  el.passNext.addEventListener('click', nextPass);
+  el.passNext.addEventListener('click', function () { nextPass(false); });
   el.hintKindBtn.addEventListener('click', giveKind);
   el.hintCharBtn.addEventListener('click', giveChar);
   el.gotRight.addEventListener('click', function () { judge(true); });
   el.giveUp.addEventListener('click', function () { judge(false); });
-  el.nextRound.addEventListener('click', afterReveal);
+  el.nextRound.addEventListener('click', startRound);
 
   el.leaveCancel.addEventListener('click', function () { el.leaveModal.close(); });
   el.leaveConfirm.addEventListener('click', confirmLeave);

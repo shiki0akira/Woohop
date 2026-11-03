@@ -9,7 +9,7 @@
     {{header}}
 
     <main id="main" class="relay-main game-main">
-      <!-- 第 1 步：開場。一隊幾人、比幾題、每個人比多久，題目類型收起來（照比手畫腳）。上方的步驟頭是全站共用的 Leader.lead -->
+      <!-- 第 1 步：開場。一隊幾人、每隊幾分鐘、每個人比多久，題目類型收起來（照比手畫腳）。上方的步驟頭是全站共用的 Leader.lead -->
       <div class="view" id="view-setup">
         <div class="page-head">
           <nav class="crumbs" aria-label="breadcrumb">
@@ -32,19 +32,19 @@
               </div>
             </div>
             <div class="per-field">
-              <span class="field-label">{{perLabel}}</span>
-              <div class="seg seg-3" role="radiogroup" aria-label="{{perLabel}}">
-                <label class="seg-item"><input type="radio" name="per" value="1">{{per1}}</label>
-                <label class="seg-item"><input type="radio" name="per" value="2">{{per2}}</label>
-                <label class="seg-item"><input type="radio" name="per" value="3">{{per3}}</label>
+              <span class="field-label">{{minLabel}}</span>
+              <div class="seg seg-3" role="radiogroup" aria-label="{{minLabel}}">
+                <label class="seg-item"><input type="radio" name="min" value="3">{{min3}}</label>
+                <label class="seg-item"><input type="radio" name="min" value="5">{{min5}}</label>
+                <label class="seg-item"><input type="radio" name="min" value="8">{{min8}}</label>
               </div>
             </div>
           </div>
           <span class="field-label field-label-gap">{{secLabel}}</span>
           <div class="seg seg-3" role="radiogroup" aria-label="{{secLabel}}">
+            <label class="seg-item"><input type="radio" name="sec" value="5">{{sec5}}</label>
             <label class="seg-item"><input type="radio" name="sec" value="10">{{sec10}}</label>
             <label class="seg-item"><input type="radio" name="sec" value="20">{{sec20}}</label>
-            <label class="seg-item"><input type="radio" name="sec" value="0">{{secFree}}</label>
           </div>
           <p class="hint" id="rounds-hint"></p>
           <!-- 題目類型平常收起來，第一張「隨機」（照比手畫腳） -->
@@ -78,7 +78,7 @@
         <div class="round-progress">
           <div class="round-meta">
             <p class="round-no" id="round-no"></p>
-            <!-- 從開始玩算起的總時間，結束畫面也是這個數字 -->
+            <!-- 這一隊還剩多少時間（只在傳、猜的時候跑，抽題目和答案揭曉時停住） -->
             <p class="clock" id="clock" aria-label="{{clockLabel}}"></p>
           </div>
           <div class="progress"><div id="round-bar" style="--p:0%"></div></div>
@@ -107,7 +107,7 @@
               </div>
             </div>
 
-            <!-- relay：題目蓋起來（排隊的人可能回頭），只顯示第幾棒和倒數 -->
+            <!-- relay：題目蓋起來（排隊的人可能回頭），只顯示第幾棒和倒數；倒數到 0 自動換下一棒 -->
             <div class="name-stage stage-relay">
               <p class="pass-no" id="pass-no"></p>
               <p class="pass-who" id="pass-who"></p>
@@ -115,7 +115,6 @@
                 <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="50" fill="none" stroke-width="12"/><circle class="arc" id="timer-arc" cx="60" cy="60" r="50" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="0"/></svg>
                 <div class="num" id="timer-num"></div>
               </div>
-              <p class="hint timer-hint" id="timer-hint" aria-live="polite"></p>
               <!-- 最後一棒時文字換成「最後一個人看完了」（app.js renderPass） -->
               <button class="btn btn-lg btn-solid btn-block" id="pass-next" type="button">{{passNext}}</button>
             </div>
@@ -150,12 +149,12 @@
         </div>
       </div>
 
-      <!-- 第 4 步：遊戲結束。猜中幾題、總共花多久 -->
+      <!-- 第 4 步：時間到。猜中幾題、比了幾題 -->
       <div class="view" id="view-end" hidden>
         <div class="lead-slot"></div>
         <section class="panel final-panel">
           <div class="final-stat"><span>{{finalRightLabel}}</span><b id="final-right"></b></div>
-          <div class="final-stat final-stat-time"><span>{{finalTimeLabel}}</span><b id="final-time"></b></div>
+          <div class="final-stat final-stat-time"><span>{{finalPlayedLabel}}</span><b id="final-played"></b></div>
         </section>
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
       </div>

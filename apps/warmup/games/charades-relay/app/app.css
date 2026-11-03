@@ -46,7 +46,10 @@
 /* 第幾題｜碼錶 一行排開（猜中幾題只在結束畫面說） */
 .round-meta { display: flex; align-items: baseline; gap: 12px; }
 .round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+/* 這一隊還剩多少時間：最後 10 秒變紅；抽題目、答案揭曉時停住，顏色變淡 */
 .clock { margin: 0 0 0 auto; font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.clock.is-paused { color: var(--muted); }
+.clock.is-urgent { color: var(--danger); }
 .round-progress .progress { max-width: none; }
 
 /* 題卡五面（app.js 的 setPhase 設 data-stage） */
@@ -66,11 +69,6 @@
 .pass-who { margin: 0; font-size: 18px; font-weight: 800; text-wrap: balance; }
 .relay-app .timer-ring { width: 150px; height: 150px; margin: 4px 0; }
 .relay-app .timer-ring .num { font-size: 46px; }
-.relay-app .timer-ring[hidden] { display: none; }
-.relay-app .timer-ring.is-up .num { color: var(--danger); }
-.timer-hint { min-height: 1.4em; font-weight: 800; }
-/* 時間到：提示變紅、變大（不自動換人，主持人看大家比完再按） */
-.timer-ring.is-up + .timer-hint { color: var(--danger); font-size: 20px; }
 .stage-relay .btn-block { width: 100%; }
 #pass-next { --h: 72px; font-size: 20px; }
 
