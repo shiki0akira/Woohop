@@ -47,7 +47,7 @@ export default {
   sizeLess: '少一個人',
   sizeMore: '多一個人',
   minLabel: '每隊幾分鐘',
-  minUnit: '{n} 分鐘',
+  minUnit: '{n} 分',
   secLabel: '每個人比幾秒',
   sec10: '10 秒',
   sec15: '15 秒',
