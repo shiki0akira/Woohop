@@ -31,13 +31,10 @@
                 <button type="button" id="size-more" aria-label="{{sizeMore}}">+</button>
               </div>
             </div>
+            <!-- 每隊幾分鐘：單選 3／5／8／12／15，app.js 依 MIN_STEPS 產生（一按就到，不用連點 ＋） -->
             <div class="per-field">
               <span class="field-label">{{minLabel}}</span>
-              <div class="seg seg-3" role="radiogroup" aria-label="{{minLabel}}">
-                <label class="seg-item"><input type="radio" name="min" value="3">{{min3}}</label>
-                <label class="seg-item"><input type="radio" name="min" value="5">{{min5}}</label>
-                <label class="seg-item"><input type="radio" name="min" value="8">{{min8}}</label>
-              </div>
+              <div class="seg seg-5" id="min-seg" role="radiogroup" aria-label="{{minLabel}}"></div>
             </div>
           </div>
           <span class="field-label field-label-gap">{{secLabel}}</span>
@@ -119,17 +116,15 @@
 
             <!--
               guess：最後一個人猜（照比手畫腳，老闆 11/02 要求）。一個字一個方塊（看得出幾個字），
-              卡片裡兩種提示：類型（黃色標籤）、隨機露一個字；「猜中了！」等按鈕在卡片下面
+              提示自動給（11/03）：猜 10 秒亮類型（黃色標籤）、20 秒露一個字；「猜中了！」等按鈕在卡片下面，隨時能按
             -->
             <div class="name-stage stage-guess">
               <div class="drawn-card guess-card" aria-live="polite">
                 <span class="badge hint-badge" id="hint-kind" hidden></span>
                 <p class="hint-mask" id="hint-mask"></p>
               </div>
-              <div class="hint-row">
-                <button class="btn btn-secondary" id="hint-kind-btn" type="button">{{hintKindButton}}</button>
-                <button class="btn btn-secondary" id="hint-char-btn" type="button">{{hintCharButton}}</button>
-              </div>
+              <!-- 自動提示的倒數：猜 10 秒亮類型、20 秒露一個字（app.js 的 tickGuess） -->
+              <p class="hint hint-next" id="hint-next" aria-live="polite"></p>
             </div>
 
             <!-- reveal：答案揭曉（猜中了／答案是），下一題 -->

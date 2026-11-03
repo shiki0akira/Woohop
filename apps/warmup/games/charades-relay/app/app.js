@@ -51,6 +51,7 @@
     sizeLess: $('size-less'),
     sizeMore: $('size-more'),
     sizeValue: $('size-value'),
+    minSeg: $('min-seg'),
     roundsHint: $('rounds-hint'),
     categoryGrid: $('category-grid'),
     categoryToggle: $('category-toggle'),
@@ -75,8 +76,7 @@
     timerNum: $('timer-num'),
     hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
-    hintKindBtn: $('hint-kind-btn'),
-    hintCharBtn: $('hint-char-btn'),
+    hintNext: $('hint-next'),
     gotRight: $('got-right'),
     giveUp: $('give-up'),
     resultTitle: $('result-title'),
@@ -115,12 +115,14 @@
   // ---------- 開場：一隊幾人、每隊幾分鐘、每個人比多久 ----------
 
   var totalPasses = function () { return prep.size - 1; };
+  // 每隊幾分鐘：單選這幾個（一按就到；用 −／＋ 從 5 到 15 要按很多下）
+  var MIN_STEPS = [3, 5, 8, 12, 15];
 
   function syncSetup() {
     el.sizeValue.textContent = prep.size;
     el.sizeLess.disabled = prep.size <= SIZE_MIN;
     el.sizeMore.disabled = prep.size >= SIZE_MAX;
-    document.querySelectorAll('input[name="min"]').forEach(function (input) {
+    el.minSeg.querySelectorAll('input').forEach(function (input) {
       input.checked = input.value === String(prep.min);
     });
     document.querySelectorAll('input[name="sec"]').forEach(function (input) {
@@ -131,6 +133,23 @@
   function setSize(n) {
     prep.size = Math.max(SIZE_MIN, Math.min(SIZE_MAX, n));
     syncSetup();
+  }
+  function renderMinSeg() {
+    MIN_STEPS.forEach(function (n) {
+      var label = document.createElement('label');
+      label.className = 'seg-item';
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'min';
+      input.value = String(n);
+      input.addEventListener('change', function () {
+        prep.min = n;
+        syncSetup();
+      });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(fill(T.minUnit, { n: n })));
+      el.minSeg.appendChild(label);
+    });
   }
 
   // 題目類型：照比手畫腳（第一張「隨機」，點某一類改成自己挑、可複選，最後一類取消掉回到隨機）
@@ -351,9 +370,6 @@
     renderMask();
     el.hintKind.textContent = hint.kind ? card[0] : '';
     el.hintKind.hidden = !hint.kind;
-    el.hintKindBtn.disabled = hint.kind;
-    // 只剩最後一個字沒露出來，就不能再多給了
-    el.hintCharBtn.disabled = hiddenLetters().length <= 1;
   }
 
   function giveKind() {
@@ -361,13 +377,51 @@
     syncHints();
     track('charades_relay_hint_shown', { round_number: roundNumber, kind: 'category', category: card[0] });
   }
-  // 每按一次隨機多露一個字（最後一個字不露）
+  // 隨機露一個字（最後一個字不露，一個字的題目就不給）
   function giveChar() {
     var hidden = hiddenLetters();
     if (hidden.length <= 1) return;
     hint.shown.push(hidden[Math.floor(Math.random() * hidden.length)]);
     syncHints();
     track('charades_relay_hint_shown', { round_number: roundNumber, kind: 'char', shown: hint.shown.length, category: card[0] });
+  }
+
+  /*
+   * 猜的時候自動給提示（老闆 11/03 要求，取代原本的兩顆提示鍵）：
+   * 猜了 HINT_KIND_AT 秒還沒中就亮類型、HINT_CHAR_AT 秒露一個字；卡片下面寫還有幾秒給下一個提示。
+   * 「猜中了！」「沒猜到，公布答案」隨時都能按，不用等提示跑完。
+   */
+  var HINT_KIND_AT = 10;
+  var HINT_CHAR_AT = 20;
+  var guessId = 0;
+  var guessSince = 0;
+
+  function stopGuessTimer() {
+    clearInterval(guessId);
+    guessId = 0;
+  }
+  function startGuessTimer() {
+    stopGuessTimer();
+    guessSince = Date.now();
+    tickGuess();
+    guessId = setInterval(tickGuess, 200);
+  }
+  function tickGuess() {
+    var s = (Date.now() - guessSince) / 1000;
+    if (!hint.kind && s >= HINT_KIND_AT) {
+      giveKind();
+      sfx.hint();
+    }
+    if (!hint.shown.length && s >= HINT_CHAR_AT) {
+      giveChar();
+      sfx.hint();
+    }
+    if (!hint.kind) el.hintNext.textContent = fill(T.hintKindIn, { s: Math.ceil(HINT_KIND_AT - s) });
+    else if (!hint.shown.length && hiddenLetters().length > 1) el.hintNext.textContent = fill(T.hintCharIn, { s: Math.ceil(HINT_CHAR_AT - s) });
+    else {
+      el.hintNext.textContent = '';
+      stopGuessTimer();
+    }
   }
 
   function flip() {
@@ -460,6 +514,8 @@
   var sfx = {
     draw: function () { tune([[660, 0.08, 0.07], [990, 0.12, 0]]); },
     pass: function () { tune([[523, 0.07, 0.06], [784, 0.1, 0]]); },
+    // 猜的時候自動給提示
+    hint: function () { tune([[784, 0.08, 0.08], [988, 0.14, 0]], 0.16); },
     // 這一棒時間到、自動換人：低一點、長一點，跟自己按的那一聲分得出來
     swap: function () { beep(440, 0.4, 0.22); },
     // 整隊時間到
@@ -488,6 +544,7 @@
     views.play.setAttribute('data-phase', next);
     el.card.setAttribute('data-stage', next);
     if (next !== 'relay') stopTimer();
+    if (next !== 'guess') stopGuessTimer();
     setRunning(!!RUNNING[next]);
     tickClock();
     renderLead();
@@ -553,6 +610,7 @@
     if (auto) sfx.swap();
     sfx.guess();
     setPhase('guess');
+    startGuessTimer();
     track('charades_relay_passed', { round_number: roundNumber, passes: pass, seconds: prep.sec });
   }
 
@@ -704,12 +762,6 @@
 
   el.sizeLess.addEventListener('click', function () { setSize(prep.size - 1); });
   el.sizeMore.addEventListener('click', function () { setSize(prep.size + 1); });
-  document.querySelectorAll('input[name="min"]').forEach(function (input) {
-    input.addEventListener('change', function () {
-      prep.min = Number(input.value);
-      syncSetup();
-    });
-  });
   document.querySelectorAll('input[name="sec"]').forEach(function (input) {
     input.addEventListener('change', function () {
       prep.sec = Number(input.value);
@@ -734,8 +786,6 @@
     flip();
   });
   el.relayStart.addEventListener('click', startRelay);
-  el.hintKindBtn.addEventListener('click', giveKind);
-  el.hintCharBtn.addEventListener('click', giveChar);
   el.gotRight.addEventListener('click', function () { judge(true); });
   el.giveUp.addEventListener('click', function () { judge(false); });
   el.nextRound.addEventListener('click', startRound);
@@ -752,6 +802,7 @@
   if (saved && typeof saved === 'object' && typeof saved.sound === 'boolean') settings.sound = saved.sound;
   syncSoundButton();
   renderCategories();
+  renderMinSeg();
   syncSetup();
   el.deck.innerHTML = deckArt();
   Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);

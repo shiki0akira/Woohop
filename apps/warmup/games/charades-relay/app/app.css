@@ -25,6 +25,8 @@
 .setup-row .stepper button { width: 44px; height: 48px; }
 .setup-row .stepper button:disabled { opacity: .4; cursor: default; }
 .setup-row .stepper output { min-width: 48px; }
+/* 每隊幾分鐘五個選項擠一排：字小一點、不換行 */
+#min-seg .seg-item { padding: 0 2px; font-size: 14px; white-space: nowrap; }
 .per-field .seg-item { padding: 0 2px; }
 .setup-panel .field-label-gap { display: block; margin-top: 18px; }
 #rounds-hint { margin: 10px 0 0; }
@@ -80,9 +82,8 @@
 .mask-box { display: inline-block; width: .9em; height: .9em; border: 3px solid currentColor; border-radius: 8px; background: var(--surface); opacity: .85; }
 .mask-word { display: inline-flex; align-items: center; gap: inherit; white-space: nowrap; }
 .mask-space { display: inline-block; width: .35em; }
-.hint-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.hint-row .btn { min-width: 0; height: auto; min-height: var(--h, 48px); padding: 8px 10px; white-space: normal; line-height: 1.25; text-wrap: balance; }
-.hint-row .btn:disabled { opacity: .45; cursor: default; }
+/* 自動提示的倒數：「5 秒後提示類型」 */
+.hint-next { min-height: 1.5em; text-align: center; font-weight: 800; }
 
 /* 卡片下面：猜中了！、沒猜到，公布答案（只在 guess） */
 .guess-actions { display: grid; justify-items: center; gap: 12px; margin-top: 16px; }
