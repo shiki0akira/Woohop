@@ -71,7 +71,6 @@
 .relay-app .timer-ring { width: 150px; height: 150px; margin: 4px 0; }
 .relay-app .timer-ring .num { font-size: 46px; }
 .stage-relay .btn-block { width: 100%; }
-#pass-next { --h: 72px; font-size: 20px; }
 
 /* guess：一個字一個方塊＋兩種提示（照比手畫腳 games/charades/app/app.css，顏色換成這個遊戲的綠） */
 .relay-app .namer .guess-card { min-height: 120px; padding: 18px 12px; align-content: center; }

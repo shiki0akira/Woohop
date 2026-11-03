@@ -25,9 +25,9 @@
   var CATS = window.RELAY.words; // [代號, 類型名稱, [題目...]]（全站共用的 apps/homepage/src/word-bank.mjs）
   var ALL_CATS = CATS.map(function (c) { return c[0]; });
 
-  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、每隊 5 分鐘、每人 10 秒、隨機題目
+  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、每隊 5 分鐘、每人 15 秒、隨機題目
   // 一隊幾人決定要傳幾棒（size - 1），最後一棒傳完自動進猜答案
-  var prep = { size: 5, min: 5, sec: 10, cats: ALL_CATS.slice() };
+  var prep = { size: 5, min: 5, sec: 15, cats: ALL_CATS.slice() };
   var randomCats = true;
   // 只記聲音開關（跟定時炸彈一樣）
   var settings = { sound: true };
@@ -73,7 +73,6 @@
     timer: $('timer'),
     timerArc: $('timer-arc'),
     timerNum: $('timer-num'),
-    passNext: $('pass-next'),
     hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
     hintKindBtn: $('hint-kind-btn'),
@@ -207,6 +206,8 @@
       title: fill(line[0], v),
       say: fill(line[1], v),
     });
+    // 答案揭曉只放標題、不放照著念（老闆 11/03 要求）
+    Leader.hideSay(!line[1]);
   }
 
   // ---------- 整隊的總倒數：只在 word／relay／guess 跑，抽題目、答案揭曉時停住 ----------
@@ -375,7 +376,7 @@
     el.drawn.classList.add('pop');
   }
 
-  // ---------- 每一棒的倒數：時間到響一聲、自動換下一棒（比完的可以提早按）；最後一棒時間到就進猜答案 ----------
+  // ---------- 每一棒的倒數：時間到響一聲、自動換下一棒（沒有手動換人鍵，老闆 11/03 要求）；最後一棒時間到就進猜答案 ----------
 
   var timerId = 0;
   var endsAt = 0;
@@ -496,12 +497,11 @@
     el.roundNo.textContent = fill(T.roundNo, { n: Math.max(1, roundNumber) });
   }
 
-  // 知道一隊幾人，所以最後一棒的按鈕直接是「最後一個人看完了」，按了進猜答案
+  // 知道一隊幾人，所以最後一棒寫「比給最後一個人看」，時間到就進猜答案
   function renderPass() {
     var last = pass >= totalPasses();
     el.passNo.textContent = fill(T.passNo, { k: pass, total: totalPasses() });
     el.passWho.textContent = fill(last ? T.passWhoLast : T.passWho, { k: pass, next: pass + 1 });
-    el.passNext.textContent = last ? T.lastSeen : T.passNext;
     startTimer();
   }
 
@@ -734,7 +734,6 @@
     flip();
   });
   el.relayStart.addEventListener('click', startRelay);
-  el.passNext.addEventListener('click', function () { nextPass(false); });
   el.hintKindBtn.addEventListener('click', giveKind);
   el.hintCharBtn.addEventListener('click', giveChar);
   el.gotRight.addEventListener('click', function () { judge(true); });
