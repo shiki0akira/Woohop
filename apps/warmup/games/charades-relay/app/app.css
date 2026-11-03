@@ -18,9 +18,10 @@
 /* ---------- 開場 ---------- */
 .setup-panel .field-label:first-child { margin-top: 0; }
 .setup-panel .hint { margin: 2px 0 10px; }
-.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px 12px; }
 .setup-row .field-label { margin-top: 0; }
-.per-field { flex: 1 1 140px; }
+/* 每隊幾分鐘自己一行（老闆 11/03 要求），跟下面的每個人比幾秒一樣滿版 */
+.per-field { flex: 1 1 100%; }
 .setup-row .stepper button { width: 44px; height: 48px; }
 .setup-row .stepper button:disabled { opacity: .4; cursor: default; }
 .setup-row .stepper output { min-width: 48px; }
