@@ -104,6 +104,8 @@
                 </div>
               </div>
               <canvas class="paint-canvas" id="canvas" aria-label="{{canvasLabel}}"></canvas>
+              <!-- 筆的顏色：黑、藍、紅、黃、綠（app.js 的 INKS，renderColors() 產生） -->
+              <div class="paint-colors" id="paint-colors" role="group" aria-label="{{colorLabel}}"></div>
               <div class="paint-tools">
                 <button class="btn btn-secondary" id="undo" type="button">{{undoButton}}</button>
                 <button class="btn btn-secondary" id="clear" type="button">{{clearButton}}</button>

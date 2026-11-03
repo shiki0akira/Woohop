@@ -75,6 +75,7 @@
     timerArc: $('timer-arc'),
     timerNum: $('timer-num'),
     canvas: $('canvas'),
+    colors: $('paint-colors'),
     undo: $('undo'),
     clear: $('clear'),
     paintDone: $('paint-done'),
@@ -268,14 +269,37 @@
     el.drawn.classList.add('pop');
   }
 
-  // ---------- 畫布：手指畫黑線，可以復原一筆、清掉重畫 ----------
-  // 筆畫存成 0～1 的座標，畫布大小變了（轉螢幕）也能重畫；交出去時壓成白底 PNG 存進 drawings
+  // ---------- 畫布：手指畫線，五種筆的顏色，可以復原一筆、清掉重畫 ----------
+  // 一筆 = { c: 顏色, p: [[x, y]⋯] }，座標存 0～1，畫布大小變了（轉螢幕）也能重畫；交出去時壓成白底 PNG 存進 drawings
 
   var ctx = el.canvas.getContext('2d');
   var strokes = [];
   var current = null;
   var locked = true;
-  var INK = '#22222c';
+  // 筆的顏色（老闆 11/03 要求：黑、藍、紅、黃、綠），名稱在 locale 的 colorNames，順序要一樣；黃色在白底上要夠深才看得到
+  var INKS = ['#22222c', '#3D54B6', '#E0483B', '#F2B200', '#2E9C78'];
+  var ink = INKS[0];
+
+  function renderColors() {
+    INKS.forEach(function (c, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'paint-color';
+      b.style.setProperty('--ink', c);
+      b.setAttribute('aria-label', T.colorNames[i]);
+      b.title = T.colorNames[i];
+      b.addEventListener('click', function () {
+        ink = c;
+        syncColors();
+      });
+      el.colors.appendChild(b);
+    });
+  }
+  function syncColors() {
+    Array.prototype.forEach.call(el.colors.children, function (b, i) {
+      b.setAttribute('aria-pressed', String(INKS[i] === ink));
+    });
+  }
 
   function fitCanvas() {
     var r = el.canvas.getBoundingClientRect();
@@ -292,15 +316,15 @@
     ctx.fillRect(0, 0, w, h);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = INK;
     ctx.lineWidth = Math.max(3, w * 0.012);
     strokes.forEach(function (s) {
+      ctx.strokeStyle = s.c;
       ctx.beginPath();
-      s.forEach(function (p, i) {
+      s.p.forEach(function (p, i) {
         if (i) ctx.lineTo(p[0] * w, p[1] * h);
         else ctx.moveTo(p[0] * w, p[1] * h);
       });
-      if (s.length === 1) ctx.lineTo(s[0][0] * w + 0.1, s[0][1] * h); // 只點一下也畫出一個點
+      if (s.p.length === 1) ctx.lineTo(s.p[0][0] * w + 0.1, s.p[0][1] * h); // 只點一下也畫出一個點
       ctx.stroke();
     });
     syncTools();
@@ -317,13 +341,13 @@
     if (locked) return;
     e.preventDefault();
     el.canvas.setPointerCapture(e.pointerId);
-    current = [point(e)];
+    current = { c: ink, p: [point(e)] };
     strokes.push(current);
     redraw();
   });
   el.canvas.addEventListener('pointermove', function (e) {
     if (!current) return;
-    current.push(point(e));
+    current.p.push(point(e));
     redraw();
   });
   ['pointerup', 'pointercancel'].forEach(function (type) {
@@ -500,6 +524,8 @@
     strokes = [];
     current = null;
     locked = false;
+    ink = INKS[0]; // 每個人都從黑色開始
+    syncColors();
     el.painterNo.textContent = fill(T.painterNo, { k: painter, total: lastPainter() });
     sfx.go();
     setPhase('paint');
@@ -744,6 +770,7 @@
   if (saved && typeof saved === 'object' && typeof saved.sound === 'boolean') settings.sound = saved.sound;
   syncSoundButton();
   renderCategories();
+  renderColors();
   syncSetup();
   el.deck.innerHTML = deckArt();
   Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);

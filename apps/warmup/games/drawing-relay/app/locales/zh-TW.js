@@ -67,6 +67,9 @@ export default {
   skipButton: '換一題',
   painterNo: '第 {k} / {total} 個人畫',
   canvasLabel: '畫布，用手指畫',
+  colorLabel: '筆的顏色',
+  // 順序跟 app.js 的 INKS 一樣：黑、藍、紅、黃、綠
+  colorNames: ['黑色', '藍色', '紅色', '黃色', '綠色'],
   undoButton: '復原',
   clearButton: '清掉重畫',
   doneButton: '畫好了',

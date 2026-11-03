@@ -65,6 +65,13 @@
   background: #ffffff; box-shadow: 0 4px 0 var(--outline);
 }
 .paint-canvas { touch-action: none; cursor: crosshair; }
+/* 筆的顏色：五顆圓點，選到的那顆外面多一圈 */
+.paint-colors { display: flex; justify-content: center; gap: 14px; }
+.paint-color {
+  width: 36px; height: 36px; padding: 0; border: 2px solid var(--outline); border-radius: 50%;
+  background: var(--ink); box-shadow: 0 3px 0 var(--outline); cursor: pointer;
+}
+.paint-color[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 3px; transform: translateY(-2px); }
 .paint-tools { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 8px; }
 .paint-tools .btn { min-width: 0; padding: 0 8px; }
 .paint-tools .btn:disabled { opacity: .45; cursor: default; }

@@ -8,7 +8,7 @@ import { wordsFor, checkWords } from '../../../homepage/src/word-bank.mjs';
 export const CONTENT_UPDATED = '2026-11-03';
 
 // 每個語言長度要一樣的清單
-export const LIST_KEYS = ['ruleCards', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps'];
+export const LIST_KEYS = ['ruleCards', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps', 'colorNames'];
 
 // 題庫跟比手畫腳同一份（全站共用的 apps/homepage/src/word-bank.mjs），只嵌畫得出來的（draw）
 export const RAW_TOKENS = ['wordsJson'];

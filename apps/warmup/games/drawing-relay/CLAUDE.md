@@ -14,7 +14,7 @@
 - **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5；畫的人 `size - 1`，最後一個人只猜）、`sec`（每人畫幾秒 20／30／45／60，預設 30）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-drawing-relay-settings']`（`{ sound }`）。
 - **play 分七段** `setPhase()`：`draw`（抽題目）→ `word`（給第 1 個人看，開始畫／換一題）→ `paint`（畫）→ `handoff`（交給下一個人）→ `view`（看上一張圖 `VIEW_SEC`＝5 秒，倒數完自動進 paint）→ ⋯⋯ → `guess`（最後一個人看最後一張圖）→ `reveal`（答案＋每個人的畫）。題卡 `#card[data-stage]` 跟 phase 同名（reveal 那面的 class 是 `.stage-reveal-answer`）。
   - **步驟頭**只在 `PLAY_LEAD`（draw／reveal），其他時候手機在畫的人手上。reveal 只有標題，draw 的照著念只在第 1 題出現（`Leader.hideSay()`，跟比手畫腳接力賽一樣）。
-  - **畫布** `#canvas`：筆畫存成 0～1 的座標（`strokes`），`redraw()` 每次整張重畫（白底黑線，線寬跟著畫布寬），`fitCanvas()` 依顯示大小×devicePixelRatio（最多 2）設解析度；`locked` 時不收指標。工具只有復原一筆、清掉重畫、畫好了（不給顏色，題目是看形狀猜）。
+  - **畫布** `#canvas`：筆畫存成 0～1 的座標（`strokes`），`redraw()` 每次整張重畫（白底黑線，線寬跟著畫布寬），`fitCanvas()` 依顯示大小×devicePixelRatio（最多 2）設解析度；`locked` 時不收指標。筆有五種顏色（`INKS`：黑、藍、紅、黃、綠，11/03 老闆要求；名稱在 locale 的 `colorNames`，順序一樣），一筆存成 `{ c, p }`，每個人開始畫時回到黑色；工具是復原一筆、清掉重畫、畫好了。
   - **收畫** `finishPainting(auto)`：時間到（`tickTimer()` 到 0）或按「畫好了」，把畫布 `toDataURL('image/png')` 存進 `drawings`，交給下一個人。`painter` 是現在輪到第幾個人。
   - **倒數**：畫的時候最後 10 秒每秒輕滴、最後三秒高音嗶，到 0 震動＋`sfx.swap`。倒數圈是設計系統的 `.timer-ring`（小號 `.timer-sm`）。離開 paint 一律 `stopTimer()`，離開 view 一律 `stopView()`。
   - **揭曉** `revealAnswer()`：猜的時候只有一顆「公布答案」，**不記猜中沒**（11/03 老闆要求），`judged` 數比了幾題、`drawn` 數這場畫了幾張；進 reveal 後`renderGallery()` 兩張一排列出每個人的畫（`.paint-img`，欄寬用 `minmax(0, 1fr)` 鎖住，圖片原始尺寸很大）。主持人按「下一題」（卡片裡）或「結束遊戲」（卡片外面下面的 `.reveal-actions`，11/03 老闆要求）。
