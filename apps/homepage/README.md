@@ -25,6 +25,7 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | 木頭人動作版 | [www.vibeweb100.com/statue](https://www.vibeweb100.com/statue/zh-TW/) | `apps/warmup/games/statue` | 已上線（2026-10-28，8 語） |
 | 比手畫腳 | [www.vibeweb100.com/charades](https://www.vibeweb100.com/charades/zh-TW/) | `apps/warmup/games/charades` | 已上線（2026-10-28，8 語） |
 | 比手畫腳接力賽 | [www.vibeweb100.com/charades-relay](https://www.vibeweb100.com/charades-relay/zh-TW/) | `apps/warmup/games/charades-relay` | 已上線（2026-11-03，8 語） |
+| 畫畫接力 | [www.vibeweb100.com/drawing-relay](https://www.vibeweb100.com/drawing-relay/zh-TW/) | `apps/warmup/games/drawing-relay` | 已上線（2026-11-03，8 語） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
 ## 架構說明
