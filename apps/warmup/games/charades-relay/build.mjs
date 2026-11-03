@@ -1,5 +1,5 @@
 /*
- * 比手畫腳接力的建置設定。共用的流程在 ../../scripts/build.js，這裡只放這個遊戲不一樣的地方。
+ * 比手畫腳接力賽的建置設定。共用的流程在 ../../scripts/build.js，這裡只放這個遊戲不一樣的地方。
  */
 
 import { wordsFor, checkWords } from '../../../homepage/src/word-bank.mjs';
