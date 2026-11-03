@@ -13,7 +13,7 @@
 - **一步一步帶**：`setup` → `rules` → `play` → `end`，用 `showScreen()` 切換。返回鍵一律回第一頁；已經抽過題目就先確認（照比手畫腳）。
 - **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5，傳 `size - 1` 棒）、`min`（每隊幾分鐘 3／5／8，預設 5）、`sec`（每人幾秒 10／15／20，預設 15；沒有「不計時」，自動換人要靠它）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-charades-relay-settings']`（`{ sound }`）。
 - **play 分五段** `setPhase()`：`draw` → `word` → `relay` → `guess` → `reveal`。題卡 `#card[data-stage]` 跟 phase 同名（reveal 那面的 class 是 `.stage-reveal-answer`，避開 game.css 的 `.stage-reveal`）。
-  - **步驟頭**：手機一直在主持人手上，所以 play 也有步驟頭，但只在 `PLAY_LEAD`（draw／reveal）兩段出現，文案是 locale 的 `lead.draw`／`lead.reveal`（reveal 只有標題「答案揭曉」，照著念是空的，`renderLead()` 用 `Leader.hideSay()` 收起來）。word、relay、guess 由 CSS 藏起 `.play-lead`。
+  - **步驟頭**：手機一直在主持人手上，所以 play 也有步驟頭，但只在 `PLAY_LEAD`（draw／reveal）兩段出現，文案是 locale 的 `lead.draw`／`lead.reveal`（reveal 只有標題「答案揭曉」，照著念是空的；draw 的照著念只在第 1 題出現。都由 `renderLead()` 用 `Leader.hideSay()` 收起來）。word、relay、guess 由 CSS 藏起 `.play-lead`。
   - **guess 照比手畫腳**（11/02 老闆要求）：`hint` 記這一題給過的提示，`renderMask()` 一個字一個方塊，`giveKind()` 黃色類型標籤、`giveChar()` 隨機露一個字（最後一個字不露）。沒有偷看答案（11/03 老闆拿掉）。卡片下面「猜中了！」／「沒猜到，公布答案」都會 `judge()` 記下來、進 reveal 顯示答案，主持人按「下一題」／「看結果」才往下（`afterReveal()`）。
   - **整隊總倒數** `startClock()`／`tickClock()`（每 200ms）：`usedMs` 累計、`runningSince` 記這段開始；**只在 `RUNNING`（word／relay／guess）跑**，draw、reveal 停住（`setPhase()` 呼叫 `setRunning()`），上方 `#clock` 停住時變淡、最後 10 秒變紅，進度條是用掉的比例。到 0 `timeUp()`：正在傳／猜的那題不算，直接 `endGame()`。`right` 猜中幾題、`judged` 比完幾題。
   - **每一棒倒數** `startTimer()`／`tickTimer()`：每一棒重新算，每秒輕滴一聲、最後三秒高音嗶，到 0 震動＋`nextPass(true)` **自動換下一棒**（`sfx.swap`，跟自己按的 `sfx.pass` 不同聲）；最後一棒到 0 直接進 guess。**沒有手動換人鍵**（11/03 老闆拿掉），全部靠倒數。倒數圈是設計系統的 `.timer-ring`。離開 relay 一律 `stopTimer()`。

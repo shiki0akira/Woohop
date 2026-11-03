@@ -206,8 +206,8 @@
       title: fill(line[0], v),
       say: fill(line[1], v),
     });
-    // 答案揭曉只放標題、不放照著念（老闆 11/03 要求）
-    Leader.hideSay(!line[1]);
+    // 答案揭曉只放標題、不放照著念；排好了嗎的照著念只在第 1 題出現，之後大家都知道了（老闆 11/03 要求）
+    Leader.hideSay(!line[1] || (screen === 'play' && phase === 'draw' && roundNumber > 1));
   }
 
   // ---------- 整隊的總倒數：只在 word／relay／guess 跑，抽題目、答案揭曉時停住 ----------
