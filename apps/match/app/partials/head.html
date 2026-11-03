@@ -27,6 +27,8 @@
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
+      // 只記正式網域：本機、區網 IP、workers.dev 的測試不送（2026-11-03，本機測試曾灌高開局次數）
+      if (!/(^|\.)vibeweb100\.com$/.test(location.hostname)) window['ga-disable-G-S7PE5687BG'] = true;
       gtag('js', new Date());
       gtag('config', 'G-S7PE5687BG', { send_page_view: false });
     </script>

@@ -85,6 +85,8 @@ ${alternates}
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
+      // 只記正式網域：本機、區網 IP、workers.dev 的測試不送（2026-11-03，本機測試曾灌高開局次數）
+      if (!/(^|\\.)vibeweb100\\.com$/.test(location.hostname)) window['ga-disable-G-S7PE5687BG'] = true;
       gtag('js', new Date());
       // 自動 page_view 關掉，由 assets/site.js 在載入時手動送（帶正確的 page_path）
       gtag('config', 'G-S7PE5687BG', { send_page_view: false });
