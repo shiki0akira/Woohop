@@ -39,7 +39,7 @@ export default {
   sizeLess: 'Ein Spieler weniger',
   sizeMore: 'Ein Spieler mehr',
   minLabel: 'Minuten pro Team',
-  minUnit: '{n} Min.',
+  minUnit: '{n}',
   secLabel: 'Sekunden pro Person',
   sec10: '10 Sek.',
   sec15: '15 Sek.',

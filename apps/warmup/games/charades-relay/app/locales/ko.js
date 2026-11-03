@@ -39,7 +39,7 @@ export default {
   sizeLess: '한 명 줄이기',
   sizeMore: '한 명 늘리기',
   minLabel: '팀당 시간',
-  minUnit: '{n}분',
+  minUnit: '{n}',
   secLabel: '한 사람당 시간',
   sec10: '10초',
   sec15: '15초',

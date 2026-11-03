@@ -39,7 +39,7 @@ export default {
   sizeLess: '1人減らす',
   sizeMore: '1人増やす',
   minLabel: '1チームの持ち時間',
-  minUnit: '{n}分',
+  minUnit: '{n}',
   secLabel: '一人の持ち時間',
   sec10: '10秒',
   sec15: '15秒',

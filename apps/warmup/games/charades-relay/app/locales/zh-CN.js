@@ -39,7 +39,7 @@ export default {
   sizeLess: '少一个人',
   sizeMore: '多一个人',
   minLabel: '每队几分钟',
-  minUnit: '{n} 分',
+  minUnit: '{n}',
   secLabel: '每个人比几秒',
   sec10: '10 秒',
   sec15: '15 秒',
