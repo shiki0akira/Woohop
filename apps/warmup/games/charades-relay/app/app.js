@@ -749,11 +749,10 @@
     playedWords.forEach(function (h) {
       var li = document.createElement('li');
       li.className = 'history-item' + (h.ok ? ' is-right' : '');
-      // 前面一個記號：猜中綠色圈圈、沒猜到紅色叉叉（11/03 老闆要求，底色不用紅綠）
+      // 前面一個記號：猜中綠色圈圈、沒猜到紅色叉叉（11/03 老闆要求，底色不用紅綠）；兩個都在 app.css 用 CSS 畫，線條一樣粗
       var icon = document.createElement('span');
       icon.className = 'history-icon';
       icon.setAttribute('aria-hidden', 'true');
-      icon.textContent = h.ok ? '' : '✕'; // 圈圈用 CSS 畫（字型裡的 ○ 太細）
       li.appendChild(icon);
       var word = document.createElement('span');
       word.className = 'history-word';
