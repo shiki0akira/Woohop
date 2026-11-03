@@ -198,6 +198,20 @@
       ${makeFace('wow', 78, 66, 2)}
       ${bubble(30, 30)}${boxes(122, 26)}`;
     },
+    // 比手畫腳接力賽（2026-11-03）：三隻小人排一列，最前面那隻轉身比動作、伸手拍下一隻的肩；後面兩隻背對（沒有臉），最後一隻頭上冒問號
+    'charades-relay': () => {
+      const arm = (d, c) => `<path d="${d}" fill="none" stroke="#22222c" stroke-width="12" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c}" stroke-width="5.5" stroke-linecap="round"/>`;
+      const hand = (x, y, c) => `<circle cx="${x}" cy="${y}" r="5.5" fill="${c}" ${K}/>`;
+      const bubble = (x, y) => `${body(`<path d="M${x - 13} ${y - 12}h26a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-5l-7 7v-7h-14a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z"/>`, '#ffffff', '', false)}<text x="${x}" y="${y + 3}" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>`;
+      return `
+      ${ground}${burst(18, 34, '#FFC628')}${dot(150, 92, '#EE7B6A', 4)}${plus(80, 22, '#7489E6')}
+      ${arm('M30 82q-12 -8 -10 -26', '#a8dccb')}${hand(20, 56, '#a8dccb')}${arm('M48 84q10 -6 22 -10', '#a8dccb')}${hand(71, 74, '#a8dccb')}
+      ${body('<path d="M20 117V74A18 18 0 0 1 56 74V117Z"/>', '#4FB59A', '<path d="M44 40h20v90H44z" fill="#3f9c83"/>')}
+      ${makeFace('wow', 38, 80, 1.6)}
+      ${body('<path d="M64 117V70A18 18 0 0 1 100 70V117Z"/>', '#7489E6', '<path d="M88 40h20v90H88z" fill="#5d72d0"/>')}
+      ${body('<path d="M108 117V70A18 18 0 0 1 144 70V117Z"/>', '#FFC628', '<path d="M132 40h20v90h-20z" fill="#eeb100"/>')}
+      ${bubble(126, 30)}`;
+    },
     // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
     toolActions: () => {
       const card = (x, y, c, a) => `<g transform="rotate(${a} ${x + 27} ${y + 36})">${body(`<rect x="${x}" y="${y}" width="54" height="72" rx="9"/>`, c, '', false)}</g>`;

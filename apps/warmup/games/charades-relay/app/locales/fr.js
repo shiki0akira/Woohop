@@ -1,0 +1,108 @@
+/*
+ * Français. Le jeu existe sous le nom de « téléphone arabe mimé » ; on garde « Téléphone mimé », plus court et
+ * sans l’expression que beaucoup évitent aujourd’hui. Les indices révèlent une lettre.
+ */
+export default {
+  htmlLang: 'fr',
+  ogLocale: 'fr_FR',
+
+  seoTitle: 'Téléphone mimé | Faites passer le mime le long de la file — en temps limité, qui en trouve le plus ?',
+  seoDesc:
+    'Le téléphone mimé sur votre téléphone : il tire les mots, chronomètre chaque joueur, passe automatiquement au suivant et compte combien votre équipe en trouve avant la fin du temps. Tout le monde se met en file, dos à l’avant ; le premier voit le mot et le mime au suivant, et ainsi de suite jusqu’au dernier, qui devine. Moins il y a de secondes, plus c’est la panique — et le meilleur moment, c’est de remonter la file en demandant « tu croyais que c’était quoi ? ». Sans appli ni inscription — parfait pour un team building, une soirée ou en classe.',
+  rulesSeoTitle: 'Règles du téléphone mimé : déroulement, chrono et conseils pour l’animateur',
+  rulesSeoDesc: 'Comment jouer au téléphone mimé : comment se placer, combien de secondes par joueur, combien de minutes par équipe, quand une réponse compte, comment faire jouer deux équipes en même temps, avec un texte que l’animateur peut lire tel quel.',
+
+  navTitle: 'Téléphone mimé',
+  navRules: 'Règles',
+  gameBack: 'Retour',
+  rulesLinkText: 'Toutes les règles →',
+  soundLabel: 'Son',
+
+  heroTitle: 'Téléphone mimé : on se passe le mime, le dernier devine',
+  heroDesc: 'Tout le monde se met en file, dos à l’avant. Le premier voit le mot, se retourne et le mime au suivant, et le mime passe de joueur en joueur jusqu’au dernier, qui crie la réponse. Chacun n’a que quelques secondes avant de passer la main ! Quelle équipe en trouvera le plus avant la fin du temps ?',
+
+  lead: {
+    setup: ['C’est parti', 'On joue au « Téléphone mimé » ! D’abord, combien de joueurs par équipe ? Au moins trois.'],
+    rules: ['Les règles', 'Mettez-vous en file et tournez-moi tous le dos. Je montre le mot au premier. Il tape sur l’épaule du suivant et lui mime le mot — sans parler, sans aucun bruit. Chacun n’a que quelques secondes : quand le téléphone sonne, c’est au suivant ! Le dernier crie la réponse. Voyons combien on en trouve avant la fin du temps !'],
+    draw: ['Tout le monde est prêt ?', 'Mettez-vous en file — tout le monde sauf le premier, tournez-moi le dos !'],
+    reveal: ['La réponse', ''],
+    end: ['Temps écoulé !', '{result}'],
+  },
+  ruleCards: [
+    ['En file', 'Tout le monde en file, dos à l’avant. Seul le premier voit le mot.'],
+    ['Mimez au suivant', 'Tapez sur l’épaule du suivant et mimez. Aucun bruit ! Quand le temps est fini, on passe au suivant.'],
+    ['Le dernier devine', 'Le dernier donne la réponse. Trouvez-en un maximum avant la fin du temps !'],
+  ],
+  rulesNext: 'Suivant : on commence',
+
+  sizeLabel: 'Joueurs par équipe',
+  sizeLess: 'Un joueur de moins',
+  sizeMore: 'Un joueur de plus',
+  minLabel: 'Minutes par équipe',
+  minUnit: '{n} min',
+  secLabel: 'Secondes par joueur',
+  sec10: '10 s',
+  sec15: '15 s',
+  sec20: '20 s',
+  roundsHint: 'Combien en trouverez-vous en {min} minutes ? Chaque mot passe {passes} fois, {sec} secondes par joueur — le changement est automatique.',
+  categoryLabel: 'Catégories',
+  categoryHint: 'Plusieurs choix possibles (au moins une)',
+  categoryRandom: 'Au hasard',
+  categoryRandomSub: 'Tout mélangé',
+  listSep: ', ',
+  startButton: 'Lancer la partie',
+
+  roundNo: 'Mot {n}',
+  clockLabel: 'Temps restant pour cette équipe',
+  drawButton: 'Tirer un mot',
+  drawHint: 'Montrez-le seulement au premier — que la file ne voie rien',
+  wordHint: 'C’est mémorisé ? Alors c’est parti, le chrono démarre',
+  startRelay: 'On fait passer !',
+  skipButton: 'Un autre mot',
+  passNo: 'Passage {k} sur {total}',
+  passWho: 'Le joueur {k} mime au joueur {next}',
+  passWhoLast: 'Le joueur {k} mime au dernier',
+  hintKindIn: 'Indice catégorie dans {s} s',
+  hintCharIn: 'Indice lettre dans {s} s',
+  gotRight: 'Trouvé !',
+  giveUp: 'Pas trouvé — voir la réponse',
+  resultRight: 'Trouvé ! La réponse est',
+  answerIs: 'La réponse est',
+  nextRound: 'Mot suivant',
+  againButton: 'Rejouer (équipe suivante)',
+
+  resultLine: '{n} trouvés en {min} minutes ! Applaudissez-vous — équipe suivante, préparez-vous !',
+  resultNone: 'Aucun trouvé cette fois… le mot s’est perdu en route ! L’équipe suivante fera-t-elle mieux ?',
+  finalRightLabel: 'Trouvés',
+  finalPlayedLabel: 'Joués',
+  finalCount: '{n}',
+
+  leaveTitle: 'Revenir au début ?',
+  leaveDesc: 'La partie recommence et le score de cette équipe ne sera pas gardé.',
+  leaveConfirm: 'Revenir au début',
+  leaveCancel: 'Continuer',
+
+  rulesTitle: 'Comment jouer au téléphone mimé',
+  rulesIntro: 'Tout le monde se met en file, dos à l’avant. Le premier voit le mot, se retourne et le mime au suivant, et le mime passe de joueur en joueur jusqu’au dernier, qui donne la réponse. Chacun n’a que quelques secondes avant de passer la main : quelle équipe en trouvera le plus avant la fin du temps ?',
+  rulesFacts: [
+    ['Joueurs', '3 à 10 par équipe ; au-delà, faites des équipes — même à 30, ça marche'],
+    ['Durée', '3 à 15 minutes par équipe (5 par défaut)'],
+    ['Matériel', 'Un téléphone pour l’animateur et de la place pour une file'],
+  ],
+  rulesHowHeading: 'Comment jouer',
+  rulesHowSteps: [
+    'Réglez le nombre de joueurs par équipe, les minutes par équipe (5 par défaut) et les secondes par joueur (15 par défaut — moins il y en a, plus c’est intense).',
+    'Tout le monde se met en file, dos à l’avant. L’animateur tire un mot et ne le montre qu’au premier ; une fois mémorisé, appuyez sur « On fait passer ! » : le chrono de l’équipe démarre.',
+    'Le premier tape sur l’épaule du deuxième, qui se retourne pour regarder : seulement du mime — pas de paroles, pas de bruit, pas de mots articulés sans voix. Quand les secondes sont écoulées, le téléphone sonne et passe tout seul au joueur suivant ; l’animateur n’a rien à toucher.',
+    'Une fois que le dernier a vu le mime, il devine. Des cases indiquent le nombre de lettres ; au bout de 10 secondes la catégorie s’affiche, au bout de 20 secondes une lettre. Appuyez sur « Trouvé ! » si c’est juste, ou à tout moment sur « Pas trouvé », puis tirez le mot suivant.',
+    'Le chrono s’arrête pendant l’affichage de la réponse : remontez la file en demandant « tu croyais que c’était quoi ? ». Quand le temps de l’équipe est écoulé, le mot en cours ne compte pas et le téléphone affiche le score. Pour l’équipe suivante, appuyez sur « Rejouer ».',
+  ],
+  rulesLeadHeading: 'Conseils pour l’animateur',
+  rulesLeadSay: 'On joue au téléphone mimé ! Mettez-vous en file, dos à l’avant. Le premier voit le mot, se retourne et le mime au suivant, et on le fait passer jusqu’au dernier, qui donne la réponse. Que du mime, aucun bruit — et chacun n’a que quelques secondes : quand le téléphone sonne, c’est au suivant ! Quelle équipe en trouvera le plus avant la fin du temps ?',
+  rulesLeadSteps: [
+    'Pour un grand groupe, faites des équipes (3 à 10 joueurs, trois équipes suffisent pour 30). Chaque équipe joue une manche avec le même temps ; celle qui en trouve le plus gagne.',
+    'Deux équipes peuvent aussi jouer en même temps : même nombre de joueurs, côte à côte. Les deux premiers voient le même mot et changent au même rythme. Les deux derniers répondent en même temps — la première bonne réponse marque, et l’animateur compte les points.',
+    'Remonter la file en demandant « tu croyais que c’était quoi ? » après la réponse, c’est le moment le plus drôle — ne le sautez pas (le chrono est arrêté).',
+  ],
+  rulesBack: '← Retour au jeu',
+};

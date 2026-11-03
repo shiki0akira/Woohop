@@ -1,0 +1,108 @@
+/*
+ * Español. Es el teléfono descompuesto (o escacharrado en España) pero con mímica; usamos «Mímica en cadena»,
+ * que se entiende igual en España y Latinoamérica. Las pistas revelan una letra.
+ */
+export default {
+  htmlLang: 'es',
+  ogLocale: 'es_ES',
+
+  seoTitle: 'Mímica en cadena | Pasa la mímica por la fila — contrarreloj, ¿quién adivina más?',
+  seoDesc:
+    'Mímica en cadena en el móvil: elige las palabras, cuenta los segundos de cada jugador, pasa solo al siguiente y apunta cuántas acierta tu equipo antes de que se acabe el tiempo. Todos en fila, de espaldas; el primero ve la palabra y se la representa al siguiente, y así hasta el último, que adivina. Cuantos menos segundos, más nervios y más disparates — y lo mejor es preguntar fila atrás «¿tú qué creías que era?». Sin apps ni registro — ideal para team building, fiestas y clase.',
+  rulesSeoTitle: 'Cómo jugar a la mímica en cadena: reglas, tiempo y consejos para el anfitrión',
+  rulesSeoDesc: 'Cómo jugar a la mímica en cadena: cómo ponerse en fila, cuántos segundos por jugador, cuántos minutos por equipo, cuándo vale una respuesta, cómo jugar dos equipos a la vez, y un texto que el anfitrión puede leer tal cual.',
+
+  navTitle: 'Mímica en cadena',
+  navRules: 'Cómo se juega',
+  gameBack: 'Volver',
+  rulesLinkText: 'Reglas completas →',
+  soundLabel: 'Sonido',
+
+  heroTitle: 'Mímica en cadena: pásala por la fila, el último adivina',
+  heroDesc: 'Todos en fila, de espaldas. El primero ve la palabra, se da la vuelta y se la representa al siguiente, y la mímica pasa de uno en uno hasta el último, que grita la respuesta. ¡Cada uno tiene solo unos segundos antes de pasar! ¿Qué equipo acertará más antes de que se acabe el tiempo?',
+
+  lead: {
+    setup: ['Empezamos', '¡Vamos a jugar a «Mímica en cadena»! Primero decidid cuántos jugadores hay por equipo: tres como mínimo.'],
+    rules: ['Cómo se juega', 'Poneos en fila y dadme la espalda. Le enseño la palabra al primero. Él le toca el hombro al siguiente y se la representa: sin hablar y sin hacer ningún ruido. Cada uno tiene solo unos segundos: ¡cuando suene el móvil, le toca al siguiente! El último dice la respuesta en voz alta. ¡A ver cuántas acertamos antes de que se acabe el tiempo!'],
+    draw: ['¿Listos?', 'Poneos en fila: ¡todos menos el primero, dadme la espalda!'],
+    reveal: ['La respuesta', ''],
+    end: ['¡Se acabó el tiempo!', '{result}'],
+  },
+  ruleCards: [
+    ['En fila', 'Todos en fila, de espaldas al primero. Solo el primero ve la palabra.'],
+    ['Pásala con mímica', 'Toca el hombro del siguiente y represéntala. ¡Nada de ruido! Cuando se acaba el tiempo, pasa al siguiente.'],
+    ['El último adivina', 'El último dice la respuesta. ¡Acertad todas las que podáis antes de que se acabe el tiempo!'],
+  ],
+  rulesNext: 'Siguiente: a jugar',
+
+  sizeLabel: 'Jugadores por equipo',
+  sizeLess: 'Un jugador menos',
+  sizeMore: 'Un jugador más',
+  minLabel: 'Minutos por equipo',
+  minUnit: '{n} min',
+  secLabel: 'Segundos por jugador',
+  sec10: '10 s',
+  sec15: '15 s',
+  sec20: '20 s',
+  roundsHint: '¿Cuántas acertaréis en {min} minutos? Cada palabra pasa {passes} veces, {sec} segundos por jugador; el cambio es automático.',
+  categoryLabel: 'Categorías',
+  categoryHint: 'Puedes elegir varias (al menos una)',
+  categoryRandom: 'Al azar',
+  categoryRandomSub: 'Todo mezclado',
+  listSep: ', ',
+  startButton: 'Empezar la partida',
+
+  roundNo: 'Palabra {n}',
+  clockLabel: 'Tiempo que le queda a este equipo',
+  drawButton: 'Sacar una palabra',
+  drawHint: 'Enséñasela solo al primero, que la fila no la vea',
+  wordHint: '¿La tiene? Pues a pasar, el reloj empieza ya',
+  startRelay: '¡A pasar!',
+  skipButton: 'Otra palabra',
+  passNo: 'Pase {k} de {total}',
+  passWho: 'El jugador {k} se la representa al {next}',
+  passWhoLast: 'El jugador {k} se la representa al último',
+  hintKindIn: 'Pista de categoría en {s} s',
+  hintCharIn: 'Pista de una letra en {s} s',
+  gotRight: '¡Acertada!',
+  giveUp: 'No la acertaron, ver la respuesta',
+  resultRight: '¡Acertada! La respuesta es',
+  answerIs: 'La respuesta es',
+  nextRound: 'Siguiente palabra',
+  againButton: 'Otra vez (siguiente equipo)',
+
+  resultLine: '¡{n} acertadas en {min} minutos! Un aplauso para vosotros. ¡Siguiente equipo, preparaos!',
+  resultNone: 'Esta vez ninguna… ¡la palabra se perdió por el camino! ¿Conseguirá el siguiente equipo estrenar el marcador?',
+  finalRightLabel: 'Acertadas',
+  finalPlayedLabel: 'Jugadas',
+  finalCount: '{n}',
+
+  leaveTitle: '¿Volver al principio?',
+  leaveDesc: 'La partida empieza de nuevo y no se guardan los aciertos de este equipo.',
+  leaveConfirm: 'Volver al principio',
+  leaveCancel: 'Seguir jugando',
+
+  rulesTitle: 'Cómo jugar a la mímica en cadena',
+  rulesIntro: 'Todos en fila, de espaldas. El primero ve la palabra, se da la vuelta y se la representa al siguiente, y la mímica pasa de uno en uno hasta el último, que dice la respuesta. Cada uno tiene solo unos segundos antes de pasar: ¿qué equipo acertará más antes de que se acabe el tiempo?',
+  rulesFacts: [
+    ['Jugadores', 'De 3 a 10 por equipo; si sois más, haced equipos: con 30 también funciona'],
+    ['Duración', 'De 3 a 15 minutos por equipo (5 por defecto)'],
+    ['Material', 'Un móvil para el anfitrión y sitio para una fila'],
+  ],
+  rulesHowHeading: 'Cómo se juega',
+  rulesHowSteps: [
+    'Elige jugadores por equipo, minutos por equipo (5 por defecto) y segundos por jugador (15 por defecto; cuantos menos, más emoción).',
+    'Todos en fila, de espaldas. El anfitrión saca una palabra y se la enseña solo al primero; cuando la tenga, pulsa «¡A pasar!» y empieza a correr el tiempo del equipo.',
+    'El primero toca el hombro del segundo, que se da la vuelta para mirar: solo mímica, nada de hablar, ni ruidos, ni vocalizar sin voz. Cuando se acaban los segundos, el móvil suena y pasa solo al siguiente jugador; el anfitrión no tiene que pulsar nada.',
+    'Cuando el último lo ha visto, empieza a adivinar. Unas casillas muestran cuántas letras tiene la respuesta; a los 10 segundos aparece la categoría y a los 20, una letra. Si acierta, pulsa «¡Acertada!»; si no, pulsa en cualquier momento «No la acertaron» y saca la siguiente palabra.',
+    'Mientras se muestra la respuesta, el reloj se detiene: preguntad fila atrás «¿tú qué creías que era?». Cuando se acaba el tiempo del equipo, la palabra que estaba pasando no cuenta y el móvil muestra cuántas acertaron. Para el siguiente equipo, pulsa «Otra vez».',
+  ],
+  rulesLeadHeading: 'Cómo dirigir el juego',
+  rulesLeadSay: '¡Vamos a jugar a mímica en cadena! Poneos en fila, de espaldas. El primero ve la palabra, se da la vuelta y se la representa al siguiente, y la vamos pasando hasta el último, que dice la respuesta. Solo mímica, nada de ruido, y cada uno tiene solo unos segundos: ¡cuando suene el móvil, le toca al siguiente! ¿Qué equipo acertará más antes de que se acabe el tiempo?',
+  rulesLeadSteps: [
+    'Si sois muchos, haced equipos (de 3 a 10; con tres equipos ya cubrís 30 personas). Cada equipo juega una ronda con el mismo tiempo y gana el que más acierte.',
+    'También pueden jugar dos equipos a la vez: mismo número de jugadores, en filas paralelas. Los dos primeros ven la misma palabra y cambian al mismo ritmo. Los dos últimos responden a la vez; el primero que acierta suma un punto y el anfitrión lleva la cuenta.',
+    'Preguntar fila atrás «¿tú qué creías que era?» después de la respuesta es el momento más divertido: no os lo saltéis (el reloj está parado).',
+  ],
+  rulesBack: '← Volver al juego',
+};

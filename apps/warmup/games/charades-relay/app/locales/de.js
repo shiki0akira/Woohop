@@ -1,0 +1,108 @@
+/*
+ * Deutsch. Bekannt als „Pantomime-Stille-Post“: Stille Post, nur ohne Worte – ein Begriff wird pantomimisch durch die Reihe gegeben.
+ * Tipps verraten einen Buchstaben.
+ */
+export default {
+  htmlLang: 'de',
+  ogLocale: 'de_DE',
+
+  seoTitle: 'Pantomime-Stille-Post | Begriff stumm durch die Reihe geben – auf Zeit, wer errät die meisten?',
+  seoDesc:
+    'Pantomime-Stille-Post auf dem Handy: Es zieht die Begriffe, zählt für jeden Spieler die Sekunden herunter, wechselt automatisch zum Nächsten und zählt, wie viele euer Team in der Zeit errät. Alle stehen in einer Reihe mit dem Rücken nach vorne; der Erste sieht den Begriff und stellt ihn dem Nächsten stumm dar, bis der Letzte rät. Je weniger Sekunden, desto hektischer – und am lustigsten ist es, hinterher die Reihe entlang zu fragen: „Was hast du gedacht?“ Ohne App, ohne Anmeldung – für Teamevents, Partys und die Klasse.',
+  rulesSeoTitle: 'Pantomime-Stille-Post: Regeln, Zeit und Tipps für die Spielleitung',
+  rulesSeoDesc: 'So geht Pantomime-Stille-Post: Aufstellung, Sekunden pro Person, Minuten pro Team, wann ein Begriff zählt, wie zwei Teams gleichzeitig spielen – plus ein Text, den die Spielleitung vorlesen kann.',
+
+  navTitle: 'Pantomime-Stille-Post',
+  navRules: 'Spielregeln',
+  gameBack: 'Zurück',
+  rulesLinkText: 'Alle Regeln →',
+  soundLabel: 'Ton',
+
+  heroTitle: 'Pantomime-Stille-Post: stumm weitergeben, der Letzte rät',
+  heroDesc: 'Alle stehen in einer Reihe mit dem Rücken nach vorne. Der Erste sieht den Begriff, dreht sich um und stellt ihn dem Nächsten stumm dar – so geht es weiter, bis der Letzte die Lösung ruft. Jeder hat nur ein paar Sekunden, dann ist der Nächste dran! Welches Team errät in der Zeit die meisten?',
+
+  lead: {
+    setup: ['Los geht’s', 'Wir spielen „Pantomime-Stille-Post“! Legt zuerst fest, wie viele pro Team mitspielen – mindestens drei.'],
+    rules: ['So geht’s', 'Stellt euch in eine Reihe und dreht mir alle den Rücken zu. Ich zeige dem Ersten den Begriff. Er tippt dem Nächsten auf die Schulter und stellt ihn stumm dar – nicht reden, keine Geräusche. Jeder hat nur ein paar Sekunden: Wenn das Handy piept, ist der Nächste dran! Der Letzte ruft laut die Lösung. Mal sehen, wie viele wir in der Zeit schaffen!'],
+    draw: ['Alle bereit?', 'Stellt euch in eine Reihe – alle außer dem Ersten dreht euch um!'],
+    reveal: ['Die Auflösung', ''],
+    end: ['Zeit ist um!', '{result}'],
+  },
+  ruleCards: [
+    ['In einer Reihe', 'Alle stehen in einer Reihe mit dem Rücken nach vorne. Nur der Erste sieht den Begriff.'],
+    ['Stumm weitergeben', 'Dem Nächsten auf die Schulter tippen und vormachen. Kein Ton! Ist die Zeit um, ist der Nächste dran.'],
+    ['Der Letzte rät', 'Der Letzte sagt die Lösung. Errate in der Zeit so viele wie möglich!'],
+  ],
+  rulesNext: 'Weiter: Spiel starten',
+
+  sizeLabel: 'Spieler pro Team',
+  sizeLess: 'Ein Spieler weniger',
+  sizeMore: 'Ein Spieler mehr',
+  minLabel: 'Minuten pro Team',
+  minUnit: '{n} Min.',
+  secLabel: 'Sekunden pro Person',
+  sec10: '10 Sek.',
+  sec15: '15 Sek.',
+  sec20: '20 Sek.',
+  roundsHint: 'Wie viele schafft ihr in {min} Minuten? Jeder Begriff wird {passes}-mal weitergegeben, {sec} Sekunden pro Person – gewechselt wird automatisch.',
+  categoryLabel: 'Kategorien',
+  categoryHint: 'Mehrere möglich (mindestens eine)',
+  categoryRandom: 'Zufällig',
+  categoryRandomSub: 'Alles gemischt',
+  listSep: ', ',
+  startButton: 'Spiel starten',
+
+  roundNo: 'Begriff {n}',
+  clockLabel: 'Restzeit für dieses Team',
+  drawButton: 'Begriff ziehen',
+  drawHint: 'Nur dem Ersten zeigen – die Reihe darf nichts sehen',
+  wordHint: 'Gemerkt? Dann los – ab jetzt läuft die Zeit',
+  startRelay: 'Weitergeben!',
+  skipButton: 'Anderer Begriff',
+  passNo: 'Station {k} von {total}',
+  passWho: 'Spieler {k} zeigt es Spieler {next}',
+  passWhoLast: 'Spieler {k} zeigt es dem Letzten',
+  hintKindIn: 'Kategorie-Tipp in {s} Sek.',
+  hintCharIn: 'Buchstaben-Tipp in {s} Sek.',
+  gotRight: 'Richtig!',
+  giveUp: 'Nicht erraten – Lösung zeigen',
+  resultRight: 'Richtig! Die Lösung ist',
+  answerIs: 'Die Lösung ist',
+  nextRound: 'Nächster Begriff',
+  againButton: 'Noch mal (nächstes Team)',
+
+  resultLine: '{n} richtig in {min} Minuten! Applaus für euch – nächstes Team, macht euch bereit!',
+  resultNone: 'Diesmal keiner richtig … der Begriff ist unterwegs verloren gegangen! Schafft das nächste Team den ersten Treffer?',
+  finalRightLabel: 'Richtig',
+  finalPlayedLabel: 'Gespielt',
+  finalCount: '{n}',
+
+  leaveTitle: 'Zurück zum Anfang?',
+  leaveDesc: 'Das Spiel beginnt von vorn, die Punkte dieses Teams werden nicht gespeichert.',
+  leaveConfirm: 'Zum Anfang',
+  leaveCancel: 'Weiterspielen',
+
+  rulesTitle: 'So spielt man Pantomime-Stille-Post',
+  rulesIntro: 'Alle stehen in einer Reihe mit dem Rücken nach vorne. Der Erste sieht den Begriff, dreht sich um und stellt ihn dem Nächsten stumm dar – so geht es weiter, bis der Letzte die Lösung sagt. Jeder hat nur ein paar Sekunden, dann ist der Nächste dran. Welches Team errät in der Zeit die meisten?',
+  rulesFacts: [
+    ['Spieler', '3–10 pro Team; bei mehr Leuten in Teams aufteilen – auch 30 klappt'],
+    ['Dauer', '3–15 Minuten pro Team (Standard: 5)'],
+    ['Material', 'Ein Handy für die Spielleitung und Platz für eine Reihe'],
+  ],
+  rulesHowHeading: 'So geht’s',
+  rulesHowSteps: [
+    'Spieler pro Team, Minuten pro Team (Standard 5) und Sekunden pro Person (Standard 15 – je weniger, desto hektischer) einstellen.',
+    'Alle stellen sich in eine Reihe mit dem Rücken nach vorne. Die Spielleitung zieht einen Begriff und zeigt ihn nur dem Ersten; hat er ihn, auf „Weitergeben!“ drücken – ab jetzt läuft die Teamzeit.',
+    'Der Erste tippt dem Zweiten auf die Schulter, der dreht sich um und schaut zu: nur Pantomime – nicht reden, keine Geräusche, keine Lippenbewegungen. Sind die Sekunden um, piept das Handy und wechselt von selbst zum Nächsten; die Spielleitung muss nichts drücken.',
+    'Hat der Letzte es gesehen, rät er. Kästchen zeigen, wie viele Buchstaben die Lösung hat; nach 10 Sekunden erscheint die Kategorie, nach 20 Sekunden ein Buchstabe. Bei richtiger Antwort „Richtig!“ drücken, sonst jederzeit „Nicht erraten“ – dann den nächsten Begriff ziehen.',
+    'Während die Lösung angezeigt wird, steht die Zeit. Fragt die Reihe zurück: „Was hast du gedacht?“ Ist die Teamzeit um, zählt der laufende Begriff nicht, und das Handy zeigt, wie viele richtig waren. Für das nächste Team auf „Noch mal“ drücken.',
+  ],
+  rulesLeadHeading: 'Tipps für die Spielleitung',
+  rulesLeadSay: 'Wir spielen Pantomime-Stille-Post! Stellt euch in eine Reihe mit dem Rücken nach vorne. Der Erste sieht den Begriff, dreht sich um und stellt ihn dem Nächsten stumm dar, und so geht es weiter bis zum Letzten, der die Lösung sagt. Nur Pantomime, kein Ton – und jeder hat nur ein paar Sekunden: Wenn das Handy piept, ist der Nächste dran! Welches Team errät in der Zeit die meisten?',
+  rulesLeadSteps: [
+    'Bei vielen Leuten in Teams aufteilen (je 3–10, drei Teams reichen für 30). Jedes Team spielt eine Runde mit derselben Zeit – die meisten richtigen gewinnen.',
+    'Zwei Teams können auch gleichzeitig spielen: gleich viele Spieler, nebeneinander aufgestellt. Beide Ersten sehen denselben Begriff und wechseln im selben Takt. Die beiden Letzten raten um die Wette – wer zuerst richtig liegt, punktet; die Spielleitung zählt mit.',
+    'Nach der Auflösung die Reihe zurück zu fragen „Was hast du gedacht?“ ist der lustigste Moment – nicht auslassen (die Zeit steht dabei).',
+  ],
+  rulesBack: '← Zurück zum Spiel',
+};

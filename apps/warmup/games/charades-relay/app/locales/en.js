@@ -1,0 +1,108 @@
+/*
+ * English. The game is known as "Telephone Charades" (charades passed down a line, like the telephone game).
+ * Word lists come from the shared word bank (act), picked for English speakers. Hints reveal letters.
+ */
+export default {
+  htmlLang: 'en',
+  ogLocale: 'en_US',
+
+  seoTitle: 'Telephone Charades | Act it down the line — timed rounds, most correct wins',
+  seoDesc:
+    'Telephone Charades on your phone: it picks the words, times every player and switches turns automatically, then counts how many your team gets right before time runs out. Everyone stands in a line facing away; the first player sees the word and acts it out for the next, who passes it on, until the last player guesses. Fewer seconds means more panic and wilder results — and asking “what did you think it was?” back down the line is the best part. No app, no sign-up — great for team building, parties and classrooms.',
+  rulesSeoTitle: 'How to play Telephone Charades: rules, timing and hosting tips',
+  rulesSeoDesc: 'How to play Telephone Charades: how to line up, how many seconds each player gets, how long each team plays, when a guess counts, how two teams can race at once, plus a script the host can read out.',
+
+  navTitle: 'Telephone Charades',
+  navRules: 'How to play',
+  gameBack: 'Back',
+  rulesLinkText: 'Full rules →',
+  soundLabel: 'Sound',
+
+  heroTitle: 'Telephone Charades: act it down the line, the last player guesses',
+  heroDesc: 'Everyone lines up facing away. The first player sees the word, turns and acts it out for the next, and it’s passed down the line until the last player shouts the answer. Each player only gets a few seconds before it switches! Which team gets the most right before time runs out?',
+
+  lead: {
+    setup: ['Welcome', 'Let’s play Telephone Charades! First decide how many players per team — at least three.'],
+    rules: ['How it works', 'Line up and face away from me. I’ll show the word to the first player, who taps the next player on the shoulder and acts it out — no talking, no sounds. Each player only gets a few seconds: when the phone beeps, it’s the next player’s turn! The last player shouts out the answer. Let’s see how many we can get before time runs out!'],
+    draw: ['Ready?', 'Line up — everyone except the first player, turn around and face away from me!'],
+    reveal: ['The answer is…', ''],
+    end: ['Time’s up!', '{result}'],
+  },
+  ruleCards: [
+    ['Line up', 'Stand in a line, all facing away from the front. Only the first player sees the word.'],
+    ['Act it down the line', 'Tap the next player’s shoulder and act it out. No talking, no sounds. When time’s up, it switches!'],
+    ['Last player guesses', 'The last player says the answer. Get as many as you can before time runs out!'],
+  ],
+  rulesNext: 'Next: start playing',
+
+  sizeLabel: 'Players per team',
+  sizeLess: 'One fewer player',
+  sizeMore: 'One more player',
+  minLabel: 'Minutes per team',
+  minUnit: '{n} min',
+  secLabel: 'Seconds per player',
+  sec10: '10 sec',
+  sec15: '15 sec',
+  sec20: '20 sec',
+  roundsHint: 'How many can you get in {min} minutes? Each word passes {passes} times, {sec} seconds each — it switches automatically.',
+  categoryLabel: 'Categories',
+  categoryHint: 'Pick as many as you like (at least one)',
+  categoryRandom: 'Random',
+  categoryRandomSub: 'All mixed',
+  listSep: ', ',
+  startButton: 'Start the game',
+
+  roundNo: 'Word {n}',
+  clockLabel: 'Time left for this team',
+  drawButton: 'Draw a word',
+  drawHint: 'Only show the first player — don’t let the line see',
+  wordHint: 'Got it? Start passing — the clock starts now',
+  startRelay: 'Start passing!',
+  skipButton: 'Another one',
+  passNo: 'Pass {k} of {total}',
+  passWho: 'Player {k} acts it out for player {next}',
+  passWhoLast: 'Player {k} acts it out for the last player',
+  hintKindIn: 'Category hint in {s} sec',
+  hintCharIn: 'Letter hint in {s} sec',
+  gotRight: 'Got it!',
+  giveUp: 'Nobody got it — show the answer',
+  resultRight: 'Got it! The answer is',
+  answerIs: 'The answer is',
+  nextRound: 'Next word',
+  againButton: 'Play again (next team)',
+
+  resultLine: '{n} right in {min} minutes! Give yourselves a round of applause — next team, get ready!',
+  resultNone: 'None right this time… the words got lost down the line! Can the next team get on the board?',
+  finalRightLabel: 'Got right',
+  finalPlayedLabel: 'Played',
+  finalCount: '{n}',
+
+  leaveTitle: 'Back to the start?',
+  leaveDesc: 'The game starts over and this team’s score won’t be kept.',
+  leaveConfirm: 'Back to start',
+  leaveCancel: 'Keep playing',
+
+  rulesTitle: 'How to play Telephone Charades',
+  rulesIntro: 'Everyone lines up facing away. The first player sees the word, turns and acts it out for the next, and it’s passed down the line until the last player says the answer. Each player only gets a few seconds before it switches — which team gets the most right before time runs out?',
+  rulesFacts: [
+    ['Players', '3–10 per team; split into teams for bigger groups — 30 works fine'],
+    ['Time', '3–15 minutes per team (5 by default)'],
+    ['You need', 'One phone for the host and room for a line'],
+  ],
+  rulesHowHeading: 'How to play',
+  rulesHowSteps: [
+    'Set players per team, minutes per team (5 by default) and seconds per player (15 by default — fewer is more intense).',
+    'Line up, all facing away. The host draws a word and shows only the first player; when they’ve got it, press “Start passing!” and the team’s clock starts.',
+    'The first player taps the second on the shoulder, and the second turns around to watch: acting only — no talking, no sounds, no mouthing. When the seconds run out the phone beeps and it switches to the next player on its own; the host doesn’t need to press anything.',
+    'Once the last player has seen it, they start guessing. Boxes show how many letters the answer has; after 10 seconds the category appears, after 20 seconds a letter. Press “Got it!” if they’re right, or “Nobody got it” any time, then draw the next word.',
+    'The clock pauses while the answer is shown — ask back down the line, “What did you think it was?” When the team’s time runs out, the word in progress doesn’t count and the phone shows how many they got. For the next team, press “Play again”.',
+  ],
+  rulesLeadHeading: 'How to host',
+  rulesLeadSay: 'Let’s play Telephone Charades! Line up facing away. The first player sees the word, turns and acts it out for the next, and we pass it down the line until the last player says the answer. Acting only, no sounds — and you only get a few seconds, so when the phone beeps, it switches! Which team can get the most right before time runs out?',
+  rulesLeadSteps: [
+    'For a big group, split into teams (3–10 each — three teams covers 30 people). Each team plays one round with the same time; most right wins.',
+    'Two teams can also race at once: same number of players, lined up side by side. Both first players see the same word and switch on the same timer. The two last players race to answer — first right scores, and the host keeps count.',
+    'Asking back down the line “What did you think it was?” after the answer is shown is the funniest part of the game — don’t skip it (the clock is paused).',
+  ],
+  rulesBack: '← Back to the game',
+};

@@ -120,6 +120,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.charades()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 比手畫腳接力賽（apps/warmup/games/charades-relay/app/strings.js 的 LANGS）
+  'charades-relay': async () => {
+    const { STRINGS: Rr, LANGS: RRL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'charades-relay', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'warmup', 'games', 'charades-relay', 'public', 'og'),
+      langs: RRL,
+      title: (lang) => splitTitle(Rr[lang].heroTitle),
+      scripts: [], art: "window.Woohop.art['charades-relay']()", viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 木頭人動作版（apps/warmup/games/statue/app/strings.js 的 LANGS）
   statue: async () => {
     const { STRINGS: Tm, LANGS: TL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'statue', 'app', 'strings.js')).href);

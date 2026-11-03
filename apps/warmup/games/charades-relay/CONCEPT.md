@@ -67,4 +67,15 @@ docs/ 裡沒有寫好的規格。比手畫腳的 CONCEPT 寫過「限時、比�
 
 ## 五、各語言名稱
 
-還沒做（老闆 11/02：繁中確認後才另外交代翻譯、查各國類似遊戲的叫法）。網址 `/charades-relay/`。
+11/03 繁中定案後補齊 8 語，名稱用各地類似遊戲的叫法（不直譯）。網址 `/charades-relay/`。
+
+| 語言 | 名稱 | 為什麼 |
+|---|---|---|
+| zh-TW | 比手畫腳接力賽 | 老闆定的 |
+| zh-CN | 你比我猜接力赛 | 比手畫腳在大陸叫「你比我猜」（跟 charades 的 zh-CN 一致） |
+| en | Telephone Charades | 英文圈就叫這個（telephone game＋charades） |
+| ja | ジェスチャー伝言ゲーム | 日本レク的定番，玩法完全一樣 |
+| ko | 몸으로 말해요 릴레이 | 比手畫腳在韓國叫「몸으로 말해요」，接力加「릴레이」 |
+| de | Pantomime-Stille-Post | Stille Post（傳話）＋Pantomime，德國派對遊戲常見的叫法 |
+| fr | Téléphone mimé | 常見叫法是「téléphone arabe mimé」，但「téléphone arabe」現在很多人避免用，取短的 |
+| es | Mímica en cadena | 傳話遊戲西班牙叫 teléfono escacharrado、拉美叫 teléfono descompuesto，取兩邊都懂的 |
