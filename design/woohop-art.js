@@ -206,6 +206,24 @@
       ${body('<path d="M108 117V70A18 18 0 0 1 144 70V117Z"/>', '#FFC628', '<path d="M132 40h20v90h-20z" fill="#eeb100"/>')}
       ${bubble(126, 30)}`;
     },
+    // 畫畫接力（2026-11-03，使用者 11/03 改過）：主體是一枝有表情的鉛筆，筆尖碰著第一張紙上的太陽（圓＋一圈光芒）；
+    // 箭頭指到第二張紙，上面只有一個大問號（下一個人看不出是什麼）
+    'drawing-relay': () => {
+      const sheet = (x, y, w, h) => body(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/>`, '#ffffff', '', false);
+      const line = (d, c = '#22222c') => `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+      return `
+      ${ground}${burst(146, 22, '#FFC628')}${ring(20, 30, '#7489E6')}${dot(152, 100, '#F3A4FB', 4)}
+      ${sheet(12, 58, 56, 58)}<circle cx="38" cy="86" r="8" fill="none" stroke="#F2B200" stroke-width="3"/>${line('M50.5 86.0L55.5 86.0M46.8 94.8L50.4 98.4M38.0 98.5L38.0 103.5M29.2 94.8L25.6 98.4M25.5 86.0L20.5 86.0M29.2 77.2L25.6 73.6M38.0 73.5L38.0 68.5M46.8 77.2L50.4 73.6', '#F2B200')}
+      ${sheet(94, 62, 50, 54)}
+      <text x="119" y="92" text-anchor="middle" dominant-baseline="middle" font-size="36" font-weight="900" fill="#E0483B" font-family="Fredoka, Nunito, sans-serif">?</text>
+      <path d="M74 92h12m-5-5l5 5l-5 5" fill="none" ${K}/>
+      <g transform="translate(6 -16) rotate(32 64 54)">
+        ${body('<path d="M54 14h20v66l-10 16-10-16z"/>', '#FFC628', '<path d="M66 8h14v90H66z" fill="#eeb100"/>')}
+        <path d="M54 80h20l-10 16z" fill="#f6d8a8" ${K}/><path d="M60.5 90.5h7l-3.5 5.5z" fill="#22222c"/>
+        <path d="M54 22h20" fill="none" ${K}/>
+        ${makeFace('grin', 64, 50, 1.3)}
+      </g>`;
+    },
     // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
     toolActions: () => {
       const card = (x, y, c, a) => `<g transform="rotate(${a} ${x + 27} ${y + 36})">${body(`<rect x="${x}" y="${y}" width="54" height="72" rx="9"/>`, c, '', false)}</g>`;

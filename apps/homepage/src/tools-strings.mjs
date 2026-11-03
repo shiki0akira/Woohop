@@ -13,7 +13,7 @@ export const TOOL_GAMES = {
   names: ['bamboo'],
   recorder: ['reverse'],
   actions: ['statue'],
-  words: ['charades', 'charades-relay'],
+  words: ['charades', 'charades-relay', 'drawing-relay'],
 };
 
 export const TOOLS = {

@@ -1,6 +1,6 @@
 # 畫畫接力 CONCEPT
 
-> 狀態：**繁中版做好、等老闆試玩**（2026-11-03，還沒上線）。第 13 個遊戲。
+> 狀態：**8 語做好、等部署**（2026-11-03）。第 13 個遊戲。
 > 新遊戲先只做 zh-TW（老闆 11/02 定的流程），確認後才另外交代翻譯、補外語名稱。
 > 同一系列：比手畫腳 → 比手畫腳接力賽（11/03 上線）→ **畫畫接力** → 一起畫一張圖，照順序一個上線再做下一個。
 
@@ -39,4 +39,15 @@
 
 ## 四、各語言名稱
 
-還沒做（繁中確認後才另外交代翻譯、查各國類似遊戲的叫法；英文圈有 Telephone Pictionary／Gartic Phone 這類）。網址 `/drawing-relay/`。
+11/03 老闆試玩確認後補齊 8 語，名稱用各地類似遊戲的叫法（不直譯），跟比手畫腳接力賽的名稱成對。網址 `/drawing-relay/`。
+
+| 語言 | 名稱 | 為什麼 |
+|---|---|---|
+| zh-TW | 畫畫接力 | 老闆定的 |
+| zh-CN | 你画我猜接力 | 畫畫猜詞在大陸叫「你画我猜」 |
+| en | Picture Telephone | telephone game 的畫畫版；不用 Telephone Pictionary（Pictionary 是商標） |
+| ja | お絵かき伝言ゲーム | 日本レク的定番 |
+| ko | 그림 릴레이 | 跟「몸으로 말해요 릴레이」成對 |
+| de | Bilder-Stille-Post | 跟「Pantomime-Stille-Post」成對 |
+| fr | Téléphone dessiné | 跟「Téléphone mimé」成對（Esquissé、Gartic Phone 都是這個遊戲） |
+| es | Dibujos en cadena | 跟「Mímica en cadena」成對 |
