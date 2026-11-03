@@ -731,7 +731,7 @@
     });
   }
 
-  // 結束畫面：這次的題目，每題附最後一張圖（傳到最後變成什麼）
+  // 結束畫面：這次的題目，上面最後一張圖（傳到最後變成什麼）、下面題目
   function renderHistory() {
     el.history.textContent = '';
     playedWords.forEach(function (h) {
@@ -744,8 +744,8 @@
       img.className = 'paint-img';
       img.src = h.last;
       img.alt = fill(T.historyLast, { word: h.word });
-      li.appendChild(word);
       li.appendChild(img);
+      li.appendChild(word);
       el.history.appendChild(li);
     });
   }

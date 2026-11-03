@@ -20,7 +20,7 @@
   - **猜的提示**（11/03）：`startGuessTimer()` 在圖下面畫字格（`renderMask()`，一個字一個方塊），猜 `HINT_KIND_AT`（10）秒自動亮類型；**不露字**（露字會繞過那些畫）。離開 guess 一律 `stopGuessTimer()`。
   - **揭曉** `revealAnswer()`：猜的時候只有一顆「公布答案」，**不記猜中沒**（11/03 老闆要求），`judged` 數比了幾題、`drawn` 數這場畫了幾張；進 reveal 後`renderGallery()` 兩張一排列出每個人的畫（`.paint-img`，欄寬用 `minmax(0, 1fr)` 鎖住，圖片原始尺寸很大）。主持人按「下一題」（卡片裡）或「結束遊戲」（卡片外面下面的 `.reveal-actions`，11/03 老闆要求）。
 - **題庫**：全站共用的 `apps/homepage/src/word-bank.mjs`，`build.mjs` 用 `wordsFor(lang, 'draw')`，頁面上是 `window.DRAWRELAY.words`。`shuffleDeck()` 照比手畫腳（去重複、整副抽完才重洗）。
-- **結束畫面**：`renderHistory()` 列出這次的題目，每題附最後一張圖（`playedWords`；**變數不要叫 history**，會蓋掉 window.history、返回鍵壞掉）；照著念是 `resultLine()`（比了幾題、畫了幾張）。
+- **結束畫面**：`renderHistory()` 列出這次的題目，上面最後一張圖、下面題目（手機一排兩個、640px 以上一排三個）（`playedWords`；**變數不要叫 history**，會蓋掉 window.history、返回鍵壞掉）；照著念是 `resultLine()`（比了幾題、畫了幾張）。
 - **結束遊戲**：紅色 `.end-btn`、要按住 `HOLD_MS`（0.8 秒）才結束（跟比手畫腳、果園同一個做法），不確定玩幾輪，防手滑。
 - **聲音** `sfx.*`：Web Audio 合成，`ensureAudio()` 在按「下一步：開始玩」時先建好。頂欄音符鍵由 game.js 呼叫 `window.toggleMusic`，開場時藏起來。
 
