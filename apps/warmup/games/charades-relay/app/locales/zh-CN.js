@@ -62,6 +62,8 @@ export default {
   passNo: '第 {k} / {total} 棒',
   passWho: '第 {k} 个人比给第 {next} 个人看',
   passWhoLast: '第 {k} 个人比给最后一个人看',
+  readyHint: '准备！第 {next} 个人转过来',
+  readyHintLast: '准备！最后一个人转过来',
   hintKindIn: '{s} 秒后提示类型',
   hintCharIn: '{s} 秒后提示一个字',
   gotRight: '猜中了！',

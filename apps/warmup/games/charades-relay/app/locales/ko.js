@@ -62,6 +62,8 @@ export default {
   passNo: '{k} / {total}번째 전달',
   passWho: '{k}번째 사람이 {next}번째 사람에게',
   passWhoLast: '{k}번째 사람이 마지막 사람에게',
+  readyHint: '준비! {next}번째 사람, 돌아서세요',
+  readyHintLast: '준비! 마지막 사람, 돌아서세요',
   hintKindIn: '{s}초 뒤 종류 힌트',
   hintCharIn: '{s}초 뒤 한 글자 힌트',
   gotRight: '정답!',

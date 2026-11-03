@@ -62,6 +62,8 @@ export default {
   passNo: 'Pase {k} de {total}',
   passWho: 'El jugador {k} se la representa al {next}',
   passWhoLast: 'El jugador {k} se la representa al último',
+  readyHint: '¡Preparados! Jugador {next}, date la vuelta',
+  readyHintLast: '¡Preparados! Último jugador, date la vuelta',
   hintKindIn: 'Pista de categoría en {s} s',
   hintCharIn: 'Pista de una letra en {s} s',
   gotRight: '¡Acertada!',

@@ -62,6 +62,8 @@ export default {
   passNo: 'Passage {k} sur {total}',
   passWho: 'Le joueur {k} mime au joueur {next}',
   passWhoLast: 'Le joueur {k} mime au dernier',
+  readyHint: 'Prêt ? Joueur {next}, retourne-toi',
+  readyHintLast: 'Prêt ? Dernier joueur, retourne-toi',
   hintKindIn: 'Indice catégorie dans {s} s',
   hintCharIn: 'Indice lettre dans {s} s',
   gotRight: 'Trouvé !',

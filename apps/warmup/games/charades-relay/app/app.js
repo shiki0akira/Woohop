@@ -75,6 +75,7 @@
     timer: $('timer'),
     timerArc: $('timer-arc'),
     timerNum: $('timer-num'),
+    readyHint: $('ready-hint'),
     hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
     hintNext: $('hint-next'),
@@ -444,9 +445,40 @@
     clearInterval(timerId);
     timerId = 0;
   }
-  function startTimer() {
+  /*
+   * 每一棒開始前先準備 READY_SEC 秒（11/03 老闆要求）：拍肩、轉過來要時間，不然這幾秒會被吃掉。
+   * 倒數圈顯示 3、2、1（.is-ready，圈不動），下面寫誰要轉過來；倒數完響一聲，才開始算這一棒的秒數。整隊總倒數照常在跑。
+   */
+  var READY_SEC = 3;
+  function startReady() {
     stopTimer();
     el.timer.classList.remove('is-urgent');
+    el.timer.classList.add('is-ready');
+    el.timerArc.style.strokeDashoffset = '0';
+    el.readyHint.textContent = pass >= totalPasses() ? T.readyHintLast : fill(T.readyHint, { next: pass + 1 });
+    endsAt = Date.now() + READY_SEC * 1000;
+    lastBeep = -1;
+    tickReady();
+    timerId = setInterval(tickReady, 100);
+  }
+  function tickReady() {
+    var left = Math.max(0, endsAt - Date.now());
+    var sec = Math.ceil(left / 1000);
+    el.timerNum.textContent = sec || 1;
+    if (sec > 0 && sec !== lastBeep) {
+      if (lastBeep !== -1) beep(660, 0.05, 0.08);
+      lastBeep = sec;
+    }
+    if (left <= 0) {
+      el.timer.classList.remove('is-ready');
+      sfx.pass();
+      startTimer();
+    }
+  }
+
+  function startTimer() {
+    stopTimer();
+    el.timer.classList.remove('is-urgent', 'is-ready');
     endsAt = Date.now() + prep.sec * 1000;
     lastBeep = -1;
     tickTimer();
@@ -562,7 +594,7 @@
     var last = pass >= totalPasses();
     el.passNo.textContent = fill(T.passNo, { k: pass, total: totalPasses() });
     el.passWho.textContent = fill(last ? T.passWhoLast : T.passWho, { k: pass, next: pass + 1 });
-    startTimer();
+    startReady();
   }
 
   function startRound() {

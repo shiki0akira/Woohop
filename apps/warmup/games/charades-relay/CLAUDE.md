@@ -16,6 +16,7 @@
   - **步驟頭**：手機一直在主持人手上，所以 play 也有步驟頭，但只在 `PLAY_LEAD`（draw／reveal）兩段出現，文案是 locale 的 `lead.draw`／`lead.reveal`（reveal 只有標題「答案揭曉」，照著念是空的；draw 的照著念只在第 1 題出現。都由 `renderLead()` 用 `Leader.hideSay()` 收起來）。word、relay、guess 由 CSS 藏起 `.play-lead`。
   - **guess 照比手畫腳**（11/02 老闆要求）：`hint` 記這一題給過的提示，`renderMask()` 一個字一個方塊，**提示自動給**（11/03，沒有提示鍵）：`startGuessTimer()`／`tickGuess()` 猜 `HINT_KIND_AT`（10）秒 `giveKind()` 亮黃色類型標籤、`HINT_CHAR_AT`（20）秒 `giveChar()` 隨機露一個字（最後一個字不露），卡片下 `#hint-next` 寫還有幾秒；離開 guess 一律 `stopGuessTimer()`。「沒猜到，公布答案」隨時能按。沒有偷看答案（11/03 老闆拿掉）。卡片下面「猜中了！」／「沒猜到，公布答案」都會 `judge()` 記下來、進 reveal 顯示答案，主持人按「下一題」／「看結果」才往下（`afterReveal()`）。
   - **整隊總倒數** `startClock()`／`tickClock()`（每 200ms）：`usedMs` 累計、`runningSince` 記這段開始；**只在 `RUNNING`（word／relay／guess）跑**，draw、reveal 停住（`setPhase()` 呼叫 `setRunning()`），上方 `#clock` 停住時變淡、最後 10 秒變紅，進度條是用掉的比例。到 0 `timeUp()`：正在傳／猜的那題不算，直接 `endGame()`。`right` 猜中幾題、`judged` 比完幾題。
+  - **每一棒前準備 3 秒** `startReady()`／`tickReady()`（11/03 老闆要求）：拍肩、轉過來要時間。倒數圈 `.is-ready` 顯示 3、2、1，下面 `#ready-hint` 寫誰要轉過來，倒數完響一聲才 `startTimer()`。整隊總倒數照常跑。
   - **每一棒倒數** `startTimer()`／`tickTimer()`：每一棒重新算，每秒輕滴一聲、最後三秒高音嗶，到 0 震動＋`nextPass(true)` **自動換下一棒**（`sfx.swap`，跟自己按的 `sfx.pass` 不同聲）；最後一棒到 0 直接進 guess。**沒有手動換人鍵**（11/03 老闆拿掉），全部靠倒數。倒數圈是設計系統的 `.timer-ring`。離開 relay 一律 `stopTimer()`。
   - **聲音** `sfx.*`：抽題、傳棒、進猜答案、猜對、猜錯、結束各一段（Web Audio 合成，不用音檔）。自己一個 AudioContext，`ensureAudio()` 在按「下一步：開始玩」時先建好，避開自動播放限制。頂欄音符鍵由 game.js 呼叫 `window.toggleMusic`。`judge()` 只在 guess 有效，連點不會算兩次。
   - `pass`：第幾棒（第 k 個人比給第 k+1 個人），共 `size - 1` 棒；最後一棒寫「比給最後一個人看」，時間到進 guess。

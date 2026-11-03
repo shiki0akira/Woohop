@@ -62,6 +62,8 @@ export default {
   passNo: '{k} / {total} 人目',
   passWho: '{k}人目が{next}人目に伝える',
   passWhoLast: '{k}人目が最後の人に伝える',
+  readyHint: '準備！{next}人目は振り返って',
+  readyHintLast: '準備！最後の人は振り返って',
   hintKindIn: 'あと{s}秒でジャンルのヒント',
   hintCharIn: 'あと{s}秒で1文字ヒント',
   gotRight: '正解！',

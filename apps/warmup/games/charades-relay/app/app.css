@@ -72,6 +72,11 @@
 .pass-who { margin: 0; font-size: 18px; font-weight: 800; text-wrap: balance; }
 .relay-app .timer-ring { width: 150px; height: 150px; margin: 4px 0; }
 .relay-app .timer-ring .num { font-size: 46px; }
+/* 每一棒前的 3 秒準備：圈變淡、數字變黃，下面寫誰要轉過來；開始算秒數後提示藏起來（位置留著，畫面不跳） */
+.relay-app .timer-ring.is-ready .arc { opacity: .25; }
+.relay-app .timer-ring.is-ready .num { color: var(--yellow-text); }
+.ready-hint { min-height: 1.4em; margin: 0; font-size: 18px; font-weight: 900; color: var(--yellow-text); text-align: center; text-wrap: balance; }
+#timer:not(.is-ready) + .ready-hint { visibility: hidden; }
 .stage-relay .btn-block { width: 100%; }
 
 /* guess：一個字一個方塊＋兩種提示（照比手畫腳 games/charades/app/app.css，顏色換成這個遊戲的綠） */

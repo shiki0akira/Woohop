@@ -72,6 +72,8 @@ export default {
   passNo: '第 {k} / {total} 棒',
   passWho: '第 {k} 個人比給第 {next} 個人看',
   passWhoLast: '第 {k} 個人比給最後一個人看',
+  readyHint: '準備！第 {next} 個人轉過來',
+  readyHintLast: '準備！最後一個人轉過來',
   // 最後一個人猜的時候（照比手畫腳）
   // 猜的時候自動給提示（10 秒類型、20 秒一個字）
   hintKindIn: '{s} 秒後提示類型',

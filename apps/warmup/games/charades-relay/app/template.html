@@ -112,6 +112,8 @@
                 <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="50" fill="none" stroke-width="12"/><circle class="arc" id="timer-arc" cx="60" cy="60" r="50" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="0"/></svg>
                 <div class="num" id="timer-num"></div>
               </div>
+              <!-- 每一棒前的 3 秒準備：誰要轉過來（倒數圈有 .is-ready 時才看得到） -->
+              <p class="ready-hint" id="ready-hint" aria-live="polite"></p>
             </div>
 
             <!--

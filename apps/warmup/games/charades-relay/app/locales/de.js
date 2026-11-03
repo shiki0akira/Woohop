@@ -62,6 +62,8 @@ export default {
   passNo: 'Station {k} von {total}',
   passWho: 'Spieler {k} zeigt es Spieler {next}',
   passWhoLast: 'Spieler {k} zeigt es dem Letzten',
+  readyHint: 'Achtung! Spieler {next}, umdrehen',
+  readyHintLast: 'Achtung! Letzter Spieler, umdrehen',
   hintKindIn: 'Kategorie-Tipp in {s} Sek.',
   hintCharIn: 'Buchstaben-Tipp in {s} Sek.',
   gotRight: 'Richtig!',

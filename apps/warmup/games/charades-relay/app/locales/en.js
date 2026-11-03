@@ -62,6 +62,8 @@ export default {
   passNo: 'Pass {k} of {total}',
   passWho: 'Player {k} acts it out for player {next}',
   passWhoLast: 'Player {k} acts it out for the last player',
+  readyHint: 'Get ready! Player {next}, turn around',
+  readyHintLast: 'Get ready! Last player, turn around',
   hintKindIn: 'Category hint in {s} sec',
   hintCharIn: 'Letter hint in {s} sec',
   gotRight: 'Got it!',
