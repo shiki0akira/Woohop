@@ -68,3 +68,21 @@ console.log('週（ISO） | 主持人數 | Google 搜尋 | Threads | 總使用�
 for (const w of weeks) console.log(`${w} | ${hosts[w] || 0} | ${google[w] || 0} | ${threads[w] || 0} | ${total[w] || 0}`);
 console.log(`\n${NORTH_STAR_START} 起累計使用者（www）：${cumulative[0] ? cumulative[0].metricValues[0].value : 0}`);
 console.log('（最後一週通常還沒過完；ISO 週 202644 = 2026-10-26～11-01）');
+
+// 兩年北極星：每月瀏覽數（docs/roadmap.md「兩年北極星」；季末檢查點 12 月 2.5 萬、3 月 5 萬、6 月 10 萬、9 月 20 萬）
+const monthly = await report({
+  dateRanges: [{ startDate: '2026-06-01', endDate: 'today' }],
+  dimensions: [{ name: 'yearMonth' }], metrics: [{ name: 'screenPageViews' }], dimensionFilter: www,
+  orderBys: [{ dimension: { dimensionName: 'yearMonth' } }],
+});
+const TARGETS = { '202612': 25000, '202703': 50000, '202706': 100000, '202709': 200000, '202712': 400000, '202803': 750000, '202805': 1000000 };
+console.log('\n月份 | 瀏覽數 | 檢查點目標');
+for (const r of monthly) {
+  const m = r.dimensionValues[0].value;
+  console.log(`${m} | ${r.metricValues[0].value} | ${TARGETS[m] || ''}`);
+}
+const day = today.getDate();
+const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+const thisMonth = monthly.length ? Number(monthly[monthly.length - 1].metricValues[0].value) : 0;
+// 今天還沒過完，當成半天算
+console.log(`這個月到目前為止 ${thisMonth}，照這個速度整月約 ${Math.round((thisMonth / Math.max(0.5, day - 0.5)) * daysInMonth)}`);
