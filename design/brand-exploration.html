@@ -1186,6 +1186,7 @@
         <li class="player"><span class="avatar sm" data-food="donut"></span><span class="name">阿豪</span><button class="btn btn-sm btn-ghost kick">移出</button></li>
         <li class="player is-offline"><span class="avatar sm" data-name="安安"><span class="status off"></span></span><span class="name">安安</span><span class="t-caption">斷線中</span></li>
       </ul>
+      <p class="note">清單的一列（成員、排行榜、答案、題目清單）一律用這個框線：<code>--edge-n</code> 外框＋<code>--raise-n</code> 底。<code>--outline</code> 是插圖的描邊色，拿來當介面框線在深色模式會看不見（2026-11-04）。</p>
       <button class="btn btn-lg btn-solid btn-block" style="margin-top:14px;max-width:420px">開始遊戲</button>
     </div>
   </div>
@@ -1313,6 +1314,7 @@
     <div class="card">
       <p class="sub">按住結束鍵</p>
       <p class="note">結束要按住 0.8 秒才算（防手滑），按住時從左到右填深；鍵盤按 Enter 直接結束。紅底白字、厚底。目前竹筍、上樓下樓、果園各自的 app.css 各一份（<code>.round-btn</code>／<code>.end-btn</code>）。</p>
+      <p class="note"><strong>擺放位置（2026-11-04 定）：</strong>「繼續玩」的鍵（下一題、再畫一張）放在卡片裡；「結束遊戲」（這顆紅色按住鍵）和結束畫面的「再玩一次」一律放在<strong>卡片外面、卡片下方</strong>，跟卡片裡的鍵分開，不會手滑。主持人「提早結束」這類會打斷所有人的動作，先跳確認框（<code>dialog.modal</code>）。</p>
       <button class="btn btn-lg btn-block demo-end" id="demo-end" type="button">按住，結束遊戲</button>
       <p class="sub" id="demo-end-out" style="margin:10px 0 0;text-align:center"></p>
     </div>

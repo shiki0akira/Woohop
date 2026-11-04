@@ -245,12 +245,13 @@
           <!-- 設計系統的排行榜：前三名站頒獎台，其餘接在下面（名次從 4 開始） -->
           <div class="podium final-podium" id="final-podium"></div>
           <ol class="rank-list board-list" id="final-list"></ol>
-          <!-- 主持人專用：再玩一輪＝全房退回大廳（成員、房號、設定都留著），不用重新掃 QR code -->
-          <div class="play-again" id="reset-block" hidden>
-            <button class="btn btn-lg btn-solid btn-block" id="reset-room" type="button">{{resetButton}}</button>
-            <p class="hint">{{playAgainHint}}</p>
-          </div>
         </section>
+        <!-- 主持人專用：再玩一輪＝全房退回大廳（成員、房號、設定都留著），不用重新掃 QR code。
+             放在結算卡片外面（2026-11-04 全站統一：再玩一次一律在卡片外、卡片下方，見設計系統頁 13） -->
+        <div class="play-again" id="reset-block" hidden>
+          <button class="btn btn-lg btn-solid btn-block" id="reset-room" type="button">{{resetButton}}</button>
+          <p class="hint">{{playAgainHint}}</p>
+        </div>
       </div>
 
       <!-- 致命錯誤：房間不存在、人數已滿、這一輪已開始 -->

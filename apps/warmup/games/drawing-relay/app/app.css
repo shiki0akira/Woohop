@@ -72,6 +72,8 @@
   background: #ffffff; box-shadow: 0 4px 0 var(--outline);
 }
 .paint-canvas { touch-action: none; cursor: crosshair; }
+/* 手機上畫到一半長按會反白（選到畫布、倒數數字、色點），畫的那一面整個不給選（2026-11-04 老闆試玩回報） */
+.stage-paint { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 /* 筆的顏色：五顆圓點，選到的那顆外面多一圈 */
 .paint-colors { display: flex; justify-content: center; gap: 14px; }
 .paint-color {
@@ -79,6 +81,8 @@
   background: var(--ink); box-shadow: 0 3px 0 var(--outline); cursor: pointer;
 }
 .paint-color[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 3px; transform: translateY(-2px); }
+/* 深色模式：--outline 跟深色底幾乎一樣，黑色那顆會看不見，外框換成設計系統的 --edge-strong */
+:root[data-theme="dark"] .paint-color { border-color: var(--edge-strong); box-shadow: 0 3px 0 var(--edge-strong); }
 .paint-tools { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 8px; }
 .paint-tools .btn { min-width: 0; padding: 0 8px; }
 .paint-tools .btn:disabled { opacity: .45; cursor: default; }
@@ -140,3 +144,6 @@
 .history-item { display: grid; gap: 6px; min-width: 0; text-align: center; }
 .history-word { font-size: 18px; font-weight: 900; color: var(--yellow-text); text-wrap: balance; }
 .history-item .paint-img { box-shadow: 0 3px 0 var(--outline); }
+
+/* 畫的時候整頁不給選取（app.js 在 body 加 .no-select）：只鎖畫布那一塊不夠，手指滑出去長按還是會反白（老闆 11/04） */
+body.no-select, body.no-select * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }

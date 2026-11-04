@@ -106,9 +106,10 @@
 .history-panel[hidden] { display: none; }
 .history-panel h2 { margin: 0 0 10px; font-size: 18px; }
 .history { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+/* 清單的一列：框線照設計系統的 .player／.rank-list（--edge-n＋--raise-n），不要用插圖描邊的 --outline，深色模式會看不見（2026-11-04） */
 .history-item {
   display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-  border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface);
+  border: 2px solid var(--edge-n); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raise-n);
 }
 /* 圈和叉都用 CSS 畫：同樣 22px 大小、4px 線條（字型的 ○、✕ 粗細不一） */
 .history-icon { position: relative; flex: none; box-sizing: border-box; width: 22px; height: 22px; margin: 0 4px; }

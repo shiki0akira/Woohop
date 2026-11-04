@@ -580,6 +580,8 @@
   function setPhase(next) {
     phase = next;
     views.play.setAttribute('data-phase', next);
+    // 畫的時候整頁不給選取：手機上畫到一半長按很容易反白（老闆 11/04）
+    document.body.classList.toggle('no-select', next === 'paint');
     el.card.setAttribute('data-stage', next);
     if (next !== 'paint') stopTimer();
     if (next !== 'view') stopView();
@@ -767,6 +769,7 @@
     var title = document.querySelector('.game-bar .title');
     if (title) title.tabIndex = next === 'setup' ? 0 : -1;
     if (next !== 'play') {
+      document.body.classList.remove('no-select');
       stopTimer();
       stopView();
     }

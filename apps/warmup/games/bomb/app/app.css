@@ -71,7 +71,6 @@ dialog.modal h2 { margin: 0 0 4px; font-size: 20px; }
 .chosen-remove { flex: none; width: 32px; height: 32px; border: 0; border-radius: var(--r-sm); background: none; color: var(--muted); cursor: pointer; font-size: 16px; }
 .chosen-remove:hover { background: var(--coral-face); color: var(--coral-text); }
 .custom-empty { margin: 16px 0 0; text-align: center; font-size: 14px; color: var(--muted); }
-dialog.modal .m-actions-one { grid-template-columns: 1fr; }
 
 /* ---------- 進行中 ---------- */
 /*

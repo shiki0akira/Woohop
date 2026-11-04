@@ -1494,6 +1494,8 @@
     el.playTabs.hidden = !playing;
     el.playGrid.hidden = !playing;
     el.resultsCard.hidden = !ended;
+    // 再玩一輪在結算卡片外面（2026-11-04 搬出來），要自己跟著結算一起開關
+    el.resetBlock.hidden = !ended || !isHost;
 
     if (inLobby) renderLobby(room, isHost);
     else if (playing) renderPlay(room);

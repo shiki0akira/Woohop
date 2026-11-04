@@ -253,9 +253,10 @@ dialog.modal .m-one { grid-template-columns: 1fr; }
 }
 /*
  * 確認框兩顆按鈕：woohop.css 是 1fr 1fr（全站的確認框都適用），但 1fr 的最小寬度是字的寬度，外語長一點就把右邊那顆擠出框外
- * （法文「Revenir au début」）。改成 minmax(0, 1fr)，字太長就換行，不撐破框
+ * （法文「Revenir au début」）。改成 minmax(0, 1fr)，字太長就換行，不撐破框。
+ * 只有一顆按鈕的（.m-one）不套：同樣的權重寫在後面會蓋掉上面的 .m-one，單顆按鈕就只剩半邊寬（2026-11-04 抓到）
  */
-dialog.modal .m-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+dialog.modal .m-actions:not(.m-one) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 dialog.modal .m-actions .btn { min-width: 0; white-space: normal; line-height: 1.2; text-wrap: balance; }
 
 /* ============================================================
