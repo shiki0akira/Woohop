@@ -20,7 +20,8 @@ const LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 const DEFAULT_LANG = 'zh-TW';
 
 // 去掉 0/O/1/I/L：房間代碼會被唸出來、也會被手動輸入，形近字一定會有人打錯
-const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+// 也去掉 E：像 8E98 這種房號會被 GA4 當成科學記號，room_id 變成 8e+98（2026-11-04）
+const CODE_ALPHABET = 'ABCDFGHJKMNPQRSTUVWXYZ23456789';
 const CODE_LENGTH = 4;
 const MAX_CREATE_ATTEMPTS = 5;
 
