@@ -614,6 +614,11 @@
       el['answer-input'].value = '';
     }
     if (state.phase === 'drawing' && navigator.vibrate) navigator.vibrate(80);
+    // 畫完一張、看到分數：很多團體玩完直接關掉、不會按結束遊戲，靠這個才算得出「真的玩完」的房間。
+    // 只在主持人的手機送（狀態是廣播給全場的，每台都送會記好幾次）
+    if (state.phase === 'scores' && prev && prev.phase !== 'scores' && me && me.host) {
+      track('sneaky_artist_round_finished', { round_number: state.round.n, player_count: state.players.length });
+    }
   }
 
   /* ---------- 倒數：畫、猜都用同一個圈 ---------- */

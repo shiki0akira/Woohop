@@ -44,4 +44,4 @@ npm run deploy
 
 ## GA4
 
-測量 ID 跟全站共用，`send_page_view: false`，`app.js` 依畫面送 page_view（`/sneaky-artist/{lang}/{home|join|room|error}`）。事件前綴 `sneaky_artist_`，在房間裡的都帶 `room_id`：`room_created`（`mode`、`draw_seconds`）、`player_joined`（`host`）、`game_started`（`player_count`、`mode`）、`round_started`（`round_number`、`player_count`）、`game_ended`（`rounds`、`player_count`）、`room_closed`。
+測量 ID 跟全站共用，`send_page_view: false`，`app.js` 依畫面送 page_view（`/sneaky-artist/{lang}/{home|join|room|error}`）。事件前綴 `sneaky_artist_`，在房間裡的都帶 `room_id`：`room_created`（`mode`、`draw_seconds`）、`player_joined`（`host`）、`game_started`（`player_count`、`mode`）、`round_started`（`round_number`、`player_count`）、`round_finished`（畫完一張看到分數，主持人送；`round_number`、`player_count`）、`game_ended`（`rounds`、`player_count`）、`room_closed`。
