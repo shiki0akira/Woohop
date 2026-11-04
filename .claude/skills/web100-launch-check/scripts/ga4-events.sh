@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 列出系列各專案送出的 GA4 事件，用來對照漏斗有沒有缺口。
 #
-# 用法：bash ga4-events.sh [web100 根目錄]
+# 用法：bash ga4-events.sh [Woohop repo 根目錄]
 #
 # 為什麼要對照而不是單看一個專案：漏掉的事件不會報錯、不影響功能，
 # 只會讓報表少一段。跟既有專案並排看，缺口才會浮出來。
@@ -12,7 +12,8 @@ ROOT="${1:-$(cd "$(dirname "$0")/../../../.." && pwd)}"
 echo "掃描：$ROOT"
 echo
 
-for dir in "$ROOT"/web100_*/; do
+# monorepo（2026-10）之後遊戲在 apps/{代號}，暖場遊戲在 apps/warmup/games/{代號}
+for dir in "$ROOT"/apps/*/ "$ROOT"/apps/warmup/games/*/; do
   name=$(basename "$dir")
   app="$dir/app/app.js"
   # 001 是 React/TS，事件寫在 .ts/.tsx；-o 要用跳脫過的括號括起來，
