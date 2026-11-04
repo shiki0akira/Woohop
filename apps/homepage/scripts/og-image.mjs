@@ -140,6 +140,16 @@ const TARGETS = {
       scripts: [], art: "window.Woohop.art['drawing-relay']()", viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 偷渡畫家（apps/sneaky-artist/app/strings.js 的 LANGS）
+  'sneaky-artist': async () => {
+    const { STRINGS: Sa, LANGS: SAL } = await import(pathToFileURL(path.join(ROOT, '..', 'sneaky-artist', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'sneaky-artist', 'public', 'og'),
+      langs: SAL,
+      title: (lang) => splitTitle(Sa[lang].heroTitle),
+      scripts: [], art: "window.Woohop.art['sneaky-artist']()", viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 木頭人動作版（apps/warmup/games/statue/app/strings.js 的 LANGS）
   statue: async () => {
     const { STRINGS: Tm, LANGS: TL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'statue', 'app', 'strings.js')).href);

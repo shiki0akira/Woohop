@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+  </head>
+
+  <body class="sneaky-app woohop-game" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="game-main">
+      <!-- 首頁：建立房間（難度、畫多久）／加入房間。版面照搶答 -->
+      <div class="view" id="view-home">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <section class="panel">
+          <h2>{{createHeading}}</h2>
+          <!-- 難度：簡單＝同類型 4 選 1／進階＝自己打字，有類型和字數提示（老闆 11/04：主持人選） -->
+          <span class="field-label">{{modeLabel}}</span>
+          <div class="mode-grid" role="radiogroup" aria-label="{{modeLabel}}">
+            <button type="button" class="choice mode-choice c-mint" data-mode="easy" aria-pressed="true"><span class="choice-name">{{modeEasy}}</span><span class="choice-sub">{{modeEasySub}}</span></button>
+            <button type="button" class="choice mode-choice c-coral" data-mode="hard" aria-pressed="false"><span class="choice-name">{{modeHard}}</span><span class="choice-sub">{{modeHardSub}}</span></button>
+          </div>
+          <span class="field-label">{{drawSecLabel}}</span>
+          <div class="seg seg-4" role="radiogroup" aria-label="{{drawSecLabel}}">
+            <label class="seg-item"><input type="radio" name="draw-sec" value="30">{{sec30}}</label>
+            <label class="seg-item"><input type="radio" name="draw-sec" value="45" checked>{{sec45}}</label>
+            <label class="seg-item"><input type="radio" name="draw-sec" value="60">{{sec60}}</label>
+            <label class="seg-item"><input type="radio" name="draw-sec" value="90">{{sec90}}</label>
+          </div>
+          <p class="hint">{{createHint}}</p>
+          <button class="btn btn-lg btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
+          <p class="form-error" id="create-error" role="alert" hidden></p>
+        </section>
+
+        <section class="panel">
+          <h2>{{joinHeading}}</h2>
+          <span class="field-label" id="join-code-label">{{codeLabel}}</span>
+          <div class="code-input" id="code-boxes" role="group" aria-labelledby="join-code-label">
+            <input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="1" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="2" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="3" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="4" />
+          </div>
+          <input id="join-code" type="hidden" value="" />
+          <button class="btn btn-lg btn-secondary btn-block" id="join-room" type="button">{{joinButton}}</button>
+          <p class="form-error" id="join-error" role="alert" hidden></p>
+        </section>
+
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 加入房間：挑頭像、填暱稱（主持人也要，他也一起畫） -->
+      <div class="view" id="view-join" hidden>
+        <section class="panel">
+          <h1 class="join-title" id="join-title">{{joinTitle}}</h1>
+          <span class="field-label">{{avatarLabel}}</span>
+          <div class="avatar-picker" id="avatar-picker" role="radiogroup" aria-label="{{avatarLabel}}"></div>
+          <label class="field-label" for="nickname">{{nicknameLabel}}</label>
+          <input class="input" id="nickname" type="text" autocomplete="nickname" maxlength="16" placeholder="{{nicknamePlaceholder}}" />
+          <button class="btn btn-lg btn-solid btn-block" id="enter-room" type="button">{{enterButton}}</button>
+          <p class="form-error" id="nickname-error" role="alert" hidden></p>
+        </section>
+      </div>
+
+      <!--
+        房間：所有人同一個畫面，依 phase 露出不同區塊（app.js 的 render 設 data-phase），主持人多了控場的按鈕（[data-host]）。
+          lobby 等人 → theme 主題＋自己的祕密題目 → drawing 同時畫 → guessing 一次亮一位、大家猜
+          → reveal 公布這一位 → ⋯⋯ → scores 這張圖的分數 → theme（再畫一張）｜ended 最後排名
+      -->
+      <div class="view" id="view-room" data-phase="lobby" hidden>
+        <!-- 等待大廳：房號卡只有主持人看得到 -->
+        <section class="room-code-card share-card" id="share-card" data-host data-show="lobby">
+          <span class="t-caption">{{roomCodeLabel}}</span>
+          <div class="room-code" id="host-room-code" aria-live="polite"></div>
+          <div class="qr qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+          <div class="row share-actions">
+            <button class="btn btn-secondary btn-sm" id="copy-link" type="button"><svg><use href="#i-copy"/></svg><span class="label">{{copyLink}}</span></button>
+            <button class="btn btn-secondary btn-sm" id="share-link" type="button" hidden><svg><use href="#i-share"/></svg>{{shareButton}}</button>
+          </div>
+          <span class="t-small">{{shareHint}}</span>
+        </section>
+
+        <section class="panel play-status" data-show="lobby" data-player>
+          <h1>{{lobbyWaitTitle}}</h1>
+          <p>{{lobbyWaitDesc}}</p>
+        </section>
+
+        <section class="panel" data-show="lobby">
+          <div class="panel-head">
+            <h2>{{playersHeading}}</h2>
+            <span class="counter" id="player-count"></span>
+          </div>
+          <p class="room-tags" id="room-tags"></p>
+          <ul class="player-list" id="player-list"></ul>
+          <div class="start-block" data-host>
+            <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
+            <p class="hint start-need" id="start-need" hidden></p>
+            <p class="hint">{{startGameHint}}</p>
+          </div>
+        </section>
+
+        <!-- 主題＋自己的祕密題目 -->
+        <section class="panel theme-panel" data-show="theme">
+          <p class="round-no" id="round-no"></p>
+          <span class="t-caption">{{themeLabel}}</span>
+          <p class="theme-text" id="theme-text"></p>
+          <div class="secret-card" id="secret-card">
+            <span class="t-caption">{{secretLabel}}</span>
+            <span class="badge" id="secret-kind"></span>
+            <p class="secret-word" id="secret-word"></p>
+            <button class="btn btn-secondary btn-sm" id="skip-secret" type="button">{{skipSecret}}</button>
+          </div>
+          <p class="hint">{{secretHint}}</p>
+          <p class="hint" data-player>{{themeWaitHint}}</p>
+          <div class="host-row" data-host>
+            <button class="btn btn-lg btn-solid" id="start-drawing" type="button">{{startDrawing}}</button>
+            <button class="btn btn-lg btn-secondary" id="skip-theme" type="button">{{skipTheme}}</button>
+          </div>
+          <p class="hint" data-host>{{themeHostHint}}</p>
+        </section>
+
+        <!-- 畫布：畫、猜、公布、分數都用同一張（猜的時候只亮一位畫家的筆畫） -->
+        <section class="panel board" id="board" data-show="drawing guessing reveal scores">
+          <div class="board-head">
+            <div class="board-who">
+              <p class="board-title" id="board-title"></p>
+              <span class="badge theme-badge" id="theme-badge"></span>
+              <span class="badge secret-badge" id="secret-badge"></span>
+            </div>
+            <div class="timer-ring timer-sm" id="timer">
+              <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="50" fill="none" stroke-width="12"/><circle class="arc" id="timer-arc" cx="60" cy="60" r="50" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="0"/></svg>
+              <div class="num" id="timer-num"></div>
+            </div>
+          </div>
+          <canvas class="paint-canvas" id="canvas" aria-label="{{canvasLabel}}"></canvas>
+          <div class="draw-tools" data-show="drawing">
+            <div class="paint-colors" id="paint-colors" role="group" aria-label="{{colorLabel}}"></div>
+            <div class="tool-row">
+              <button class="btn btn-secondary" id="undo" type="button">{{undoButton}}</button>
+              <button class="btn btn-secondary" id="end-drawing" type="button" data-host>{{endDrawingButton}}</button>
+            </div>
+            <p class="hint">{{drawingHint}}</p>
+          </div>
+        </section>
+
+        <!-- 猜：簡單版 4 選 1／進階版類型＋字數格＋打字 -->
+        <section class="panel guess-panel" data-show="guessing">
+          <div class="guess-me" id="guess-me" hidden>
+            <p class="guess-me-title">{{guessMineTitle}}</p>
+            <p class="hint">{{guessMineDesc}}</p>
+          </div>
+          <div id="guess-form">
+            <div class="options" id="options"></div>
+            <div class="hard-guess" id="hard-guess">
+              <span class="badge hint-badge" id="hint-kind"></span>
+              <p class="hint-mask" id="hint-mask"></p>
+              <div class="answer-row">
+                <input class="input" id="answer-input" type="text" maxlength="30" autocomplete="off" placeholder="{{answerPlaceholder}}" />
+                <button class="btn btn-solid" id="answer-send" type="button">{{answerButton}}</button>
+              </div>
+            </div>
+            <p class="answered-mine" id="answered-mine" hidden></p>
+          </div>
+          <!-- 沒有「公布答案」鍵（老闆 11/04）：大家都答了、或倒數到 0 就自動公布 -->
+          <p class="hint answered-count" id="answered-count"></p>
+        </section>
+
+        <!-- 公布這一位：答案、誰猜什麼、得分 -->
+        <section class="panel result-panel" data-show="reveal">
+          <p class="result-title" id="result-title"></p>
+          <p class="result-answer" id="result-answer"></p>
+          <ul class="answer-list" id="answer-list"></ul>
+          <p class="hint" id="nobody" hidden>{{nobodyCorrect}}</p>
+          <!-- 5 秒後自動下一位（老闆 11/04），主持人可以先按 -->
+          <button class="btn btn-lg btn-solid btn-block" id="next-turn" type="button" data-host></button>
+          <p class="hint" id="next-wait" data-player></p>
+        </section>
+
+        <!-- 這張圖的分數：大家偷渡了什麼＋目前分數 -->
+        <section class="panel" data-show="scores ended">
+          <h1 class="scores-title" id="scores-title"></h1>
+          <div data-show="scores">
+            <h2>{{secretsHeading}}</h2>
+            <ul class="secret-list" id="secret-list"></ul>
+          </div>
+          <h2 id="leaderboard-heading"></h2>
+          <ol class="rank-list score-ranks" id="score-list"></ol>
+          <!-- 繼續玩的鍵放卡片裡；結束遊戲、再玩一次放卡片外面下面（設計系統頁 13 的擺放規則） -->
+          <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button" data-host data-show="scores">{{nextRoundButton}}</button>
+          <p class="hint" data-player>{{waitHostNext}}</p>
+        </section>
+        <!-- 紅色、要按住 0.8 秒才結束（跟你畫我猜接力、比手畫腳的 .end-btn 同一個做法） -->
+        <button class="btn btn-lg btn-block end-btn" id="end-game" type="button" data-host data-show="scores">{{endGameButton}}</button>
+        <button class="btn btn-lg btn-solid btn-block" id="play-again" type="button" data-host data-show="ended">{{playAgainButton}}</button>
+      </div>
+
+      <!-- 連不上 / 房間有問題 -->
+      <div class="view" id="view-error" hidden>
+        <section class="panel center">
+          <h1 id="error-title">{{errorTitle}}</h1>
+          <p id="error-desc">{{errorDesc}}</p>
+          <a class="btn btn-lg btn-solid" href="{{base}}/{{lang}}/">{{backHome}}</a>
+        </section>
+      </div>
+    </main>
+
+    <div class="conn-banner" id="conn-banner" role="status" hidden></div>
+
+    <dialog class="modal" id="confirm-dialog">
+      <div class="m-body">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-desc"></p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="confirm-cancel" type="button">{{cancelButton}}</button>
+        <button class="btn btn-danger" id="confirm-ok" type="button"></button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="closed-dialog">
+      <div class="m-body">
+        <h2>{{roomClosedTitle}}</h2>
+        <p>{{roomClosedDesc}}</p>
+      </div>
+      <div class="m-actions m-one">
+        <button class="btn btn-solid" id="closed-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="kicked-dialog">
+      <div class="m-body">
+        <h2>{{kickedTitle}}</h2>
+        <p>{{kickedDesc}}</p>
+      </div>
+      <div class="m-actions m-one">
+        <button class="btn btn-solid" id="kicked-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script src="{{base}}/vendor/qrcode.js"></script>
+    <script>
+      window.T = {{stringsJson}};
+      window.AVATARS = {{avatarsJson}};
+      window.SNEAKY = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        page: '',
+        siteOrigin: '{{siteOrigin}}',
+        workerOrigin: '{{workerOrigin}}',
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

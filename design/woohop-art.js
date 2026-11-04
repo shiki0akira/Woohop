@@ -224,6 +224,25 @@
         ${makeFace('grin', 64, 56, 1.3)}
       </g>`;
     },
+    // 偷渡畫家（2026-11-04，使用者要求跟你畫我猜接力分得開）：兩枝鉛筆同時畫同一張紙（大家一起畫），
+    // 紙上的山和太陽中間偷偷藏了一個粉紅色的小東西；左邊那枝眨眼（偷渡的人）
+    'sneaky-artist': () => {
+      const line = (d, c) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const pencil = (tf, color, stripe, face) => `<g transform="${tf}">
+        ${body('<path d="M54 26h20v54l-10 16-10-16z"/>', color, `<path d="M66 20h14v78H66z" fill="${stripe}"/>`)}
+        <path d="M54 80h20l-10 16z" fill="#f6d8a8" ${K}/><path d="M60.5 90.5h7l-3.5 5.5z" fill="#22222c"/>
+        <path d="M54 34h20" fill="none" ${K}/>
+        ${makeFace(face, 64, 56, 1.2)}
+      </g>`;
+      return `
+      ${ground}${burst(80, 30, '#FFC628')}${ring(148, 96, '#4FB59A')}${dot(12, 96, '#F3A4FB', 4)}
+      ${body('<rect x="30" y="58" width="100" height="58" rx="8"/>', '#ffffff', '', false)}
+      ${line('M44 108l18-22 12 12 11-10 16 20', '#3D54B6')}
+      <circle cx="84" cy="72" r="6" fill="none" stroke="#F2B200" stroke-width="3"/>
+      <circle cx="66" cy="102" r="5.5" fill="#F3A4FB" stroke="#22222c" stroke-width="2.4"/><circle cx="64.2" cy="101" r="1.2" fill="#22222c"/><circle cx="68.2" cy="102.8" r="1" fill="#22222c"/>
+      ${pencil('translate(-36 6) rotate(-30 64 54)', '#F3A4FB', '#e08ae9', 'wink')}
+      ${pencil('translate(66 6) rotate(30 64 54)', '#7489E6', '#5d72d0', 'grin')}`;
+    },
     // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
     toolActions: () => {
       const card = (x, y, c, a) => `<g transform="rotate(${a} ${x + 27} ${y + 36})">${body(`<rect x="${x}" y="${y}" width="54" height="72" rx="9"/>`, c, '', false)}</g>`;

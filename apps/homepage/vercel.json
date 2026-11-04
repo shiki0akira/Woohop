@@ -180,6 +180,54 @@
       "destination": "https://web100-01-avalon-voice.vercel.app/avalon/:file"
     },
     {
+      "source": "/sneaky-artist-sitemap.xml",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/sitemap.xml"
+    },
+    {
+      "source": "/sneaky-artist",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist"
+    },
+    {
+      "source": "/sneaky-artist/",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/"
+    },
+    {
+      "source": "/sneaky-artist/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/:lang"
+    },
+    {
+      "source": "/sneaky-artist/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/:lang/"
+    },
+    {
+      "source": "/sneaky-artist/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/:lang/:page"
+    },
+    {
+      "source": "/sneaky-artist/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/:lang/:page/"
+    },
+    {
+      "source": "/sneaky-artist/api/:path*",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/api/:path*"
+    },
+    {
+      "source": "/sneaky-artist/vendor/:path*",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/vendor/:path*"
+    },
+    {
+      "source": "/sneaky-artist/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/:file"
+    },
+    {
+      "source": "/sneaky-artist/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/woohop/:file"
+    },
+    {
+      "source": "/sneaky-artist/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://woohop-sneaky-artist.shiki0akira.workers.dev/sneaky-artist/og/:file"
+    },
+    {
       "source": "/buzzer-sitemap.xml",
       "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/sitemap.xml"
     },

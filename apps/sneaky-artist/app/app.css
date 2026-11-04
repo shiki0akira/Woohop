@@ -1,0 +1,185 @@
+/*
+ * 偷渡畫家自己的樣式。色票、按鈕、彈窗、輸入框、頭像、房號、排行榜、倒數圈來自 Woohop 全站的
+ * woohop.css＋site.css＋game.css（唯一來源在 apps/homepage/assets，build 時複製進來），這裡只排這個遊戲的東西。
+ * 房間的版面照搶答（apps/buzzer/app/app.css），畫布、筆色照你畫我猜接力（apps/warmup/games/drawing-relay）。
+ */
+
+/* 這個遊戲的代表色：靛藍 */
+.sneaky-app { --game-edge: var(--indigo-edge); }
+
+#view-join, #view-room, #view-error { padding-top: 20px; }
+/* 房間裡的區塊用 [hidden] 開關（app.js 依 phase 設），game.css 的 .view 是 flex 直排，藏起來的不能佔位 */
+.sneaky-app [hidden] { display: none !important; }
+/* 主持人才有的按鈕（[data-host]）、只給玩家看的提示（[data-player]） */
+#view-room:not(.is-host) [data-host] { display: none !important; }
+#view-room.is-host [data-player] { display: none !important; }
+
+.sneaky-app .center { text-align: center; display: grid; justify-items: center; gap: 12px; }
+.sneaky-app .center h1 { margin: 0; font-size: 26px; }
+.sneaky-app .center p { margin: 0; color: var(--muted); }
+.sneaky-app .hint { margin: 8px 0 0; text-align: center; }
+
+/* ---------- 首頁：開房、加入 ---------- */
+.sneaky-app .input { max-width: none; }
+.sneaky-app .panel > .btn-block { margin-top: 16px; }
+.mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mode-choice { min-height: 0; padding: 14px 8px 12px; gap: 2px; }
+.mode-choice .choice-name { font-size: 17px; }
+.mode-choice .choice-sub { font-size: 13px; }
+.mode-choice::after { width: 20px; height: 20px; top: -7px; right: -7px; background-size: 12px; }
+.sneaky-app .code-input { gap: 8px; }
+.sneaky-app .code-input input { flex: 1 1 0; min-width: 0; max-width: 72px; }
+
+/* ---------- 加入：挑頭像、填暱稱（照搶答） ---------- */
+.join-title { margin: 0 0 4px; font-size: 24px; font-weight: 900; }
+.sneaky-app .avatar-picker { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.sneaky-app .avatar-option { min-width: 0; }
+.sneaky-app .avatar-option svg.avatar { width: 100%; height: 100%; }
+.sneaky-app svg.avatar { flex: none; border-radius: 50%; border: 2px solid var(--outline); box-sizing: border-box; width: auto; height: auto; display: block; }
+
+/* ---------- 等待大廳（照搶答） ---------- */
+.sneaky-app .room-code-card { max-width: none; margin-bottom: 4px; }
+@media (min-width: 640px) {
+  .sneaky-app .room-code-card {
+    grid-template-columns: 1fr auto; column-gap: 32px; row-gap: 12px;
+    grid-template-areas: 'cap qr' 'code qr' 'actions qr' 'hint qr';
+    justify-items: start; text-align: left; align-items: center; padding: 28px 32px;
+  }
+  .sneaky-app .room-code-card > .t-caption { grid-area: cap; }
+  .sneaky-app .room-code-card > .room-code { grid-area: code; }
+  .sneaky-app .room-code-card > .qr { grid-area: qr; width: 188px; height: 188px; }
+  .sneaky-app .room-code-card > .share-actions { grid-area: actions; justify-content: flex-start; }
+  .sneaky-app .room-code-card > .t-small { grid-area: hint; }
+}
+.share-actions { justify-content: center; gap: 8px; }
+.share-actions .btn { margin-bottom: 3px; }
+.qr-box svg { display: block; width: 100%; height: 100%; }
+.play-status { text-align: center; }
+.play-status h1 { margin: 0; font-size: clamp(24px, 6vw, 30px); font-weight: 900; }
+.play-status > p { margin: 6px 0 0; color: var(--muted); }
+.room-tags { margin: 6px 0 0; font-size: 14px; font-weight: 800; color: var(--indigo-text); }
+.sneaky-app .player-list { max-width: none; margin-top: 12px; }
+.sneaky-app .player { gap: 10px; padding: 8px 10px; }
+.sneaky-app .player svg.avatar { width: 32px; height: 32px; }
+.sneaky-app .player .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.sneaky-app .player .badge, .sneaky-app .player .t-caption { flex: none; white-space: nowrap; }
+.sneaky-app .player .kick { --h: 32px; width: 32px; padding: 0; color: var(--muted); }
+.start-block { display: grid; gap: 10px; margin-top: 18px; }
+.start-block .hint { margin: 0; }
+.start-block .start-need { color: var(--ink); font-weight: 800; }
+
+/* ---------- 主題＋祕密題目 ---------- */
+.theme-panel { display: grid; justify-items: center; text-align: center; gap: 6px; }
+.round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
+.theme-text { margin: 0 0 8px; font-size: clamp(34px, 11vw, 52px); font-weight: 900; line-height: 1.15; color: var(--indigo-text); text-wrap: balance; }
+/* 祕密題目用粉紅，跟主題的靛藍分開 */
+.secret-card {
+  display: grid; justify-items: center; gap: 8px; width: 100%; padding: 16px; border: 2px solid var(--pink-edge);
+  border-radius: var(--r-lg); background: var(--pink-face); box-shadow: 0 5px 0 var(--pink-edge);
+}
+.secret-card .t-caption { color: var(--pink-text); font-weight: 800; }
+.secret-card .badge { background: var(--surface); color: var(--pink-text); border-color: var(--pink-edge); }
+.secret-word { margin: 0; font-size: clamp(30px, 9vw, 42px); font-weight: 900; color: var(--pink-text); }
+.host-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; width: 100%; margin-top: 12px; }
+.host-row .btn { min-width: 0; padding: 0 10px; white-space: normal; line-height: 1.2; }
+
+/* ---------- 畫布（畫、猜、公布、分數共用） ---------- */
+.board { display: grid; gap: 12px; padding: 16px; }
+.board-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.board-who { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.board-title { flex-basis: 100%; margin: 0; font-size: 20px; font-weight: 900; line-height: 1.3; }
+.sneaky-app .theme-badge { background: var(--indigo-face); color: var(--indigo-text); border-color: var(--indigo-edge); }
+.sneaky-app .secret-badge { background: var(--pink-face); color: var(--pink-text); border-color: var(--pink-edge); }
+.sneaky-app .timer-ring.timer-sm { flex: none; width: 60px; height: 60px; margin: 0; }
+.sneaky-app .timer-ring.timer-sm .num { font-size: 20px; }
+/* 正方形：大家在手機直拿的時候畫，正方形比 4:3 多一點空間 */
+.paint-canvas {
+  display: block; width: 100%; aspect-ratio: 1 / 1; border: 2px solid var(--outline); border-radius: var(--r-md);
+  background: #ffffff; box-shadow: 0 4px 0 var(--outline); touch-action: none; cursor: crosshair;
+}
+.paint-canvas.is-locked { cursor: default; }
+/* 手機上畫到一半長按會反白（選到畫布、倒數數字、色點），整塊畫布區不給選（跟你畫我猜接力一樣） */
+.board { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.draw-tools { display: grid; gap: 10px; }
+.paint-colors { display: flex; justify-content: center; gap: 14px; }
+.paint-color {
+  width: 36px; height: 36px; padding: 0; border: 2px solid var(--outline); border-radius: 50%;
+  background: var(--ink); box-shadow: 0 3px 0 var(--outline); cursor: pointer;
+}
+.paint-color[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 3px; transform: translateY(-2px); }
+/* 深色模式：--outline 跟深色底幾乎一樣，黑色那顆會看不見，外框換成設計系統的 --edge-strong */
+:root[data-theme="dark"] .paint-color { border-color: var(--edge-strong); box-shadow: 0 3px 0 var(--edge-strong); }
+.tool-row { display: flex; gap: 8px; }
+.tool-row .btn { flex: 1; min-width: 0; }
+.tool-row .btn:disabled { opacity: .45; }
+.draw-tools .hint { margin: 0; }
+
+/* ---------- 猜 ---------- */
+.guess-panel { display: grid; gap: 12px; }
+.guess-me { text-align: center; }
+.guess-me-title { margin: 0; font-size: 20px; font-weight: 900; }
+.options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.options .option { min-width: 0; padding: 0 8px; white-space: normal; line-height: 1.2; font-size: 18px; }
+.options .option.is-picked { --face: var(--indigo-face); --edge: var(--indigo-edge); color: var(--indigo-text); }
+.options .option:disabled:not(.is-picked) { opacity: .5; }
+.hard-guess { display: grid; justify-items: center; gap: 10px; }
+.sneaky-app .hint-badge { padding: 6px 16px; font-size: 18px; background: var(--surface); color: var(--indigo-text); border-color: var(--indigo-edge); }
+.hint-mask { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .12em; margin: 0; font-size: clamp(28px, 9vw, 40px); font-weight: 900; color: var(--indigo-text); }
+.mask-box { display: inline-block; width: .9em; height: .9em; border: 3px solid currentColor; border-radius: 8px; background: var(--surface); opacity: .85; }
+.mask-space { display: inline-block; width: .35em; }
+.answer-row { display: flex; gap: 8px; width: 100%; }
+.answer-row .input { flex: 1; min-width: 0; }
+.answered-mine { margin: 0; text-align: center; font-size: 18px; font-weight: 900; color: var(--indigo-text); }
+.answered-count { margin: 0; font-weight: 800; }
+
+/* ---------- 公布 ---------- */
+.result-panel { display: grid; gap: 10px; text-align: center; }
+.result-title { margin: 0; font-size: 18px; font-weight: 900; color: var(--muted); }
+.result-answer { margin: 0; font-size: clamp(34px, 11vw, 52px); font-weight: 900; line-height: 1.15; color: var(--pink-text); }
+/* 清單的一列：框線照設計系統的 .player／.rank-list（--edge-n＋--raise-n），不用插圖描邊的 --outline（深色模式看不見） */
+.answer-list, .secret-list { display: grid; gap: 8px; margin: 6px 0 0; padding: 0; list-style: none; text-align: left; }
+.answer-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 2px solid var(--edge-n);
+  border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raise-n);
+}
+.answer-item.is-correct { background: var(--mint-face); border-color: var(--mint-edge); }
+.answer-item.is-artist { background: var(--yellow-face); border-color: var(--yellow-edge); }
+.answer-item svg.avatar { width: 28px; height: 28px; }
+.answer-item .name { flex: none; max-width: 30%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800; }
+.answer-item .answer-text { flex: 1; min-width: 0; font-size: 17px; font-weight: 900; overflow-wrap: anywhere; }
+.answer-item .badge, .answer-item .t-caption { flex: none; white-space: nowrap; margin-left: auto; }
+
+/* ---------- 分數 ---------- */
+.scores-title { margin: 0 0 8px; font-size: clamp(24px, 6vw, 30px); font-weight: 900; text-align: center; }
+.sneaky-app h2 { margin: 16px 0 0; font-size: 18px; }
+.sneaky-app .rank-list.score-ranks { counter-reset: rank 0; max-width: none; margin-top: 10px; }
+.sneaky-app .score-ranks li { gap: 10px; padding: 8px 12px; }
+.sneaky-app .score-ranks svg.avatar { width: 28px; height: 28px; }
+.sneaky-app .score-ranks .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800; }
+.sneaky-app .score-ranks .t-caption { flex: none; white-space: nowrap; }
+.sneaky-app .score-ranks li.first { background: var(--indigo-face); border-color: var(--indigo-edge); box-shadow: 0 4px 0 var(--indigo-edge); }
+.sneaky-app .score-ranks li.me:not(.first) { background: var(--blue-face); border-color: var(--blue-edge); box-shadow: 0 4px 0 var(--blue-edge); }
+
+/* ---------- 連線中斷提示（照搶答） ---------- */
+.conn-banner {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 60;
+  width: min(420px, calc(100% - 32px)); padding: 12px 16px; border-radius: var(--r-md);
+  background: var(--ink); color: var(--on-ink); font-weight: 700; text-align: center; box-shadow: 0 10px 30px #0000003d;
+}
+
+/* 大家偷渡了什麼：名字靠左，題目和幾人猜中靠右（老闆 11/04） */
+.secret-list .name { flex: 1; max-width: none; }
+.secret-list .answer-text { flex: none; margin-left: auto; text-align: right; }
+.secret-list .t-caption { margin-left: 0; }
+
+/* ---------- 結束遊戲：紅色、要按住 0.8 秒（照你畫我猜接力的 .end-btn），放在分數卡片外面 ---------- */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
+
+/* 畫的時候整頁不給選取（app.js 在 body 加 .no-select）：只鎖畫布那一塊不夠，手指滑出去長按還是會反白（老闆 11/04） */
+body.no-select, body.no-select * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }

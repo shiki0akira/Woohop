@@ -57,6 +57,8 @@
     { key: 'charades', players: [2, 30], minutes: 10, phones: 'one', purpose: ['warmup', 'move'], color: '#7489E6', added: '2026-10-28' },
     { key: 'charades-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'move', 'team'], color: '#4FB59A', added: '2026-11-03' },
     { key: 'drawing-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'team', 'sit'], color: '#FFC628', added: '2026-11-03' },
+    // 房間型：每人一支手機，一間 3～8 人
+    { key: 'sneaky-artist', players: [3, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」

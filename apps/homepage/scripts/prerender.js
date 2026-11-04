@@ -40,7 +40,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-11-04b';
+const ASSET_VERSION = '2026-11-04d';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -116,7 +116,7 @@ ${extra.map((f) => `    <script src="/assets/${f}${v}"></script>`).join('\n')}`;
 
 /* ---------- 遊戲清單（靜態版，給爬蟲與沒開 JS 的人；JS 會換成有插圖、能篩選的版本） ---------- */
 
-const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'orchard', 'reverse', 'statue', 'charades', 'charades-relay', 'drawing-relay', 'avalon'];
+const GAME_KEYS = ['match', 'bingo', 'bomb', 'buzzer', 'bamboo', 'stairs', 'orchard', 'reverse', 'statue', 'charades', 'charades-relay', 'drawing-relay', 'sneaky-artist', 'avalon'];
 // 這個語言真的玩得到的遊戲（竹筍目前只有 zh-TW，見 locales.mjs 的 GAME_LANGS）
 const gameKeysFor = (lang) => GAME_KEYS.filter((k) => gameInLang(k, lang));
 function staticGames(s, lang, keys = gameKeysFor(lang)) {
@@ -478,7 +478,7 @@ ${scripts(s, lang, key, ['game.js', 'tools.js'], { navPage: 'tools', tool })}
 const mailLink = '<a class="link footer-mail" data-u="woohop" data-d="vibeweb100.com" hidden><span></span></a>';
 // 隱私權政策、服務條款的段落：**粗體**、[文字](網址)；{mail}、{contact}、{privacy}、{rooms} 換成實際內容
 const legal = (s, lang, p) => {
-  const rooms = new Intl.ListFormat(lang, { type: 'conjunction' }).format(['buzzer', 'match', 'bingo'].map((k) => s.games[k][0]));
+  const rooms = new Intl.ListFormat(lang, { type: 'conjunction' }).format(['buzzer', 'match', 'bingo', 'sneaky-artist'].map((k) => s.games[k][0]));
   return rich(p.replace('{rooms}', rooms))
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => {
       const h = { '{contact}': `${local(lang, 'about')}#contact`, '{privacy}': local(lang, 'privacy') }[href] || href;

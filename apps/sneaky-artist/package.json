@@ -1,0 +1,18 @@
+{
+  "name": "woohop-sneaky-artist",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Woohop 偷渡畫家：大家用自己的手機同時畫一張圖，每人偷渡一個祕密題目（Cloudflare Workers + Durable Objects）",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test test/*.test.js",
+    "dev": "npm run build && wrangler dev",
+    "dev:lan": "npm run build && wrangler dev --ip 0.0.0.0",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "qrcode-generator": "^1.4.4",
+    "wrangler": "^4.118.0"
+  }
+}
