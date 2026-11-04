@@ -42,6 +42,14 @@
    * added：上線日期（首頁沒篩選時「最新」那兩張照這個排；2026-10 改版前就有的遊戲不填）
    * 幸福模擬器不是遊戲（獨立專案），不在這裡，只在首頁專區與頁尾。
    */
+  /*
+   * 找遊戲的預設順序、首頁四張卡：熱門＋新上線的加權排名（2026-11-04 老闆定的規則）。
+   * 由 scripts/ga-ranking.mjs 從 GA4 算出來、改寫下面這一行（不要手改），每兩週的週日進度檢查跑一次、老闆確認後才部署。
+   * 熱門 70%：近 28 天按下開始的主持人數 ÷ 上線天數（7～28）再開根號；新上線 30%：上線當天 1、14 天後歸零
+   */
+  // RANK:BEGIN
+  const RANK = ['reverse', 'avalon', 'charades', 'charades-relay', 'drawing-relay', 'sneaky-artist', 'buzzer', 'statue', 'bomb', 'bamboo', 'orchard', 'stairs', 'bingo', 'match'];
+  // RANK:END
   const GAMES = [
     { key: 'match',   players: [5, 30], minutes: 8,  phones: 'each', purpose: ['know'],           color: '#F3A4FB' },
     { key: 'bingo',   players: [8, 50], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
@@ -60,7 +68,8 @@
     // 房間型：每人一支手機，一間 3～8 人
     { key: 'sneaky-artist', players: [3, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
   ].map(g => ({
-    ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
+    ...g, rank: RANK.includes(g.key) ? RANK.indexOf(g.key) : RANK.length,
+    name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
     soon: g.soon || Boolean(gameLangs[g.key] && !gameLangs[g.key].includes(lang)),
   }));
@@ -160,8 +169,9 @@
       // 選了 5 分鐘、15 分鐘：一局最接近那個時間的排前面，比較能把時間用滿（15 分以上不排，不然阿瓦隆永遠第一）
       const byTime = state.time === '0' || state.time === '1';
       const rank = g => { const i = filtered ? -1 : featured.indexOf(g.key); return i < 0 ? Infinity : i; };
+      // 最後照 RANK（熱門＋新上線的加權排名）排，選了條件也一樣
       const all = GAMES.filter(g => match(g) && !(filtered && g.soon))
-        .sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0) || rank(a) - rank(b) || (byTime ? b.minutes - a.minutes : 0));
+        .sort((a, b) => (a.soon ? 1 : 0) - (b.soon ? 1 : 0) || rank(a) - rank(b) || (byTime ? b.minutes - a.minutes : 0) || a.rank - b.rank);
       $('[data-results]').innerHTML = all.slice(0, limit).map(g => card(g, state.purpose)).join('');
       const n = all.filter(g => !g.soon).length, soon = all.filter(g => g.soon).length;
       $('[data-count]').innerHTML = fmt(esc(t.found), { n: `<em>${n}</em>` }) + (soon ? `<span class="t-small">${esc(fmt(t.soonCount, { n: soon }))}</span>` : '');
