@@ -1,5 +1,5 @@
 /*
- * 畫畫接力。一支手機在大家手上傳（CONCEPT.md 第二節）：
+ * 你畫我猜接力。一支手機在大家手上傳（CONCEPT.md 第二節）：
  * 第 1 個人看題目畫 → 交給下一個人，他只看上一張圖 5 秒，再畫出他以為的東西 → ⋯⋯ → 最後一個人看最後一張圖猜
  * → 答案揭曉，依序攤開每個人的畫（最好笑的地方）。
  *
@@ -28,8 +28,21 @@
   var CATS = window.DRAWRELAY.words; // [代號, 類型名稱, [題目...]]（全站共用的 apps/homepage/src/word-bank.mjs，用途 draw）
   var ALL_CATS = CATS.map(function (c) { return c[0]; });
 
-  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、每人畫 30 秒、隨機題目
-  var prep = { size: 5, sec: 30, cats: ALL_CATS.slice() };
+  // 開場的設定：每次打開都是預設（產品決定，不記上次選的），預設就能玩：一隊 5 人、傳話、每人畫 20 秒、隨機題目
+  // 玩法 mode（11/04 老闆加的）：relay 傳話（只看上一張圖、各畫一張）／team 合力（輪流看題目，在同一張圖上接著畫）。
+  // 秒數兩種玩法分開記：傳話 15／20／30／45（預設 20），合力很短 5／8／10／15。
+  // 合力的預設跟著人數走（老闆 11/04）：人少每人多畫一點、人多每人少畫一點，整張圖大約 30～45 秒畫完，
+  // 才不會前面幾個人就畫得很完整。主持人自己點過秒數（secTeamPicked）就不再自動改
+  var teamSecFor = function (size) {
+    var painters = size - 1;
+    if (painters <= 3) return 10; // 3～4 人也只給 10 秒，不夠主持人再自己調（老闆 11/04）
+    if (painters <= 5) return 8;
+    return 5;
+  };
+  var prep = { size: 5, mode: 'relay', secRelay: 20, secTeam: teamSecFor(5), cats: ALL_CATS.slice() };
+  var secTeamPicked = false;
+  var isTeam = function () { return prep.mode === 'team'; };
+  var sec = function () { return isTeam() ? prep.secTeam : prep.secRelay; };
   var randomCats = true;
   // 只記聲音開關（跟比手畫腳接力賽一樣）
   var settings = { sound: true };
@@ -69,8 +82,12 @@
     drawn: $('drawn'),
     cardKind: $('card-kind'),
     cardText: $('card-text'),
+    wordHint: $('word-hint'),
     paintStart: $('paint-start'),
     skip: $('skip'),
+    modes: document.querySelectorAll('.mode-choice'),
+    secRelay: document.querySelector('.sec-relay'),
+    secTeam: document.querySelector('.sec-team'),
     painterNo: $('painter-no'),
     timer: $('timer'),
     timerArc: $('timer-arc'),
@@ -131,12 +148,21 @@
     el.sizeLess.disabled = prep.size <= SIZE_MIN;
     el.sizeMore.disabled = prep.size >= SIZE_MAX;
     document.querySelectorAll('input[name="sec"]').forEach(function (input) {
-      input.checked = input.value === String(prep.sec);
+      input.checked = input.value === String(prep.secRelay);
     });
-    el.roundsHint.textContent = fill(T.roundsHint, { painters: lastPainter(), sec: prep.sec });
+    document.querySelectorAll('input[name="sec-team"]').forEach(function (input) {
+      input.checked = input.value === String(prep.secTeam);
+    });
+    Array.prototype.forEach.call(el.modes, function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.mode === prep.mode));
+    });
+    el.secRelay.hidden = isTeam();
+    el.secTeam.hidden = !isTeam();
+    el.roundsHint.textContent = fill(isTeam() ? T.roundsHintTeam : T.roundsHint, { painters: lastPainter(), sec: sec() });
   }
   function setSize(n) {
     prep.size = Math.max(SIZE_MIN, Math.min(SIZE_MAX, n));
+    if (!secTeamPicked) prep.secTeam = teamSecFor(prep.size);
     syncSetup();
   }
 
@@ -207,11 +233,13 @@
     var line = T.lead[key];
     if (!line) return;
     var v = { result: resultLine() };
+    // 合力的說明規則換一段念法
+    var say = screen === 'rules' && isTeam() ? T.rulesTeamSay : line[1];
     Leader.lead(views[screen].querySelector('.lead-slot'), {
       index: STEPS.indexOf(screen),
       total: STEPS.length,
       title: fill(line[0], v),
-      say: fill(line[1], v),
+      say: fill(say, v),
     });
     // 照著念是空的就收起來；排好了嗎只在第 1 題念（跟比手畫腳接力賽一樣）
     Leader.hideSay(!line[1] || (screen === 'play' && phase === 'draw' && roundNumber > 1));
@@ -273,10 +301,12 @@
   }
 
   // ---------- 畫布：手指畫線，五種筆的顏色，可以復原一筆、清掉重畫 ----------
-  // 一筆 = { c: 顏色, p: [[x, y]⋯] }，座標存 0～1，畫布大小變了（轉螢幕）也能重畫；交出去時壓成白底 PNG 存進 drawings
+  // 一筆 = { c: 顏色, p: [[x, y]⋯] }，座標存 0～1，畫布大小變了（轉螢幕）也能重畫；交出去時壓成白底 PNG 存進 drawings。
+  // 合力時大家接著同一張畫：turnStart 之前的筆是前面的人畫的，復原、清掉都碰不到（傳話時 turnStart 一律是 0）
 
   var ctx = el.canvas.getContext('2d');
   var strokes = [];
+  var turnStart = 0;
   var current = null;
   var locked = true;
   // 筆的顏色（老闆 11/03 要求：黑、藍、紅、黃、綠），名稱在 locale 的 colorNames，順序要一樣；黃色在白底上要夠深才看得到
@@ -337,8 +367,9 @@
     return [Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), Math.max(0, Math.min(1, (e.clientY - r.top) / r.height))];
   }
   function syncTools() {
-    el.undo.disabled = locked || !strokes.length;
-    el.clear.disabled = locked || !strokes.length;
+    var mine = strokes.length > turnStart;
+    el.undo.disabled = locked || !mine;
+    el.clear.disabled = locked || !mine;
   }
   el.canvas.addEventListener('pointerdown', function (e) {
     if (locked) return;
@@ -374,23 +405,23 @@
   function startTimer() {
     stopTimer();
     el.timer.classList.remove('is-urgent');
-    endsAt = Date.now() + prep.sec * 1000;
+    endsAt = Date.now() + sec() * 1000;
     lastBeep = -1;
     tickTimer();
     timerId = setInterval(tickTimer, 100);
   }
   function tickTimer() {
     var left = Math.max(0, endsAt - Date.now());
-    var sec = Math.ceil(left / 1000);
-    el.timerNum.textContent = sec;
-    el.timerArc.style.strokeDashoffset = String(RING * (1 - left / (prep.sec * 1000)));
-    el.timer.classList.toggle('is-urgent', sec <= 3 && left > 0);
-    if (sec > 0 && sec !== lastBeep) {
+    var s = Math.ceil(left / 1000);
+    el.timerNum.textContent = s;
+    el.timerArc.style.strokeDashoffset = String(RING * (1 - left / (sec() * 1000)));
+    el.timer.classList.toggle('is-urgent', s <= 3 && left > 0);
+    if (s > 0 && s !== lastBeep) {
       if (lastBeep !== -1) {
-        if (sec <= 3) beep(880, 0.08, 0.14);
-        else if (sec <= 10) beep(1200, 0.03, 0.05);
+        if (s <= 3) beep(880, 0.08, 0.14);
+        else if (s <= 10) beep(1200, 0.03, 0.05);
       }
-      lastBeep = sec;
+      lastBeep = s;
     }
     if (left <= 0) {
       stopTimer();
@@ -565,6 +596,8 @@
     roundNumber += 1;
     skips = 0;
     drawings = [];
+    strokes = [];
+    turnStart = 0;
     painter = 1;
     renderRound();
     setPhase('draw');
@@ -579,18 +612,23 @@
     setTimeout(function () {
       drawing = false;
       el.deck.classList.remove('is-drawing');
+      el.wordHint.textContent = isTeam() ? T.wordHintTeam : T.wordHint;
+      el.skip.hidden = false;
       setPhase('word');
       flip();
     }, reduceMotion ? 0 : 380);
   }
 
-  // 第 painter 個人開始畫：空白畫布、倒數
+  // 第 painter 個人開始畫、倒數。傳話：空白畫布、從黑色開始；
+  // 合力：接著前面的人畫，每個人預設一種筆色（輪流），一步一步看時分得出誰畫的
   function startPainting() {
-    strokes = [];
+    if (!isTeam()) strokes = [];
+    turnStart = strokes.length;
     current = null;
     locked = false;
-    ink = INKS[0]; // 每個人都從黑色開始
+    ink = isTeam() ? INKS[(painter - 1) % INKS.length] : INKS[0];
     syncColors();
+    el.clear.textContent = isTeam() ? T.clearMine : T.clearButton;
     el.painterNo.textContent = fill(T.painterNo, { k: painter, total: lastPainter() });
     sfx.go();
     setPhase('paint');
@@ -612,7 +650,7 @@
     setPhase('handoff');
   }
 
-  // 下一個人拿到手機：看上一張圖（最後一個人直接看最後一張圖猜）
+  // 下一個人拿到手機：看上一張圖（最後一個人直接看最後一張圖猜）；合力時先看題目，再接著同一張圖畫
   function takeOver() {
     var last = drawings[drawings.length - 1];
     if (painter > lastPainter()) {
@@ -620,6 +658,14 @@
       sfx.guess();
       setPhase('guess');
       startGuessTimer();
+      return;
+    }
+    if (isTeam()) {
+      // 輪流看題目（11/04 老闆：不要大家一起先看），第 2 個人以後不能換題
+      el.wordHint.textContent = fill(T.wordHintNext, { k: painter - 1 });
+      el.skip.hidden = true;
+      setPhase('word');
+      flip();
       return;
     }
     el.viewImg.src = last;
@@ -634,7 +680,7 @@
     drawn += drawings.length;
     playedWords.push({ word: card[1], last: drawings[drawings.length - 1] });
     sfx.reveal();
-    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown });
+    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown, mode: prep.mode });
     el.resultAnswer.textContent = card[1];
     renderGallery();
     renderRound();
@@ -648,7 +694,7 @@
       li.className = 'gallery-item';
       var label = document.createElement('span');
       label.className = 'gallery-label';
-      label.textContent = fill(T.galleryLabel, { k: i + 1 });
+      label.textContent = fill(isTeam() ? T.galleryLabelTeam : T.galleryLabel, { k: i + 1 });
       var img = document.createElement('img');
       img.className = 'paint-img';
       img.src = src;
@@ -693,6 +739,24 @@
     },
   ];
 
+  // 合力的三張卡：輪流看題目（一張紙＋眼睛）、接著同一張圖畫（兩種顏色的線）、最後一個人猜（同一張問號泡泡）
+  var RULE_ART_TEAM = [
+    function () {
+      return W.ground + W.burst(140, 22, '#FFC628') + W.dot(18, 30, '#4FB59A', 4) +
+        paper(54, 34, 60, 70) +
+        '<path d="M64 60h40M64 74h28" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round"/>' +
+        head(30, 86, 16, '#F3A4FB', 'wow');
+    },
+    function () {
+      return W.ground + W.ring(144, 28, '#7489E6') + W.plus(18, 36, '#EE7B6A') +
+        paper(30, 34, 96, 70) +
+        '<path d="M42 90q14-30 28-10" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round"/>' +
+        '<path d="M76 88q8-24 22-16t16-10" fill="none" stroke="#3D54B6" stroke-width="3.5" stroke-linecap="round"/>' +
+        '<g transform="rotate(35 128 46)">' + W.body('<rect x="122" y="18" width="12" height="52" rx="4"/>', '#FF9419', '', false) + '</g>';
+    },
+    RULE_ART[2],
+  ];
+
   // ---------- 畫面切換 ----------
 
   function showScreen(next) {
@@ -726,7 +790,8 @@
     track('drawing_relay_game_started', {
       game_number: gameNumber,
       size: prep.size,
-      seconds: prep.sec,
+      mode: prep.mode,
+      seconds: sec(),
       categories: randomCats ? 'random' : prep.cats.join(','),
     });
   }
@@ -768,7 +833,8 @@
       rounds: judged,
       drawings: drawn,
       size: prep.size,
-      seconds: prep.sec,
+      mode: prep.mode,
+      seconds: sec(),
       duration_seconds: Math.round((Date.now() - startedAt) / 1000),
     });
     renderHistory();
@@ -818,12 +884,27 @@
   el.sizeMore.addEventListener('click', function () { setSize(prep.size + 1); });
   document.querySelectorAll('input[name="sec"]').forEach(function (input) {
     input.addEventListener('change', function () {
-      prep.sec = Number(input.value);
+      prep.secRelay = Number(input.value);
+      syncSetup();
+    });
+  });
+  document.querySelectorAll('input[name="sec-team"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+      prep.secTeam = Number(input.value);
+      secTeamPicked = true;
+      syncSetup();
+    });
+  });
+  Array.prototype.forEach.call(el.modes, function (b) {
+    b.addEventListener('click', function () {
+      prep.mode = b.dataset.mode;
       syncSetup();
     });
   });
 
   el.start.addEventListener('click', function () {
+    // 說明規則的三張卡依玩法換
+    Leader.ruleCards(el.ruleCards, isTeam() ? T.ruleCardsTeam : T.ruleCards, isTeam() ? RULE_ART_TEAM : RULE_ART);
     pushGameState();
     showScreen('rules');
   });
@@ -841,11 +922,11 @@
   });
   el.paintStart.addEventListener('click', startPainting);
   el.undo.addEventListener('click', function () {
-    strokes.pop();
+    if (strokes.length > turnStart) strokes.pop();
     redraw();
   });
   el.clear.addEventListener('click', function () {
-    strokes = [];
+    strokes.length = turnStart;
     redraw();
   });
   el.paintDone.addEventListener('click', function () { finishPainting(false); });

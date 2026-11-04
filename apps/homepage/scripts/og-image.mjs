@@ -130,7 +130,7 @@ const TARGETS = {
       scripts: [], art: "window.Woohop.art['charades-relay']()", viewBox: '0 0 160 128', artWidth: 500,
     };
   },
-  // 畫畫接力（apps/warmup/games/drawing-relay/app/strings.js 的 LANGS）
+  // 你畫我猜接力（apps/warmup/games/drawing-relay/app/strings.js 的 LANGS）
   'drawing-relay': async () => {
     const { STRINGS: Dr, LANGS: DRL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'drawing-relay', 'app', 'strings.js')).href);
     return {

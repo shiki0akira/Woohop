@@ -1,4 +1,4 @@
-# 畫畫接力（apps/warmup/games/drawing-relay）
+# 你畫我猜接力（apps/warmup/games/drawing-relay）
 
 一支手機在大家手上傳的畫畫遊戲：第 1 個人看題目畫，下一個人只看上一張圖 5 秒，再在空白畫布上畫出他以為的東西，一路傳下去，最後一個人看最後一張圖猜。揭曉時把每個人的畫依序攤開。玩法與設計決策在 `CONCEPT.md`，這裡只記跟程式碼直接相關的事。
 
@@ -11,7 +11,8 @@
 ## `app/app.js` 的結構
 
 - **一步一步帶**：`setup` → `rules` → `play` → `end`，用 `showScreen()` 切換。返回鍵一律回第一頁；已經抽過題目就先確認。
-- **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5；畫的人 `size - 1`，最後一個人只猜）、`sec`（每人畫幾秒 20／30／45／60，預設 30）、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-drawing-relay-settings']`（`{ sound }`）。
+- **開場設定** `prep`：`size`（一隊幾人 3～10，預設 5；畫的人 `size - 1`，最後一個人只猜）、`mode`（`relay` 傳話＝預設／`team` 合力，11/04 加的）、`secRelay`（傳話每人 15／20／30／45 秒，預設 20，11/04 老闆改）、`secTeam`（合力每人 5／8／10／15 秒，預設跟著人數走：`teamSecFor()` 畫的人 2～3 個 10、4～5 個 8、6 個以上 5；主持人自己點過就不再自動改（`secTeamPicked`），11/04 老闆試玩後改），用 `sec()` 取現在玩法的秒數、`cats`（題目類型，`randomCats` 跟比手畫腳一樣）。**不記上次選的**；只有聲音開關存在 `localStorage['woohop-drawing-relay-settings']`（`{ sound }`）。
+- **合力模式** `isTeam()`：除了最後一個人都輪流看題目（`takeOver()` 進 `word`，第 2 個人以後藏起「換一題」），再接著同一張圖畫：`strokes` 不清空，`turnStart` 之前是前面的人畫的，復原、「清掉我畫的」碰不到；每個人預設筆色 `INKS[(painter - 1) % 5]`。`drawings` 存每個人畫完時整張圖的樣子，揭曉的標籤是 `galleryLabelTeam`（第 k 個人畫完）。說明規則換成 `ruleCardsTeam`＋`RULE_ART_TEAM`、照著念換 `rulesTeamSay`（按「開始遊戲」時依玩法重畫）。傳話模式完全照舊（`turnStart` 一律 0）。
 - **play 分七段** `setPhase()`：`draw`（抽題目）→ `word`（給第 1 個人看，開始畫／換一題）→ `paint`（畫）→ `handoff`（交給下一個人）→ `view`（看上一張圖 `VIEW_SEC`＝5 秒，倒數完自動進 paint）→ ⋯⋯ → `guess`（最後一個人看最後一張圖）→ `reveal`（答案＋每個人的畫）。題卡 `#card[data-stage]` 跟 phase 同名（reveal 那面的 class 是 `.stage-reveal-answer`）。
   - **步驟頭**只在 `PLAY_LEAD`（draw／reveal），其他時候手機在畫的人手上。reveal 只有標題，draw 的照著念只在第 1 題出現（`Leader.hideSay()`，跟比手畫腳接力賽一樣）。
   - **畫布** `#canvas`：筆畫存成 0～1 的座標（`strokes`），`redraw()` 每次整張重畫（白底黑線，線寬跟著畫布寬），`fitCanvas()` 依顯示大小×devicePixelRatio（最多 2）設解析度；`locked` 時不收指標。筆有五種顏色（`INKS`：黑、藍、紅、黃、綠，11/03 老闆要求；名稱在 locale 的 `colorNames`，順序一樣），一筆存成 `{ c, p }`，每個人開始畫時回到黑色；工具是復原一筆、清掉重畫、畫好了。
@@ -30,7 +31,7 @@
 
 | 事件 | 時機 | 參數 |
 |---|---|---|
-| `drawing_relay_game_started` | 進入上場（含再玩一次） | `game_number`、`size`、`seconds`、`categories` |
+| `drawing_relay_game_started` | 進入上場（含再玩一次） | `game_number`、`size`、`mode`、`seconds`、`categories` |
 | `drawing_relay_skipped` | 換一題 | `round_number`、`category` |
-| `drawing_relay_revealed` | 公布答案 | `round_number`、`painters`、`category`、`skips` |
-| `drawing_relay_game_ended` | 結束遊戲 | `rounds`、`drawings`、`size`、`seconds`、`duration_seconds` |
+| `drawing_relay_revealed` | 公布答案 | `round_number`、`painters`、`category`、`skips`、`mode` |
+| `drawing_relay_game_ended` | 結束遊戲 | `rounds`、`drawings`、`size`、`mode`、`seconds`、`duration_seconds` |

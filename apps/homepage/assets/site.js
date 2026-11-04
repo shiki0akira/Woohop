@@ -37,25 +37,26 @@
 
   /* ================= 遊戲資料 =================
    * players：最少～最多人；minutes：一局大約幾分鐘（卡片標「3 分一局」、「有多少時間」篩選、排破冰組合都用它）
-   * phones：none / one / each；purpose：warmup / know（桌遊助手不是破冰遊戲，留空，選了目的就不會出現）
+   * phones：none / one / each；purpose：warmup / know / move（動動身體）/ team（分隊比賽）/ sit（坐著就能玩），可以複數（2026-11-04 從兩個擴充成五個）；
+   * 桌遊助手不是破冰遊戲，留空，選了目的就不會出現。卡片的標籤只看 warmup / know
    * added：上線日期（首頁沒篩選時「最新」那兩張照這個排；2026-10 改版前就有的遊戲不填）
    * 幸福模擬器不是遊戲（獨立專案），不在這裡，只在首頁專區與頁尾。
    */
   const GAMES = [
     { key: 'match',   players: [5, 30], minutes: 8,  phones: 'each', purpose: ['know'],           color: '#F3A4FB' },
     { key: 'bingo',   players: [8, 50], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
-    { key: 'bomb',    players: [4, 15], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know'], color: '#EE7B6A' },
-    { key: 'buzzer',  players: [5, 50], minutes: 5,  phones: 'each', purpose: ['warmup'],         color: '#FF9419' },
-    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#4FB59A', added: '2026-10-20' },
+    { key: 'bomb',    players: [4, 15], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know', 'sit'], color: '#EE7B6A' },
+    { key: 'buzzer',  players: [5, 50], minutes: 5,  phones: 'each', purpose: ['warmup', 'team'], color: '#FF9419' },
+    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup', 'move'], color: '#4FB59A', added: '2026-10-20' },
     { key: 'avalon',  players: [5, 10], minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器
-    { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup'],         color: '#FF9419', added: '2026-10-22' },
-    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup'],         color: '#7489E6', added: '2026-10-21' },
-    { key: 'reverse', players: [2, 20], minutes: 10, phones: 'one',  purpose: ['warmup'],         color: '#F3A4FB', added: '2026-10-23' },
-    { key: 'statue',  players: [4, 50], minutes: 10, phones: 'none', purpose: ['warmup'],         color: '#FFC628', added: '2026-10-28' },
-    { key: 'charades', players: [2, 30], minutes: 10, phones: 'one', purpose: ['warmup'],         color: '#7489E6', added: '2026-10-28' },
-    { key: 'charades-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup'],   color: '#4FB59A', added: '2026-11-03' },
-    { key: 'drawing-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup'],    color: '#FFC628', added: '2026-11-03' },
+    { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup', 'sit'],  color: '#FF9419', added: '2026-10-22' },
+    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup', 'move'], color: '#7489E6', added: '2026-10-21' },
+    { key: 'reverse', players: [2, 20], minutes: 10, phones: 'one',  purpose: ['warmup', 'sit'],  color: '#F3A4FB', added: '2026-10-23' },
+    { key: 'statue',  players: [4, 50], minutes: 10, phones: 'none', purpose: ['warmup', 'move'], color: '#FFC628', added: '2026-10-28' },
+    { key: 'charades', players: [2, 30], minutes: 10, phones: 'one', purpose: ['warmup', 'move'], color: '#7489E6', added: '2026-10-28' },
+    { key: 'charades-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'move', 'team'], color: '#4FB59A', added: '2026-11-03' },
+    { key: 'drawing-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'team', 'sit'], color: '#FFC628', added: '2026-11-03' },
   ].map(g => ({
     ...g, name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
     // 只開放部分語言的遊戲（prerender 從 locales.mjs 的 GAME_LANGS 帶進來）：其他語言當成「即將推出」
@@ -72,7 +73,7 @@
   const tagChip = (icon, text) => `<span><svg aria-hidden="true"><use href="#${icon}"/></svg>${esc(text)}</span>`;
   const card = (g, purposes = new Set()) => {
     const tag = g.soon ? 'div' : 'a';
-    const badge = g.soon ? ['b-soon', t.soon] : g.boardgame ? ['b-info', t.badgeBoard] : (g.purpose.find(p => purposes.has(p)) || g.purpose[0]) === 'know' ? ['b-info', t.badgeKnow] : ['b-new', t.badgeWarm];
+    const badge = g.soon ? ['b-soon', t.soon] : g.boardgame ? ['b-info', t.badgeBoard] : (g.purpose.find(p => purposes.has(p) && (p === 'warmup' || p === 'know')) || g.purpose.find(p => p === 'warmup' || p === 'know')) === 'know' ? ['b-info', t.badgeKnow] : ['b-new', t.badgeWarm];
     return `<${tag} class="game${g.soon ? ' soon' : ''}" ${g.soon ? '' : `href="${g.url}"`} data-key="${g.key}">
       <span class="badge ${badge[0]} purpose">${esc(badge[1])}</span>
       <div class="art">${artSvg(g.key)}</div>
@@ -93,7 +94,7 @@
     // 主持人有多少時間＝上限：一局在這之內的都列出來（5 分鐘、15 分鐘、15 分以上＝不限）
     time:    { label: t.fTime,    type: 'one',  values: ['0', '1', '2'],                  labels: t.oTime, max: [5, 15, Infinity] },
     phones:  { label: t.fPhones,  type: 'many', values: ['none', 'one', 'each'],          labels: t.oPhones },
-    purpose: { label: t.fPurpose, type: 'many', values: ['warmup', 'know'],               labels: t.oPurpose },
+    purpose: { label: t.fPurpose, type: 'many', values: ['warmup', 'know', 'move', 'team', 'sit'], labels: t.oPurpose },
   };
   // featured：沒選任何條件時排在最前面的遊戲 key（首頁用：熱門兩個＋最新兩個）
   const finder = (root, { filters = Object.keys(FILTERS), limit = Infinity, moreHref = null, featured = [] } = {}) => {

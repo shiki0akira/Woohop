@@ -1,5 +1,5 @@
 /*
- * 畫畫接力自己的樣式。步驟頭、規則卡、抽卡（.namer）、分段控制、倒數圈、按鈕都在全站共用的
+ * 你畫我猜接力自己的樣式。步驟頭、規則卡、抽卡（.namer）、分段控制、倒數圈、按鈕都在全站共用的
  * woohop.css＋game.css，這裡只排這個遊戲的版面。開場、題卡照抄比手畫腳接力賽（games/charades-relay/app/app.css）。
  * 跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
  */
@@ -23,6 +23,13 @@
 .setup-panel .stepper output { min-width: 48px; }
 .setup-panel .field-label-gap { display: block; margin-top: 18px; }
 #rounds-hint { margin: 10px 0 0; }
+/* 玩法：兩張選擇卡並排（傳話／合力，11/04）；秒數依玩法只露一組 */
+.mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mode-choice { min-height: 0; padding: 14px 8px 12px; gap: 2px; }
+.mode-choice .choice-name { font-size: 17px; }
+.mode-choice .choice-sub { font-size: 13px; }
+.mode-choice::after { width: 20px; height: 20px; top: -7px; right: -7px; background-size: 12px; }
+.setup-panel .seg[hidden], #skip[hidden] { display: none; }
 .category-bar { margin-top: 16px; }
 .category-bar .tool-toggle { font-size: 15px; }
 #category-panel[hidden] { display: none; }

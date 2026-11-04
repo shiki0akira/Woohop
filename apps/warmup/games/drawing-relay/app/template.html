@@ -28,12 +28,25 @@
             <output id="size-value" aria-live="polite"></output>
             <button type="button" id="size-more" aria-label="{{sizeMore}}">+</button>
           </div>
+          <!-- 玩法：傳話（只看上一張圖、各畫一張）／合力（輪流看題目、在同一張圖上接著畫，11/04 老闆要求） -->
+          <span class="field-label field-label-gap">{{modeLabel}}</span>
+          <div class="mode-grid" role="group" aria-label="{{modeLabel}}">
+            <button type="button" class="choice mode-choice c-yellow" data-mode="relay"><span class="choice-name">{{modeRelay}}</span><span class="choice-sub">{{modeRelaySub}}</span></button>
+            <button type="button" class="choice mode-choice c-mint" data-mode="team"><span class="choice-name">{{modeTeam}}</span><span class="choice-sub">{{modeTeamSub}}</span></button>
+          </div>
           <span class="field-label field-label-gap">{{secLabel}}</span>
-          <div class="seg seg-4" role="radiogroup" aria-label="{{secLabel}}">
+          <!-- 秒數兩種玩法分開：傳話 15／20／30／45，合力很短 5／8／10／15 -->
+          <div class="seg seg-4 sec-relay" role="radiogroup" aria-label="{{secLabel}}">
+            <label class="seg-item"><input type="radio" name="sec" value="15">{{sec15}}</label>
             <label class="seg-item"><input type="radio" name="sec" value="20">{{sec20}}</label>
             <label class="seg-item"><input type="radio" name="sec" value="30">{{sec30}}</label>
             <label class="seg-item"><input type="radio" name="sec" value="45">{{sec45}}</label>
-            <label class="seg-item"><input type="radio" name="sec" value="60">{{sec60}}</label>
+          </div>
+          <div class="seg seg-4 sec-team" role="radiogroup" aria-label="{{secLabel}}" hidden>
+            <label class="seg-item"><input type="radio" name="sec-team" value="5">{{sec5}}</label>
+            <label class="seg-item"><input type="radio" name="sec-team" value="8">{{sec8}}</label>
+            <label class="seg-item"><input type="radio" name="sec-team" value="10">{{sec10}}</label>
+            <label class="seg-item"><input type="radio" name="sec-team" value="15">{{sec15}}</label>
           </div>
           <p class="hint" id="rounds-hint"></p>
           <!-- 題目類型平常收起來，第一張「隨機」（照比手畫腳） -->
@@ -87,7 +100,7 @@
                 <span class="badge" id="card-kind"></span>
                 <p class="drawn-name" id="card-text" aria-live="polite"></p>
               </div>
-              <p class="hint">{{wordHint}}</p>
+              <p class="hint" id="word-hint"></p>
               <div class="pass-row">
                 <button class="btn btn-lg btn-solid pass-bar" id="paint-start" type="button">{{startPaint}}</button>
                 <button class="btn btn-lg btn-secondary pass-bar pass-redraw" id="skip" type="button">{{skipButton}}</button>
