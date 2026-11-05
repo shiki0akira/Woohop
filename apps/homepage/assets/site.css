@@ -260,7 +260,7 @@
   .footer-mail svg, .footer-social svg { width: 18px; height: 18px; flex: none; }
   /* 頁尾的聯絡方式只放圓形圖示（老闆 11/05）；信箱的字留給螢幕閱讀器，畫面上藏起來 */
   .footer-icons { display: flex; gap: 10px; }
-  .footer-icon { position: relative; display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: var(--ink); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); }
+  .footer-icon { position: relative; display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: var(--ink); background: var(--surface); border: 2px solid var(--edge-n); }
   .footer-icon[hidden] { display: none; }
   .footer-icon:hover { background: var(--hover); }
   .footer-icon:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
