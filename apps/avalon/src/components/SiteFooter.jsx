@@ -49,14 +49,21 @@ export default function SiteFooter() {
             <br />
             {s.footerTag2}
           </p>
-          {mail && (
-            <a className="link footer-mail" href={`mailto:${mail}`}>
+          <div className="footer-icons">
+            {mail && (
+              <a className="footer-icon footer-mail" href={`mailto:${mail}`}>
+                <svg aria-hidden="true">
+                  <use href="#i-mail" />
+                </svg>
+                <span>{mail}</span>
+              </a>
+            )}
+            <a className="footer-icon" href="https://www.threads.com/@woohop.app" target="_blank" rel="noopener" aria-label="Threads @woohop.app" title="Threads @woohop.app">
               <svg aria-hidden="true">
-                <use href="#i-mail" />
+                <use href="#i-threads" />
               </svg>
-              <span>{mail}</span>
             </a>
-          )}
+          </div>
         </div>
         <div className="footer-col">
           <h4>{s.footerSite}</h4>

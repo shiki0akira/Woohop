@@ -258,6 +258,14 @@
   /* 頁尾品牌欄底下的聯絡信箱 */
   .footer-mail, .footer-social { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
   .footer-mail svg, .footer-social svg { width: 18px; height: 18px; flex: none; }
+  /* 頁尾的聯絡方式只放圓形圖示（老闆 11/05）；信箱的字留給螢幕閱讀器，畫面上藏起來 */
+  .footer-icons { display: flex; gap: 10px; }
+  .footer-icon { position: relative; display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: var(--ink); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: 0 3px 0 var(--edge-n); }
+  .footer-icon[hidden] { display: none; }
+  .footer-icon:hover { background: var(--hover); }
+  .footer-icon:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .footer-icon svg { width: 20px; height: 20px; }
+  .footer-icon span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- 桌遊助手：小工具頁（tools.js 用全站共用的帶領元件 window.Leader 建，樣式大多在 game.css） ---------- */
 /* 桌遊助手總覽與小工具頁：每個區塊上下 40px（全站的 section 是 48px） */
