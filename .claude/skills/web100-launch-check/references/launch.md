@@ -74,6 +74,7 @@
 - `apps/homepage/README.md` 的專案一覽
 - `apps/warmup/CLAUDE.md` 的遊戲表（暖場型）
 - 記憶裡該遊戲的那則（狀態、commit）
+- **Notion**：「計畫 Woohop」當週那筆改狀態、寫「實際」；**「回報」資料庫寫一筆**（`collection://9aa00356-c378-4468-a76d-cfd6fb4b2db1`，部門選 Sharon，產出放遊戲網址）。後台 admin.vibeweb100.com 的工位卡片讀這裡，沒寫回報老闆就看不到做了什麼（11/05 老闆問「後台是不是都沒更新」，就是漏了這個）
 
 ## 常踩的坑
 
