@@ -24,6 +24,7 @@ export const ABOUT = {
     contactHeading: '聯絡我們',
     contactLead: '想推薦遊戲、發現哪裡壞掉、或有任何建議，都歡迎告訴我們，每一則都會看。',
     mailLead: '也可以直接寫信給我們：',
+    threadsLead: '新遊戲和開發過程都在 Threads：',
     form: {
       type: '想跟我們說什麼？',
       types: { recommend: '推薦遊戲', idea: '修改建議', collab: '合作邀約', other: '其他' },
@@ -104,6 +105,7 @@ export const ABOUT = {
     contactHeading: 'Contact us',
     contactLead: 'Want to suggest a game, found something broken, or have an idea? Tell us — we read every message.',
     mailLead: 'Or email us directly:',
+    threadsLead: 'Follow new games on Threads:',
     form: {
       type: 'What’s it about?',
       types: { recommend: 'Suggest a game', idea: 'Feedback', collab: 'Partnership', other: 'Other' },
@@ -184,6 +186,7 @@ export const ABOUT = {
     contactHeading: 'Kontakt',
     contactLead: 'Du möchtest ein Spiel vorschlagen, hast einen Fehler gefunden oder eine Idee? Schreib uns – wir lesen jede Nachricht.',
     mailLead: 'Oder schreib uns direkt eine E-Mail:',
+    threadsLead: 'Neue Spiele gibt’s auf Threads:',
     form: {
       type: 'Worum geht es?',
       types: { recommend: 'Spiel vorschlagen', idea: 'Feedback', collab: 'Kooperation', other: 'Sonstiges' },
@@ -264,6 +267,7 @@ export const ABOUT = {
     contactHeading: 'Nous contacter',
     contactLead: 'Vous voulez proposer un jeu, vous avez trouvé un bug ou vous avez une idée ? Dites-le-nous : nous lisons chaque message.',
     mailLead: 'Ou écrivez-nous directement :',
+    threadsLead: 'Suivez les nouveaux jeux sur Threads :',
     form: {
       type: 'De quoi s’agit-il ?',
       types: { recommend: 'Proposer un jeu', idea: 'Suggestion', collab: 'Partenariat', other: 'Autre' },
@@ -344,6 +348,7 @@ export const ABOUT = {
     contactHeading: 'お問い合わせ',
     contactLead: 'おすすめのゲーム、不具合、改善のアイデアなど、なんでも教えてください。すべて目を通しています。',
     mailLead: 'メールでも受け付けています：',
+    threadsLead: '新しいゲームの情報はThreadsで：',
     form: {
       type: 'お問い合わせの種類',
       types: { recommend: 'ゲームの提案', idea: '改善の提案', collab: '協業のご相談', other: 'その他' },
@@ -424,6 +429,7 @@ export const ABOUT = {
     contactHeading: '문의하기',
     contactLead: '추천하고 싶은 게임, 고장 난 부분, 개선 아이디어 무엇이든 알려 주세요. 모든 메시지를 읽고 있습니다.',
     mailLead: '이메일로도 보내실 수 있습니다:',
+    threadsLead: '새 게임 소식은 Threads에서:',
     form: {
       type: '어떤 내용인가요?',
       types: { recommend: '게임 추천', idea: '개선 제안', collab: '제휴 문의', other: '기타' },
@@ -504,6 +510,7 @@ export const ABOUT = {
     contactHeading: 'Contacto',
     contactLead: '¿Quieres sugerir un juego, encontraste algo que no funciona o tienes una idea? Cuéntanoslo: leemos todos los mensajes.',
     mailLead: 'O escríbenos directamente:',
+    threadsLead: 'Sigue los juegos nuevos en Threads:',
     form: {
       type: '¿Sobre qué es?',
       types: { recommend: 'Sugerir un juego', idea: 'Sugerencia', collab: 'Colaboración', other: 'Otro' },
@@ -584,6 +591,7 @@ export const ABOUT = {
     contactHeading: '联系我们',
     contactLead: '想推荐游戏、发现哪里出了问题，或者有任何建议，都欢迎告诉我们，每一条都会看。',
     mailLead: '也可以直接给我们发邮件：',
+    threadsLead: '新游戏和开发过程都在 Threads：',
     form: {
       type: '想和我们说什么？',
       types: { recommend: '推荐游戏', idea: '改进建议', collab: '合作邀约', other: '其他' },

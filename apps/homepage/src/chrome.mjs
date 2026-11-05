@@ -76,6 +76,7 @@ export function footer(s, lang, page, langHref = (l) => local(l, page)) {
             <!-- 聯絡信箱（Cloudflare Email Routing 轉寄）。地址拆成兩半放在 data 屬性，由 site.js 組回來，
                  HTML 裡不出現完整地址，少被爬蟲抓去寄垃圾信 -->
             <a class="link footer-mail" data-u="woohop" data-d="vibeweb100.com" hidden><svg aria-hidden="true"><use href="#i-mail"/></svg><span></span></a>
+            <a class="link footer-social" href="https://www.threads.com/@woohop.app" target="_blank" rel="noopener" aria-label="Threads @woohop.app"><svg aria-hidden="true"><use href="#i-threads"/></svg><span>@woohop.app</span></a>
           </div>
           <div class="footer-col"><h4>${esc(s.footerSite)}</h4><a class="link" href="${local(lang, 'games')}">${esc(s.navGames)}</a><a class="link" href="${local(lang, 'combo')}">${esc(s.navCombo)}</a><a class="link" href="${local(lang, 'tools')}">${esc(s.navBoardgame)}</a><a class="link" href="${local(lang, 'guides')}">${esc(s.navGuides)}</a></div>
           <div class="footer-col"><h4>${esc(s.footerOther)}</h4><a class="link" href="/happiness/zh-TW/">${esc(s.games.happy[0])}</a><span class="t-small">${esc(s.happyShort)}</span></div>

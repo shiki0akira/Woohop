@@ -256,8 +256,8 @@
   .faq-art .h-float { transform-origin: 50% 50%; animation: h-float 3.6s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .faq-art * { animation: none !important; } }
   /* 頁尾品牌欄底下的聯絡信箱 */
-  .footer-mail { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
-  .footer-mail svg { width: 18px; height: 18px; flex: none; }
+  .footer-mail, .footer-social { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
+  .footer-mail svg, .footer-social svg { width: 18px; height: 18px; flex: none; }
 
 /* ---------- 桌遊助手：小工具頁（tools.js 用全站共用的帶領元件 window.Leader 建，樣式大多在 game.css） ---------- */
 /* 桌遊助手總覽與小工具頁：每個區塊上下 40px（全站的 section 是 48px） */
