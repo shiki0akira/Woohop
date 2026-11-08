@@ -55,11 +55,11 @@
     { key: 'bingo',   players: [8, 50], minutes: 12, phones: 'each', purpose: ['know'],           color: '#FFC628' },
     { key: 'bomb',    players: [4, 15], minutes: 5,  phones: 'one',  purpose: ['warmup', 'know', 'sit'], color: '#EE7B6A' },
     { key: 'buzzer',  players: [5, 50], minutes: 5,  phones: 'each', purpose: ['warmup', 'team'], color: '#FF9419' },
-    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup', 'move'], color: '#4FB59A', added: '2026-10-20' },
+    { key: 'bamboo',  players: [4, 20], minutes: 3,  phones: 'none', purpose: ['warmup', 'move', 'sit'], color: '#4FB59A', added: '2026-10-20' },
     { key: 'avalon',  players: [5, 10], minutes: 40, phones: 'one',  purpose: [],                 color: '#3D54B6', boardgame: true },
     // 企劃書第 3 階段：不用手機的遊戲＋帶領播放器
     { key: 'orchard', players: [4, 30], minutes: 5,  phones: 'none', purpose: ['warmup', 'sit'],  color: '#FF9419', added: '2026-10-22' },
-    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup', 'move'], color: '#7489E6', added: '2026-10-21' },
+    { key: 'stairs',  players: [4, 30], minutes: 3,  phones: 'none', purpose: ['warmup', 'move', 'sit'], color: '#7489E6', added: '2026-10-21' },
     { key: 'reverse', players: [2, 20], minutes: 10, phones: 'one',  purpose: ['warmup', 'sit'],  color: '#F3A4FB', added: '2026-10-23' },
     { key: 'statue',  players: [4, 50], minutes: 10, phones: 'none', purpose: ['warmup', 'move'], color: '#FFC628', added: '2026-10-28' },
     { key: 'charades', players: [2, 30], minutes: 10, phones: 'one', purpose: ['warmup', 'move'], color: '#7489E6', added: '2026-10-28' },
