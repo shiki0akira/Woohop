@@ -22,8 +22,8 @@
 import { dealSecret, isCorrect, maskOf, scoreTurn } from './game.js';
 
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
-const MAX_PLAYERS = 8; // 3～8 人（老闆 11/04）：超過 8 個人擠在同一張手機大小的畫布上會畫成一團
-const MIN_PLAYERS = 3;
+const MAX_PLAYERS = 8; // 2～8 人：超過 8 個人擠在同一張手機大小的畫布上會畫成一團（上限老闆 11/04 定）
+const MIN_PLAYERS = 2; // 老闆 11/09 從 3 降到 2：兩個人也玩得起來（互相猜對方偷渡了什麼）
 const GUESS_MS = { easy: 20000, hard: 30000 };
 const NEXT_MS = 5000; // 公布一位之後幾秒自動換下一位／看分數（老闆 11/04）
 const GRACE_MS = 800; // 客戶端時鐘跟伺服器差一點點，時間到的訊息早到一點也接受
