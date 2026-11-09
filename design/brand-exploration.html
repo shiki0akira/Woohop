@@ -213,6 +213,8 @@
     box-shadow: 0 var(--depth) 0 var(--edge);
     margin-bottom: var(--depth);
     cursor: pointer; user-select: none;
+    /* 手機連點兩下不要觸發瀏覽器放大（遊戲就是要一直點） */
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     transition: transform .08s, box-shadow .08s, filter .15s;
   }
   .btn svg { width: 20px; height: 20px; flex: none; }

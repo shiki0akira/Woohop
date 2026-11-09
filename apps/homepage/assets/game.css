@@ -5,6 +5,10 @@
  *   play    遊戲進行中、結算：只剩返回＋置中的遊戲名，不能點出去（誤點這一輪就沒了），頁尾也藏起來
  */
 
+/* 遊戲頁整頁關掉「連點兩下放大」：這些遊戲本來就要一直點，手指偶爾落在按鈕外面也不該放大。
+   manipulation 只擋雙擊縮放，雙指縮放與捲動照常。 */
+.woohop-game { touch-action: manipulation; }
+
 /* 遊戲頁不用網站導覽列，頂欄換成遊戲內頂欄 */
 .woohop-game #site-nav { display: none; }
 /* site.css 給每個 <section> 上下留白（首頁的大區塊），遊戲裡的區塊是卡片，不要。用 :where 壓低特異性，卡片自己的 padding 才蓋得過 */
