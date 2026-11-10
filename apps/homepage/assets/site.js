@@ -65,6 +65,8 @@
     { key: 'charades', players: [2, 30], minutes: 10, phones: 'one', purpose: ['warmup', 'move'], color: '#7489E6', added: '2026-10-28' },
     { key: 'charades-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'move', 'team'], color: '#4FB59A', added: '2026-11-03' },
     { key: 'drawing-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'team', 'sit'], color: '#FFC628', added: '2026-11-03' },
+    // 福杯滿溢：一支手機傳著玩，但也可以改成真的杯子和水（主持人準備道具），所以手機標成 none（跟竹筍、上樓下樓一樣）
+    { key: 'cup', players: [2, 12], minutes: 5, phones: 'none', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-09' },
     // 房間型：每人一支手機，一間 3～8 人
     { key: 'sneaky-artist', players: [2, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
   ].map(g => ({

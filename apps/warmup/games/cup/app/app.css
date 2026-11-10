@@ -1,0 +1,160 @@
+/*
+ * 福杯滿溢自己的樣式。步驟頭、規則卡、拉霸、按鈕、彈窗都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：藍（水） */
+.cup-app { --game-edge: var(--blue-edge); }
+.cup-app .panel { padding: 20px; }
+/* 開場不給聲音開關：開始玩才有音效（全站規則，跟竹筍、定時炸彈一樣） */
+.cup-app[data-screen="setup"] .game-music { display: none; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場：杯子大小（固定顯示、不收合：照人數選杯子是重要的一步） ---------- */
+.size-panel { display: grid; gap: 14px; margin: 16px 0 18px; }
+.size-title { margin: 0; font: 800 16px/1.3 Fredoka, Nunito, sans-serif; }
+.size-panel .hint { margin: 0; }
+/* 按鈕上是兩行（「小杯 / 3–5 人」）：換行要留住，上下也要留白，不然兩行會黏在一起 */
+.cup-app .size-seg { gap: 6px; padding: 6px; }
+.cup-app .size-seg .seg-item { height: auto; min-height: 62px; padding: 12px 6px; white-space: pre-line; line-height: 1.45; }
+
+/* ---------- 加水：只露這一段的區塊（app.js 的 setPhase） ---------- */
+#view-play[data-phase="pass"] .phase-pour,
+#view-play[data-phase="pour"] .phase-pass,
+#view-play[data-phase="pour"] .phase-draw,
+#view-play[data-phase="pass"] .phase-draw,
+/* 抽容器的時候只有杯子在跑，其他都先收起來 */
+#view-play[data-phase="draw"] .phase-pour,
+#view-play[data-phase="draw"] .phase-pass,
+#view-play[data-phase="draw"] .cup-note,
+#view-play[data-phase="draw"] .sound-nudge { display: none; }
+
+/* 抽容器：杯子一直換、輕輕上下跳；抽到的時候彈一下 */
+.draw-say { margin: 0; text-align: center; color: var(--muted); font-weight: 800; }
+@keyframes cup-shuffle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes cup-pop { 0% { transform: scale(.88); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.cup-stage.is-drawing .cup-cam { animation: cup-shuffle .18s ease-in-out infinite; }
+.cup-stage.is-drawn .cup-cam { animation: cup-pop .36s cubic-bezier(.22, .61, .36, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .cup-stage.is-drawing .cup-cam, .cup-stage.is-drawn .cup-cam { animation: none; }
+}
+
+.turn { margin: 20px 0 0; text-align: center; font-weight: 800; color: var(--muted); }
+
+/* ---------- 杯子：這個遊戲唯一的儀表板，畫面上沒有百分比 ---------- */
+.cup-wrap { position: relative; display: grid; justify-items: center; margin: 2px 0 10px; }
+/*
+ * 鏡頭的畫框：尺寸就是杯子 SVG 的比例（160:196），**overflow: hidden**——
+ * 放大之後畫框外的東西要被切掉，才會像鏡頭推近到杯口。
+ */
+.cup-stage { width: 100%; max-width: 280px; aspect-ratio: 160 / 196; overflow: hidden; }
+/* 鏡頭本身：transform 由 app.js 的 setCamera 按杯型算（中心與倍率每種杯子都不一樣） */
+.cup-cam { width: 100%; height: 100%; transition: transform .5s cubic-bezier(.22, .61, .36, 1); }
+.cup { display: block; width: 100%; height: 100%; }
+/* 拉近的時候背景小裝飾淡出：被畫框切一半的圈圈、地線看起來像壞掉 */
+.cup .cup-decor { transition: opacity .3s ease; }
+.cup-stage.is-zoom .cup-decor { opacity: 0; }
+
+/*
+ * 手機上「加水」這一屏**不捲動**（老闆 2026-11-09）：玩的時候一邊看水位一邊點，
+ * 捲動會讓杯子跑出畫面。做法是把 #view-play 變成固定高度的直向 flex，
+ * 杯子（.cup-wrap）吃掉剩下的高度、可以被壓縮，其他列都是固定高度。
+ * 100dvh 不是 100vh：手機瀏覽器的網址列會收合，vh 量到的是收合後的高度，會多出一截。
+ */
+@media (max-width: 760px) {
+  .cup-app[data-screen="play"] .game-main { padding-bottom: 10px; }
+  .cup-app[data-screen="play"] #view-play {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* 扣掉頂欄（sticky 10 ＋ 64）與上下留白 */
+    height: calc(100dvh - 118px);
+  }
+  .cup-app[data-screen="play"] #view-play > * { flex: none; }
+  /* 這條要帶 #view-play：不然會被上面那條 `#view-play > *` 蓋掉（它有 id，特異性比較高） */
+  .cup-app[data-screen="play"] #view-play .cup-wrap { flex: 1 1 0; min-height: 90px; margin: 0; display: flex; align-items: center; justify-content: center; }
+  /* 畫框改成「吃滿高度」，寬度由 aspect-ratio 推回去，杯子就會跟著畫面縮 */
+  .cup-app[data-screen="play"] #view-play .cup-stage { height: 100%; width: auto; max-width: 100%; min-height: 0; }
+  .cup-app[data-screen="play"] .cup-note { margin: 0; }
+  .cup-app[data-screen="play"] .sound-nudge { margin: 0; }
+  /* 「加水」黏在底部的 sticky 在這裡沒意義（整屏不捲），拿掉才不會多出 margin */
+  .cup-app[data-screen="play"] .btn-start { position: static; }
+}
+
+/* 這一局是哪一種杯子 */
+.cup-note { margin: 0 0 12px; text-align: center; color: var(--muted); font-weight: 700; text-wrap: balance; }
+.cup-note.is-blind { color: var(--coral-text); font-weight: 800; }
+/* 「打開聲音比較有利」的提示：看得到但不搶戲，更不擋住加水 */
+.sound-nudge { margin: -6px 0 12px; text-align: center; color: var(--muted); font-size: 14px; text-wrap: balance; }
+
+/* 水面凸出杯口那一段：杯子微微晃（prefers-reduced-motion 時 app.js 不加這個 class） */
+@keyframes cup-wobble {
+  0%, 100% { transform: rotate(-1.1deg); }
+  50% { transform: rotate(1.1deg); }
+}
+.cup.is-tense { transform-origin: 80% 96%; animation: cup-wobble .42s ease-in-out infinite; }
+/* prefers-reduced-motion 時鏡頭直接切換，不做動畫（全站慣例；晃動 app.js 本來就不加） */
+@media (prefers-reduced-motion: reduce) {
+  .cup-cam { transition: none; }
+}
+
+/* 溢出來的水：平常藏起來 */
+.cup .spill { opacity: 0; }
+.cup.is-overflow .spill { opacity: 1; }
+@keyframes drop-fall {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(58px); opacity: 0; }
+}
+.cup.is-overflow .drop { animation: drop-fall .75s ease-in infinite; }
+.cup.is-overflow .drop-b { animation-delay: .3s; }
+@media (prefers-reduced-motion: reduce) {
+  .cup.is-overflow .drop { animation: none; }
+}
+
+/* 「溢出來了！」蓋在杯子上 */
+.flash {
+  position: absolute; top: 38%; left: 50%; translate: -50% -50%; margin: 0; padding: 8px 18px;
+  border: 2px solid var(--coral-edge); border-radius: var(--r-md); background: var(--surface);
+  box-shadow: 0 4px 0 var(--coral-edge); color: var(--coral-text);
+  font-size: 22px; font-weight: 900; white-space: nowrap;
+}
+
+/* ---------- 加水（點一下開、再點一次關） ---------- */
+.pour-block { display: grid; gap: 10px; }
+/* 連點的時候不要選到字、不要叫出長按選單 */
+.pour-btn {
+  --h: 72px; font-size: 21px;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.pour-btn.is-pouring { translate: 0 4px; box-shadow: 0 1px 0 var(--edge); }
+.pour-hint { margin: 0; text-align: center; }
+.pour-hint.is-tense { color: var(--coral-text); font-weight: 800; }
+
+/* ---------- 傳給下一個人 ---------- */
+.pass-panel { display: grid; gap: 12px; }
+.pass-panel p { margin: 0; text-wrap: balance; }
+
+/* ---------- 水溢出來了 ---------- */
+/* 結束畫面：杯子插圖刻意畫小，下面的真心話大冒險拉霸要在同一個畫面看得到 */
+.cup-app .end-card { display: grid; justify-items: center; gap: 6px; padding: 16px; text-align: center; }
+.end-cup { display: block; width: 100%; max-width: 116px; height: auto; overflow: visible; }
+.end-card h1 { margin: 2px 0 0; font-size: 22px; }
+/*
+ * 手機上結束畫面要讓**拉霸**出現在第一屏（老闆 2026-11-09：「這樣看不到拉霸，感覺怪怪的」）。
+ * 做法：結果卡改成橫的一排（左邊小插圖、右邊兩行字），插圖縮到 76px。
+ * 結果只是回顧，拉霸才是接下來要做的事。
+ */
+.end-lines { display: grid; gap: 4px; justify-items: center; }
+/* 手機上維持「插圖在上、字在下」的置中版面（橫排看起來重心會歪），只是整張壓矮 */
+@media (max-width: 760px) {
+  .cup-app .end-card { gap: 8px; padding: 14px; }
+  .cup-app .end-cup { max-width: 86px; }
+  .end-lines { gap: 2px; }
+}
+.end-stats { margin: 0; font-weight: 800; }
+.end-best { margin: 0; color: var(--muted); font-weight: 700; }
+.slot-panel { display: grid; gap: 14px; margin-top: 14px; }
+.slot-panel h2 { margin: 0; font-size: 17px; text-wrap: balance; }

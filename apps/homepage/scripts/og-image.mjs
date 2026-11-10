@@ -150,6 +150,16 @@ const TARGETS = {
       scripts: [], art: "window.Woohop.art['sneaky-artist']()", viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 福杯滿溢（apps/warmup/games/cup/app/strings.js 的 LANGS）
+  cup: async () => {
+    const { STRINGS: Cu, LANGS: CUL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'cup', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'warmup', 'games', 'cup', 'public', 'og'),
+      langs: CUL,
+      title: (lang) => splitTitle(Cu[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.cup()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 木頭人動作版（apps/warmup/games/statue/app/strings.js 的 LANGS）
   statue: async () => {
     const { STRINGS: Tm, LANGS: TL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'statue', 'app', 'strings.js')).href);

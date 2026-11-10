@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="cup-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="cup-main game-main">
+      <!-- 第 1 步：開場。上方的步驟頭是全站共用的 Leader.lead -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <!--
+          唯一的選項：杯子大小。**固定顯示、不收合**（老闆 11/09：照人數選杯子是重要的一步，
+          收起來會被跳過）
+        -->
+        <section class="panel size-panel" id="size-panel">
+          <h2 class="size-title">{{advancedLabel}}</h2>
+          <p class="hint">{{sizeHint}}</p>
+          <div class="seg seg-3 size-seg" role="radiogroup" aria-label="{{advancedLabel}}">
+            <label class="seg-item"><input type="radio" name="size" value="small">{{sizeSmall}}</label>
+            <label class="seg-item"><input type="radio" name="size" value="normal">{{sizeNormal}}</label>
+            <label class="seg-item"><input type="radio" name="size" value="large">{{sizeLarge}}</label>
+          </div>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!--
+        第 3 步：加水。手機在大家手上傳，**不放步驟頭**（apps/warmup/CLAUDE.md）。
+        分兩段（data-phase）：pour 加水（點一下開、再點一次關）→ pass 傳給下一個人 → 回 pour。
+        杯子兩段都在（水位是這個遊戲唯一的儀表板，畫面上沒有百分比，CONCEPT.md 2.6）。
+      -->
+      <div class="view" id="view-play" data-phase="pour" hidden>
+        <p class="turn" id="turn" aria-live="polite"></p>
+
+        <!--
+          杯子：SVG 由 app.js 畫（cupSvg），每一局隨機一種杯型；水位、凸起、濺出來的水都是改屬性。
+          三層：.cup-stage 是鏡頭的畫框（overflow: hidden）、.cup-cam 是鏡頭（水快滿時放大到杯口）、
+          <svg> 自己負責晃動——鏡頭與晃動分兩層，兩個 transform 才不會互相蓋掉。
+        -->
+        <div class="cup-wrap" id="cup-wrap">
+          <div class="cup-stage" id="cup-stage">
+            <div class="cup-cam" id="cup-cam">
+              <svg class="illo cup" id="cup" viewBox="0 0 160 196" aria-hidden="true"></svg>
+            </div>
+          </div>
+          <p class="flash" id="flash" hidden>{{overflowFlash}}</p>
+        </div>
+
+        <!-- 抽容器：一局開始先抽，抽到了才顯示下面那行說明、才能加水 -->
+        <p class="draw-say phase-draw" id="draw-say">{{drawSay}}</p>
+        <!-- 這一局抽到哪一種杯子（不透明那幾款要先講清楚「要用耳朵聽」） -->
+        <p class="cup-note" id="cup-note" aria-live="polite"></p>
+        <!-- 抽到不透明的、聲音又關著：引導他打開音符鍵。可以無視，不擋加水 -->
+        <p class="sound-nudge" id="sound-nudge" hidden>{{soundNudge}}</p>
+
+        <!-- pour：點一下開水、再點一次關水。沒有上限，想加多少是玩家的賭注（CONCEPT.md 2.4） -->
+        <div class="phase-pour pour-block">
+          <button class="btn btn-lg btn-solid btn-block pour-btn" id="pour" type="button">{{pourButton}}</button>
+          <p class="hint pour-hint" id="pour-hint">{{pourHint}}</p>
+        </div>
+
+        <!-- pass：一個人加一次就換下一個人，一定要按這顆才換手（防同一個人連按） -->
+        <section class="panel phase-pass pass-panel">
+          <p>{{passSay}}</p>
+          <!-- 跟「加水」用不同顏色：傳手機是換人，不是再加一次水（老闆 2026-11-09） -->
+          <button class="btn btn-lg btn-block g-mint pass-btn" id="pass" type="button">{{passButton}}</button>
+        </section>
+      </div>
+
+      <!--
+        第 4 步：水溢出來了。輸家是誰現場都看得到，所以不記名、不記分；
+        輸的人拉真心話大冒險拉霸（全站共用的 Leader.slot，跟定時炸彈同一套）
+      -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel end-card">
+          <svg class="illo end-cup" id="end-cup" viewBox="0 0 160 196" aria-hidden="true"></svg>
+          <!--
+            兩行字包成一塊：手機上插圖在左、文字在右，包起來行距才不會被插圖的高度撐開
+            （老闆 2026-11-09：「這 gap 也太寬了」）。
+            「溢在第幾個人手上」跟「撐過幾次加水」是同一個數字，所以只留一行。
+          -->
+          <div class="end-lines">
+            <p class="end-stats" id="end-stats"></p>
+            <p class="end-best" id="end-best" hidden></p>
+          </div>
+        </section>
+        <section class="panel slot-panel">
+          <h2>{{slotHeading}}</h2>
+          <div id="slot-root"></div>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+    </main>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.CUP = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+        // 真心話大冒險拉霸的題目（全站共用的 apps/homepage/src/slot-prompts.mjs，只嵌這個語言的）
+        slot: {{slotJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

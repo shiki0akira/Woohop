@@ -408,43 +408,47 @@
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/drawing-relay/sitemap.xml"
     },
     {
+      "source": "/cup-sitemap.xml",
+      "destination": "https://woohop-warmup.shiki0akira.workers.dev/cup/sitemap.xml"
+    },
+    {
       "source": "/reverse/vendor/:file(qrcode.js)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/reverse/vendor/:file"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/:page"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:lang/:page/"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/:file"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/woohop/:file"
     },
     {
-      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay)/og/:file([a-zA-Z-]+\\.png)",
+      "source": "/:game(bomb|bamboo|stairs|orchard|reverse|statue|charades|charades-relay|drawing-relay|cup)/og/:file([a-zA-Z-]+\\.png)",
       "destination": "https://woohop-warmup.shiki0akira.workers.dev/:game/og/:file"
     },
     {

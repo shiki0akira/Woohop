@@ -243,6 +243,28 @@
       ${pencil('translate(-36 6) rotate(-30 64 54)', '#F3A4FB', '#e08ae9', 'wink')}
       ${pencil('translate(66 6) rotate(30 64 54)', '#7489E6', '#5d72d0', 'grin')}`;
     },
+    // 福杯滿溢（2026-11-10）：滿到杯口的那一杯水，水面被表面張力撐成一個凸起、剛好還沒溢出來。
+    // 主體是水自己（有表情、緊張），不畫玩家（跟竹筍、木頭人同一種做法）。
+    // 畫法上有兩件事是關鍵，改之前先看懂：
+    //   1. **水不自己描一圈邊**（前幾版都這樣畫，看起來會變成「杯子裡放了一個東西」）：
+    //      水只有填色＋錯位留白，描邊只畫凸起的那條弧、杯口那條細線、杯壁與杯底
+    //   2. **凸起要比杯口寬一點、往外凸出來**（x 48→112，杯壁只有 56～104）：
+    //      只往上鼓不往外溢的話，看起來只是一個圓頂的容器，不像被表面張力撐住的水
+    cup: () => {
+      const id = `wclipcup${++clipSeq}`;
+      // 杯口在 y=52，控制點 22 → 凸起的頂點 y≈37，高過杯口 15；左右各外凸 8
+      const water = '<path d="M48 52Q80 22 112 52L104 52V98a14 14 0 0 1-14 14H70a14 14 0 0 1-14-14V52Z"/>';
+      return `
+      ${ground}${burst(26, 30, '#FFC628')}${ring(142, 26, '#4FB59A')}${plus(148, 94, '#F3A4FB')}${dot(16, 88, '#FF9419', 4)}
+      ${withAttr(water, 'fill="#fff"')}
+      <clipPath id="${id}">${water}</clipPath>
+      <g clip-path="url(#${id})"><g transform="${OFF}">${withAttr(water, 'fill="#aebcf3"')}<path d="M86 16h36v110H86z" fill="#8799E9"/></g></g>
+      ${makeFace('worry', 80, 88, 2)}
+      <path d="M48 52Q80 22 112 52" fill="none" ${K}/>
+      <path d="M48 52h64" fill="none" stroke="#22222c" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M56 52v46a14 14 0 0 0 14 14h20a14 14 0 0 0 14-14V52" fill="none" ${K}/>
+      <path d="M40 38l-8-5M36 50l-9 1M120 38l8-5M124 50l9 1" fill="none" stroke="#7489E6" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-width:var(--ill-sw, 4px)"/>`;
+    },
     // 動作抽卡（桌遊助手）：一疊卡，最上面那張只畫一個問號（使用者要求卡片簡單、不畫動作）；左下角一台在閃光的相機（三連拍）
     toolActions: () => {
       const card = (x, y, c, a) => `<g transform="rotate(${a} ${x + 27} ${y + 36})">${body(`<rect x="${x}" y="${y}" width="54" height="72" rx="9"/>`, c, '', false)}</g>`;
