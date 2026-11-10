@@ -376,6 +376,16 @@
       return null;
     }
   }
+  /*
+   * iPhone 靜音鍵：在靜音狀態下建的引擎一輩子不出聲，切回頁面／打開音樂時重建（game.js 的 Leader.resetAudio）。
+   * master 是建在舊 context 上的，要一起丟；正在放配樂就跳過，不然音樂會斷在半路。
+   */
+  Leader.onAudioReset(function () {
+    if (music.playing) return;
+    Leader.closeAudio(music.ctx);
+    music.ctx = null;
+    music.master = null;
+  });
 
   function env(gain, t, peak, decay) {
     gain.gain.setValueAtTime(0.0001, t);
@@ -745,10 +755,12 @@
         stopMusic();
       } else {
         settings.music = true;
+        Leader.resetAudio(); // 先重建引擎：靜音狀態下建的那個不會出聲
         startMusic(false);
       }
     } else {
       settings.music = !settings.music;
+      if (settings.music) Leader.resetAudio();
     }
     saveSettings();
     syncMusicToggle();

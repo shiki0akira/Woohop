@@ -468,6 +468,8 @@
       return null;
     }
   }
+  // iPhone 靜音鍵：在靜音狀態下建的引擎一輩子不出聲，切回頁面／打開聲音時重建（game.js 的 Leader.resetAudio）
+  Leader.onAudioReset(function () { Leader.closeAudio(audio); audio = null; });
   function beep(freq, seconds, peak, delay, type) {
     if (!settings.sound) return;
     var c = ensureAudio();
@@ -511,7 +513,10 @@
     settings.sound = !settings.sound;
     writeJson(SETTINGS_KEY, { sound: settings.sound });
     syncSoundButton();
-    if (settings.sound) sfx.go(); // 打開時響一下，順便在點擊裡把 AudioContext 叫醒
+    if (settings.sound) {
+      Leader.resetAudio(); // 先重建引擎：靜音狀態下建的那個不會出聲
+      sfx.go(); // 打開時響一下，順便在點擊裡把新的 AudioContext 叫醒
+    }
   };
 
   // ---------- 猜的時候：一個字一個方塊，猜 HINT_KIND_AT 秒還沒中自動亮類型（照比手畫腳接力賽，不露字） ----------

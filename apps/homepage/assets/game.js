@@ -181,6 +181,31 @@
     });
   }
 
+  /*
+   * ---------- iPhone 靜音鍵：音訊引擎要能整個重建（2026-11-10） ----------
+   * iPhone 在「建立 AudioContext 的當下」決定它跟不跟靜音鍵走：在靜音狀態下建的，之後把靜音鍵
+   * 扳回來它也一輩子不出聲——resume() 沒用，它本來就在 running，只是輸出被系統吃掉。唯一解法是重建。
+   * 老闆 2026-11-09 在福杯滿溢回報，其他遊戲一樣有這個問題。
+   *
+   * 共用元件各自用 Leader.onAudioReset(fn) 登記「怎麼丟掉自己的 context」（正在出聲的就跳過）；
+   * 切回這一頁時自動全部丟掉，下一聲自然重建。遊戲自己的音符鍵「打開聲音」時呼叫 Leader.resetAudio()。
+   */
+  var audioResets = [];
+  function onAudioReset(fn) { audioResets.push(fn); }
+  function resetAudio() {
+    audioResets.forEach(function (fn) {
+      try { fn(); } catch (e) { /* 一個元件出錯不擋其他 */ }
+    });
+  }
+  function closeAudio(c) {
+    if (c && c.state !== 'closed') {
+      try { c.close(); } catch (e) { /* 有些瀏覽器不給關，丟掉就好 */ }
+    }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) resetAudio();
+  });
+
   // ---------- 音效（拉霸的喀喀聲與停下來那一聲） ----------
   // 自己一個 AudioContext：遊戲有沒有配樂都能用。只在「拉一下」那個點擊裡建立，避開自動播放限制
   var audio = null;
@@ -197,6 +222,8 @@
       return null;
     }
   }
+  // 拉霸的聲音都很短，丟掉也不會切到什麼
+  onAudioReset(function () { closeAudio(audio); audio = null; });
   function blip(c, t0, freq, peak, decay, type) {
     var osc = c.createOscillator();
     var gain = c.createGain();
@@ -405,7 +432,10 @@
     return { reset: reset };
   }
 
-  window.Leader = { lead: lead, hideSay: hideSay, ruleCards: ruleCards, slot: slot };
+  window.Leader = {
+    lead: lead, hideSay: hideSay, ruleCards: ruleCards, slot: slot,
+    onAudioReset: onAudioReset, resetAudio: resetAudio, closeAudio: closeAudio,
+  };
 })();
 
 /*
@@ -817,6 +847,19 @@
     }
   }
 
+  /*
+   * 靜音鍵重建（見拉霸那段的說明）：每個節拍器把自己的 bus 登記在這裡。
+   * bus 是建在舊 context 上的，丟 context 時一定要一起丟，不然新節點接不上舊 bus 會報錯。
+   * 有任何一個時鐘還在跑就整組跳過——正在打拍子或放配樂時重建會整個斷掉。
+   */
+  var instances = [];
+  window.Leader.onAudioReset(function () {
+    if (instances.some(function (it) { return it.busy(); })) return;
+    instances.forEach(function (it) { it.drop(); });
+    window.Leader.closeAudio(audio);
+    audio = null;
+  });
+
   // 一般拍是木魚聲；重拍低一點、厚一點，加一點拍手的噪音
   function click(c, at, accent, out) {
     var osc = c.createOscillator();
@@ -939,6 +982,10 @@
     var soundOn = function () { return !opts.sound || opts.sound(); };
     var clickBus = null; // 拍子聲、配樂各自的總音量：關掉時一口氣壓到 0，已經排進去的音就不會拖尾
     var musicBus = null;
+    instances.push({
+      busy: function () { return st.clock; },
+      drop: function () { clickBus = null; musicBus = null; },
+    });
     /*
      * 音量（使用者要求）：配樂平常正常大聲；一打拍子就壓低，讓拍子聲聽得清楚，停了再拉回來。
      * 「誰輸了？」那步一進來正常大聲，拉霸轉的時候壓低（duck），停下來之後維持中等音量當背景。
@@ -1215,6 +1262,12 @@
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
   }
+  // 靜音鍵重建（見拉霸那段的說明）。正在播或正在錄就跳過；錄好的 AudioBuffer 不綁 context，換新的照樣能播
+  window.Leader.onAudioReset(function () {
+    if (playing || recording) return;
+    window.Leader.closeAudio(ctx);
+    ctx = null;
+  });
 
   function pickMime() {
     // iOS Safari 只錄得出 mp4，Chrome／Android 是 webm

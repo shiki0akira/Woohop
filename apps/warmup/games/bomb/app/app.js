@@ -588,6 +588,9 @@
       return null;
     }
   }
+  // iPhone 靜音鍵：在靜音狀態下建的引擎一輩子不出聲，切回頁面／打開聲音時重建（game.js 的 Leader.resetAudio）。
+  // 滴答與爆炸都是一聲一聲的短音，下一聲自然建新的，所以隨時丟都安全
+  Leader.onAudioReset(function () { Leader.closeAudio(audio.ctx); audio.ctx = null; });
 
   function playTick() {
     if (!settings.sound) return;
@@ -672,6 +675,8 @@
     settings.sound = !settings.sound;
     saveSettings();
     syncSoundButton();
+    // 打開聲音就重建引擎（含拉霸的）：在靜音狀態下建的那個不會出聲
+    if (settings.sound) Leader.resetAudio();
   };
 
   // ---------- 螢幕保持亮著 ----------

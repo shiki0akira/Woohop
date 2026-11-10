@@ -986,8 +986,10 @@
       stopPourSound();
       stopMusic(0.12);
     } else {
-      // 重建聲音引擎：手機在靜音狀態下開始玩的話，舊的 context 一輩子都不會出聲（見 resetAudio）
+      // 重建聲音引擎：手機在靜音狀態下開始玩的話，舊的 context 一輩子都不會出聲（見 resetAudio）。
+      // 結束畫面的拉霸是 game.js 的共用元件，有自己的 context，要用 Leader.resetAudio() 一起重建
       resetAudio();
+      Leader.resetAudio();
       syncMusic(); // 配樂要從重建中接回來（在 play 又還沒溢出才播）
       if (pouring) startPourSound();
     }
