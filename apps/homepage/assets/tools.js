@@ -380,3 +380,45 @@
     });
   }
 })();
+
+/*
+ * 「這些遊戲裡也有用到」的左右鍵（老闆 2026-11-10）：卡片一排放不下才出現。
+ * 按鈕是滑鼠的方便鍵，內容本來就能捲到，所以對輔助科技隱藏（aria-hidden）——
+ * 這樣也不用為了兩顆箭頭多開八個語言的文案。
+ */
+(function gameRail() {
+  var grid = document.querySelector('.tool-used .game-grid');
+  if (!grid || grid.children.length < 2) return;
+
+  var wrap = document.createElement('div');
+  wrap.className = 'rail-wrap';
+  grid.parentNode.insertBefore(wrap, grid);
+  wrap.appendChild(grid);
+
+  function arrow(cls, d) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'rail-btn ' + cls;
+    b.setAttribute('aria-hidden', 'true');
+    b.tabIndex = -1;
+    b.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+      'stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="' + d + '"/></svg>';
+    wrap.appendChild(b);
+    return b;
+  }
+  var prev = arrow('rail-prev', 'M15 5 8 12l7 7');
+  var next = arrow('rail-next', 'M9 5l7 7-7 7');
+
+  function page() { return Math.max(grid.clientWidth - 60, 200); }
+  prev.addEventListener('click', function () { grid.scrollBy({ left: -page(), behavior: 'smooth' }); });
+  next.addEventListener('click', function () { grid.scrollBy({ left: page(), behavior: 'smooth' }); });
+
+  function sync() {
+    var over = grid.scrollWidth - grid.clientWidth > 8;
+    prev.hidden = !over || grid.scrollLeft <= 4;
+    next.hidden = !over || grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 4;
+  }
+  grid.addEventListener('scroll', sync);
+  window.addEventListener('resize', sync);
+  sync();
+})();

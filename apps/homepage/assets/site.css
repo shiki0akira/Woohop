@@ -274,6 +274,35 @@
 .tools-page main > section { padding-top: 20px; }
 /* 「怎麼用」「也用在這些遊戲」緊接在上一塊下面，上面只留 20px */
 .tool-page main > section.tool-how, .tool-page main > section.tool-used { padding: 20px 0 40px; }
+/*
+ * 「這些遊戲裡也有用到」排成**橫向一列**，放不下就用左右鍵翻（老闆 2026-11-10）。
+ * 原本是會換行的格線，第五個遊戲會自己掉到第二排孤零零一張。
+ * 只動工具頁這一區，找遊戲頁與首頁的 .game-grid 不受影響。
+ */
+.tool-used .rail-wrap { position: relative; }
+.tool-used .game-grid {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; padding-bottom: 4px; scrollbar-width: none;
+}
+.tool-used .game-grid::-webkit-scrollbar { display: none; }
+.tool-used .game-grid > * { flex: 0 0 270px; scroll-snap-align: start; }
+.tool-used .rail-btn {
+  position: absolute; top: 50%; translate: 0 -50%; z-index: 2;
+  width: 44px; height: 44px; padding: 0; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  border: 2px solid var(--edge-n); background: var(--surface); color: var(--ink);
+  box-shadow: 0 3px 0 var(--edge-n);
+}
+.tool-used .rail-btn:hover { background: var(--hover); }
+.tool-used .rail-btn:active { translate: 0 calc(-50% + 3px); box-shadow: none; }
+.tool-used .rail-btn[hidden] { display: none; }
+.tool-used .rail-prev { left: -12px; }
+.tool-used .rail-next { right: -12px; }
+/* 手機用滑的就好，不佔畫面 */
+@media (max-width: 760px) {
+  .tool-used .game-grid > * { flex: 0 0 min(300px, 84vw); }
+  .tool-used .rail-btn { display: none; }
+}
 /* 手機點進來第一個畫面就要看到整個工具：標題區收緊、工具緊接在說明下面 */
 .tool-page .page-head { padding: 24px 0 0; }
 .tool-page main > section.tool-section { padding: 16px 0 40px; }

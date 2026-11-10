@@ -8,7 +8,7 @@
 export const TOOL_KEYS = ['truthOrDare', 'metronome', 'names', 'recorder', 'actions', 'words'];
 // 每個小工具在哪些遊戲裡也用得到（總覽頁與工具頁底下的「也用在這些遊戲」）
 export const TOOL_GAMES = {
-  truthOrDare: ['bamboo', 'stairs', 'orchard', 'bomb'],
+  truthOrDare: ['bamboo', 'stairs', 'orchard', 'bomb', 'cup'],
   metronome: ['stairs', 'orchard'],
   names: ['bamboo'],
   recorder: ['reverse'],
