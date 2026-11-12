@@ -1,0 +1,145 @@
+/*
+ * 秒數挑戰自己的樣式。步驟頭、規則卡、拉霸、按鈕、彈窗、排行榜都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：黃（碼錶） */
+.seconds-app { --game-edge: var(--yellow-edge); }
+.seconds-app .panel { padding: 20px; }
+/* 開場不給聲音開關：開始玩才有聲音（全站規則，跟竹筍、福杯滿溢一樣） */
+.seconds-app[data-screen="setup"] .game-music { display: none; }
+
+/* 「開始遊戲」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場：遊戲人數、數字看得到幾秒（照你畫我猜接力的 .setup-panel，其他遊戲同一套） ---------- */
+.setup-panel .field-label:first-child { margin-top: 0; }
+.setup-panel .hint { margin: 2px 0 10px; }
+.setup-panel .stepper button { width: 44px; height: 48px; }
+.setup-panel .stepper button:disabled { opacity: .4; cursor: default; }
+.setup-panel .stepper output { min-width: 48px; }
+.setup-panel .field-label-gap { display: block; margin-top: 18px; }
+.setup-panel .peek-hint { margin: 10px 0 0; }
+.setup-panel .mode-hint { margin: 10px 0 0; }
+/* 人數藏起來（一起按）的時候，「看得到幾秒」變成第一個欄位，上面不用空 */
+.setup-panel .players-field[hidden] + .peek-label { margin-top: 0; }
+/* 一起按：開場的 QR code＋代碼（照倒放猜猜看的 .setup-qr） */
+.setup-qr-wrap { display: grid; justify-items: center; gap: 8px; margin-top: 14px; }
+.setup-qr { width: 188px; height: 188px; }
+.join-only { margin-top: 10px; }
+/* 只要計時器：沒有目標，目標卡不放 */
+#view-play.is-free .target-card { display: none; }
+.seconds-app .seg-2 { grid-template-columns: repeat(2, 1fr); }
+
+.qr-box svg { display: block; width: 100%; height: 100%; }
+.compare-hint { margin: 0; text-align: center; font-weight: 800; }
+
+/* ---------- 輪流按：只露這一段的區塊（app.js 的 setPhase） ---------- */
+#view-play:not([data-phase="draw"]) .phase-draw,
+#view-play:not([data-phase="done"]) .phase-done,
+#view-play[data-phase="draw"] .phase-ready,
+#view-play[data-phase="done"] .phase-ready,
+#view-play[data-phase="draw"] .clock-card,
+#view-play[data-phase="draw"] .clock { display: none; }
+.seconds-app [hidden] { display: none !important; }
+
+#view-play { display: grid; gap: 14px; padding-top: 16px; }
+
+/* 目標秒數：最大的那個數字 */
+.target-card {
+  display: grid; justify-items: center; gap: 4px; padding: 12px 16px;
+  border: 2px solid var(--yellow-edge); border-radius: var(--r-lg); background: var(--yellow-face); box-shadow: 0 5px 0 var(--yellow-edge);
+}
+.target-label { font-size: 14px; font-weight: 800; color: var(--yellow-text); }
+/* 目標比下面計時的數字小一點（老闆 11/12）：主角是自己按的那個數字 */
+.target { margin: 0; font: 800 clamp(34px, 10vw, 46px)/1 Fredoka, Nunito, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; }
+.target small { margin-left: 6px; font-size: .32em; font-weight: 800; }
+@keyframes target-pop { 0% { transform: scale(.9); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.target-card .target.is-drawn { animation: target-pop .36s cubic-bezier(.22, .61, .36, 1); }
+@media (prefers-reduced-motion: reduce) { .target-card .target.is-drawn { animation: none; } }
+
+.draw-say { margin: 0; text-align: center; color: var(--muted); font-weight: 800; }
+
+/* 輪到誰＋數字＋結果的底卡（老闆 11/12） */
+.seconds-app .clock-card { display: grid; justify-items: center; gap: 14px; padding: 18px 16px 20px; text-align: center; }
+.turn { margin: 0; font-weight: 800; color: var(--muted); }
+
+/*
+ * 計時的數字：每一位一個底塊（像碼錶，老闆 11/12），小數點沒有底塊。
+ * 前幾秒看得到，之後淡掉、換成同樣位數的問號。底塊用設計系統的 --track 灰底＋--edge-n 框
+ */
+.clock { position: relative; display: grid; place-items: center; }
+.clock > * { grid-area: 1 / 1; display: flex; align-items: flex-end; gap: 6px; transition: opacity .5s ease; }
+.clock-digit {
+  display: grid; place-items: center; width: clamp(46px, 15vw, 72px); height: clamp(66px, 22vw, 100px);
+  border: 2px solid var(--edge-n); border-radius: var(--r-md); background: var(--track); box-shadow: var(--raise-n);
+  font: 800 clamp(44px, 15vw, 68px)/1 Fredoka, Nunito, sans-serif; font-variant-numeric: tabular-nums;
+}
+.clock-dot { font: 800 clamp(44px, 15vw, 68px)/1 Fredoka, Nunito, sans-serif; padding-bottom: 8px; }
+.clock-mask { opacity: 0; color: var(--muted); }
+.clock.is-hidden .clock-num { opacity: 0; }
+.clock.is-hidden .clock-mask { opacity: 1; }
+@media (max-width: 380px) {
+  .clock > * { gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) { .clock > * { transition: none; } }
+
+/* 停下來：按了幾秒、差多少 */
+.result { display: grid; justify-items: center; gap: 4px; text-align: center; }
+.result p { margin: 0; }
+.result-line { font-weight: 800; color: var(--muted); }
+.result-diff { font-size: 22px; font-weight: 900; }
+
+.press-hint { margin: 0; text-align: center; }
+/* 開始／停：一顆大按鈕，連點的時候不要選到字 */
+.press-btn {
+  --h: 84px; font-size: 26px;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.press-btn.is-running { --face: var(--coral-face); --edge: var(--coral-edge); color: var(--coral-text); }
+.done-actions { display: grid; gap: 10px; }
+.done-actions .hint { margin: 0; text-align: center; }
+
+/*
+ * 手機上玩的那一屏**不捲動**（福杯滿溢那時定的規則）：固定高度直向 flex，數字區吃掉剩下的高度。
+ * 100dvh 不是 100vh：手機瀏覽器的網址列會收合，vh 量到的是收合後的高度。
+ */
+@media (max-width: 760px) {
+  .seconds-app[data-screen="play"] .game-main { padding-bottom: 10px; }
+  .seconds-app[data-screen="play"] #view-play {
+    display: flex; flex-direction: column; gap: 10px; padding-top: 10px;
+    height: calc(100dvh - 118px);
+  }
+  .seconds-app[data-screen="play"] #view-play > * { flex: none; }
+  /* 底卡吃掉剩下的高度，內容在卡片裡置中 */
+  .seconds-app[data-screen="play"] #view-play .clock-card { flex: 1 1 0; min-height: 0; align-content: center; }
+}
+
+/* ---------- 看結果 ---------- */
+.seconds-app .end-card { display: grid; gap: 10px; padding: 16px; }
+.end-target { margin: 0; text-align: center; font: 800 20px/1.3 Fredoka, Nunito, sans-serif; }
+/* 頒獎台：設計系統的 .podium（woohop.css），這裡只排台上的字；下面的排行榜名次從 4 開始（.rank-list 預設的 counter-reset 3） */
+.seconds-app .sec-podium { width: 100%; max-width: 420px; margin: 6px auto 0; }
+.seconds-app .sec-podium .crown { color: #c49a1e; }
+.seconds-app .sec-podium .col { gap: 2px; }
+.seconds-app .sec-podium .name { font-size: 15px; }
+.podium-time { font: 800 20px/1.2 Fredoka, Nunito, sans-serif; font-variant-numeric: tabular-nums; }
+.podium-diff { font-size: 13px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+.seconds-app .rank-list.sec-ranks { max-width: 420px; width: 100%; margin: 4px auto 0; }
+.seconds-app .rank-list.sec-ranks:empty { display: none; }
+.seconds-app .sec-ranks li { gap: 10px; padding: 8px 12px; }
+.seconds-app .sec-ranks .name { flex: 1; min-width: 0; font-weight: 800; }
+.seconds-app .sec-ranks .time { font-weight: 900; font-variant-numeric: tabular-nums; }
+.seconds-app .sec-ranks .diff { flex: none; min-width: 72px; text-align: right; color: var(--muted); font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.seconds-app #again { margin-top: 14px; }
+.end-target:only-child { padding: 6px 0; }
+
+/* 結束遊戲（一起按的主持人）：紅色、要按住 0.8 秒。**跟比手畫腳、你畫我猜接力、偷渡畫家的 .end-btn 一字不差**（高 68px、字 20px），改的話那幾個一起看 */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
+  position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }

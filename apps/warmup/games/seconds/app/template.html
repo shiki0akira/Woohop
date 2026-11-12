@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="seconds-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="seconds-main game-main">
+      <!-- 第 1 步：開場。上方的步驟頭是全站共用的 Leader.lead -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <!--
+          開場：遊戲人數（只有輪流按）→ 數字看得到幾秒 → 怎麼玩（老闆 11/12：放在看得到幾秒下面）。
+          選「一起按」就在這裡出 QR code，大家趁主持人說明規則時先掃（照倒放猜猜看的搶答）
+        -->
+        <section class="panel setup-panel">
+          <div class="players-field" id="players-field">
+            <span class="field-label">{{playersLabel}}</span>
+            <div class="stepper">
+              <button type="button" id="players-less" aria-label="{{playersLess}}">−</button>
+              <output id="players-value" aria-live="polite"></output>
+              <button type="button" id="players-more" aria-label="{{playersMore}}">+</button>
+            </div>
+          </div>
+          <span class="field-label field-label-gap peek-label">{{peekLabel}}</span>
+          <div class="seg seg-3" role="radiogroup" aria-label="{{peekLabel}}">
+            <label class="seg-item"><input type="radio" name="peek" value="1">{{peek1}}</label>
+            <label class="seg-item"><input type="radio" name="peek" value="2">{{peek2}}</label>
+            <label class="seg-item"><input type="radio" name="peek" value="3">{{peek3}}</label>
+          </div>
+          <p class="hint peek-hint">{{peekHint}}</p>
+          <span class="field-label field-label-gap">{{modeLabel}}</span>
+          <div class="seg seg-2" role="radiogroup" aria-label="{{modeLabel}}">
+            <label class="seg-item"><input type="radio" name="mode" value="one">{{modeOne}}</label>
+            <label class="seg-item"><input type="radio" name="mode" value="each">{{modeEach}}</label>
+          </div>
+          <p class="hint mode-hint" id="mode-hint"></p>
+          <!-- 一起按：QR code（網址帶 #c=代碼，掃進來的人每一輪的秒數跟主持人一樣） -->
+          <div class="setup-qr-wrap" id="setup-qr-wrap" hidden>
+            <div class="qr qr-box setup-qr" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+          </div>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <button class="btn btn-lg btn-secondary btn-block join-only" id="join-only" type="button">{{joinOnlyLink}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡講規則（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!--
+        第 3 步：輪流按。手機在大家手上傳，**不放步驟頭**（apps/warmup/CLAUDE.md）。
+        data-phase：draw 抽秒數 → ready 輪到的人準備 → running 計時中 → done 停下來看差多少 → ready（下一位）⋯⋯
+      -->
+      <div class="view" id="view-play" data-phase="draw" hidden>
+        <div class="target-card">
+          <span class="target-label">{{targetLabel}}</span>
+          <p class="target"><span id="target"></span><small>{{secUnit}}</small></p>
+        </div>
+        <p class="draw-say phase-draw">{{drawSay}}</p>
+
+        <!--
+          輪到誰＋計時的數字＋結果收在一張底卡裡（老闆 11/12）。數字每一位一個底塊（像碼錶），
+          前幾秒看得到，之後淡掉換成問號（app.css 的 .is-hidden）。底塊由 app.js 的 setClock 畫
+        -->
+        <section class="panel clock-card">
+          <p class="turn" id="turn" aria-live="polite"></p>
+          <div class="clock" id="clock" aria-live="off">
+            <span class="clock-num" id="clock-num"></span>
+            <span class="clock-mask" id="clock-mask" aria-hidden="true"></span>
+          </div>
+          <!-- 停下來之後：按了幾秒、差多少（評語拿掉了，老闆 11/12） -->
+          <div class="result phase-done" id="result">
+            <p class="result-line" id="result-line"></p>
+            <p class="result-diff" id="result-diff"></p>
+          </div>
+          <p class="hint press-hint phase-ready phase-running" id="press-hint"></p>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block press-btn phase-ready phase-running" id="press" type="button">{{startPress}}</button>
+
+        <p class="hint compare-hint phase-done" id="compare-hint" hidden>{{compareHint}}</p>
+        <div class="done-actions phase-done">
+          <!-- 換人的按鈕用 g-mint（跟主要動作不同色，老闆 11/09 福杯滿溢定的）；最後一位按完就變成「看結果」 -->
+          <button class="btn btn-lg btn-block g-mint" id="next" type="button">{{nextButton}}</button>
+          <!-- 一起按的主持人才有：沒有「最後一位」，所以要有一個收尾（老闆 11/12）。紅色、按住 0.8 秒（照比手畫腳、偷渡畫家的 .end-btn） -->
+          <button class="btn btn-lg btn-block end-btn" id="end-each" type="button" hidden>{{endEachButton}}</button>
+        </div>
+      </div>
+
+      <!-- 第 4 步：看結果。前三名站上頒獎台、其他人接在下面（老闆 11/12：結束不放拉霸） -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel end-card">
+          <p class="end-target" id="end-target"></p>
+          <!-- 前三名站上設計系統的頒獎台（woohop.css 的 .podium，照幸福賓果的結算），第 4 名以後接在下面的排行榜 -->
+          <div class="podium sec-podium" id="podium"></div>
+          <ol class="rank-list sec-ranks" id="ranks"></ol>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+      </div>
+    </main>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.SECONDS = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+      };
+    </script>
+    <script src="{{base}}/vendor/qrcode.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>

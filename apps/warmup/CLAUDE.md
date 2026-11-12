@@ -14,6 +14,7 @@
 | 比手畫腳接力賽 | `games/charades-relay` | `/charades-relay/{lang}/` |
 | 你畫我猜接力 | `games/drawing-relay` | `/drawing-relay/{lang}/` |
 | 福杯滿溢 | `games/cup` | `/cup/{lang}/` |
+| 秒數挑戰 ⚠️ 只有 zh-TW、還沒上線（部署別的遊戲前先把資料夾搬出去） | `games/seconds` | `/seconds/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 
