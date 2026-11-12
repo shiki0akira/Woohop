@@ -17,4 +17,5 @@ Sitemap: https://www.vibeweb100.com/charades-relay-sitemap.xml
 Sitemap: https://www.vibeweb100.com/drawing-relay-sitemap.xml
 Sitemap: https://www.vibeweb100.com/cup-sitemap.xml
 Sitemap: https://www.vibeweb100.com/sneaky-artist-sitemap.xml
+Sitemap: https://www.vibeweb100.com/truths-sitemap.xml
 Sitemap: https://www.vibeweb100.com/happiness-sitemap.xml

@@ -69,6 +69,8 @@
     { key: 'cup', players: [2, 12], minutes: 5, phones: 'none', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-09' },
     // 房間型：每人一支手機，一間 3～8 人
     { key: 'sneaky-artist', players: [2, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
+    // 兩真一假：房間型、每人一支手機（玩法頁也寫了不用手機也能玩，但篩選照網站實際玩法標 each，老闆 11/12）
+    { key: 'truths', players: [2, 15], minutes: 15, phones: 'each', purpose: ['know', 'sit'], color: '#F3A4FB', added: '2026-11-12' },
   ].map(g => ({
     ...g, rank: RANK.includes(g.key) ? RANK.indexOf(g.key) : RANK.length,
     name: t.games[g.key][0], desc: t.games[g.key][1], url: gameUrl(g.key),
