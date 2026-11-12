@@ -52,7 +52,20 @@
 
 ## 七、各語言名稱
 
-還沒做。英文圈是有名字的經典遊戲（Two Truths and a Lie），其他語言補的時候先查當地有沒有既有的叫法。
+2026-11-12 補齊 8 語，網址 `/truths/`。這是全世界都有的經典破冰遊戲，各語言都用當地既有的叫法，不直譯：
+
+| 語言 | 名稱 | 理由 |
+|---|---|---|
+| en | Two Truths and a Lie | 英文圈的原名 |
+| de | Zwei Wahrheiten, eine Lüge | 德文的通行說法 |
+| fr | Deux vérités, un mensonge | 法文的通行說法 |
+| ja | 2つの真実と1つの嘘 | 日本的アイスブレイク也用這個名字 |
+| ko | 진진가 | 韓國的叫法（진실・진실・거짓 的縮寫），比直譯短也更多人認得 |
+| es | Dos verdades y una mentira | 西文的通行說法 |
+| zh-CN | 两真一假 | 中文圈同一個名字 |
+
+獎項名也照各地習慣：最會猜＝Best guesser／名探偵／명탐정／Mejor detective；最會騙＝Best liar／嘘つき王／거짓말왕／Mejor mentiroso。
+主題庫各語言自己寫在地的例子（日文的拉麵、韓文的國土縱走、西文的 paella），36 個主題對應同一組題材。
 
 ## 沒做、可以再討論的
 

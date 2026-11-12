@@ -13,7 +13,12 @@
     <meta property="og:description" content="{{pageDesc}}" />
     <meta property="og:url" content="{{canonical}}" />
     <meta property="og:locale" content="{{ogLocale}}" />
-    <!-- 分享縮圖：⚠️ 還沒做。上線時跑 apps/homepage 的 `node scripts/og-image.mjs truths`（產生到 public/og/），再把 og:image 加回來 -->
+    <!-- 分享縮圖：apps/homepage 的 `node scripts/og-image.mjs truths` 產生到 public/og/，改了標題或插圖要重跑 -->
+    <meta property="og:image" content="{{siteOrigin}}{{base}}/og/{{lang}}.png?v=1" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{navTitle}}" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <!-- 系列共用的 GA4 資源，跟首頁同一個 ID。
          send_page_view 關掉自動送出，改由 app.js 依畫面手動送——遊戲頁的幾個畫面

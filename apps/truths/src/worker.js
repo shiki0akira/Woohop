@@ -11,8 +11,8 @@ import { TruthsRoom } from './room.js';
 export { TruthsRoom };
 
 const BASE = '/truths';
-// 跟 app/strings.js 的 LANGS 一致，兩邊要一起改。⚠️ 目前只有繁中（老闆確認後才補其他 7 語）
-const LANGS = ['zh-TW'];
+// 跟 app/strings.js 的 LANGS 與首頁的 SUPPORTED_LANGS 一致，三邊要一起改
+const LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 const DEFAULT_LANG = 'zh-TW';
 
 // 跟搶答一樣：去掉 0/O/1/I/L（會唸、會手打）和 E（8E98 會被 GA4 當成科學記號）
