@@ -85,6 +85,7 @@ Woohop/
 │  ├─ match/      ← web100_03_PreferenceMatch （同上）
 │  ├─ bingo/      ← web100_04_HappyBingo      （同上）
 │  ├─ sneaky-artist/ ← 偷渡畫家（房間型，接法同搶答；2026-11-04 上線）
+│  ├─ truths/     ← 兩真一假（房間型，接法同搶答；2026-11-12 上線）
 │  └─ warmup/     ← 暖場遊戲：games/ 底下的定時炸彈、竹筍、上樓下樓、果園菜園動物園、倒放猜猜看、木頭人動作版、比手畫腳、比手畫腳接力賽、你畫我猜接力、福杯滿溢
 │                   （同上，合在一個 assets-only Worker，2026-10-23 合併）
 ├─ packages/      ← 之後的共用程式（design tokens、房間系統、頁首頁尾、帶領播放器）
@@ -159,6 +160,7 @@ Woohop/
 | web100_02_BuzzerGame | 已上線 | Cloudflare Workers | 單一 Worker 同時服務靜態檔與 Durable Object；8 種語言，已裝 GA4 |
 | web100_03_PreferenceMatch | 已上線 | Cloudflare Workers | 二選一破冰配對，路徑 /match/；接法同搶答（網頁走代理、API 與 WebSocket 直連）|
 | sneaky-artist（偷渡畫家） | 已上線（2026-11-04，8 語） | Cloudflare Workers | 大家用自己的手機同時畫一張圖、每人偷渡一個祕密題目，路徑 /sneaky-artist/；接法同搶答 |
+| truths（兩真一假） | 已上線（2026-11-12，8 語） | Cloudflare Workers | 大家同時在自己手機上寫三句（兩真一假）、一個一個猜，路徑 /truths/；接法同搶答 |
 | web100_04_HappyBingo | 已上線 | Cloudflare Workers | 找人配對的破冰賓果，路徑 /bingo/；接法同搶答。上線時只有 zh-TW／en，2026-08-26 補齊 8 種語言 |
 | web100_05_TimeBomb | 已上線 | Cloudflare Workers | 一台手機傳著玩的定時炸彈，路徑 /bomb/；8 種語言。2026-10-23 起跟其他暖場遊戲合在 `apps/warmup` 的同一個 Worker（`woohop-warmup`）。**純前端卻走 Workers**，是第 4 節那條規則的例外，理由見下方 |
 | bamboo（竹筍竹筍蹦蹦出） | 已上線（2026-10-20） | Cloudflare Workers | 第一個不用手機的遊戲（手機只在主持人手上帶領），路徑 /bamboo/；8 種語言（zh-TW 先上，同一天補齊；遊戲名用各地類似遊戲的名稱）。接法同定時炸彈（assets-only Worker） |

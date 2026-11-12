@@ -5,8 +5,9 @@
 2026-11-11 照偷渡畫家（`apps/sneaky-artist`，那邊照搶答）複製出來：單一 Worker 同時服務靜態檔與 Durable Object、網頁走首頁代理但 API／WebSocket 直連 workers.dev、`scripts/build.js` 產生各語言靜態頁、頭像與暱稱共用 `web100-profile`、返回鍵與離開房間的做法都一樣，**細節與理由看 `apps/buzzer/CLAUDE.md`**。
 （11/10 先做過一支手機傳著玩的版本放在 `apps/warmup/games/truths`，老闆試玩後改成房間版，那份刪掉了，主題庫搬過來。）
 
-⚠️ **只有繁中、還沒上線**：`app/strings.js` 和 `src/worker.js` 的 `LANGS` 都只有 `zh-TW`、沒有分享縮圖（`partials/head.html` 拿掉了 og:image）、還沒接首頁、Worker `woohop-truths` 還沒部署。老闆確認之後跑 `/web100-launch-check`。
-上線時要補：7 語、`og-image.mjs truths`＋把 og:image 加回 head、首頁清單（手機欄怎麼標要問老闆，玩法頁寫了「不用手機也能玩」）、`vercel.json` 代理、`apps/feedback` 的 `GAMES`、`docs/ARCHITECTURE.md` 的專案表。
+**已上線（2026-11-12，8 語）**：Worker `woohop-truths`，首頁 `vercel.json` 照偷渡畫家那一組代理 `/truths/*`。各語言名稱在 `CONCEPT.md` 第七節。
+首頁插圖是 `woohop-art.js` 的 `art.truths`（一個眨眼的人頭上三個對話框：兩個打勾、中間一個打叉），分享縮圖 `node scripts/og-image.mjs truths`。
+首頁清單手機欄標 **each**（老闆 11/12：照網站實際玩法；玩法頁另外寫了不用手機也能玩），目的 know＋sit。
 
 ## 指令
 

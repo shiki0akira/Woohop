@@ -27,6 +27,7 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | 比手畫腳接力賽 | [www.vibeweb100.com/charades-relay](https://www.vibeweb100.com/charades-relay/zh-TW/) | `apps/warmup/games/charades-relay` | 已上線（2026-11-03，8 語） |
 | 你畫我猜接力 | [www.vibeweb100.com/drawing-relay](https://www.vibeweb100.com/drawing-relay/zh-TW/) | `apps/warmup/games/drawing-relay` | 已上線（2026-11-03，8 語） |
 | 偷渡畫家 | [www.vibeweb100.com/sneaky-artist](https://www.vibeweb100.com/sneaky-artist/zh-TW/) | `apps/sneaky-artist` | 已上線（2026-11-04，8 語，房間型） |
+| 兩真一假 | [www.vibeweb100.com/truths](https://www.vibeweb100.com/truths/zh-TW/) | `apps/truths` | 已上線（2026-11-12，8 語，房間型） |
 | 福杯滿溢 | [www.vibeweb100.com/cup](https://www.vibeweb100.com/cup/zh-TW/) | `apps/warmup/games/cup` | 已上線（2026-11-10，8 語） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
