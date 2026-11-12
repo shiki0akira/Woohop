@@ -67,6 +67,8 @@
     { key: 'drawing-relay', players: [3, 30], minutes: 15, phones: 'one', purpose: ['warmup', 'team', 'sit'], color: '#FFC628', added: '2026-11-03' },
     // 福杯滿溢：一支手機傳著玩，但也可以改成真的杯子和水（主持人準備道具），所以手機標成 none（跟竹筍、上樓下樓一樣）
     { key: 'cup', players: [2, 12], minutes: 5, phones: 'none', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-09' },
+    // 秒數挑戰：主要是一支手機輪流按（一起按是每人一支，但篩選只能標一個值，照預設玩法標 one）
+    { key: 'seconds', players: [2, 20], minutes: 3, phones: 'one', purpose: ['warmup', 'sit'], color: '#FFC628', added: '2026-11-12' },
     // 房間型：每人一支手機，一間 3～8 人
     { key: 'sneaky-artist', players: [2, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
     // 兩真一假：房間型、每人一支手機（玩法頁也寫了不用手機也能玩，但篩選照網站實際玩法標 each，老闆 11/12）
