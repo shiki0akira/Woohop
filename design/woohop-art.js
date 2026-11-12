@@ -259,6 +259,17 @@
       ${say(60, 8, '#fbb3a8', 'M74 38l6 12 6-12')}${cross(80, 23)}
       ${say(112, 20, '#a8dccb', 'M116 50l6 10 4-10')}${tick(132, 35)}`;
     },
+    // 秒數挑戰（2026-11-12）：一個有表情的碼錶，白色錶面上一根指針，頭上的按鈕、右上的側鈕。
+    // 跟節拍器（toolMetronome，三角形擺錘）分得開
+    seconds: () => `
+      ${ground}${burst(26, 28, '#FFC628')}${ring(142, 26, '#4FB59A')}${dot(150, 104, '#F3A4FB', 4)}${plus(16, 96, '#7489E6')}
+      ${body('<rect x="72" y="18" width="16" height="12" rx="3"/>', '#FF9419', '', false)}
+      <g transform="rotate(42 80 76)">${body('<rect x="75" y="26" width="10" height="10" rx="3"/>', '#FF9419', '', false)}</g>
+      ${body('<circle cx="80" cy="76" r="40"/>', '#FFC628', '<path d="M98 30h30v92H98z" fill="#eeb100"/>')}
+      ${body('<circle cx="80" cy="76" r="28"/>', '#ffffff', '', false)}
+      <path d="M80 54v6M102 76h-6M58 76h6" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>
+      <path d="M80 76l12-12" fill="none" ${K}/><circle cx="80" cy="76" r="3.2" fill="#22222c"/>
+      ${makeFace('happy', 80, 90, 1.1)}`,
     // 福杯滿溢（2026-11-10）：滿到杯口的那一杯水，水面被表面張力撐成一個凸起、剛好還沒溢出來。
     // 主體是水自己（有表情、緊張），不畫玩家（跟竹筍、木頭人同一種做法）。
     // 畫法上有兩件事是關鍵，改之前先看懂：

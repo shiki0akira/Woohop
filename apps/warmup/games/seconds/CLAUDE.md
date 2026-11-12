@@ -5,10 +5,8 @@
 
 建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。2026-11-12 參考福杯滿溢的結構寫的。
 
-⚠️ **目前只有繁體中文**（`app/strings.js` 的 `LANGS` 只有 `zh-TW`），還沒接首頁、還沒部署。老闆確認繁中版之後才跑 `/web100-launch-check`。
-⚠️ 上線時首頁 `vercel.json` 要多一條 `/seconds/vendor/qrcode.js`（跟倒放猜猜看一樣，QR code 用的）。
-⚠️ **`apps/warmup` 整包一起部署**：還沒上線之前要部署別的暖場遊戲，先把這個資料夾暫時搬出 `games/`（並刪掉 `dist/seconds`），
-不然會跟著上到 workers.dev。
+**已上線（2026-11-12，8 語）**，各語言名稱在 `CONCEPT.md` 第四節。首頁 `vercel.json` 的 `:game(...)` 白名單有 seconds，
+另外多一條 `/seconds/vendor/qrcode.js`（一起按的 QR code，跟倒放猜猜看一樣）。首頁插圖是 `woohop-art.js` 的 `art.seconds`。
 
 ## `app/app.js` 的結構
 
