@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "woohop-truths",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-11-01",
+
+  // 跟搶答、偷渡畫家同一個做法：靜態頁跟 API 走同一個 Worker，`dist` 是 scripts/build.js 產生的，不進版控
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // 找不到對應檔案時交給 Worker（/truths/ 要依語言轉址、/truths/api/* 是 API）
+    "not_found_handling": "none",
+    "run_worker_first": ["/truths/api/*"]
+  },
+
+  "durable_objects": {
+    "bindings": [{ "name": "ROOM", "class_name": "TruthsRoom" }]
+  },
+
+  // SQLite backend 是 Durable Object 免費方案唯一支援的儲存層
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["TruthsRoom"] }],
+
+  "observability": { "enabled": true, "head_sampling_rate": 0.2 }
+}
