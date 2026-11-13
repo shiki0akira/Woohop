@@ -352,7 +352,7 @@
    *   碼錶：mm:ss.cc，開始／暫停／重設；沒有聲音
    *   倒數：mm:ss，預設 1 分鐘，±30 秒調整，或點數字直接打（像微波爐：打 130 就是 1:30）；時間到響鈴＋震動
    *   數字上面有一個跑步的小人：碼錶在原地跑（地板往後退），暫停就停下來喘氣；
-   *   倒數從起跑線跑向終點線，跑到的位置＝過了多少時間，時間到衝過終點舉雙手
+   *   倒數也一直原地跑，最後 5 秒終點旗從右邊滾進來，時間到衝過終點舉雙手
    * 時間一律從 performance.now() 算（不是每次加 50ms），所以切到背景再回來也是準的；
    * 倒數到 0 用 setTimeout 另外排一個，畫面在背景不更新也會準時響。
    * 跑的時候要求螢幕不要自動關（Wake Lock，瀏覽器不支援就算了）。
@@ -421,8 +421,9 @@
           `<circle class="r-puff" cx="26" cy="-26" r="4" fill="#fff" stroke="${INK}" stroke-width="1.6"/>` +
           `<circle class="r-puff r-puff-2" cx="33" cy="-31" r="3" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`) +
       `</g></g>`;
-    // 倒數才有的起跑線、終點（地上的格子線＋旗桿，旗子朝跑來的方向）、衝線後的彩帶；
-    // 時間到小人衝過終點線停在右邊（FINISH_X）
+    // 倒數的終點（地上的格子線＋旗桿＋旗子）與衝線後的彩帶：畫在 x=0（終點線的位置），JS 整組往左推。
+    // 倒數時小人一直原地跑、地板往後退；最後 FLAG_MS 毫秒終點從右邊滾進來，剩 0 秒剛好到小人腳前，
+    // 時間到小人往前衝過線（RX → RX + PAST）
     const checker = (x, y, w, h, n) => {
       let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff"/>`;
       const cw = w / n, ch = h / 2;
@@ -431,21 +432,21 @@
     };
     const course =
       `<g class="t-course">` +
-        `<path d="M22 92v-10" stroke="var(--text-2)" stroke-width="3" stroke-linecap="round"/>` +
-        `<path d="M252 92V14" style="stroke:var(--ink)" stroke-width="3" stroke-linecap="round"/>` +
-        checker(228, 14, 24, 14, 4) +
-        `<rect x="244" y="88" width="8" height="8" fill="${INK}"/><rect x="244" y="88" width="4" height="4" fill="#fff"/><rect x="248" y="92" width="4" height="4" fill="#fff"/>` +
-      `</g>` +
-      `<g class="t-party">${W.burst(212, 46, '#FFC628')}${W.plus(234, 62, '#EE7B6A')}${W.ring(196, 70, '#7489E6', 4)}${W.dot(224, 82, '#F3A4FB', 3.5)}</g>`;
+        `<path d="M8 92V36" style="stroke:var(--ink)" stroke-width="3" stroke-linecap="round"/>` +
+        checker(8, 36, 24, 14, 4) +
+        `<rect x="0" y="88" width="8" height="8" fill="${INK}"/><rect x="0" y="88" width="4" height="4" fill="#fff"/><rect x="4" y="92" width="4" height="4" fill="#fff"/>` +
+        `<g class="t-party">${W.burst(82, 44, '#FFC628')}${W.plus(-16, 54, '#EE7B6A')}${W.ring(88, 74, '#7489E6', 4)}${W.dot(-8, 76, '#F3A4FB', 3.5)}</g>` +
+      `</g>`;
     const scene = make('div', 'timer-scene');
     scene.setAttribute('aria-hidden', 'true');
     scene.innerHTML =
-      `<svg viewBox="0 0 300 100">` +
+      `<svg viewBox="0 22 300 78">` +
         `<path class="t-ground" d="M0 92.5H300" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 10"/>` +
         course + runner +
       `</svg>`;
     const rPos = scene.querySelector('.r-pos');
-    const RUN_FROM = 34, RUN_TO = 222, FINISH_X = 278;
+    const courseEl = scene.querySelector('.t-course');
+    const FLAG_MS = 5000, PAST = 60;
 
     // ---------- 數字＋（倒數時）點數字直接打 ----------
     const display = make('div', 'timer-display');
@@ -565,11 +566,16 @@
     const placeRunner = () => {
       let x = 150;
       if (mode === 'cd') {
-        const done = Math.min(1, Math.max(0, 1 - currentMs() / (cdTotal * 1000)));
-        x = cdLeftMs <= 0 && !running ? FINISH_X : RUN_FROM + (RUN_TO - RUN_FROM) * done;
+        const RX = 110;
+        const left = Math.max(0, currentMs());
+        x = cdLeftMs <= 0 && !running ? RX + PAST : RX;
+        // 終點線：剩 FLAG_MS 時在畫面最右邊外面，剩 0 秒時在小人腳前（還很遠就整組藏起來）
+        const fx = RX + 14 + left * (300 - RX - 14) / FLAG_MS;
+        courseEl.style.transform = `translateX(${fx.toFixed(1)}px)`;
+        courseEl.style.visibility = fx < 300 ? 'visible' : 'hidden';
       }
       // 用 CSS transform（不是 SVG 屬性）：衝線那一下才有 transition 可以滑過去
-      rPos.style.transform = `translate(${x.toFixed(1)}px, 92px) scale(1.25)`;
+      rPos.style.transform = `translate(${x.toFixed(1)}px, 92px) scale(.9)`;
     };
     const tick = () => {
       if (!editing) paint(mode === 'sw' ? swText(currentMs()) : cdText(currentMs()));

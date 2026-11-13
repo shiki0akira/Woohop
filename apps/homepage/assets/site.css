@@ -391,10 +391,11 @@
 .timer-actions .btn.is-running { --face: var(--coral-face); --edge: var(--coral-edge); color: var(--coral-text); }
 
 /*
- * 跑步小人：碼錶原地跑（地板往後退）、暫停停下來喘氣；倒數從起跑線跑到終點、時間到舉雙手。
+ * 跑步小人：一直原地跑（地板往後退）、暫停停下來喘氣；倒數最後 5 秒終點滾進來、時間到衝線舉雙手。
  * 每個會動的部位外面包一層 translate 到關節，裡面那層繞 0 0 轉，所以 transform-origin 都是 0 0
  */
-.timer-scene svg { display: block; width: 100%; height: auto; overflow: visible; }
+.timer-scene { margin: 10px 0; }
+.timer-scene svg { display: block; width: 100%; height: auto; overflow: hidden; }
 :root[data-theme="dark"] .timer-scene { background: radial-gradient(closest-side, #ffffff22, #ffffff0c 65%, transparent); }
 .timer-scene .t-ground { stroke: var(--text-2); }
 .timer-scene .r-leg, .timer-scene .r-arm, .timer-scene .r-lean, .timer-scene .r-bob { transform-origin: 0 0; transition: transform .25s ease; }
@@ -405,19 +406,20 @@
 .timer-scene.is-done .f-done, .timer-scene.is-done .t-party,
 .timer-scene.mode-cd .t-course { display: inline; }
 /* 跑：手腳前後擺、身體往前傾、一步一跳 */
-@keyframes r-leg { from { transform: rotate(34deg); } to { transform: rotate(-34deg); } }
-@keyframes r-arm { from { transform: rotate(45deg); } to { transform: rotate(-60deg); } }
-@keyframes r-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+/* 一步 .2 秒（原本 .34 秒看起來像在走路） */
+@keyframes r-leg { from { transform: rotate(42deg); } to { transform: rotate(-42deg); } }
+@keyframes r-arm { from { transform: rotate(55deg); } to { transform: rotate(-70deg); } }
+@keyframes r-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 @keyframes r-speed { from { transform: translateX(6px); opacity: 1; } to { transform: translateX(-8px); opacity: .2; } }
 @keyframes t-ground { to { stroke-dashoffset: 26; } }
-.timer-scene.is-run .r-leg-f, .timer-scene.is-run .r-arm-b { animation: r-leg .34s ease-in-out infinite alternate; }
-.timer-scene.is-run .r-leg-b { animation: r-leg .34s ease-in-out infinite alternate-reverse; }
-.timer-scene.is-run .r-arm-f { animation: r-arm .34s ease-in-out infinite alternate-reverse; }
+.timer-scene.is-run .r-leg-f, .timer-scene.is-run .r-arm-b { animation: r-leg .2s ease-in-out infinite alternate; }
+.timer-scene.is-run .r-leg-b { animation: r-leg .2s ease-in-out infinite alternate-reverse; }
+.timer-scene.is-run .r-arm-f { animation: r-arm .2s ease-in-out infinite alternate-reverse; }
 .timer-scene.is-run .r-arm-b { animation-name: r-arm; animation-direction: alternate; }
-.timer-scene.is-run .r-bob { animation: r-bob .34s ease-in-out infinite; }
-.timer-scene.is-run .r-lean { transform: rotate(12deg); }
-.timer-scene.is-run .r-speed { animation: r-speed .34s linear infinite; }
-.timer-scene.mode-sw.is-run .t-ground { animation: t-ground .36s linear infinite; }
+.timer-scene.is-run .r-bob { animation: r-bob .2s ease-in-out infinite; }
+.timer-scene.is-run .r-lean { transform: rotate(16deg); }
+.timer-scene.is-run .r-speed { animation: r-speed .25s linear infinite; }
+.timer-scene.is-run .t-ground { animation: t-ground .22s linear infinite; }
 /* 喘氣：彎腰、雙手撐膝蓋、身體一起一伏、流汗、嘴巴前面冒白氣 */
 @keyframes r-pant { 0%, 100% { transform: rotate(26deg); } 50% { transform: rotate(21deg) translateY(1.5px); } }
 @keyframes r-drop { from { transform: translateY(0); opacity: 1; } to { transform: translateY(9px); opacity: 0; } }
