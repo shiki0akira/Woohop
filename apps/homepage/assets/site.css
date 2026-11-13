@@ -348,6 +348,39 @@
 .name-list-text { margin: 0; font-weight: 700; line-height: 1.7; color: var(--text-2); }
 .word-kind[hidden] { display: none; }
 .tool-panel .prose ol { margin: 0; }
+/*
+ * 計時器（2026-11-13）：數字一位一個底塊（跟秒數挑戰 apps/warmup/games/seconds 的 .clock-digit 同一款，
+ * 改樣子兩邊一起看）。碼錶 6 位（mm:ss.cc）、倒數 4 位（mm:ss），格子寬度跟著畫面縮
+ */
+.timer-tabs { width: auto; }
+.timer-tabs button { min-width: 96px; }
+.timer-display { display: grid; justify-items: center; gap: 10px; padding: 6px 0; }
+.timer-tiles { display: flex; align-items: flex-end; justify-content: center; gap: 5px; }
+.timer-digit {
+  display: grid; place-items: center; width: clamp(38px, 11vw, 64px); height: clamp(56px, 16vw, 92px);
+  border: 2px solid var(--edge-n); border-radius: var(--r-md); background: var(--track); box-shadow: var(--raise-n);
+  font: 800 clamp(34px, 10.5vw, 60px)/1 Fredoka, Nunito, sans-serif; font-variant-numeric: tabular-nums;
+}
+.timer-sep { font: 800 clamp(30px, 9vw, 52px)/1 Fredoka, Nunito, sans-serif; padding-bottom: 6px; }
+.timer-status { margin: 0; font-size: 22px; font-weight: 900; color: var(--coral-text); }
+.timer-status[hidden] { display: none; }
+/* 時間到：數字底塊變紅閃一下 */
+@keyframes timer-flash { 0%, 100% { transform: none; } 30% { transform: scale(1.06); } 60% { transform: scale(.98); } }
+.timer-done .timer-digit { background: var(--coral-face); border-color: var(--coral-edge); box-shadow: 0 4px 0 var(--coral-edge); color: var(--coral-text); }
+.timer-done .timer-tiles { animation: timer-flash .6s ease 3; }
+@media (prefers-reduced-motion: reduce) { .timer-done .timer-tiles { animation: none; } }
+.timer-setter { display: grid; gap: 10px; }
+.timer-setter[hidden] { display: none; }
+.timer-presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.timer-presets .chip { justify-content: center; text-align: center; }
+.timer-adjust { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.timer-adjust .btn { min-width: 0; }
+.timer-adjust .btn:disabled { opacity: .45; }
+.timer-actions { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; }
+.timer-actions .btn { min-width: 0; }
+.timer-actions .btn:disabled { opacity: .45; }
+.timer-actions .btn.is-running { --face: var(--coral-face); --edge: var(--coral-edge); color: var(--coral-text); }
+.timer-sound { width: auto; }
 
 /* ---------- 關於我們（含聯絡表單）、服務條款、隱私權政策（2026-10-22） ---------- */
 .about-page main > section, .legal-page main > section { padding: 24px 0 40px; }

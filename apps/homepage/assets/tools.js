@@ -1,5 +1,5 @@
 /*
- * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/、recorder/、actions/、words/）。2026-10-22，錄音機 2026-10-23，抽題目 2026-10-28
+ * 桌遊助手總覽（/{lang}/tools/）與小工具頁（tools/truth-or-dare/、metronome/、names/、recorder/、actions/、words/、timer/）。2026-10-22，錄音機 2026-10-23，抽題目 2026-10-28，計時器 2026-11-13
  *
  * 小工具本體就是遊戲裡用的那一份全站共用帶領元件 window.Leader（assets/game.js），這裡只負責：
  *   - 總覽頁：把爬蟲用的純文字連結換成有插圖的卡片（遊戲卡用 site.js 的 Site.card，工具卡自己畫）
@@ -20,8 +20,9 @@
 
   // ---------- 卡片 ----------
   // 錄音機跟倒放猜猜看用同一張插圖
-  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'toolActions', words: 'toolWords' };
-  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB', actions: '#EE7B6A', words: '#FF9419' };
+  // 計時器跟秒數挑戰用同一張插圖（有表情的碼錶）
+  const TOOL_ART = { truthOrDare: 'toolSlot', metronome: 'toolMetronome', names: 'toolNames', recorder: 'reverse', actions: 'toolActions', words: 'toolWords', timer: 'seconds' };
+  const TOOL_COLOR = { truthOrDare: '#FFC628', metronome: '#7489E6', names: '#4FB59A', recorder: '#F3A4FB', actions: '#EE7B6A', words: '#FF9419', timer: '#4FB59A' };
   // 橫式卡：左邊插圖，右邊標題＋說明
   const hCard = ({ href, attr, art, color, name, desc }) => `<a class="game tool-card" href="${href}" ${attr}>
       <div class="art"><svg viewBox="0 0 160 126" aria-hidden="true">${art}</svg></div>
@@ -344,6 +345,254 @@
       void face.offsetWidth;
       face.classList.add('pop');
     });
+  }
+
+  /*
+   * 計時器（2026-11-13，老闆 11/12 提的）：碼錶＋倒數。數字是秒數挑戰那種一位一個底塊（.timer-tiles）。
+   *   碼錶：mm:ss.cc，開始／暫停／重設
+   *   倒數：mm:ss，常用時間一鍵選（30 秒～10 分）＋ −10／+10 秒微調；最後 5 秒滴答、時間到響鈴＋震動
+   * 時間一律從 performance.now() 算（不是每次加 50ms），所以切到背景再回來也是準的；
+   * 倒數到 0 用 setTimeout 另外排一個，畫面在背景不更新也會準時響。
+   * 跑的時候要求螢幕不要自動關（Wake Lock，瀏覽器不支援就算了）。
+   */
+  if (tool.key === 'timer') {
+    const I = T.items.timer;
+    const PRESETS = [30, 60, 120, 180, 300, 600];
+    const MAX_CD = 99 * 60 + 59;
+    let mode = 'sw'; // sw 碼錶／cd 倒數
+    let running = false;
+    let swMs = 0; // 碼錶累積（暫停時的值）
+    let cdTotal = 60; // 倒數設定的秒數
+    let cdLeftMs = cdTotal * 1000;
+    let startAt = 0; // 這一段開始的 performance.now()
+    let loop = 0;
+    let endTimer = 0;
+    let lastTickSec = -1;
+    let sound = true;
+    let wake = null;
+
+    // 模式：碼錶／倒數（全站的 .segmented）
+    const tabs = make('div', 'segmented timer-tabs');
+    tabs.setAttribute('role', 'group');
+    const tabBtn = (id, label) => {
+      const b = make('button', '', label);
+      b.type = 'button';
+      b.dataset.mode = id;
+      b.addEventListener('click', () => setMode(id));
+      tabs.appendChild(b);
+      return b;
+    };
+    tabBtn('sw', I.stopwatchLabel);
+    tabBtn('cd', I.countdownLabel);
+
+    const display = make('div', 'timer-display');
+    const tiles = make('div', 'timer-tiles');
+    tiles.setAttribute('aria-live', 'off');
+    const status = make('p', 'timer-status', I.doneLabel);
+    status.hidden = true;
+    display.appendChild(tiles);
+    display.appendChild(status);
+
+    // 倒數的設定：常用時間＋微調（跑的時候藏起來）
+    const setter = make('div', 'timer-setter');
+    const presetRow = make('div', 'timer-presets');
+    PRESETS.forEach(sec => {
+      const b = make('button', 'chip', sec < 60 ? I.secFmt.replace('{n}', sec) : I.minFmt.replace('{n}', sec / 60));
+      b.type = 'button';
+      b.dataset.sec = String(sec);
+      b.addEventListener('click', () => { cdTotal = sec; cdLeftMs = sec * 1000; syncAll(); });
+      presetRow.appendChild(b);
+    });
+    const adjust = make('div', 'timer-adjust');
+    const less = make('button', 'btn btn-secondary', I.lessLabel);
+    const more = make('button', 'btn btn-secondary', I.moreLabel);
+    less.type = more.type = 'button';
+    less.addEventListener('click', () => { cdTotal = Math.max(5, cdTotal - 10); cdLeftMs = cdTotal * 1000; syncAll(); });
+    more.addEventListener('click', () => { cdTotal = Math.min(MAX_CD, cdTotal + 10); cdLeftMs = cdTotal * 1000; syncAll(); });
+    adjust.appendChild(less);
+    adjust.appendChild(more);
+    setter.appendChild(presetRow);
+    setter.appendChild(adjust);
+
+    const actions = make('div', 'timer-actions');
+    const startBtn = make('button', 'btn btn-lg btn-solid');
+    const resetBtn = make('button', 'btn btn-lg btn-secondary', I.resetLabel);
+    startBtn.type = resetBtn.type = 'button';
+    actions.appendChild(startBtn);
+    actions.appendChild(resetBtn);
+
+    const soundChip = make('button', 'chip timer-sound', I.soundLabel);
+    soundChip.type = 'button';
+    soundChip.setAttribute('aria-pressed', 'true');
+    soundChip.addEventListener('click', () => {
+      sound = !sound;
+      soundChip.setAttribute('aria-pressed', String(sound));
+    });
+
+    root.appendChild(tabs);
+    root.appendChild(display);
+    root.appendChild(setter);
+    root.appendChild(actions);
+    root.appendChild(soundChip);
+
+    // ---------- 聲音：開始後第一次按就建 AudioContext；iPhone 靜音鍵照全站做法重建 ----------
+    let ctx = null;
+    const ensureAudio = () => {
+      try {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') ctx.resume();
+      } catch (e) { ctx = null; }
+      return ctx;
+    };
+    if (Leader && Leader.onAudioReset) {
+      Leader.onAudioReset(() => {
+        if (running) return;
+        Leader.closeAudio(ctx);
+        ctx = null;
+      });
+    }
+    const beep = (freq, at, dur, vol) => {
+      if (!sound || !ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const t0 = ctx.currentTime + (at || 0);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(vol || 0.3, t0 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.05);
+    };
+    // 時間到：三組「嗶嗶」
+    const alarm = () => {
+      for (let i = 0; i < 3; i++) {
+        beep(1046.5, i * 0.5, 0.16, 0.35);
+        beep(1318.5, i * 0.5 + 0.18, 0.2, 0.35);
+      }
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+    };
+
+    // ---------- 螢幕不要自動關 ----------
+    const keepAwake = async (on) => {
+      try {
+        if (on && 'wakeLock' in navigator && !wake) wake = await navigator.wakeLock.request('screen');
+        if (!on && wake) { await wake.release(); wake = null; }
+      } catch (e) { wake = null; }
+    };
+
+    // ---------- 畫數字：一位一個底塊，冒號、小數點沒有底塊 ----------
+    const paint = (text) => {
+      const chars = text.split('');
+      if (tiles.children.length !== chars.length) {
+        tiles.textContent = '';
+        chars.forEach(ch => tiles.appendChild(make('span', /[0-9]/.test(ch) ? 'timer-digit' : 'timer-sep')));
+      }
+      chars.forEach((ch, i) => { if (tiles.children[i].textContent !== ch) tiles.children[i].textContent = ch; });
+    };
+    const two = n => String(n).padStart(2, '0');
+    const swText = (ms) => {
+      const cs = Math.floor(ms / 10);
+      const m = Math.min(99, Math.floor(cs / 6000));
+      return two(m) + ':' + two(Math.floor(cs / 100) % 60) + '.' + two(cs % 100);
+    };
+    // 倒數顯示「還剩幾秒」往上取整：剛按下 1:00 時是 1:00，不會馬上跳成 0:59
+    const cdText = (ms) => {
+      const s = Math.max(0, Math.ceil(ms / 1000));
+      return two(Math.floor(s / 60)) + ':' + two(s % 60);
+    };
+    const now = () => performance.now();
+    const currentMs = () => {
+      if (mode === 'sw') return running ? swMs + (now() - startAt) : swMs;
+      return running ? cdLeftMs - (now() - startAt) : cdLeftMs;
+    };
+
+    const tick = () => {
+      const ms = currentMs();
+      if (mode === 'sw') { paint(swText(ms)); return; }
+      paint(cdText(ms));
+      // 最後 5 秒每秒滴一聲
+      const sec = Math.ceil(ms / 1000);
+      if (running && sec <= 5 && sec >= 1 && sec !== lastTickSec) {
+        lastTickSec = sec;
+        beep(880, 0, 0.08, 0.2);
+      }
+    };
+
+    const syncAll = () => {
+      tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+      setter.hidden = mode !== 'cd' || running;
+      presetRow.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.sec) === cdTotal)));
+      less.disabled = cdTotal <= 5;
+      more.disabled = cdTotal >= MAX_CD;
+      const started = mode === 'sw' ? swMs > 0 : cdLeftMs !== cdTotal * 1000;
+      startBtn.textContent = running ? I.pauseLabel : started && !(mode === 'cd' && cdLeftMs <= 0) ? I.resumeLabel : I.startLabel;
+      startBtn.classList.toggle('is-running', running);
+      resetBtn.disabled = running || !started;
+      root.classList.toggle('timer-done', mode === 'cd' && cdLeftMs <= 0);
+      status.hidden = !(mode === 'cd' && cdLeftMs <= 0);
+      tick();
+    };
+
+    const finish = () => {
+      clearInterval(loop);
+      clearTimeout(endTimer);
+      running = false;
+      cdLeftMs = 0;
+      keepAwake(false);
+      alarm();
+      syncAll();
+      track('tool_timer_finished', { seconds: cdTotal });
+    };
+
+    const start = () => {
+      ensureAudio();
+      if (mode === 'cd' && cdLeftMs <= 0) cdLeftMs = cdTotal * 1000; // 時間到之後再按開始＝重新倒數
+      running = true;
+      startAt = now();
+      lastTickSec = -1;
+      loop = setInterval(tick, 50);
+      if (mode === 'cd') endTimer = setTimeout(finish, cdLeftMs);
+      keepAwake(true);
+      beep(1320, 0, 0.07, 0.2);
+      track('tool_timer_started', { mode: mode === 'sw' ? 'stopwatch' : 'countdown', seconds: mode === 'cd' ? cdTotal : 0 });
+      syncAll();
+    };
+    const pause = () => {
+      const ms = currentMs();
+      clearInterval(loop);
+      clearTimeout(endTimer);
+      running = false;
+      if (mode === 'sw') swMs = ms;
+      else cdLeftMs = ms;
+      keepAwake(false);
+      syncAll();
+    };
+    const reset = () => {
+      if (mode === 'sw') swMs = 0;
+      else cdLeftMs = cdTotal * 1000;
+      syncAll();
+    };
+    const setMode = (m) => {
+      if (m === mode) return;
+      if (running) pause();
+      mode = m;
+      tiles.textContent = ''; // 位數不一樣（碼錶 6 位、倒數 4 位），格子重建
+      syncAll();
+    };
+
+    startBtn.addEventListener('click', () => (running ? pause() : start()));
+    resetBtn.addEventListener('click', reset);
+    // 切回這一頁：Wake Lock 會被瀏覽器收回，還在跑就再要一次；數字也馬上補到現在
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        if (running) { wake = null; keepAwake(true); }
+        tick();
+      }
+    });
+    syncAll();
   }
 
   // 倒放錄音機：跟倒放猜猜看同一個 Leader.recorder，多了播放速度（連音高一起變，慢像大叔、快像花栗鼠）
