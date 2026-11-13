@@ -7,7 +7,7 @@ import { LOCALE_LABELS, PROJECT_ID } from './app/strings.js';
 import { QUESTIONS, CATEGORY_GROUPS, checkQuestions } from './app/questions.js';
 
 // sitemap 的 lastmod：**內容真的有變才手動改**
-export const CONTENT_UPDATED = '2026-08-31';
+export const CONTENT_UPDATED = '2026-11-13';
 
 // 規則頁的清單長度要一致，否則某個語言會少一步驟而沒人發現
 export const LIST_KEYS = ['rulesFacts', 'rulesTimeGuide', 'rulesHowSteps', 'rulesLeadSteps', 'ruleCards'];

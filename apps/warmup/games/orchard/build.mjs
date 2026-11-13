@@ -3,7 +3,7 @@
  */
 
 // sitemap 的 lastmod：**內容真的有變才手動改**
-export const CONTENT_UPDATED = '2026-10-21';
+export const CONTENT_UPDATED = '2026-11-13';
 
 // 每個語言長度要一樣的清單
 export const LIST_KEYS = ['ruleCards', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps'];

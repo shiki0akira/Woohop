@@ -6,7 +6,7 @@
 import { THEMES, groupsFor, checkNames } from '../../../homepage/src/name-pools.mjs';
 
 // sitemap 的 lastmod：**內容真的有變才手動改**
-export const CONTENT_UPDATED = '2026-10-20';
+export const CONTENT_UPDATED = '2026-11-13';
 
 // 每個語言長度要一樣的清單
 export const LIST_KEYS = ['ruleCards', 'chant', 'rulesFacts', 'rulesHowSteps', 'rulesLeadSteps'];
