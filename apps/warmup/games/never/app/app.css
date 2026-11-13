@@ -1,0 +1,64 @@
+/*
+ * 我從來沒有自己的樣式。步驟頭、規則卡、拉霸、按鈕、選項卡都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面（主題卡、收合鍵、結束鍵照抄果園菜園動物園）。
+ * 跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：珊瑚紅 */
+.never-app { --game-edge: var(--coral-edge); }
+.never-app .panel { padding: 20px; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場：選玩法（照秒數挑戰的 .setup-panel） ---------- */
+.setup-panel .field-label:first-child { margin-top: 0; }
+.never-app .seg-2 { grid-template-columns: repeat(2, 1fr); }
+.setup-panel .hint { margin: 10px 0 0; }
+
+/* ---------- 主題：第幾輪、大大的主題名稱、例句 ---------- */
+.topic-panel { display: grid; gap: 10px; }
+.topic-card {
+  position: relative; display: grid; justify-items: center; gap: 6px; text-align: center; padding: 14px 52px 16px;
+  border: 2px solid var(--coral-edge); border-radius: var(--r-md); background: var(--coral-face); color: var(--coral-text);
+  box-shadow: 0 4px 0 var(--coral-edge);
+}
+.round-tag { font-size: 14px; font-weight: 800; }
+.topic-card strong { font-size: 34px; line-height: 1.2; font-weight: 900; color: var(--ink); text-wrap: balance; }
+.topic-text { display: grid; }
+/* 右上角的骰子鍵：只有圖示（名稱給螢幕閱讀器），左右內距 52px 讓主題字不會壓到它 */
+.topic-shuffle { position: absolute; top: 10px; right: 10px; width: 36px; padding: 0; }
+.topic-shuffle svg { width: 18px; height: 18px; }
+/* 例句：點一下換一句，右邊一個小箭頭表示可以點。卡片左右內距 52px 是給骰子鍵的，例句這行放寬回來 */
+.topic-ex {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 -40px; padding: 6px 12px;
+  border: 0; border-radius: 999px; background: #ffffff8c; color: inherit; cursor: pointer;
+  font: inherit; font-size: 16px; font-weight: 700; line-height: 1.4; text-align: left; text-wrap: pretty;
+}
+.topic-ex svg { flex: none; width: 16px; height: 16px; }
+:root[data-theme="dark"] .topic-ex { background: #ffffff14; }
+/* 「自己選主題」收合鍵：跟果園菜園動物園、定時炸彈的「自訂區間」一樣 */
+.topic-toggle {
+  justify-self: start; display: inline-flex; align-items: center; gap: 4px; padding: 4px 0;
+  border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800;
+}
+.topic-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.topic-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
+.topic-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- 開始玩 ---------- */
+#next-round { white-space: normal; line-height: 1.2; }
+/* 結束鍵：紅色、要按住 0.8 秒（跟竹筍的 .round-btn 同一個做法），按住時從左到右填滿 */
+.end-btn {
+  --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 60px;
+  position: relative; overflow: hidden; font-size: 18px; white-space: normal; line-height: 1.2; text-wrap: balance;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
+
+/* 玩法頁：主題和例句排兩欄 */
+.rules-topics ul { columns: 2; column-gap: 24px; }
+.rules-topics li { break-inside: avoid; }
+@media (max-width: 520px) { .rules-topics ul { columns: 1; } }

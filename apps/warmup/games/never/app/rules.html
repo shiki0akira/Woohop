@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="never-app woohop-game" data-screen="rules" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="never-main game-rules game-main">
+      <div class="page-head">
+        <nav class="crumbs" aria-label="breadcrumb">
+          <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><a href="{{base}}/{{lang}}/">{{navTitle}}</a><span>›</span><span>{{navRules}}</span>
+        </nav>
+        <h1>{{rulesTitle}}</h1>
+        <p>{{rulesIntro}}</p>
+      </div>
+
+      <!-- 一眼看到：幾個人、多久、要準備什麼 -->
+      <ul class="rules-facts">
+        {{rulesFactsList}}
+      </ul>
+
+      <section class="panel prose">
+        <h2>{{rulesHowHeading}}</h2>
+        <ol>
+          {{rulesHowList}}
+        </ol>
+      </section>
+
+      <!-- 反過來玩（開場選「我做過」） -->
+      <section class="panel prose">
+        <h2>{{rulesDidHeading}}</h2>
+        <p>{{rulesDidIntro}}</p>
+        <ol>
+          {{rulesDidList}}
+        </ol>
+      </section>
+
+      <!-- 主題和例句：每個主題第一句例句，給搜尋「我從來沒有 題目」的人看 -->
+      <section class="panel prose rules-topics">
+        <h2>{{rulesTopicsHeading}}</h2>
+        <p>{{rulesTopicsIntro}}</p>
+        <ul>
+          {{rulesTopicsList}}
+        </ul>
+      </section>
+
+      <section class="panel prose rules-lead">
+        <h2>{{rulesLeadHeading}}</h2>
+        <!-- 開場那一句做成首頁破冰組合同款的「照著念」卡片，主持人直接念 -->
+        <div class="prompt-card"><span class="say">{{sayLabel}}</span>{{rulesLeadSay}}</div>
+        <ul>
+          {{rulesLeadList}}
+        </ul>
+      </section>
+
+      <p class="rules-back"><a class="btn btn-lg btn-solid" href="{{base}}/{{lang}}/">{{rulesBack}}</a></p>
+    </main>
+
+    {{footer}}
+
+    <script>
+      window.NEVER = { lang: '{{lang}}', base: '{{base}}' };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+  </body>
+</html>
