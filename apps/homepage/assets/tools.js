@@ -349,15 +349,17 @@
 
   /*
    * 計時器（2026-11-13，老闆 11/12 提的）：碼錶＋倒數。數字是秒數挑戰那種一位一個底塊（.timer-tiles）。
-   *   碼錶：mm:ss.cc，開始／暫停／重設
-   *   倒數：mm:ss，常用時間一鍵選（30 秒～10 分）＋ −10／+10 秒微調；最後 5 秒滴答、時間到響鈴＋震動
+   *   碼錶：mm:ss.cc，開始／暫停／重設；沒有聲音
+   *   倒數：mm:ss，預設 1 分鐘，±30 秒調整，或點數字直接打（像微波爐：打 130 就是 1:30）；時間到響鈴＋震動
+   *   數字上面有一個跑步的小人：碼錶在原地跑（地板往後退），暫停就停下來喘氣；
+   *   倒數從起跑線跑向終點線，跑到的位置＝過了多少時間，時間到衝過終點舉雙手
    * 時間一律從 performance.now() 算（不是每次加 50ms），所以切到背景再回來也是準的；
    * 倒數到 0 用 setTimeout 另外排一個，畫面在背景不更新也會準時響。
    * 跑的時候要求螢幕不要自動關（Wake Lock，瀏覽器不支援就算了）。
    */
   if (tool.key === 'timer') {
     const I = T.items.timer;
-    const PRESETS = [30, 60, 120, 180, 300, 600];
+    const STEP = 30;
     const MAX_CD = 99 * 60 + 59;
     let mode = 'sw'; // sw 碼錶／cd 倒數
     let running = false;
@@ -367,9 +369,8 @@
     let startAt = 0; // 這一段開始的 performance.now()
     let loop = 0;
     let endTimer = 0;
-    let lastTickSec = -1;
-    let sound = true;
     let wake = null;
+    let editing = false;
 
     // 模式：碼錶／倒數（全站的 .segmented）
     const tabs = make('div', 'segmented timer-tabs');
@@ -380,39 +381,100 @@
       b.dataset.mode = id;
       b.addEventListener('click', () => setMode(id));
       tabs.appendChild(b);
-      return b;
     };
     tabBtn('sw', I.stopwatchLabel);
     tabBtn('cd', I.countdownLabel);
 
+    // ---------- 跑步小人（畫法照動作卡的小人：圓頭長身＋粗線手腳） ----------
+    const INK = '#22222c';
+    const C = ['#a8dccb', '#7cc9b1'];
+    const limb = (d, hand, w = 6) =>
+      `<path d="${d}" fill="none" stroke="${INK}" stroke-linecap="round" stroke-width="${w + 8}" vector-effect="non-scaling-stroke"/>` +
+      `<path d="${d}" fill="none" stroke="${C[0]}" stroke-linecap="round" stroke-width="${w}" vector-effect="non-scaling-stroke"/>` +
+      (hand ? `<circle cx="${hand[0]}" cy="${hand[1]}" r="4.5" fill="${C[0]}" ${W.K}/>` : '');
+    // 腳：粗一點，腳底一隻深色鞋子（鞋尖朝前）
+    const leg = limb('M0 0L0 16', null, 8) + `<path d="M-3.5 15h8a3.5 3.5 0 0 1 0 7h-8z" fill="${INK}"/>`;
+    const at = (x, y, cls, inner) => `<g transform="translate(${x} ${y})"><g class="${cls}">${inner}</g></g>`;
+    // 身體以「屁股」為原點：頭頂 y=-48、寬 30；臉朝右（往前跑的方向）
+    const bean = '<path d="M-15 2V-33A15 15 0 0 1 15 -33V2Z"/>';
+    const shade = `<path d="M-9 -60h30v70h-30z" fill="${C[1]}"/>`;
+    const fx = 3, fy = -33, fs = 1.4;
+    // 喘氣的臉：眼睛 > <、嘴巴張開一縮一放
+    const tiredFace =
+      `<path d="M${fx - 8} ${fy - 2.6}l3.4 2.4-3.4 2.4M${fx + 8} ${fy - 2.6}l-3.4 2.4 3.4 2.4" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<ellipse class="r-mouth" cx="${fx}" cy="${fy + 6}" rx="2.6" ry="3.2" fill="${INK}"/>`;
+    const runner =
+      `<g class="r-pos"><g class="r-bob">` +
+        `<g class="r-speed"><path d="M-40 -40h-14M-36 -28h-20M-42 -16h-12" fill="none" stroke="#7489E6" stroke-width="3.5" stroke-linecap="round"/></g>` +
+        at(0, -22, 'r-leg r-leg-b', leg) +
+        at(0, -22, 'r-leg r-leg-f', leg) +
+        at(0, -22, 'r-lean',
+          at(0, -18, 'r-arm r-arm-b', limb('M0 0q3 9 1 16', [1, 16])) +
+          W.body(bean, C[0], shade) +
+          `<g class="r-face f-idle">${W.makeFace('smile', fx, fy, fs)}</g>` +
+          `<g class="r-face f-run">${W.makeFace('grin', fx, fy, fs)}</g>` +
+          `<g class="r-face f-tired">${tiredFace}</g>` +
+          `<g class="r-face f-done">${W.makeFace('happy', fx, fy, fs)}</g>` +
+          at(0, -18, 'r-arm r-arm-f', limb('M0 0q3 9 1 16', [1, 16])) +
+          // 喘氣：額頭的汗、嘴巴前面的白氣
+          `<path class="r-sweat" d="M-10 -44q-3 4 0 6 3-2 0-6z" fill="#7cc8f0" stroke="${INK}" stroke-width="1.6"/>` +
+          `<circle class="r-puff" cx="26" cy="-26" r="4" fill="#fff" stroke="${INK}" stroke-width="1.6"/>` +
+          `<circle class="r-puff r-puff-2" cx="33" cy="-31" r="3" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`) +
+      `</g></g>`;
+    // 倒數才有的起跑線、終點（地上的格子線＋旗桿，旗子朝跑來的方向）、衝線後的彩帶；
+    // 時間到小人衝過終點線停在右邊（FINISH_X）
+    const checker = (x, y, w, h, n) => {
+      let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff"/>`;
+      const cw = w / n, ch = h / 2;
+      for (let i = 0; i < n; i++) s += `<rect x="${x + i * cw}" y="${y + (i % 2) * ch}" width="${cw}" height="${ch}" fill="${INK}"/>`;
+      return s + `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${INK}" stroke-width="2"/>`;
+    };
+    const course =
+      `<g class="t-course">` +
+        `<path d="M22 92v-10" stroke="var(--text-2)" stroke-width="3" stroke-linecap="round"/>` +
+        `<path d="M252 92V14" style="stroke:var(--ink)" stroke-width="3" stroke-linecap="round"/>` +
+        checker(228, 14, 24, 14, 4) +
+        `<rect x="244" y="88" width="8" height="8" fill="${INK}"/><rect x="244" y="88" width="4" height="4" fill="#fff"/><rect x="248" y="92" width="4" height="4" fill="#fff"/>` +
+      `</g>` +
+      `<g class="t-party">${W.burst(212, 46, '#FFC628')}${W.plus(234, 62, '#EE7B6A')}${W.ring(196, 70, '#7489E6', 4)}${W.dot(224, 82, '#F3A4FB', 3.5)}</g>`;
+    const scene = make('div', 'timer-scene');
+    scene.setAttribute('aria-hidden', 'true');
+    scene.innerHTML =
+      `<svg viewBox="0 0 300 100">` +
+        `<path class="t-ground" d="M0 92.5H300" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="16 10"/>` +
+        course + runner +
+      `</svg>`;
+    const rPos = scene.querySelector('.r-pos');
+    const RUN_FROM = 34, RUN_TO = 222, FINISH_X = 278;
+
+    // ---------- 數字＋（倒數時）點數字直接打 ----------
     const display = make('div', 'timer-display');
+    const tilesWrap = make('div', 'timer-tiles-wrap');
     const tiles = make('div', 'timer-tiles');
-    tiles.setAttribute('aria-live', 'off');
+    const input = make('input', 'timer-input');
+    input.type = 'text';
+    input.inputMode = 'numeric';
+    input.autocomplete = 'off';
+    input.maxLength = 4;
+    input.setAttribute('aria-label', I.inputLabel);
+    tilesWrap.appendChild(tiles);
+    tilesWrap.appendChild(input);
+    const hint = make('p', 'timer-hint', I.editHint);
     const status = make('p', 'timer-status', I.doneLabel);
-    status.hidden = true;
-    display.appendChild(tiles);
+    display.appendChild(tilesWrap);
+    display.appendChild(hint);
     display.appendChild(status);
 
-    // 倒數的設定：常用時間＋微調（跑的時候藏起來）
-    const setter = make('div', 'timer-setter');
-    const presetRow = make('div', 'timer-presets');
-    PRESETS.forEach(sec => {
-      const b = make('button', 'chip', sec < 60 ? I.secFmt.replace('{n}', sec) : I.minFmt.replace('{n}', sec / 60));
-      b.type = 'button';
-      b.dataset.sec = String(sec);
-      b.addEventListener('click', () => { cdTotal = sec; cdLeftMs = sec * 1000; syncAll(); });
-      presetRow.appendChild(b);
-    });
+    // 倒數：±30 秒（跑的時候藏起來）
     const adjust = make('div', 'timer-adjust');
     const less = make('button', 'btn btn-secondary', I.lessLabel);
     const more = make('button', 'btn btn-secondary', I.moreLabel);
     less.type = more.type = 'button';
-    less.addEventListener('click', () => { cdTotal = Math.max(5, cdTotal - 10); cdLeftMs = cdTotal * 1000; syncAll(); });
-    more.addEventListener('click', () => { cdTotal = Math.min(MAX_CD, cdTotal + 10); cdLeftMs = cdTotal * 1000; syncAll(); });
+    const setTotal = (sec) => { cdTotal = sec; cdLeftMs = sec * 1000; syncAll(); };
+    less.addEventListener('click', () => setTotal(Math.max(1, cdTotal - STEP)));
+    more.addEventListener('click', () => setTotal(Math.min(MAX_CD, cdTotal + STEP)));
     adjust.appendChild(less);
     adjust.appendChild(more);
-    setter.appendChild(presetRow);
-    setter.appendChild(adjust);
 
     const actions = make('div', 'timer-actions');
     const startBtn = make('button', 'btn btn-lg btn-solid');
@@ -421,28 +483,19 @@
     actions.appendChild(startBtn);
     actions.appendChild(resetBtn);
 
-    const soundChip = make('button', 'chip timer-sound', I.soundLabel);
-    soundChip.type = 'button';
-    soundChip.setAttribute('aria-pressed', 'true');
-    soundChip.addEventListener('click', () => {
-      sound = !sound;
-      soundChip.setAttribute('aria-pressed', String(sound));
-    });
-
     root.appendChild(tabs);
+    root.appendChild(scene);
     root.appendChild(display);
-    root.appendChild(setter);
+    root.appendChild(adjust);
     root.appendChild(actions);
-    root.appendChild(soundChip);
 
-    // ---------- 聲音：開始後第一次按就建 AudioContext；iPhone 靜音鍵照全站做法重建 ----------
+    // ---------- 鈴聲（只有倒數時間到才響）：按開始時建 AudioContext；iPhone 靜音鍵照全站做法重建 ----------
     let ctx = null;
     const ensureAudio = () => {
       try {
         if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
         if (ctx.state === 'suspended') ctx.resume();
       } catch (e) { ctx = null; }
-      return ctx;
     };
     if (Leader && Leader.onAudioReset) {
       Leader.onAudioReset(() => {
@@ -451,26 +504,26 @@
         ctx = null;
       });
     }
-    const beep = (freq, at, dur, vol) => {
-      if (!sound || !ctx) return;
+    const beep = (freq, offset, dur) => {
+      if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      const t0 = ctx.currentTime + (at || 0);
+      const t0 = ctx.currentTime + offset;
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, t0);
       gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(vol || 0.3, t0 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.35, t0 + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(t0);
       osc.stop(t0 + dur + 0.05);
     };
-    // 時間到：三組「嗶嗶」
+    // 時間到：三組「嗶嗶」＋震動
     const alarm = () => {
       for (let i = 0; i < 3; i++) {
-        beep(1046.5, i * 0.5, 0.16, 0.35);
-        beep(1318.5, i * 0.5 + 0.18, 0.2, 0.35);
+        beep(1046.5, i * 0.5, 0.16);
+        beep(1318.5, i * 0.5 + 0.18, 0.2);
       }
       if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
     };
@@ -509,32 +562,72 @@
       return running ? cdLeftMs - (now() - startAt) : cdLeftMs;
     };
 
-    const tick = () => {
-      const ms = currentMs();
-      if (mode === 'sw') { paint(swText(ms)); return; }
-      paint(cdText(ms));
-      // 最後 5 秒每秒滴一聲
-      const sec = Math.ceil(ms / 1000);
-      if (running && sec <= 5 && sec >= 1 && sec !== lastTickSec) {
-        lastTickSec = sec;
-        beep(880, 0, 0.08, 0.2);
+    const placeRunner = () => {
+      let x = 150;
+      if (mode === 'cd') {
+        const done = Math.min(1, Math.max(0, 1 - currentMs() / (cdTotal * 1000)));
+        x = cdLeftMs <= 0 && !running ? FINISH_X : RUN_FROM + (RUN_TO - RUN_FROM) * done;
       }
+      // 用 CSS transform（不是 SVG 屬性）：衝線那一下才有 transition 可以滑過去
+      rPos.style.transform = `translate(${x.toFixed(1)}px, 92px) scale(1.25)`;
+    };
+    const tick = () => {
+      if (!editing) paint(mode === 'sw' ? swText(currentMs()) : cdText(currentMs()));
+      placeRunner();
     };
 
     const syncAll = () => {
-      tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
-      setter.hidden = mode !== 'cd' || running;
-      presetRow.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.sec) === cdTotal)));
-      less.disabled = cdTotal <= 5;
-      more.disabled = cdTotal >= MAX_CD;
+      const done = mode === 'cd' && cdLeftMs <= 0;
       const started = mode === 'sw' ? swMs > 0 : cdLeftMs !== cdTotal * 1000;
-      startBtn.textContent = running ? I.pauseLabel : started && !(mode === 'cd' && cdLeftMs <= 0) ? I.resumeLabel : I.startLabel;
+      tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+      // 小人：跑／停下來喘氣（開始過但暫停）／衝線／站著
+      scene.className = 'timer-scene mode-' + mode + (running ? ' is-run' : done ? ' is-done' : started ? ' is-tired' : '');
+      const canEdit = mode === 'cd' && !running;
+      adjust.hidden = !canEdit;
+      input.disabled = !canEdit;
+      tilesWrap.classList.toggle('is-editable', canEdit);
+      hint.hidden = !canEdit || done;
+      less.disabled = cdTotal <= STEP;
+      more.disabled = cdTotal >= MAX_CD;
+      startBtn.textContent = running ? I.pauseLabel : started && !done ? I.resumeLabel : I.startLabel;
       startBtn.classList.toggle('is-running', running);
       resetBtn.disabled = running || !started;
-      root.classList.toggle('timer-done', mode === 'cd' && cdLeftMs <= 0);
-      status.hidden = !(mode === 'cd' && cdLeftMs <= 0);
+      root.classList.toggle('timer-done', done);
+      status.hidden = !done;
       tick();
     };
+
+    // 點數字直接打：從右邊推進去（打 1、3、0 → 01:30），離開輸入框才算數；秒數打超過 59 會自動進位
+    const editDigits = () => input.value.replace(/\D/g, '').slice(-4);
+    const showEntry = () => {
+      const d = editDigits().padStart(4, '0');
+      paint(d.slice(0, 2) + ':' + d.slice(2));
+    };
+    input.addEventListener('focus', () => {
+      if (input.disabled) return;
+      editing = true;
+      input.value = '';
+      tilesWrap.classList.add('is-editing');
+      showEntry();
+    });
+    input.addEventListener('input', () => {
+      input.value = editDigits();
+      showEntry();
+    });
+    const commit = () => {
+      if (!editing) return;
+      editing = false;
+      tilesWrap.classList.remove('is-editing');
+      const d = editDigits();
+      if (d) {
+        const p = d.padStart(4, '0');
+        const sec = Math.min(MAX_CD, Number(p.slice(0, 2)) * 60 + Number(p.slice(2)));
+        if (sec > 0) { setTotal(sec); return; }
+      }
+      syncAll();
+    };
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') input.blur(); });
 
     const finish = () => {
       clearInterval(loop);
@@ -548,15 +641,16 @@
     };
 
     const start = () => {
-      ensureAudio();
-      if (mode === 'cd' && cdLeftMs <= 0) cdLeftMs = cdTotal * 1000; // 時間到之後再按開始＝重新倒數
+      commit(); // 還在輸入就按開始：先把打的時間算進去（不靠 blur，有的瀏覽器不一定先送）
+      if (mode === 'cd') {
+        ensureAudio();
+        if (cdLeftMs <= 0) cdLeftMs = cdTotal * 1000; // 時間到之後再按開始＝重新倒數
+      }
       running = true;
       startAt = now();
-      lastTickSec = -1;
       loop = setInterval(tick, 50);
       if (mode === 'cd') endTimer = setTimeout(finish, cdLeftMs);
       keepAwake(true);
-      beep(1320, 0, 0.07, 0.2);
       track('tool_timer_started', { mode: mode === 'sw' ? 'stopwatch' : 'countdown', seconds: mode === 'cd' ? cdTotal : 0 });
       syncAll();
     };
