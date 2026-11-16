@@ -62,11 +62,13 @@
         <button class="btn btn-lg btn-block end-btn" id="end-btn" type="button">{{endGame}}</button>
       </div>
 
-      <!-- 第 4 步：誰輸了。五根都折完的人拉真心話大冒險拉霸，拉霸可以一直再拉 -->
+      <!-- 第 4 步：誰贏了。最後還留著手指的人抽一個動作讓大家模仿、三連拍（老闆 11/16：跟木頭人動作版一樣） -->
       <div class="view" id="view-end" hidden>
         <div class="lead-slot"></div>
-        <section class="panel">
-          <div id="slot-root"></div>
+        <section class="panel punish-panel">
+          <h2>{{punishHeading}}</h2>
+          <!-- 動作卡＋隨機抽一個：全站共用的 Leader.actionCard -->
+          <div id="punish-root"></div>
         </section>
         <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
       </div>
@@ -90,7 +92,7 @@
         lang: '{{lang}}',
         base: '{{base}}',
         T: {{stringsJson}},
-        slot: {{slotJson}},
+        actions: {{actionsJson}},
       };
     </script>
     <script src="{{base}}/header.js?v={{assetVersion}}"></script>

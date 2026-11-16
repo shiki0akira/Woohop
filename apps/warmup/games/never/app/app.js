@@ -1,9 +1,10 @@
 /*
  * 我從來沒有。手指是大家自己折的、手機不記分（CONCEPT.md），手機只做四件事：
- * 一步一步帶、每一輪抽主題＋給例句、讓主持人按「下一輪」、輸的人拉真心話大冒險拉霸。
+ * 一步一步帶、每一輪抽主題＋給例句、讓主持人按「下一輪」、贏家抽動作讓大家模仿。
+ * 五根折完的人出局，最後還留著手指的人贏（老闆 11/16：看誰最後勝利，不是看誰先出局）。
  *
- * 一步一步帶（跟果園菜園動物園同一套，步驟頭、規則卡、拉霸都是全站共用的 window.Leader）：
- *   setup 開場（選玩法）→ rules 說明規則 → play 開始（主題卡、下一輪）→ end 誰輸了（拉霸）→ 再玩一次回 play
+ * 一步一步帶（跟果園菜園動物園同一套，步驟頭、規則卡、動作卡都是全站共用的 window.Leader）：
+ *   setup 開場（選玩法）→ rules 說明規則 → play 開始（主題卡、下一輪）→ end 誰贏了（動作卡）→ 再玩一次回 play
  * 返回鍵一律回第一頁；開始玩之後先確認。
  */
 (function () {
@@ -15,7 +16,7 @@
   var W = window.Woohop;
   var Leader = window.Leader;
 
-  // 玩法：never 我從來沒有（預設）／did 我做過。每次進來都是預設值（不記上次玩過的，全站規則）
+  // 玩法：never 我從來沒有（預設）／did 我曾經做過。每次進來都是預設值（不記上次玩過的，全站規則）
   var mode = 'never';
   var screen = 'setup';
   var topicIndex = -1; // 這一輪的主題（T.topics 的第幾個）
@@ -43,7 +44,7 @@
     topicToggle: $('topic-toggle'),
     nextRound: $('next-round'),
     endBtn: $('end-btn'),
-    slotRoot: $('slot-root'),
+    punishRoot: $('punish-root'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -129,7 +130,9 @@
   var STEPS = ['setup', 'rules', 'play', 'end'];
 
   function renderLead() {
-    var text = leadTexts()[screen];
+    // 抽到「自由發揮」（topics 第三格是 'free'）那一輪念 playFree：不限主題
+    var free = screen === 'play' && topicIndex >= 0 && T.topics[topicIndex][2] === 'free';
+    var text = leadTexts()[free ? 'playFree' : screen];
     Leader.lead(views[screen].querySelector('.lead-slot'), {
       index: STEPS.indexOf(screen),
       total: STEPS.length,
@@ -180,22 +183,13 @@
     },
   ];
 
-  // ---------- 拉霸（Leader.slot） ----------
-  // 這個遊戲沒有配樂、沒有聲音開關（講話的遊戲），拉霸照常出聲
+  // ---------- 誰贏了：贏家抽一個動作讓大家模仿、三連拍（全站共用的 Leader.actionCard，照木頭人動作版） ----------
+  // 這個遊戲沒有配樂、沒有聲音開關（講話的遊戲）
 
-  var slotTool = null;
-  function resetSlot() {
-    if (!slotTool) {
-      slotTool = Leader.slot(el.slotRoot, {
-        prompts: window.NEVER.slot.prompts,
-        actions: window.NEVER.slot.actions,
-        onPull: function (info) {
-          track('never_slot_pulled', { round_number: roundNumber, kind: info.kind, mode: info.mode });
-        },
-      });
-    }
-    slotTool.reset();
-  }
+  var punish = Leader.actionCard(el.punishRoot, {
+    actions: window.NEVER.actions,
+    onDraw: function (action) { track('never_action_drawn', { action: action[0], mode: mode }); },
+  });
 
   // ---------- 螢幕保持亮著（一輪可能講很久） ----------
 
@@ -231,7 +225,7 @@
     renderLead();
     if (next === 'play') requestWakeLock();
     else releaseWakeLock();
-    if (next === 'end') resetSlot();
+    if (next === 'end') punish.reset();
 
     window.scrollTo(0, 0);
     if (typeof window.trackPageView === 'function') window.trackPageView(BASE + '/' + LANG + '/' + next);
