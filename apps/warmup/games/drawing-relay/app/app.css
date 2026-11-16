@@ -90,7 +90,7 @@
 .stage-write .btn:disabled { opacity: .45; cursor: default; }
 /* 交替：揭曉時猜的那一句做成跟圖一樣大的方塊，圖文交錯排 */
 .gallery-text {
-  display: grid; place-items: center; aspect-ratio: 1 / 1; padding: 10px; border: 2px solid var(--yellow-edge); border-radius: var(--r-md);
+  display: grid; place-items: center; aspect-ratio: 1 / 1; margin: 0; padding: 10px; border: 2px solid var(--yellow-edge); border-radius: var(--r-md);
   background: var(--yellow-face); color: var(--yellow-text); box-shadow: 0 3px 0 var(--yellow-edge);
   font-size: clamp(18px, 5.5vw, 26px); font-weight: 900; line-height: 1.25; text-align: center; overflow-wrap: anywhere; text-wrap: balance;
 }
@@ -138,12 +138,12 @@
 .hint-next { min-height: 1.4em; font-weight: 800; }
 
 /* 卡片下面：公布答案（只在 guess） */
-.guess-actions { display: grid; gap: 12px; margin-top: 16px; }
+.guess-actions { display: grid; gap: 12px; } /* 外層 #view-play 已經有 16px 的 gap，不再另外加 margin（11/16 老闆：太寬） */
 #view-play:not([data-phase="guess"]) .guess-actions { display: none; }
 #reveal-answer { --h: 72px; font-size: 20px; }
 
 /* 卡片外面下面：結束遊戲（只在 reveal）。紅色、要按住 0.8 秒（跟比手畫腳的 .end-btn 同一個做法），按住時從左到右填滿 */
-.reveal-actions { margin-top: 16px; }
+.reveal-actions { margin: 0; }
 .end-btn {
   --face: #e0503c; --edge: #8f2f22; --text: #fff; --h: 68px;
   position: relative; overflow: hidden; font-size: 20px; white-space: normal; line-height: 1.2; text-wrap: balance;
