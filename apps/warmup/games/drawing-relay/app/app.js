@@ -152,8 +152,9 @@
 
   // ---------- 開場：一隊幾人、每人畫幾秒 ----------
 
-  // 輪到第幾個人為止：傳話、合力的最後一個人只猜（不算）；交替每個人都輪一次
-  var lastPainter = function () { return isAlt() ? prep.size : prep.size - 1; };
+  // 輪到第幾個人為止：傳話、合力的最後一個人只猜（不算）。
+  // 交替：雙數隊伍跟傳話一樣，最後一個人看最後一張圖大聲猜、不用打字（老闆 11/16）；單數隊伍每個人都輪一次
+  var lastPainter = function () { return isAlt() && prep.size % 2 === 1 ? prep.size : prep.size - 1; };
 
   function syncSetup() {
     el.sizeValue.textContent = prep.size;
@@ -670,10 +671,11 @@
     passOn();
   }
 
-  // 這一棒結束、換下一個人。交替玩法每個人都輪過了就直接收尾（endAlt），不用再交給「最後一個人」
+  // 這一棒結束、換下一個人。交替玩法的單數隊伍每個人都輪過了就直接收尾（endAlt）；
+  // 雙數隊伍跟傳話一樣交給最後一個人猜
   function passOn() {
     painter += 1;
-    if (isAlt() && painter > lastPainter()) {
+    if (isAlt() && painter > lastPainter() && prep.size % 2 === 1) {
       endAlt();
       return;
     }
@@ -689,8 +691,8 @@
       el.guessImg.src = last;
       showIndex = drawings.length - 1;
       el.guessTitle.textContent = T.guessTitle;
-      // 合力是同一張圖越畫越完整，往前翻只會更少，不給翻
-      el.guessBack.hidden = isTeam() || drawings.length < 2;
+      // 合力是同一張圖越畫越完整，往前翻只會更少，不給翻；交替的前一棒是文字，也不給翻
+      el.guessBack.hidden = isTeam() || isAlt() || drawings.length < 2;
       sfx.guess();
       setPhase('guess');
       startGuessTimer();

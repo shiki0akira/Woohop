@@ -211,15 +211,15 @@
    * 貝斯一小節一圈、旋律兩小節一句，速度固定 112 BPM 不加速（系列規則）。引擎照福杯滿溢的 music 那段複製，
    * 拿掉水位與表面張力。window.Leader 還沒有「只有配樂」的共用引擎（之後做配樂庫再抽，memory music-library-idea）。
    *
-   * 這是講話的遊戲，所以比竹筍、福杯小聲很多（MUSIC_VOL）：大家要聽得到彼此說「我從來沒有⋯⋯」。
+   * 音量跟福杯滿溢一樣（MUSIC_VOL 0.3；11/16 先做 0.16，老闆說太小聲）。
    * 什麼時候播：syncMusic() 一個地方決定——play、end 兩個畫面、聲音開著才播；end（國王）更小聲當背景，
    * 拉霸轉的時候再壓低。開場不播、頂欄音符鍵在開場藏起來（全站規則）。
    */
   var SETTINGS_KEY = 'woohop-never-settings';
   var settings = { sound: true }; // 只記聲音開關（全站一樣），其他設定每次都是預設
-  var MUSIC_VOL = 0.16;
-  var MUSIC_BG_VOL = 0.1; // 國王那一步：背景
-  var MUSIC_DUCK = 0.04; // 拉霸轉的時候
+  var MUSIC_VOL = 0.3; // 跟福杯滿溢一樣（11/16 老闆：0.16 太小聲）
+  var MUSIC_BG_VOL = 0.18; // 國王那一步：背景
+  var MUSIC_DUCK = 0.06; // 拉霸轉的時候
   var MUSIC_BPM = 112;
   var audio = { ctx: null, noise: null };
   var music = { bus: null, timer: 0, playing: false, next: 0, step: 0, bar: 0, ducked: false };
