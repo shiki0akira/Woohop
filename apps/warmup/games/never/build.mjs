@@ -11,9 +11,9 @@ export const LIST_KEYS = ['ruleCards', 'ruleCardsDid', 'rulesFacts', 'rulesHowSt
 // 玩法頁的「反過來玩」與「主題和例句」直接塞 HTML
 export const RAW_TOKENS = ['rulesDidList', 'rulesTopicsList'];
 
-export function gameBar() {
-  // 沒有配樂、沒有聲音開關（講話的遊戲，跟兩真一假一樣；結尾的拉霸照常出聲），也沒有設定分頁：唯一的選項（玩法）固定顯示在開場
-  return { musicLabel: '' };
+export function gameBar({ page, strings }) {
+  // 有配樂（11/16 老闆要的），頂欄音符鍵管配樂和拉霸的聲音；玩法頁沒有聲音。沒有設定分頁：唯一的選項（玩法）固定顯示在開場
+  return { musicLabel: page.dir === 'rules' ? '' : strings.soundLabel };
 }
 
 export function tokens({ strings, page, escapeHtml }) {

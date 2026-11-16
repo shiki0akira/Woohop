@@ -184,7 +184,6 @@
   ];
 
   // ---------- 國王指定一個人拉真心話大冒險拉霸（Leader.slot） ----------
-  // 這個遊戲沒有配樂、沒有聲音開關（講話的遊戲），拉霸照常出聲。
   // 拉霸的題目全站共用、都是破冰安全的，國王不用自己想要人做什麼（11/16 討論）
 
   var slotTool = null;
@@ -193,12 +192,228 @@
       slotTool = Leader.slot(el.slotRoot, {
         prompts: window.NEVER.slot.prompts,
         actions: window.NEVER.slot.actions,
+        sound: function () { return settings.sound; },
+        // 拉霸轉的時候配樂再壓低，停下來回到背景音量（照果園菜園動物園）
         onPull: function (info) {
+          duckMusic(true);
           track('never_slot_pulled', { game_number: gameNumber, kind: info.kind, mode: info.mode });
         },
+        onLand: function () { duckMusic(false); },
       });
     }
     slotTool.reset();
+  }
+
+  /*
+   * ---------- 背景配樂（老闆 11/16：開始玩時也要有配樂） ----------
+   *
+   * 樂曲照搬竹筍（福杯滿溢也是同一首）：大鼓＋拍手＋hi-hat＋triangle 貝斯＋square 小旋律、C 大調五聲音階、
+   * 貝斯一小節一圈、旋律兩小節一句，速度固定 112 BPM 不加速（系列規則）。引擎照福杯滿溢的 music 那段複製，
+   * 拿掉水位與表面張力。window.Leader 還沒有「只有配樂」的共用引擎（之後做配樂庫再抽，memory music-library-idea）。
+   *
+   * 這是講話的遊戲，所以比竹筍、福杯小聲很多（MUSIC_VOL）：大家要聽得到彼此說「我從來沒有⋯⋯」。
+   * 什麼時候播：syncMusic() 一個地方決定——play、end 兩個畫面、聲音開著才播；end（國王）更小聲當背景，
+   * 拉霸轉的時候再壓低。開場不播、頂欄音符鍵在開場藏起來（全站規則）。
+   */
+  var SETTINGS_KEY = 'woohop-never-settings';
+  var settings = { sound: true }; // 只記聲音開關（全站一樣），其他設定每次都是預設
+  var MUSIC_VOL = 0.16;
+  var MUSIC_BG_VOL = 0.1; // 國王那一步：背景
+  var MUSIC_DUCK = 0.04; // 拉霸轉的時候
+  var MUSIC_BPM = 112;
+  var audio = { ctx: null, noise: null };
+  var music = { bus: null, timer: 0, playing: false, next: 0, step: 0, bar: 0, ducked: false };
+
+  function ensureAudio() {
+    try {
+      if (!audio.ctx) {
+        var Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return null;
+        audio.ctx = new Ctx();
+      }
+      if (audio.ctx.state === 'suspended') audio.ctx.resume();
+      return audio.ctx;
+    } catch (e) {
+      return null;
+    }
+  }
+  // iPhone 靜音鍵：在靜音狀態下建的引擎一輩子不出聲，切回頁面／打開聲音時重建（game.js 的 Leader.resetAudio）
+  Leader.onAudioReset(function () {
+    if (music.playing && document.visibilityState === 'visible') return; // 正在出聲的不重建
+    clearInterval(music.timer);
+    music.timer = 0;
+    music.playing = false;
+    music.bus = null;
+    Leader.closeAudio(audio.ctx);
+    audio.ctx = null;
+    audio.noise = null;
+  });
+  function noiseBuffer(ctx) {
+    if (audio.noise) return audio.noise;
+    var buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 2), ctx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+    audio.noise = buffer;
+    return buffer;
+  }
+
+  var NOTE = { C3: 130.81, D3: 146.83, E3: 164.81, G3: 196, A3: 220, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880 };
+  var BASS = ['C3', null, 'C3', null, 'G3', null, 'A3', null, 'C3', null, 'C3', null, 'E3', null, 'G3', 'D3'];
+  var MELODY = [
+    ['E5', null, 'G5', null, 'A5', null, 'G5', null, 'E5', null, null, 'D5', 'C5', null, null, null],
+    ['D5', null, 'E5', null, 'G5', null, 'E5', null, 'A5', null, 'G5', null, 'E5', 'D5', 'C5', null],
+  ];
+
+  function env(gain, t, peak, decay) {
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(peak, t + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  }
+  function mtone(type, freq, t, peak, decay, filterFreq) {
+    var ctx = audio.ctx;
+    if (!ctx || !music.bus) return;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    env(gain, t, peak, decay);
+    if (filterFreq) {
+      var filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = filterFreq;
+      osc.connect(filter);
+      filter.connect(gain);
+    } else {
+      osc.connect(gain);
+    }
+    gain.connect(music.bus);
+    osc.start(t);
+    osc.stop(t + decay + 0.05);
+  }
+  function kick(t, peak) {
+    var ctx = audio.ctx;
+    if (!ctx || !music.bus) return;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.frequency.setValueAtTime(150, t);
+    osc.frequency.exponentialRampToValueAtTime(45, t + 0.14);
+    env(gain, t, peak || 0.9, 0.22);
+    osc.connect(gain);
+    gain.connect(music.bus);
+    osc.start(t);
+    osc.stop(t + 0.3);
+  }
+  function mnoise(t, peak, decay, hp) {
+    var ctx = audio.ctx;
+    if (!ctx || !music.bus) return;
+    var src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(ctx);
+    var filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = hp;
+    var gain = ctx.createGain();
+    env(gain, t, peak, decay);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(music.bus);
+    src.start(t);
+    src.stop(t + decay + 0.05);
+  }
+  // 一步（十六分音符），照竹筍的 scheduleStep，不加速、不隨時間變密
+  function scheduleMusicStep(t) {
+    var s = music.step;
+    var bar = music.bar;
+    if (s === 0 || s === 8 || (bar % 2 === 1 && s === 10)) kick(t, 0.8);
+    if (s === 4 || s === 12) mnoise(t, 0.28, 0.1, 1500); // 拍手
+    if (s % 2 === 0) mnoise(t, s % 4 === 2 ? 0.12 : 0.06, 0.03, 7000);
+    if (BASS[s]) mtone('triangle', NOTE[BASS[s]], t, 0.35, 0.22);
+    var note = MELODY[bar % 2][s];
+    if (note) mtone('square', NOTE[note], t, 0.07, 0.16, 2600);
+  }
+  function musicTick() {
+    var ctx = audio.ctx;
+    if (!ctx || !music.playing) return;
+    var guard = 0;
+    while (music.next < ctx.currentTime + 0.12 && guard < 24) {
+      scheduleMusicStep(music.next);
+      music.next += 15 / MUSIC_BPM;
+      music.step = (music.step + 1) % 16;
+      if (music.step === 0) music.bar += 1;
+      guard += 1;
+    }
+    // 計時器被節流過（切到背景、省電模式）就不要補排一大串過期的音，直接跳到現在
+    if (music.next < ctx.currentTime) music.next = ctx.currentTime + 0.05;
+  }
+  function musicLevel() {
+    if (music.ducked) return MUSIC_DUCK;
+    return screen === 'end' ? MUSIC_BG_VOL : MUSIC_VOL;
+  }
+  function rampBus(target, seconds) {
+    if (!music.bus || !audio.ctx) return;
+    var now = audio.ctx.currentTime;
+    var g = music.bus.gain;
+    g.cancelScheduledValues(now);
+    g.setValueAtTime(Math.max(0.0001, g.value), now);
+    g.linearRampToValueAtTime(Math.max(0.0001, target), now + seconds);
+  }
+  function duckMusic(on) {
+    if (music.ducked === on) return;
+    music.ducked = on;
+    if (music.playing) rampBus(musicLevel(), on ? 0.08 : 0.5);
+  }
+  function startMusic() {
+    if (music.playing) return;
+    var ctx = ensureAudio();
+    if (!ctx) return;
+    if (!music.bus) {
+      music.bus = ctx.createGain();
+      music.bus.gain.value = 0.0001;
+      music.bus.connect(ctx.destination);
+    }
+    music.playing = true;
+    music.step = 0;
+    music.bar = 0;
+    music.next = ctx.currentTime + 0.08;
+    rampBus(musicLevel(), 0.4);
+    music.timer = setInterval(musicTick, 25);
+    musicTick();
+  }
+  // 已經排進音訊時鐘的音停不掉，所以是把匯流排淡掉
+  function stopMusic() {
+    clearInterval(music.timer);
+    music.timer = 0;
+    music.playing = false;
+    rampBus(0.0001, 0.3);
+  }
+  // 該播的時候播、不該播的時候不要自己冒出來；換畫面、切回頁面、開關聲音都走這裡
+  function syncMusic() {
+    var want = settings.sound && (screen === 'play' || screen === 'end') && document.visibilityState === 'visible';
+    if (want && !music.playing) startMusic();
+    else if (!want && music.playing) stopMusic();
+    else if (want) rampBus(musicLevel(), 0.4); // 從 play 換到 end：音量往下
+    syncSoundButton();
+  }
+
+  // 頂欄的音符鍵（chrome.mjs gameBar 的 musicLabel，game.js 按下去呼叫 window.toggleMusic）：管配樂和拉霸的聲音
+  var soundButton = $('game-music');
+  function syncSoundButton() {
+    if (soundButton) soundButton.setAttribute('aria-pressed', String(settings.sound));
+  }
+  window.toggleMusic = function () {
+    settings.sound = !settings.sound;
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ sound: settings.sound }));
+    } catch (e) {
+      /* 無痕模式：照樣能玩，只是記不住 */
+    }
+    if (settings.sound) Leader.resetAudio(); // 先重建引擎：靜音狀態下建的那個不會出聲
+    syncMusic();
+  };
+  try {
+    var saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
+    if (saved && typeof saved.sound === 'boolean') settings.sound = saved.sound;
+  } catch (e) {
+    /* 同上 */
   }
 
   // ---------- 螢幕保持亮著（一輪可能講很久） ----------
@@ -219,6 +434,8 @@
       wakeLock = null;
       requestWakeLock();
     }
+    // 切到背景停配樂（背景分頁的 setInterval 會被節流、排程會亂），切回來再接上
+    syncMusic();
   });
 
   // ---------- 畫面切換 ----------
@@ -236,6 +453,7 @@
     if (next === 'play') requestWakeLock();
     else releaseWakeLock();
     if (next === 'end') resetSlot();
+    syncMusic();
 
     window.scrollTo(0, 0);
     if (typeof window.trackPageView === 'function') window.trackPageView(BASE + '/' + LANG + '/' + next);
