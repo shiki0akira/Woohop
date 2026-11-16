@@ -94,6 +94,9 @@ export default {
   guessTitle: '¿Qué es este dibujo? ¡Dilo en voz alta!',
   hintKindIn: 'Pista de categoría en {s} s',
   revealButton: 'Ver la respuesta',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: '¿No sale? Ver el dibujo anterior',
+  guessBackTitle: 'Uno antes: dibujo del jugador {k}',
   answerIs: 'La respuesta es',
   galleryLabel: 'Dibujo del jugador {k}',
   nextRound: 'Siguiente palabra',

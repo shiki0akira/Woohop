@@ -102,6 +102,8 @@
     viewImg: $('view-img'),
     viewNum: $('view-num'),
     guessImg: $('guess-img'),
+    guessTitle: $('guess-title'),
+    guessBack: $('guess-back'),
     hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
     hintNext: $('hint-next'),
@@ -662,6 +664,10 @@
     var last = drawings[drawings.length - 1];
     if (painter > lastPainter()) {
       el.guessImg.src = last;
+      showIndex = drawings.length - 1;
+      el.guessTitle.textContent = T.guessTitle;
+      // 合力是同一張圖越畫越完整，往前翻只會更少，不給翻
+      el.guessBack.hidden = isTeam() || drawings.length < 2;
       sfx.guess();
       setPhase('guess');
       startGuessTimer();
@@ -680,6 +686,22 @@
     startView();
   }
 
+  /*
+   * 猜不到：照順序往前翻一張（老闆 11/16 和朋友試玩後要的），看翻到第幾張才猜得出來。
+   * 翻到第一張就把按鈕藏起來；猜到了一樣按「公布答案」，GA 記往前翻了幾張（back_steps）
+   */
+  var showIndex = 0;
+  function guessBack() {
+    if (phase !== 'guess' || showIndex <= 0) return;
+    showIndex -= 1;
+    el.guessImg.src = drawings[showIndex];
+    el.guessTitle.textContent = fill(T.guessBackTitle, { k: showIndex + 1 });
+    el.guessBack.hidden = showIndex <= 0;
+    sfx.go();
+    track('drawing_relay_guess_back', { round_number: roundNumber, painter: showIndex + 1, painters: drawings.length });
+    window.scrollTo(0, 0);
+  }
+
   // 公布答案：揭曉答案、攤開每個人的畫（不記猜中沒）
   function revealAnswer() {
     if (phase !== 'guess') return;
@@ -687,7 +709,7 @@
     drawn += drawings.length;
     playedWords.push({ word: card[1], last: drawings[drawings.length - 1] });
     sfx.reveal();
-    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown, mode: prep.mode });
+    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown, mode: prep.mode, back_steps: drawings.length - 1 - showIndex });
     el.resultAnswer.textContent = card[1];
     renderGallery();
     renderRound();
@@ -940,6 +962,7 @@
   el.paintDone.addEventListener('click', function () { finishPainting(false); });
   el.handoffGo.addEventListener('click', takeOver);
   el.revealAnswer.addEventListener('click', revealAnswer);
+  el.guessBack.addEventListener('click', guessBack);
   el.nextRound.addEventListener('click', startRound);
   el.endGame.addEventListener('click', function (event) {
     if (event.detail === 0) endGame(); // 鍵盤沒有「按住」可言

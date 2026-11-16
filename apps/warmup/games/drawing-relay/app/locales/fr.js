@@ -94,6 +94,9 @@ export default {
   guessTitle: 'Qu’est-ce que c’est ? Dis-le à voix haute !',
   hintKindIn: 'Indice catégorie dans {s} s',
   revealButton: 'Voir la réponse',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: 'Bloqué ? Voir le dessin d’avant',
+  guessBackTitle: 'Un cran avant : dessin du joueur {k}',
   answerIs: 'La réponse est',
   galleryLabel: 'Dessin du joueur {k}',
   nextRound: 'Mot suivant',

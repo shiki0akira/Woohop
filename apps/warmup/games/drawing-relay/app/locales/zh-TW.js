@@ -103,6 +103,9 @@ export default {
   guessTitle: '這張圖畫的是什麼？大聲說出來！',
   hintKindIn: '{s} 秒後提示類型',
   revealButton: '公布答案',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: '猜不到？看前一張圖',
+  guessBackTitle: '往前一張：第 {k} 個人畫的',
   answerIs: '答案是',
   galleryLabel: '第 {k} 個人畫的',
   nextRound: '下一題',

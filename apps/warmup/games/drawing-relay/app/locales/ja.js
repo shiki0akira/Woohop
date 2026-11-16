@@ -94,6 +94,9 @@ export default {
   guessTitle: 'この絵は何？大きな声で答えて！',
   hintKindIn: 'あと{s}秒でジャンルのヒント',
   revealButton: '答えを見る',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: 'わからない？ひとつ前の絵を見る',
+  guessBackTitle: 'ひとつ前：{k}人目の絵',
   answerIs: '答えは',
   galleryLabel: '{k}人目の絵',
   nextRound: '次の問題',

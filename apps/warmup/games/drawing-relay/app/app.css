@@ -61,14 +61,23 @@
 .drawrelay-app .namer .drawn-name { color: var(--yellow-text); word-break: normal; text-wrap: balance; }
 .drawrelay-app .namer .drawn-card .badge { background: var(--surface); color: var(--yellow-text); border-color: var(--yellow-edge); }
 
-/* paint：上面第幾個人＋小倒數圈，中間畫布（4:3，白底、2px 線＋4px 底），下面復原／清掉／畫好了 */
+/* paint：上面第幾個人＋小倒數圈，中間畫布（正方形，白底、2px 線＋4px 底），下面復原／清掉／畫好了 */
 .stage-paint { gap: 12px; }
 .paint-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .painter-no { margin: 0; font-size: 22px; font-weight: 900; color: var(--yellow-text); }
 .drawrelay-app .timer-ring.timer-sm { width: 64px; height: 64px; margin: 0; }
 .drawrelay-app .timer-ring.timer-sm .num { font-size: 22px; }
+/*
+ * 畫布與所有的圖一律正方形（老闆 11/16 和朋友試玩：4:3 太小，改正方形、大一點）。
+ * 畫、看上一張、猜這三面把卡片左右內距縮成 10px，畫布幾乎跟卡片一樣寬；寬螢幕最大 520px，不然要捲才看得到整張
+ */
+.drawrelay-app .namer .name-card[data-stage=paint],
+.drawrelay-app .namer .name-card[data-stage=view],
+.drawrelay-app .namer .name-card[data-stage=guess] { padding-left: 10px; padding-right: 10px; }
+.stage-paint .paint-canvas, .stage-view .paint-img, .stage-guess .paint-img { justify-self: center; max-width: 520px; }
+.stage-paint .paint-head, .stage-paint .paint-tools { padding: 0 10px; }
 .paint-canvas, .paint-img {
-  display: block; width: 100%; aspect-ratio: 4 / 3; border: 2px solid var(--outline); border-radius: var(--r-md);
+  display: block; width: 100%; aspect-ratio: 1 / 1; border: 2px solid var(--outline); border-radius: var(--r-md);
   background: #ffffff; box-shadow: 0 4px 0 var(--outline);
 }
 .paint-canvas { touch-action: none; cursor: crosshair; }

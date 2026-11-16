@@ -94,6 +94,9 @@ export default {
   guessTitle: '이 그림은 뭘까요? 큰 소리로 말해요!',
   hintKindIn: '{s}초 뒤 종류 힌트',
   revealButton: '정답 공개',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: '모르겠어요? 이전 그림 보기',
+  guessBackTitle: '이전 그림: {k}번째 사람의 그림',
   answerIs: '정답은',
   galleryLabel: '{k}번째 사람의 그림',
   nextRound: '다음 문제',

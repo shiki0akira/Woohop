@@ -33,5 +33,6 @@
 |---|---|---|
 | `drawing_relay_game_started` | 進入上場（含再玩一次） | `game_number`、`size`、`mode`、`seconds`、`categories` |
 | `drawing_relay_skipped` | 換一題 | `round_number`、`category` |
-| `drawing_relay_revealed` | 公布答案 | `round_number`、`painters`、`category`、`skips`、`mode` |
+| `drawing_relay_guess_back` | 猜不到、往前翻一張（傳話模式） | `round_number`、`painter`（翻到第幾個人的）、`painters` |
+| `drawing_relay_revealed` | 公布答案 | `round_number`、`painters`、`category`、`skips`、`mode`、`back_steps`（往前翻了幾張才猜到，0＝看最後一張就猜到） |
 | `drawing_relay_game_ended` | 結束遊戲 | `rounds`、`drawings`、`size`、`mode`、`seconds`、`duration_seconds` |

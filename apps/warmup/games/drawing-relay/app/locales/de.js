@@ -94,6 +94,9 @@ export default {
   guessTitle: 'Was ist auf dem Bild? Sag es laut!',
   hintKindIn: 'Kategorie-Tipp in {s} Sek.',
   revealButton: 'Lösung zeigen',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: 'Keine Ahnung? Bild davor zeigen',
+  guessBackTitle: 'Ein Bild zurück: Bild von Spieler {k}',
   answerIs: 'Die Lösung ist',
   galleryLabel: 'Bild von Spieler {k}',
   nextRound: 'Nächster Begriff',

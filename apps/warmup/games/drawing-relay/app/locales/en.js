@@ -94,6 +94,9 @@ export default {
   guessTitle: 'What’s this a drawing of? Say it out loud!',
   hintKindIn: 'Category hint in {s} sec',
   revealButton: 'Show the answer',
+  // 最後一個人猜不到：照順序往前翻，看翻到第幾張才猜得出來（老闆 11/16 和朋友試玩後要的；合力模式沒有）
+  guessBack: 'Stuck? See the drawing before it',
+  guessBackTitle: 'One back: player {k}’s drawing',
   answerIs: 'The answer is',
   galleryLabel: 'Player {k}’s drawing',
   nextRound: 'Next word',

@@ -142,7 +142,7 @@
 
             <!-- guess：最後一個人看最後一張圖猜 -->
             <div class="name-stage stage-guess">
-              <p class="view-title">{{guessTitle}}</p>
+              <p class="view-title" id="guess-title">{{guessTitle}}</p>
               <img class="paint-img" id="guess-img" alt="{{guessTitle}}">
               <!-- 答案有幾個字（一個字一個方塊），猜 10 秒還沒中自動亮類型（照比手畫腳接力賽；不露字，11/03 討論：露字會繞過那些畫） -->
               <div class="drawn-card guess-card" aria-live="polite">
@@ -161,9 +161,11 @@
             </div>
           </section>
         </div>
-        <!-- guess：卡片下面只有一顆「公布答案」（不記猜中沒，老闆 11/03 要求） -->
+        <!-- guess：卡片下面「公布答案」（不記猜中沒，老闆 11/03 要求）＋猜不到往前翻 -->
         <div class="guess-actions phase-guess">
           <button class="btn btn-lg btn-solid btn-block" id="reveal-answer" type="button">{{revealButton}}</button>
+          <!-- 猜不到就照順序往前翻一張（傳話模式才有；翻到第一張就藏起來），老闆 11/16 -->
+          <button class="btn btn-lg btn-secondary btn-block" id="guess-back" type="button">{{guessBack}}</button>
         </div>
         <!-- reveal：「結束遊戲」放在卡片外面下面（老闆 11/03 要求），跟「下一題」分開，不會手滑 -->
         <div class="reveal-actions">
