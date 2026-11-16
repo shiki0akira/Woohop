@@ -28,11 +28,12 @@
             <output id="size-value" aria-live="polite"></output>
             <button type="button" id="size-more" aria-label="{{sizeMore}}">+</button>
           </div>
-          <!-- 玩法：傳話（只看上一張圖、各畫一張）／合力（輪流看題目、在同一張圖上接著畫，11/04 老闆要求） -->
+          <!-- 玩法：傳話（只看上一張圖、各畫一張）／合力（輪流看題目、在同一張圖上接著畫，11/04 老闆要求）／交替（畫一張、猜一句輪流，11/16 老闆要求） -->
           <span class="field-label field-label-gap">{{modeLabel}}</span>
           <div class="mode-grid" role="group" aria-label="{{modeLabel}}">
             <button type="button" class="choice mode-choice c-yellow" data-mode="relay"><span class="choice-name">{{modeRelay}}</span><span class="choice-sub">{{modeRelaySub}}</span></button>
             <button type="button" class="choice mode-choice c-mint" data-mode="team"><span class="choice-name">{{modeTeam}}</span><span class="choice-sub">{{modeTeamSub}}</span></button>
+            <button type="button" class="choice mode-choice c-pink" data-mode="alt"><span class="choice-name">{{modeAlt}}</span><span class="choice-sub">{{modeAltSub}}</span></button>
           </div>
           <span class="field-label field-label-gap">{{secLabel}}</span>
           <!-- 秒數兩種玩法分開：傳話 15／20／30／45，合力很短 5／8／10／15 -->
@@ -138,6 +139,15 @@
               <p class="view-title">{{viewTitle}}</p>
               <img class="paint-img" id="view-img" alt="{{viewTitle}}">
               <p class="view-count"><span id="view-num"></span>{{viewCountUnit}}</p>
+            </div>
+
+            <!-- write：交替玩法輪到「猜一句」的人，看上一張圖打字寫下他猜的（不限時），寫好傳下去 -->
+            <div class="name-stage stage-write">
+              <p class="painter-no" id="writer-no"></p>
+              <p class="view-title">{{writeTitle}}</p>
+              <img class="paint-img" id="write-img" alt="{{writeTitle}}">
+              <input class="write-input" id="write-input" type="text" maxlength="40" autocomplete="off" enterkeyhint="done" placeholder="{{writePlaceholder}}" aria-label="{{writeTitle}}">
+              <button class="btn btn-lg btn-solid btn-block" id="write-done" type="button" disabled>{{writeDone}}</button>
             </div>
 
             <!-- guess：最後一個人看最後一張圖猜 -->

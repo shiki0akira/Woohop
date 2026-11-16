@@ -42,6 +42,10 @@
   var prep = { size: 5, mode: 'relay', secRelay: 20, secTeam: teamSecFor(5), cats: ALL_CATS.slice() };
   var secTeamPicked = false;
   var isTeam = function () { return prep.mode === 'team'; };
+  // 交替 alt（11/16 老闆加的）：畫一張、猜一句輪流。每個人都輪一次（沒有另外一個只猜的人），秒數跟傳話同一組
+  var isAlt = function () { return prep.mode === 'alt'; };
+  // 第 k 個人這一棒要做什麼：交替時單數畫、雙數猜一句（打字）；其他玩法都是畫
+  var turnType = function (k) { return isAlt() && k % 2 === 0 ? 'write' : 'draw'; };
   var sec = function () { return isTeam() ? prep.secTeam : prep.secRelay; };
   var randomCats = true;
   // 只記聲音開關（跟比手畫腳接力賽一樣）
@@ -59,7 +63,8 @@
   var deck = [];
   var card = null;
   var painter = 1; // 現在輪到第幾個人（1 號看題目畫；最後一號猜）
-  var drawings = []; // 這一題每個人畫的圖（dataURL），第 i 張是第 i+1 個人畫的
+  var drawings = []; // 這一題大家畫的圖（dataURL）。傳話、合力時第 i 張是第 i+1 個人畫的
+  var chain = []; // 這一題每一棒照順序：{ type: 'draw', src } 或 { type: 'text', text }（揭曉時交替玩法用它圖文交錯排）
   var skips = 0;
 
   var $ = function (id) { return document.getElementById(id); };
@@ -104,6 +109,10 @@
     guessImg: $('guess-img'),
     guessTitle: $('guess-title'),
     guessBack: $('guess-back'),
+    writerNo: $('writer-no'),
+    writeImg: $('write-img'),
+    writeInput: $('write-input'),
+    writeDone: $('write-done'),
     hintKind: $('hint-kind'),
     hintMask: $('hint-mask'),
     hintNext: $('hint-next'),
@@ -143,7 +152,8 @@
 
   // ---------- 開場：一隊幾人、每人畫幾秒 ----------
 
-  var lastPainter = function () { return prep.size - 1; }; // 畫的人數；最後一個人只猜
+  // 輪到第幾個人為止：傳話、合力的最後一個人只猜（不算）；交替每個人都輪一次
+  var lastPainter = function () { return isAlt() ? prep.size : prep.size - 1; };
 
   function syncSetup() {
     el.sizeValue.textContent = prep.size;
@@ -160,7 +170,8 @@
     });
     el.secRelay.hidden = isTeam();
     el.secTeam.hidden = !isTeam();
-    el.roundsHint.textContent = fill(isTeam() ? T.roundsHintTeam : T.roundsHint, { painters: lastPainter(), sec: sec() });
+    var hint = isTeam() ? T.roundsHintTeam : isAlt() ? T.roundsHintAlt : T.roundsHint;
+    el.roundsHint.textContent = fill(hint, { painters: lastPainter(), sec: sec() });
   }
   function setSize(n) {
     prep.size = Math.max(SIZE_MIN, Math.min(SIZE_MAX, n));
@@ -236,7 +247,7 @@
     if (!line) return;
     var v = { result: resultLine() };
     // 合力的說明規則換一段念法
-    var say = screen === 'rules' && isTeam() ? T.rulesTeamSay : line[1];
+    var say = screen === 'rules' && isTeam() ? T.rulesTeamSay : screen === 'rules' && isAlt() ? T.rulesAltSay : line[1];
     Leader.lead(views[screen].querySelector('.lead-slot'), {
       index: STEPS.indexOf(screen),
       total: STEPS.length,
@@ -605,6 +616,7 @@
     roundNumber += 1;
     skips = 0;
     drawings = [];
+    chain = [];
     strokes = [];
     turnStart = 0;
     painter = 1;
@@ -651,9 +663,20 @@
     locked = true;
     current = null;
     redraw();
-    drawings.push(el.canvas.toDataURL('image/png'));
+    var src = el.canvas.toDataURL('image/png');
+    drawings.push(src);
+    chain.push({ type: 'draw', src: src });
     if (auto) sfx.swap();
+    passOn();
+  }
+
+  // 這一棒結束、換下一個人。交替玩法每個人都輪過了就直接收尾（endAlt），不用再交給「最後一個人」
+  function passOn() {
     painter += 1;
+    if (isAlt() && painter > lastPainter()) {
+      endAlt();
+      return;
+    }
     el.handoffTitle.textContent = painter > lastPainter() ? T.handoffLast : fill(T.handoffTo, { k: painter });
     el.handoffGo.textContent = painter > lastPainter() ? T.handoffGoLast : fill(T.handoffGo, { k: painter });
     setPhase('handoff');
@@ -681,6 +704,28 @@
       flip();
       return;
     }
+    if (isAlt()) {
+      var prev = chain[chain.length - 1];
+      if (turnType(painter) === 'write') {
+        // 猜一句：看上一張圖（不限時），打字寫下他猜的
+        el.writeImg.src = prev.src;
+        el.writeInput.value = '';
+        el.writeDone.disabled = true;
+        el.writerNo.textContent = fill(T.writerNo, { k: painter, total: lastPainter() });
+        sfx.go();
+        setPhase('write');
+        el.writeInput.focus();
+        return;
+      }
+      // 畫一張：只看上一個人寫的那句話（用題卡那一面顯示），記住了按「開始畫！」
+      el.cardKind.textContent = fill(T.wordFromText, { k: painter - 1 });
+      el.cardText.textContent = prev.text;
+      el.wordHint.textContent = T.wordHintAlt;
+      el.skip.hidden = true;
+      setPhase('word');
+      flip();
+      return;
+    }
     el.viewImg.src = last;
     setPhase('view');
     startView();
@@ -690,6 +735,35 @@
    * 猜不到：照順序往前翻一張（老闆 11/16 和朋友試玩後要的），看翻到第幾張才猜得出來。
    * 翻到第一張就把按鈕藏起來；猜到了一樣按「公布答案」，GA 記往前翻了幾張（back_steps）
    */
+  // 交替：猜一句寫好了，傳下去（空白不給傳）
+  function finishWriting() {
+    if (phase !== 'write') return;
+    var text = el.writeInput.value.trim();
+    if (!text) return;
+    el.writeInput.blur();
+    chain.push({ type: 'text', text: text });
+    passOn();
+  }
+
+  /*
+   * 交替：每個人都輪過了。最後一棒是猜一句 → 直接公布答案（最後那句就是傳到最後的答案）；
+   * 最後一棒是畫 → 大家一起看最後一張圖猜，再公布答案（不給往前翻：前一棒是文字）
+   */
+  function endAlt() {
+    showIndex = drawings.length - 1;
+    if (chain[chain.length - 1].type === 'text') {
+      revealAnswer(true);
+      return;
+    }
+    el.guessImg.src = drawings[drawings.length - 1];
+    showIndex = drawings.length - 1;
+    el.guessTitle.textContent = T.guessAllTitle;
+    el.guessBack.hidden = true;
+    sfx.guess();
+    setPhase('guess');
+    startGuessTimer();
+  }
+
   var showIndex = 0;
   function guessBack() {
     if (phase !== 'guess' || showIndex <= 0) return;
@@ -703,8 +777,9 @@
   }
 
   // 公布答案：揭曉答案、攤開每個人的畫（不記猜中沒）
-  function revealAnswer() {
-    if (phase !== 'guess') return;
+  function revealAnswer(fromAlt) {
+    if (phase !== 'guess' && fromAlt !== true) return;
+    if (fromAlt === true) kindShown = false;
     judged += 1;
     drawn += drawings.length;
     playedWords.push({ word: card[1], last: drawings[drawings.length - 1] });
@@ -716,20 +791,29 @@
     setPhase('reveal');
   }
 
+  // 每一棒照順序攤開：交替玩法圖和「猜的那一句」交錯（chain），其他玩法只有圖
   function renderGallery() {
     el.gallery.textContent = '';
-    drawings.forEach(function (src, i) {
+    chain.forEach(function (item, i) {
       var li = document.createElement('li');
       li.className = 'gallery-item';
       var label = document.createElement('span');
       label.className = 'gallery-label';
-      label.textContent = fill(isTeam() ? T.galleryLabelTeam : T.galleryLabel, { k: i + 1 });
-      var img = document.createElement('img');
-      img.className = 'paint-img';
-      img.src = src;
-      img.alt = label.textContent;
+      var key = item.type === 'text' ? T.galleryLabelText : isTeam() ? T.galleryLabelTeam : T.galleryLabel;
+      label.textContent = fill(key, { k: i + 1 });
       li.appendChild(label);
-      li.appendChild(img);
+      if (item.type === 'text') {
+        var box = document.createElement('p');
+        box.className = 'gallery-text';
+        box.textContent = item.text;
+        li.appendChild(box);
+      } else {
+        var img = document.createElement('img');
+        img.className = 'paint-img';
+        img.src = item.src;
+        img.alt = label.textContent;
+        li.appendChild(img);
+      }
       el.gallery.appendChild(li);
     });
   }
@@ -784,6 +868,23 @@
         '<g transform="rotate(35 128 46)">' + W.body('<rect x="122" y="18" width="12" height="52" rx="4"/>', '#FF9419', '', false) + '</g>';
     },
     RULE_ART[2],
+  ];
+
+  // 交替的三張卡：畫一張（同傳話第一張）、猜一句（一張圖→說話泡泡）、最後一起看（圖、字、圖排一排）
+  var RULE_ART_ALT = [
+    RULE_ART[0],
+    function () {
+      return W.ground + W.ring(144, 28, '#7489E6') + W.plus(18, 36, '#EE7B6A') +
+        paper(22, 40, 50, 58) + '<path d="M32 84q8-20 16-4t14-8" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M80 68h12m-5-5l5 5l-5 5" fill="none" stroke="#22222c" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        head(124, 88, 20, '#F3A4FB', 'smile') + bubble(124, 40, 'Aa');
+    },
+    function () {
+      return W.ground + W.burst(146, 22, '#FFC628') + W.dot(14, 30, '#4FB59A', 4) +
+        paper(12, 50, 40, 46) + '<path d="M20 82q6-16 12-4t10-6" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>' +
+        bubble(80, 73, 'Aa') +
+        paper(108, 50, 40, 46) + '<path d="M116 86q8-22 16-2" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>';
+    },
   ];
 
   // ---------- 畫面切換 ----------
@@ -934,7 +1035,9 @@
 
   el.start.addEventListener('click', function () {
     // 說明規則的三張卡依玩法換
-    Leader.ruleCards(el.ruleCards, isTeam() ? T.ruleCardsTeam : T.ruleCards, isTeam() ? RULE_ART_TEAM : RULE_ART);
+    if (isTeam()) Leader.ruleCards(el.ruleCards, T.ruleCardsTeam, RULE_ART_TEAM);
+    else if (isAlt()) Leader.ruleCards(el.ruleCards, T.ruleCardsAlt, RULE_ART_ALT);
+    else Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);
     pushGameState();
     showScreen('rules');
   });
@@ -963,6 +1066,13 @@
   el.handoffGo.addEventListener('click', takeOver);
   el.revealAnswer.addEventListener('click', revealAnswer);
   el.guessBack.addEventListener('click', guessBack);
+  el.writeInput.addEventListener('input', function () {
+    el.writeDone.disabled = !el.writeInput.value.trim();
+  });
+  el.writeInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.isComposing) finishWriting(); // 注音、日文選字時按 Enter 是確定選字，不算送出
+  });
+  el.writeDone.addEventListener('click', finishWriting);
   el.nextRound.addEventListener('click', startRound);
   el.endGame.addEventListener('click', function (event) {
     if (event.detail === 0) endGame(); // 鍵盤沒有「按住」可言

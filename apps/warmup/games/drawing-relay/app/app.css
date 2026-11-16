@@ -23,9 +23,9 @@
 .setup-panel .stepper output { min-width: 48px; }
 .setup-panel .field-label-gap { display: block; margin-top: 18px; }
 #rounds-hint { margin: 10px 0 0; }
-/* 玩法：兩張選擇卡並排（傳話／合力，11/04）；秒數依玩法只露一組 */
-.mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.mode-choice { min-height: 0; padding: 14px 8px 12px; gap: 2px; }
+/* 玩法：三張選擇卡並排（傳話／合力 11/04、交替 11/16）；秒數依玩法只露一組（交替跟傳話同一組） */
+.mode-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.mode-choice { min-height: 0; padding: 14px 6px 12px; gap: 2px; }
 .mode-choice .choice-name { font-size: 17px; }
 .mode-choice .choice-sub { font-size: 13px; }
 .mode-choice::after { width: 20px; height: 20px; top: -7px; right: -7px; background-size: 12px; }
@@ -53,6 +53,7 @@
 .drawrelay-app .namer .name-card[data-stage="handoff"] .stage-handoff,
 .drawrelay-app .namer .name-card[data-stage="view"] .stage-view,
 .drawrelay-app .namer .name-card[data-stage="guess"] .stage-guess,
+.drawrelay-app .namer .name-card[data-stage="write"] .stage-write,
 .drawrelay-app .namer .name-card[data-stage="reveal"] .stage-reveal-answer { display: grid; }
 .drawrelay-app .namer .name-stage .hint { margin: 0; text-align: center; }
 /* 每一面都是一欄、寬度鎖在卡片裡（畫布、圖片才不會用原始尺寸撐開） */
@@ -71,10 +72,28 @@
  * 畫布與所有的圖一律正方形（老闆 11/16 和朋友試玩：4:3 太小，改正方形、大一點）。
  * 畫、看上一張、猜這三面把卡片左右內距縮成 10px，畫布幾乎跟卡片一樣寬；寬螢幕最大 520px，不然要捲才看得到整張
  */
-.drawrelay-app .namer .name-card[data-stage=paint],
-.drawrelay-app .namer .name-card[data-stage=view],
-.drawrelay-app .namer .name-card[data-stage=guess] { padding-left: 10px; padding-right: 10px; }
-.stage-paint .paint-canvas, .stage-view .paint-img, .stage-guess .paint-img { justify-self: center; max-width: 520px; }
+.drawrelay-app .namer .name-card[data-stage="paint"],
+.drawrelay-app .namer .name-card[data-stage="view"],
+.drawrelay-app .namer .name-card[data-stage="guess"],
+.drawrelay-app .namer .name-card[data-stage="write"] { padding-left: 10px; padding-right: 10px; }
+.stage-paint .paint-canvas, .stage-view .paint-img, .stage-guess .paint-img, .stage-write .paint-img { justify-self: center; max-width: 520px; }
+
+/* write：交替玩法「猜一句」。上面第幾個人、看上一張圖、下面打字（16px 以上，iPhone 才不會自動放大） */
+.stage-write { justify-items: center; gap: 12px; }
+.stage-write .painter-no { justify-self: start; padding: 0 10px; }
+.write-input {
+  width: 100%; max-width: 520px; height: 56px; padding: 0 16px; border: 2px solid var(--outline); border-radius: var(--r-md);
+  background: var(--surface); color: var(--ink); font: inherit; font-size: 20px; font-weight: 800; text-align: center;
+}
+.write-input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.stage-write .btn-block { width: 100%; max-width: 520px; }
+.stage-write .btn:disabled { opacity: .45; cursor: default; }
+/* 交替：揭曉時猜的那一句做成跟圖一樣大的方塊，圖文交錯排 */
+.gallery-text {
+  display: grid; place-items: center; aspect-ratio: 1 / 1; padding: 10px; border: 2px solid var(--yellow-edge); border-radius: var(--r-md);
+  background: var(--yellow-face); color: var(--yellow-text); box-shadow: 0 3px 0 var(--yellow-edge);
+  font-size: clamp(18px, 5.5vw, 26px); font-weight: 900; line-height: 1.25; text-align: center; overflow-wrap: anywhere; text-wrap: balance;
+}
 .stage-paint .paint-head, .stage-paint .paint-tools { padding: 0 10px; }
 .paint-canvas, .paint-img {
   display: block; width: 100%; aspect-ratio: 1 / 1; border: 2px solid var(--outline); border-radius: var(--r-md);
