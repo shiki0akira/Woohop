@@ -58,10 +58,6 @@
 .end-btn::before { content: ""; position: absolute; inset: 0; background: #0000002e; transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .end-btn.is-holding::before { transform: scaleX(1); transition: transform .8s linear; }
 
-/* 誰贏了：動作卡（照木頭人動作版的 .punish-panel） */
-.punish-panel { display: grid; gap: 14px; }
-.punish-panel h2 { margin: 0; font-size: 17px; }
-
 /* 玩法頁：主題和例句排兩欄 */
 .rules-topics ul { columns: 2; column-gap: 24px; }
 .rules-topics li { break-inside: avoid; }

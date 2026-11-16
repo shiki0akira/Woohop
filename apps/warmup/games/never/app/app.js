@@ -1,10 +1,10 @@
 /*
  * 我從來沒有。手指是大家自己折的、手機不記分（CONCEPT.md），手機只做四件事：
- * 一步一步帶、每一輪抽主題＋給例句、讓主持人按「下一輪」、贏家抽動作讓大家模仿。
- * 五根折完的人出局，最後還留著手指的人贏（老闆 11/16：看誰最後勝利，不是看誰先出局）。
+ * 一步一步帶、每一輪抽主題＋給例句、讓主持人按「下一輪」、國王指定的人拉真心話大冒險拉霸。
+ * 五根折完的人出局，最後還留著手指的人當國王（老闆 11/16：看誰最後勝利、像國王遊戲一樣指定一個人）。
  *
- * 一步一步帶（跟果園菜園動物園同一套，步驟頭、規則卡、動作卡都是全站共用的 window.Leader）：
- *   setup 開場（選玩法）→ rules 說明規則 → play 開始（主題卡、下一輪）→ end 誰贏了（動作卡）→ 再玩一次回 play
+ * 一步一步帶（跟果園菜園動物園同一套，步驟頭、規則卡、拉霸都是全站共用的 window.Leader）：
+ *   setup 開場（選玩法）→ rules 說明規則 → play 開始（主題卡、下一輪）→ end 國王是誰（拉霸）→ 再玩一次回 play
  * 返回鍵一律回第一頁；開始玩之後先確認。
  */
 (function () {
@@ -44,7 +44,7 @@
     topicToggle: $('topic-toggle'),
     nextRound: $('next-round'),
     endBtn: $('end-btn'),
-    punishRoot: $('punish-root'),
+    slotRoot: $('slot-root'),
     again: $('again'),
     leaveModal: $('leave-modal'),
     leaveCancel: $('leave-cancel'),
@@ -183,13 +183,23 @@
     },
   ];
 
-  // ---------- 誰贏了：贏家抽一個動作讓大家模仿、三連拍（全站共用的 Leader.actionCard，照木頭人動作版） ----------
-  // 這個遊戲沒有配樂、沒有聲音開關（講話的遊戲）
+  // ---------- 國王指定一個人拉真心話大冒險拉霸（Leader.slot） ----------
+  // 這個遊戲沒有配樂、沒有聲音開關（講話的遊戲），拉霸照常出聲。
+  // 拉霸的題目全站共用、都是破冰安全的，國王不用自己想要人做什麼（11/16 討論）
 
-  var punish = Leader.actionCard(el.punishRoot, {
-    actions: window.NEVER.actions,
-    onDraw: function (action) { track('never_action_drawn', { action: action[0], mode: mode }); },
-  });
+  var slotTool = null;
+  function resetSlot() {
+    if (!slotTool) {
+      slotTool = Leader.slot(el.slotRoot, {
+        prompts: window.NEVER.slot.prompts,
+        actions: window.NEVER.slot.actions,
+        onPull: function (info) {
+          track('never_slot_pulled', { game_number: gameNumber, kind: info.kind, mode: info.mode });
+        },
+      });
+    }
+    slotTool.reset();
+  }
 
   // ---------- 螢幕保持亮著（一輪可能講很久） ----------
 
@@ -225,7 +235,7 @@
     renderLead();
     if (next === 'play') requestWakeLock();
     else releaseWakeLock();
-    if (next === 'end') punish.reset();
+    if (next === 'end') resetSlot();
 
     window.scrollTo(0, 0);
     if (typeof window.trackPageView === 'function') window.trackPageView(BASE + '/' + LANG + '/' + next);
