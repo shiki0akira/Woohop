@@ -175,3 +175,11 @@
 
 /* 畫的時候整頁不給選取（app.js 在 body 加 .no-select）：只鎖畫布那一塊不夠，手指滑出去長按還是會反白（老闆 11/04） */
 body.no-select, body.no-select * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+/* 11/16 老闆試玩：
+ * - 提示類型亮了以後，倒數那一行收起來（不留空白）
+ * - 揭曉時上面的「第 n 題」藏起來，題號併進「第 n 題答案是」
+ * - 交替往前翻翻到文字時，圖換成跟圖一樣大的文字方塊 */
+.hint-next[hidden], #guess-img[hidden], .guess-text[hidden] { display: none; }
+#view-play[data-phase="reveal"] .round-progress { display: none; }
+.guess-text { justify-self: center; width: 100%; max-width: 520px; font-size: clamp(26px, 8vw, 40px); }

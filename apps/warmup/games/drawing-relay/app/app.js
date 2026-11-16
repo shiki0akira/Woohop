@@ -44,8 +44,17 @@
   var isTeam = function () { return prep.mode === 'team'; };
   // 交替 alt（11/16 老闆加的）：畫一張、猜一句輪流。每個人都輪一次（沒有另外一個只猜的人），秒數跟傳話同一組
   var isAlt = function () { return prep.mode === 'alt'; };
-  // 第 k 個人這一棒要做什麼：交替時單數畫、雙數猜一句（打字）；其他玩法都是畫
-  var turnType = function (k) { return isAlt() && k % 2 === 0 ? 'write' : 'draw'; };
+  /*
+   * 第 k 個人這一棒要做什麼（交替才會有 write＝看圖打字猜一句；其他玩法都是畫）。
+   * 最後一個人一律看最後一張圖大聲猜（老闆 11/16），所以倒數第二棒一定要是畫：
+   *   雙數隊伍：1 畫、2 寫、3 畫⋯⋯
+   *   單數隊伍：第 2 個人先看圖 5 秒再畫一張（跟傳話一樣），之後才交替：1 畫、2 畫、3 寫、4 畫⋯⋯
+   */
+  var turnType = function (k) {
+    if (!isAlt()) return 'draw';
+    if (prep.size % 2 === 0) return k % 2 === 0 ? 'write' : 'draw';
+    return k >= 3 && k % 2 === 1 ? 'write' : 'draw';
+  };
   var sec = function () { return isTeam() ? prep.secTeam : prep.secRelay; };
   var randomCats = true;
   // 只記聲音開關（跟比手畫腳接力賽一樣）
@@ -108,6 +117,8 @@
     viewNum: $('view-num'),
     guessImg: $('guess-img'),
     guessTitle: $('guess-title'),
+    guessText: $('guess-text'),
+    resultTitle: $('result-title'),
     guessBack: $('guess-back'),
     writerNo: $('writer-no'),
     writeImg: $('write-img'),
@@ -152,9 +163,8 @@
 
   // ---------- 開場：一隊幾人、每人畫幾秒 ----------
 
-  // 輪到第幾個人為止：傳話、合力的最後一個人只猜（不算）。
-  // 交替：雙數隊伍跟傳話一樣，最後一個人看最後一張圖大聲猜、不用打字（老闆 11/16）；單數隊伍每個人都輪一次
-  var lastPainter = function () { return isAlt() && prep.size % 2 === 1 ? prep.size : prep.size - 1; };
+  // 輪到第幾個人為止：最後一個人只猜（不算）。三種玩法都一樣（交替也是，老闆 11/16）
+  var lastPainter = function () { return prep.size - 1; };
 
   function syncSetup() {
     el.sizeValue.textContent = prep.size;
@@ -171,7 +181,7 @@
     });
     el.secRelay.hidden = isTeam();
     el.secTeam.hidden = !isTeam();
-    var hint = isTeam() ? T.roundsHintTeam : isAlt() ? T.roundsHintAlt : T.roundsHint;
+    var hint = isTeam() ? T.roundsHintTeam : isAlt() ? (prep.size % 2 ? T.roundsHintAltOdd : T.roundsHintAlt) : T.roundsHint;
     el.roundsHint.textContent = fill(hint, { painters: lastPainter(), sec: sec() });
   }
   function setSize(n) {
@@ -591,6 +601,7 @@
       track('drawing_relay_hint_shown', { round_number: roundNumber, category: card[0] });
     }
     el.hintNext.textContent = kindShown ? '' : fill(T.hintKindIn, { s: Math.ceil(HINT_KIND_AT - s) });
+    el.hintNext.hidden = kindShown; // 類型亮了就收起來，不留一行空白（老闆 11/16）
     if (kindShown) stopGuessTimer();
   }
 
@@ -671,14 +682,9 @@
     passOn();
   }
 
-  // 這一棒結束、換下一個人。交替玩法的單數隊伍每個人都輪過了就直接收尾（endAlt）；
-  // 雙數隊伍跟傳話一樣交給最後一個人猜
+  // 這一棒結束、交給下一個人（最後一個人只猜）
   function passOn() {
     painter += 1;
-    if (isAlt() && painter > lastPainter() && prep.size % 2 === 1) {
-      endAlt();
-      return;
-    }
     el.handoffTitle.textContent = painter > lastPainter() ? T.handoffLast : fill(T.handoffTo, { k: painter });
     el.handoffGo.textContent = painter > lastPainter() ? T.handoffGoLast : fill(T.handoffGo, { k: painter });
     setPhase('handoff');
@@ -689,10 +695,12 @@
     var last = drawings[drawings.length - 1];
     if (painter > lastPainter()) {
       el.guessImg.src = last;
-      showIndex = drawings.length - 1;
+      el.guessImg.hidden = false;
+      el.guessText.hidden = true;
+      showIndex = chain.length - 1;
       el.guessTitle.textContent = T.guessTitle;
-      // 合力是同一張圖越畫越完整，往前翻只會更少，不給翻；交替的前一棒是文字，也不給翻
-      el.guessBack.hidden = isTeam() || isAlt() || drawings.length < 2;
+      // 合力是同一張圖越畫越完整，往前翻只會更少，不給翻（交替可以翻，圖和那一句都會翻到）
+      el.guessBack.hidden = isTeam() || chain.length < 2;
       sfx.guess();
       setPhase('guess');
       startGuessTimer();
@@ -706,8 +714,8 @@
       flip();
       return;
     }
-    if (isAlt()) {
-      var prev = chain[chain.length - 1];
+    var prev = chain[chain.length - 1];
+    if (isAlt() && (turnType(painter) === 'write' || prev.type === 'text')) {
       if (turnType(painter) === 'write') {
         // 猜一句：看上一張圖（不限時），打字寫下他猜的
         el.writeImg.src = prev.src;
@@ -747,46 +755,34 @@
     passOn();
   }
 
-  /*
-   * 交替：每個人都輪過了。最後一棒是猜一句 → 直接公布答案（最後那句就是傳到最後的答案）；
-   * 最後一棒是畫 → 大家一起看最後一張圖猜，再公布答案（不給往前翻：前一棒是文字）
-   */
-  function endAlt() {
-    showIndex = drawings.length - 1;
-    if (chain[chain.length - 1].type === 'text') {
-      revealAnswer(true);
-      return;
-    }
-    el.guessImg.src = drawings[drawings.length - 1];
-    showIndex = drawings.length - 1;
-    el.guessTitle.textContent = T.guessAllTitle;
-    el.guessBack.hidden = true;
-    sfx.guess();
-    setPhase('guess');
-    startGuessTimer();
-  }
-
+  // showIndex 是 chain 的第幾棒：傳話每一棒都是圖；交替圖和「猜的那一句」交錯，翻到文字就換成文字方塊
   var showIndex = 0;
   function guessBack() {
     if (phase !== 'guess' || showIndex <= 0) return;
     showIndex -= 1;
-    el.guessImg.src = drawings[showIndex];
-    el.guessTitle.textContent = fill(T.guessBackTitle, { k: showIndex + 1 });
+    var item = chain[showIndex];
+    var isText = item.type === 'text';
+    el.guessImg.hidden = isText;
+    el.guessText.hidden = !isText;
+    if (isText) el.guessText.textContent = item.text;
+    else el.guessImg.src = item.src;
+    el.guessTitle.textContent = fill(isText ? T.guessBackTitleText : T.guessBackTitle, { k: showIndex + 1 });
     el.guessBack.hidden = showIndex <= 0;
     sfx.go();
-    track('drawing_relay_guess_back', { round_number: roundNumber, painter: showIndex + 1, painters: drawings.length });
+    track('drawing_relay_guess_back', { round_number: roundNumber, painter: showIndex + 1, painters: chain.length, mode: prep.mode });
     window.scrollTo(0, 0);
   }
 
   // 公布答案：揭曉答案、攤開每個人的畫（不記猜中沒）
-  function revealAnswer(fromAlt) {
-    if (phase !== 'guess' && fromAlt !== true) return;
-    if (fromAlt === true) kindShown = false;
+  function revealAnswer() {
+    if (phase !== 'guess') return;
     judged += 1;
     drawn += drawings.length;
     playedWords.push({ word: card[1], last: drawings[drawings.length - 1] });
     sfx.reveal();
-    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown, mode: prep.mode, back_steps: drawings.length - 1 - showIndex });
+    track('drawing_relay_revealed', { round_number: roundNumber, painters: drawings.length, category: card[0], skips: skips, hint_kind: kindShown, mode: prep.mode, back_steps: chain.length - 1 - showIndex });
+    // 「第 n 題答案是」：題號併進這一行，上面的「第 n 題」在揭曉時藏起來（老闆 11/16：太佔位子）
+    el.resultTitle.textContent = fill(T.answerIs, { n: roundNumber });
     el.resultAnswer.textContent = card[1];
     renderGallery();
     renderRound();

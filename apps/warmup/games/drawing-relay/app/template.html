@@ -154,6 +154,8 @@
             <div class="name-stage stage-guess">
               <p class="view-title" id="guess-title">{{guessTitle}}</p>
               <img class="paint-img" id="guess-img" alt="{{guessTitle}}">
+              <!-- 交替玩法往前翻翻到「猜的那一句」時，圖換成這個文字方塊 -->
+              <p class="gallery-text guess-text" id="guess-text" hidden></p>
               <!-- 答案有幾個字（一個字一個方塊），猜 10 秒還沒中自動亮類型（照比手畫腳接力賽；不露字，11/03 討論：露字會繞過那些畫） -->
               <div class="drawn-card guess-card" aria-live="polite">
                 <span class="badge hint-badge" id="hint-kind" hidden></span>
@@ -164,7 +166,7 @@
 
             <!-- reveal：答案揭曉＋每個人的畫，下一題／結束 -->
             <div class="name-stage stage-reveal-answer">
-              <p class="result-title">{{answerIs}}</p>
+              <p class="result-title" id="result-title"></p>
               <p class="result-answer" id="result-answer"></p>
               <ol class="gallery" id="gallery"></ol>
               <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button">{{nextRound}}</button>
