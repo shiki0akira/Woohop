@@ -81,7 +81,8 @@
 .key[data-key="4"], .key[data-key="5"], .key[data-key="6"] { --kf: var(--mint-face); --ke: var(--mint-edge); }
 .key[data-key="7"], .key[data-key="8"], .key[data-key="9"] { --kf: var(--pink-face); --ke: var(--pink-edge); }
 .key[data-key="0"] { --kf: var(--blue-face); --ke: var(--blue-edge); }
-.key-del { --kf: var(--coral-face); --ke: var(--coral-edge); font-size: 24px; }
+.key-del { --kf: var(--coral-face); --ke: var(--coral-edge); display: grid; place-items: center; color: var(--coral-text); }
+.key-del svg { width: 30px; height: 30px; pointer-events: none; }
 /* 「猜！」用全站主按鈕的顏色；可以按的那一刻跳一下，提醒「打好了就按這裡」 */
 .key-go { --kf: var(--indigo); --ke: var(--solid-edge); color: #fff; font-family: inherit; font-size: 22px; font-weight: 900; }
 .key-go:disabled { opacity: .4; cursor: default; }

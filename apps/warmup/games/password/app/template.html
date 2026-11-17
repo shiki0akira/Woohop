@@ -74,7 +74,8 @@
             <button class="key" type="button" data-key="7">7</button>
             <button class="key" type="button" data-key="8">8</button>
             <button class="key" type="button" data-key="9">9</button>
-            <button class="key key-del" type="button" data-key="del" aria-label="{{clearKey}}">⌫</button>
+            <!-- 刪除鍵畫成圖示（11/17 老闆：⌫ 字元在各家手機字型長得不一樣、怪怪的），線條照全站圖示：圓頭、粗 2.6 -->
+            <button class="key key-del" type="button" data-key="del" aria-label="{{clearKey}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="m11.5 9.5 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
             <button class="key" type="button" data-key="0">0</button>
             <button class="key key-go" type="button" data-key="go" id="guess-go" disabled>{{guessButton}}</button>
           </div>
