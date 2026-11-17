@@ -218,7 +218,16 @@
   }
   function renderInput() {
     el.guessValue.textContent = input;
+    var wasDisabled = el.go.disabled;
     el.go.disabled = !input;
+    // 「猜！」變成可以按的那一刻跳一下
+    if (wasDisabled && input) bounce(el.go, 'is-ready');
+  }
+  // 重新觸發一次 CSS 動畫（先拿掉 class、強制 reflow、再加回去）
+  function bounce(node, cls) {
+    node.classList.remove(cls);
+    void node.offsetWidth;
+    node.classList.add(cls);
   }
 
   function press(key) {
@@ -231,6 +240,8 @@
     else if (input.length < maxDigits() && !(input === '' && key === '0')) input += key;
     else return;
     sfx.key();
+    var btn = el.keypad.querySelector('[data-key="' + key + '"]');
+    if (btn) bounce(btn, 'is-pop');
     renderInput();
   }
 

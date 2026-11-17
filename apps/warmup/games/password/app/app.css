@@ -17,6 +17,21 @@
 .setup-panel .field-label:first-child { margin-top: 0; }
 .setup-panel .hint { margin: 10px 0 0; }
 
+/*
+ * ---------- 猜（play）----------
+ * 老闆 11/17 試玩：頂欄下面要有間距（跟定時炸彈的 .view-play 一樣 20px）；
+ * 電腦上不要捲動、一個畫面看得完：整塊最寬 440px 置中，鍵盤高度跟著視窗高度縮
+ */
+#view-play { padding-top: 20px; width: 100%; max-width: 440px; margin: 0 auto; }
+/* 猜的時候頁面底下不留全站的 40px 留白（多那一段就會出現捲軸） */
+.password-app[data-screen="play"] .game-main { padding-bottom: 12px; }
+/* 矮的筆電螢幕（高度 760 以下）：範圍卡收緊一點 */
+@media (max-height: 760px) {
+  .password-app .range-card { padding: 12px 20px; gap: 0; }
+  .password-app .range-num { font-size: clamp(44px, 9vh, 60px); }
+  .password-app .guess-value { font-size: 34px; }
+}
+
 /* ---------- 猜：範圍卡 ---------- */
 .range-card {
   display: grid; justify-items: center; gap: 4px; text-align: center;
@@ -34,28 +49,48 @@
 .range-count { margin: 0; font-size: 14px; font-weight: 700; color: var(--muted); }
 @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
 
-/* ---------- 猜：輸入與鍵盤 ---------- */
+/* ---------- 猜：輸入與鍵盤（11/17 老闆：鍵盤可愛一點）----------
+ * 數字用 logo 那套圓體 Fredoka；按鍵一排一個粉彩色（黃、薄荷、粉、藍），刪除珊瑚、「猜！」主色；
+ * 粗外框＋厚底（設計系統的 2px＋4px 再加厚一點），按下去整顆陷下去、彈一下 */
 .guess-panel { display: grid; gap: 14px; }
-.guess-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.guess-row { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .guess-label { font-size: 18px; font-weight: 800; color: var(--muted); }
 .guess-value {
-  min-width: 4ch; padding: 6px 18px; border: 2px solid var(--outline); border-radius: var(--r-md);
-  background: var(--surface); box-shadow: 0 4px 0 var(--outline);
-  font-size: 40px; font-weight: 900; line-height: 1.1; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink);
+  min-width: 4ch; padding: 4px 18px; border: 2.5px dashed var(--outline); border-radius: 18px;
+  background: var(--surface);
+  font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-size: 40px; font-weight: 700; line-height: 1.15;
+  text-align: center; font-variant-numeric: tabular-nums; color: var(--ink);
 }
-.guess-value:empty::before { content: "?"; color: var(--muted); opacity: .5; }
+/* 打了字就變成實線、浮起來；還沒打的時候問號輕輕晃 */
+.guess-value:not(:empty) { border-style: solid; box-shadow: 0 4px 0 var(--outline); }
+.guess-value:empty::before { content: "?"; display: inline-block; color: var(--muted); opacity: .55; animation: wobble 1.6s ease-in-out infinite; }
+@keyframes wobble { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .key {
-  height: 60px; border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface); color: var(--ink);
-  box-shadow: 0 4px 0 var(--outline); font: inherit; font-size: 26px; font-weight: 900; cursor: pointer;
-  -webkit-user-select: none; user-select: none; touch-action: manipulation;
+  --kf: var(--surface); --ke: var(--outline);
+  height: clamp(46px, 7.4vh, 60px); border: 2.5px solid var(--ke); border-radius: 18px; background: var(--kf); color: var(--ink);
+  box-shadow: 0 5px 0 var(--ke); cursor: pointer;
+  font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-size: 28px; font-weight: 700; line-height: 1;
+  transition: transform .06s, box-shadow .06s;
+  -webkit-user-select: none; user-select: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
-.key:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
-.key-del { font-size: 22px; color: var(--muted); }
-/* 「猜！」用全站主按鈕（.btn-solid）的顏色 */
-.key-go { border-color: var(--solid-edge); background: var(--indigo); color: #fff; box-shadow: 0 4px 0 var(--solid-edge); font-size: 22px; }
-.key-go:disabled { opacity: .45; cursor: default; transform: none; }
-:root[data-theme="dark"] .key:not(.key-go) { border-color: var(--edge-strong); box-shadow: 0 4px 0 var(--edge-strong); }
+.key:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 var(--ke); }
+.key.is-pop { animation: key-pop .22s cubic-bezier(.2, 1.8, .4, 1) 1; }
+@keyframes key-pop { 0% { transform: translateY(4px) scale(.94); } 100% { transform: none; } }
+.key[data-key="1"], .key[data-key="2"], .key[data-key="3"] { --kf: var(--yellow-face); --ke: var(--yellow-edge); }
+.key[data-key="4"], .key[data-key="5"], .key[data-key="6"] { --kf: var(--mint-face); --ke: var(--mint-edge); }
+.key[data-key="7"], .key[data-key="8"], .key[data-key="9"] { --kf: var(--pink-face); --ke: var(--pink-edge); }
+.key[data-key="0"] { --kf: var(--blue-face); --ke: var(--blue-edge); }
+.key-del { --kf: var(--coral-face); --ke: var(--coral-edge); font-size: 24px; }
+/* 「猜！」用全站主按鈕的顏色；可以按的那一刻跳一下，提醒「打好了就按這裡」 */
+.key-go { --kf: var(--indigo); --ke: var(--solid-edge); color: #fff; font-family: inherit; font-size: 22px; font-weight: 900; }
+.key-go:disabled { opacity: .4; cursor: default; }
+.key-go.is-ready { animation: key-ready .4s cubic-bezier(.2, 1.8, .4, 1) 1; }
+@keyframes key-ready { 0% { transform: scale(.9); } 100% { transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .guess-value:empty::before, .key.is-pop, .key-go.is-ready { animation: none; }
+}
 
 /* ---------- 爆炸（照抄定時炸彈） ---------- */
 .boom-card { text-align: center; padding: 28px 20px 24px; }
