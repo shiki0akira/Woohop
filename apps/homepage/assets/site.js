@@ -70,6 +70,7 @@
     // 秒數挑戰：主要是一支手機輪流按（一起按是每人一支，但篩選只能標一個值，照預設玩法標 one）
     { key: 'seconds', players: [2, 20], minutes: 3, phones: 'one', purpose: ['warmup', 'sit'], color: '#FFC628', added: '2026-11-12' },
     { key: 'never', players: [3, 15], minutes: 15, phones: 'one', purpose: ['warmup', 'know', 'sit'], color: '#FFC628', added: '2026-11-17' },
+    { key: 'password', players: [3, 20], minutes: 5, phones: 'one', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-17' },
     // 房間型：每人一支手機，一間 3～8 人
     { key: 'sneaky-artist', players: [2, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
     // 兩真一假：房間型、每人一支手機（玩法頁也寫了不用手機也能玩，但篩選照網站實際玩法標 each，老闆 11/12）

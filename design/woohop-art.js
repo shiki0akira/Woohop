@@ -281,6 +281,18 @@
       ${body('<rect x="48" y="58" width="72" height="59" rx="20"/>', '#FFC628', '<path d="M100 50h30v80h-30z" fill="#eeb100"/>')}
       ${makeFace('wink', 84, 88, 1.5)}`;
     },
+    // 終極密碼（2026-11-17）：一把有表情的藍色密碼鎖，鎖身上一排三格數字轉盤、旁邊一個問號泡泡。
+    // 跟遊戲裡「說明規則」第一張卡同一把鎖（games/password/app/app.js 的 RULE_ART），多了轉盤才看得出是「密碼」
+    password: () => `
+      ${ground}${burst(140, 24, '#FFC628')}${ring(20, 38, '#EE7B6A')}${dot(148, 100, '#4FB59A', 4)}${plus(16, 96, '#F3A4FB')}
+      <path d="M58 60V44a22 22 0 0 1 44 0v16" fill="none" ${K}/>
+      ${body('<rect x="40" y="58" width="80" height="60" rx="16"/>', '#7489E6', '<path d="M100 50h30v80h-30z" fill="#5c70cf"/>')}
+      ${body('<rect x="50" y="68" width="60" height="20" rx="6"/>', '#ffffff', '', false)}
+      <path d="M70 68v20M90 68v20" fill="none" stroke="#22222c" stroke-width="2.6"/>
+      <text x="60" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">4</text>
+      <text x="80" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>
+      <text x="100" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">7</text>
+      ${makeFace('happy', 80, 102, 1.3)}`,
     // 福杯滿溢（2026-11-10）：滿到杯口的那一杯水，水面被表面張力撐成一個凸起、剛好還沒溢出來。
     // 主體是水自己（有表情、緊張），不畫玩家（跟竹筍、木頭人同一種做法）。
     // 畫法上有兩件事是關鍵，改之前先看懂：
