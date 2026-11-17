@@ -270,6 +270,17 @@
       <path d="M80 54v6M102 76h-6M58 76h6" fill="none" stroke="#22222c" stroke-width="3" stroke-linecap="round"/>
       <path d="M80 76l12-12" fill="none" ${K}/><circle cx="80" cy="76" r="3.2" fill="#22222c"/>
       ${makeFace('happy', 80, 90, 1.1)}`,
+    // 我從來沒有（2026-11-17）：一隻舉起來的手，兩根手指折下去（只露出一小截圓頭），手掌上有表情。
+    // 跟遊戲裡「說明規則」第三張卡同一個畫法（games/never/app/app.js 的 hand()），顏色換成這個遊戲的黃
+    never: () => {
+      const finger = (x, top) => body(`<rect x="${x}" y="${top}" width="16" height="${84 - top}" rx="8"/>`, '#FFC628', '', false);
+      return `
+      ${ground}${burst(142, 26, '#EE7B6A')}${ring(20, 36, '#7489E6')}${dot(148, 100, '#4FB59A', 4)}${plus(18, 96, '#F3A4FB')}
+      ${finger(52, 26)}${finger(68, 18)}${finger(84, 42)}${finger(100, 42)}
+      <g transform="rotate(-45 50 104)">${body('<rect x="40" y="66" width="17" height="42" rx="8.5"/>', '#FFC628', '', false)}</g>
+      ${body('<rect x="48" y="58" width="72" height="59" rx="20"/>', '#FFC628', '<path d="M100 50h30v80h-30z" fill="#eeb100"/>')}
+      ${makeFace('wink', 84, 88, 1.5)}`;
+    },
     // 福杯滿溢（2026-11-10）：滿到杯口的那一杯水，水面被表面張力撐成一個凸起、剛好還沒溢出來。
     // 主體是水自己（有表情、緊張），不畫玩家（跟竹筍、木頭人同一種做法）。
     // 畫法上有兩件事是關鍵，改之前先看懂：
