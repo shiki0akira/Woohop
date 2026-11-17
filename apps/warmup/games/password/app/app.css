@@ -1,0 +1,70 @@
+/*
+ * 終極密碼自己的樣式。步驟頭、規則卡、拉霸、按鈕、分段選項都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面。跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：藍（密碼、鎖） */
+.password-app { --game-edge: var(--blue-edge); }
+.password-app .panel { padding: 20px; }
+/* 開場不給聲音開關：開始玩才有聲音（全站規則） */
+.password-app[data-screen="setup"] .game-music { display: none; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場 ---------- */
+.setup-panel .field-label:first-child { margin-top: 0; }
+.setup-panel .hint { margin: 10px 0 0; }
+
+/* ---------- 猜：範圍卡 ---------- */
+.range-card {
+  display: grid; justify-items: center; gap: 4px; text-align: center;
+  border-color: var(--blue-edge); background: var(--blue-face); box-shadow: 0 4px 0 var(--blue-edge);
+}
+.range-label { margin: 0; font-size: 15px; font-weight: 800; color: var(--muted); }
+.range-nums { display: flex; align-items: baseline; justify-content: center; gap: 12px; font-variant-numeric: tabular-nums; }
+.range-num { font-size: clamp(48px, 16vw, 72px); font-weight: 900; line-height: 1.05; color: var(--ink); }
+.range-to { font-size: 32px; font-weight: 900; color: var(--muted); }
+/* 縮小的那一邊跳一下 */
+.range-num.is-moved { animation: range-pop .5s cubic-bezier(.2, 1.6, .4, 1) 1; color: #3D54B6; }
+@keyframes range-pop { 0% { transform: scale(.6); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+.range-msg { min-height: 1.4em; margin: 2px 0 0; font-size: 20px; font-weight: 900; color: var(--ink); text-wrap: balance; }
+.range-msg.is-warn { color: #c0392b; animation: shake .35s 1; }
+.range-count { margin: 0; font-size: 14px; font-weight: 700; color: var(--muted); }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+/* ---------- 猜：輸入與鍵盤 ---------- */
+.guess-panel { display: grid; gap: 14px; }
+.guess-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.guess-label { font-size: 18px; font-weight: 800; color: var(--muted); }
+.guess-value {
+  min-width: 4ch; padding: 6px 18px; border: 2px solid var(--outline); border-radius: var(--r-md);
+  background: var(--surface); box-shadow: 0 4px 0 var(--outline);
+  font-size: 40px; font-weight: 900; line-height: 1.1; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink);
+}
+.guess-value:empty::before { content: "?"; color: var(--muted); opacity: .5; }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.key {
+  height: 60px; border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface); color: var(--ink);
+  box-shadow: 0 4px 0 var(--outline); font: inherit; font-size: 26px; font-weight: 900; cursor: pointer;
+  -webkit-user-select: none; user-select: none; touch-action: manipulation;
+}
+.key:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.key-del { font-size: 22px; color: var(--muted); }
+/* 「猜！」用全站主按鈕（.btn-solid）的顏色 */
+.key-go { border-color: var(--solid-edge); background: var(--indigo); color: #fff; box-shadow: 0 4px 0 var(--solid-edge); font-size: 22px; }
+.key-go:disabled { opacity: .45; cursor: default; transform: none; }
+:root[data-theme="dark"] .key:not(.key-go) { border-color: var(--edge-strong); box-shadow: 0 4px 0 var(--edge-strong); }
+
+/* ---------- 爆炸（照抄定時炸彈） ---------- */
+.boom-card { text-align: center; padding: 28px 20px 24px; }
+.boom-card h1 { margin: 4px 0 6px; font-size: clamp(28px, 7vw, 38px); font-weight: 900; text-wrap: balance; }
+.boom-mark svg { display: block; width: 96px; height: 96px; margin: 0 auto; fill: var(--coral); stroke: var(--outline); stroke-width: 2; stroke-linejoin: round; overflow: visible; animation: boom-pop .45s cubic-bezier(.2, 1.5, .4, 1) 1; }
+@keyframes boom-pop { from { transform: scale(.3) rotate(-25deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+.boom-stats { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.boom-card .leader-slot { margin-top: 20px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .range-num.is-moved, .range-msg.is-warn, .boom-mark svg { animation: none; }
+}
