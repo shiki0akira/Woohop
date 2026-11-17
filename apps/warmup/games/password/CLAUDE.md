@@ -6,7 +6,7 @@
 
 建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。骨架照「我從來沒有」，爆炸畫面與爆炸聲照抄定時炸彈（`games/bomb`）。
 
-- ⚠️ 2026-11-17 **只有繁中**（`app/strings.js` 的 `LANGS`），老闆確認後再補 7 語、接首頁。
+- **8 種語言**（2026-11-17）。外語名在 CONCEPT.md 第三節。
 - 本機：`.claude/launch.json` 的 `warmup-dev`（port 8790），開 `/password/zh-TW/`。
 
 ## `app/app.js` 的結構
