@@ -31,6 +31,7 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | 福杯滿溢 | [www.vibeweb100.com/cup](https://www.vibeweb100.com/cup/zh-TW/) | `apps/warmup/games/cup` | 已上線（2026-11-10，8 語） |
 | 秒數挑戰 | [www.vibeweb100.com/seconds](https://www.vibeweb100.com/seconds/zh-TW/) | `apps/warmup/games/seconds` | 已上線（2026-11-12，8 語） |
 | 我從來沒有 | [www.vibeweb100.com/never](https://www.vibeweb100.com/never/zh-TW/) | `apps/warmup/games/never` | 已上線（2026-11-17，8 語） |
+| 終極密碼 | [www.vibeweb100.com/password](https://www.vibeweb100.com/password/zh-TW/) | `apps/warmup/games/password` | 已上線（2026-11-17，8 語） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
 ## 架構說明
