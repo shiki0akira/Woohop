@@ -15,7 +15,7 @@
 | 你畫我猜接力 | `games/drawing-relay` | `/drawing-relay/{lang}/` |
 | 福杯滿溢 | `games/cup` | `/cup/{lang}/` |
 | 秒數挑戰 | `games/seconds` | `/seconds/{lang}/` |
-| 我從來沒有（繁中，還沒接首頁） | `games/never` | `/never/{lang}/` |
+| 我從來沒有 | `games/never` | `/never/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 
