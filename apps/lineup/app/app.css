@@ -131,7 +131,7 @@
 .lu-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--slot-min), 1fr)); gap: 12px 8px; margin: 10px 0 0; padding: 0; list-style: none; }
 @media (max-width: 400px) { .lineup-app { --slot-min: 54px; } }
 .lu-row:empty { display: none; }
-.lu-slot { position: relative; display: grid; justify-items: center; gap: 6px; min-width: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.lu-slot { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 6px; min-width: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .lu-slot-face {
   position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1; box-sizing: border-box; border: 2px solid var(--lu-edge); border-radius: 14px;
   background: var(--surface); box-shadow: 0 3px 0 var(--lu-edge);
@@ -140,7 +140,7 @@
 .lu-slot-pos { position: absolute; top: 3px; left: 5px; font: 800 10px/1 Nunito, system-ui, sans-serif; color: var(--muted); }
 /* 還沒放牌的格子：虛線框＋第幾格 */
 .lu-slot.is-empty .lu-slot-face { border-style: dashed; background: transparent; box-shadow: none; font-size: 14px; opacity: .7; }
-.lu-slot-who { display: flex; align-items: center; justify-content: center; gap: 2px; max-width: 100%; min-height: 16px; font-size: 11px; font-weight: 800; }
+.lu-slot-who { display: flex; align-items: center; justify-content: center; gap: 2px; width: 100%; min-width: 0; min-height: 16px; font-size: 11px; font-weight: 800; }
 .lu-slot-who > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lu-slot-who svg.avatar { width: 16px; height: 16px; }
 /* 自己的牌：藍色，數字直接看得到 */
@@ -177,7 +177,7 @@
 .hand-panel #hand-wait { margin: 10px 0 0; }
 
 /* ---------- 翻牌頁：一次一張大牌（老闆 11/20），下面一排點是進度 ---------- */
-.flip-stage { display: grid; justify-items: center; gap: 8px; margin-top: 6px; text-align: center; }
+.flip-stage { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 8px; margin-top: 6px; text-align: center; }
 .flip-pos { font-size: 15px; font-weight: 900; color: var(--muted); }
 .flip-card {
   position: relative; display: grid; place-items: center; width: 132px; height: 132px; box-sizing: border-box;
@@ -192,7 +192,9 @@
 .flip-mark { top: -10px; right: -10px; width: 34px; height: 34px; font-size: 18px; border-width: 3px; }
 .flip-mark:empty { display: none; }
 .flip-card.is-bad .flip-mark { background: var(--pink-edge); }
-.flip-who { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 900; }
+.flip-who { display: flex; align-items: center; justify-content: center; gap: 6px; max-width: 100%; font-size: 16px; font-weight: 900; }
+.flip-who > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 名字太長：一律「…」省略，不能把格子撐開（老闆 11/20） */
 .flip-who svg.avatar { width: 24px; height: 24px; }
 .flip-note { font-size: 14px; font-weight: 800; color: var(--muted); }
 .flip-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; }
