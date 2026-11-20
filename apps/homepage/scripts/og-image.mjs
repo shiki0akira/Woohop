@@ -160,6 +160,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.truths()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 數字默契排排站（apps/lineup/app/strings.js 的 LANGS）
+  lineup: async () => {
+    const { STRINGS: Lu, LANGS: LUL } = await import(pathToFileURL(path.join(ROOT, '..', 'lineup', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'lineup', 'public', 'og'),
+      langs: LUL,
+      title: (lang) => splitTitle(Lu[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.lineup()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 福杯滿溢（apps/warmup/games/cup/app/strings.js 的 LANGS）
   cup: async () => {
     const { STRINGS: Cu, LANGS: CUL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'cup', 'app', 'strings.js')).href);

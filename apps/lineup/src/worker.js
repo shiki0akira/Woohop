@@ -13,8 +13,7 @@ export { LineupRoom };
 
 const BASE = '/lineup';
 // 跟 app/strings.js 的 LANGS 與首頁的 SUPPORTED_LANGS 一致，三邊要一起改
-// ⚠️ 2026-11-20 只有繁中：補 7 語時改回 8 個（不然 /lineup/ 會把英文瀏覽器轉到不存在的 /lineup/en/）
-const LANGS = ['zh-TW'];
+const LANGS = ['zh-TW', 'en', 'de', 'fr', 'ja', 'ko', 'es', 'zh-CN'];
 const DEFAULT_LANG = 'zh-TW';
 
 // 跟搶答一樣：去掉 0/O/1/I/L（會唸、會手打）和 E（8E98 會被 GA4 當成科學記號）

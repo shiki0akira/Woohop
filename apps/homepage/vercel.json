@@ -276,6 +276,54 @@
       "destination": "https://woohop-truths.shiki0akira.workers.dev/truths/og/:file"
     },
     {
+      "source": "/lineup-sitemap.xml",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/sitemap.xml"
+    },
+    {
+      "source": "/lineup",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup"
+    },
+    {
+      "source": "/lineup/",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/"
+    },
+    {
+      "source": "/lineup/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/:lang"
+    },
+    {
+      "source": "/lineup/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/:lang/"
+    },
+    {
+      "source": "/lineup/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/:lang/:page"
+    },
+    {
+      "source": "/lineup/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(rules)/",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/:lang/:page/"
+    },
+    {
+      "source": "/lineup/api/:path*",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/api/:path*"
+    },
+    {
+      "source": "/lineup/vendor/:path*",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/vendor/:path*"
+    },
+    {
+      "source": "/lineup/:file(app.css|app.js|header.js|favicon.svg|apple-touch-icon.png|sitemap.xml)",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/:file"
+    },
+    {
+      "source": "/lineup/woohop/:file(woohop.css|site.css|game.css|woohop-art.js|site.js|game.js)",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/woohop/:file"
+    },
+    {
+      "source": "/lineup/og/:file([a-zA-Z-]+\\.png)",
+      "destination": "https://woohop-lineup.shiki0akira.workers.dev/lineup/og/:file"
+    },
+    {
       "source": "/buzzer-sitemap.xml",
       "destination": "https://web100-02-buzzer-game.shiki0akira.workers.dev/buzzer/sitemap.xml"
     },

@@ -293,6 +293,17 @@
       <text x="80" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>
       <text x="100" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">7</text>
       ${makeFace('happy', 80, 102, 1.3)}`,
+    // 數字默契排排站（2026-11-20）：三張牌從矮到高站成一排（3、42、97），最高那張有表情。
+    // 跟動作抽卡、抽題目的「一疊卡」和終極密碼的鎖分得開：這裡是排排站、由小到大
+    lineup: () => {
+      const num = (x, y, t) => `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">${t}</text>`;
+      return `
+      ${ground}${burst(26, 28, '#FFC628')}${ring(150, 22, '#7489E6')}${dot(14, 70, '#F3A4FB', 4)}${plus(148, 66, '#EE7B6A')}
+      ${body('<rect x="20" y="79" width="34" height="38" rx="8"/>', '#a8dccb', '', false)}${num(37, 97, '3')}
+      ${body('<rect x="62" y="57" width="34" height="60" rx="8"/>', '#FFC628', '', false)}${num(79, 74, '42')}
+      ${body('<rect x="104" y="35" width="38" height="82" rx="9"/>', '#fbb3a8', '<path d="M126 27h24v98h-24z" fill="#ef9a8d"/>')}${num(123, 52, '97')}
+      ${makeFace('happy', 123, 88, 1.1)}`;
+    },
     // 福杯滿溢（2026-11-10）：滿到杯口的那一杯水，水面被表面張力撐成一個凸起、剛好還沒溢出來。
     // 主體是水自己（有表情、緊張），不畫玩家（跟竹筍、木頭人同一種做法）。
     // 畫法上有兩件事是關鍵，改之前先看懂：
