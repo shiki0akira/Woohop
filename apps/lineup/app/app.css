@@ -6,6 +6,9 @@
 
 /* 這個遊戲的代表色：薄荷（合作、排排站） */
 .lineup-app { --game-edge: var(--mint-edge); }
+/* 卡片、格子的框線：淺色用插圖的深描邊；深色模式那個顏色跟底色太近看不到（老闆 11/20），換成亮一點的灰 */
+.lineup-app { --lu-edge: var(--outline); }
+:root[data-theme="dark"] .lineup-app { --lu-edge: #6c6c80; }
 
 #view-join, #view-room, #view-error { padding-top: 20px; }
 /* 房間裡的區塊用 [hidden] 開關（app.js 依 phase 設），game.css 的 .view 是 flex 直排，藏起來的不能佔位 */
@@ -92,9 +95,9 @@
 .vote-list { display: grid; gap: 10px; }
 .vote-option {
   display: grid; gap: 8px; padding: 12px 14px; text-align: center; font: inherit; color: var(--ink); cursor: pointer;
-  border: 2px solid var(--outline); border-radius: var(--r-md); background: var(--surface); box-shadow: 0 4px 0 var(--outline);
+  border: 2px solid var(--lu-edge); border-radius: var(--r-md); background: var(--surface); box-shadow: 0 4px 0 var(--lu-edge);
 }
-.vote-option:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.vote-option:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--lu-edge); }
 .vote-option.is-picked { border-color: var(--mint-edge); background: var(--mint-face); box-shadow: 0 4px 0 var(--mint-edge); }
 .vote-name { font-size: 20px; font-weight: 900; line-height: 1.25; }
 /* 刻度：1 越不想做（例：寫報告）←→ 100 越想做（例：出國玩）橫的一排（老闆 11/20） */
@@ -130,8 +133,8 @@
 .lu-row:empty { display: none; }
 .lu-slot { position: relative; display: grid; justify-items: center; gap: 6px; min-width: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .lu-slot-face {
-  position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1; box-sizing: border-box; border: 2px solid var(--outline); border-radius: 14px;
-  background: var(--surface); box-shadow: 0 3px 0 var(--outline);
+  position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1; box-sizing: border-box; border: 2px solid var(--lu-edge); border-radius: 14px;
+  background: var(--surface); box-shadow: 0 3px 0 var(--lu-edge);
   font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-size: 24px; font-weight: 700; color: var(--muted);
 }
 .lu-slot-pos { position: absolute; top: 3px; left: 5px; font: 800 10px/1 Nunito, system-ui, sans-serif; color: var(--muted); }
@@ -178,7 +181,7 @@
 .flip-pos { font-size: 15px; font-weight: 900; color: var(--muted); }
 .flip-card {
   position: relative; display: grid; place-items: center; width: 132px; height: 132px; box-sizing: border-box;
-  border: 3px solid var(--outline); border-radius: 26px; background: var(--surface); box-shadow: 0 6px 0 var(--outline);
+  border: 3px solid var(--lu-edge); border-radius: 26px; background: var(--surface); box-shadow: 0 6px 0 var(--lu-edge);
 }
 .flip-num { font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-size: 60px; font-weight: 700; line-height: 1; color: var(--muted); }
 .flip-card.is-mine { border-color: var(--blue-edge); background: var(--blue-face); box-shadow: 0 6px 0 var(--blue-edge); }
@@ -193,7 +196,7 @@
 .flip-who svg.avatar { width: 24px; height: 24px; }
 .flip-note { font-size: 14px; font-weight: 800; color: var(--muted); }
 .flip-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; }
-.flip-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--outline); opacity: .5; }
+.flip-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--lu-edge); opacity: .5; }
 .flip-dot.is-ok { background: var(--mint-edge); opacity: 1; }
 .flip-dot.is-bad { background: var(--pink-edge); opacity: 1; }
 .flip-dot.is-current { outline: 2px solid var(--ink); outline-offset: 2px; }
