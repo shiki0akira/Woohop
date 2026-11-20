@@ -254,7 +254,7 @@
       return `
       ${ground}${burst(148, 72, '#FFC628')}${ring(14, 76, '#7489E6')}${dot(146, 104, '#4FB59A', 4)}
       ${body('<path d="M50 117V98A30 30 0 0 1 110 98V117Z"/>', '#F3A4FB', '<path d="M94 60h24v70H94z" fill="#e08ae9"/>')}
-      ${makeFace('wink', 80, 98, 1.7)}
+      ${makeFace('wink', 80, 97, 2.2)}
       ${say(8, 20, '#a8dccb', 'M34 50l4 10 6-10')}${tick(28, 35)}
       ${say(60, 8, '#fbb3a8', 'M74 38l6 12 6-12')}${cross(80, 23)}
       ${say(112, 20, '#a8dccb', 'M116 50l6 10 4-10')}${tick(132, 35)}`;
@@ -279,7 +279,7 @@
       ${finger(52, 26)}${finger(68, 18)}${finger(84, 42)}${finger(100, 42)}
       <g transform="rotate(-45 50 104)">${body('<rect x="40" y="66" width="17" height="42" rx="8.5"/>', '#FFC628', '', false)}</g>
       ${body('<rect x="48" y="58" width="72" height="59" rx="20"/>', '#FFC628', '<path d="M100 50h30v80h-30z" fill="#eeb100"/>')}
-      ${makeFace('wink', 84, 88, 1.5)}`;
+      ${makeFace('wink', 84, 87, 2.1)}`;
     },
     // 終極密碼（2026-11-17）：一把有表情的藍色密碼鎖，鎖身上一排三格數字轉盤、旁邊一個問號泡泡。
     // 跟遊戲裡「說明規則」第一張卡同一把鎖（games/password/app/app.js 的 RULE_ART），多了轉盤才看得出是「密碼」
@@ -292,7 +292,7 @@
       <text x="60" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">4</text>
       <text x="80" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>
       <text x="100" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">7</text>
-      ${makeFace('happy', 80, 102, 1.3)}`,
+      ${makeFace('happy', 80, 100, 1.9)}`,
     // 數字默契排排站（2026-11-20）：三張牌從矮到高站成一排（3、42、97），最高那張有表情。
     // 跟動作抽卡、抽題目的「一疊卡」和終極密碼的鎖分得開：這裡是排排站、由小到大
     lineup: () => {
@@ -302,7 +302,7 @@
       ${body('<rect x="20" y="79" width="34" height="38" rx="8"/>', '#a8dccb', '', false)}${num(37, 97, '3')}
       ${body('<rect x="62" y="57" width="34" height="60" rx="8"/>', '#FFC628', '', false)}${num(79, 74, '42')}
       ${body('<rect x="104" y="35" width="38" height="82" rx="9"/>', '#fbb3a8', '<path d="M126 27h24v98h-24z" fill="#ef9a8d"/>')}${num(123, 52, '97')}
-      ${makeFace('happy', 123, 88, 1.1)}`;
+      ${makeFace('happy', 123, 86, 1.8)}`;
     },
     // 福杯滿溢（2026-11-10）：滿到杯口的那一杯水，水面被表面張力撐成一個凸起、剛好還沒溢出來。
     // 主體是水自己（有表情、緊張），不畫玩家（跟竹筍、木頭人同一種做法）。
