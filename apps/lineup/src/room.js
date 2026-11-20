@@ -5,7 +5,7 @@
  * 數字默契排排站的流程（phase）：
  *   lobby 等人 → voting 抽三個主題，大家投一個（全部投完、或主持人按決定，票最多的；平手隨機）
  *   → playing 每個人拿到 1～3 張不重複的 1～100 祕密數字，大家互相形容，在自己的手機上把牌「排進去」，
- *     從第一格依序往後填；全部排上去之後大家最後確認，只有主持人能拖曳換順序
+ *     從最左邊的空格往後填；點自己的牌可以拿出來（那一格空著，其他不動）；大家都可以拖曳換位置
  *   → reveal 從第一張一張翻（下一張的主人或主持人翻），比前一張小就是排錯；全部翻完看排錯幾張
  *   → playing 下一輪（新數字、新主題）⋯⋯
  *
@@ -17,7 +17,7 @@
  * 自己的牌只放在每條連線各自的 you（broadcast 逐條送），共用的 state 只有誰的牌排在第幾張、翻開的那幾張的數字。
  */
 
-import { dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, cleanMaxPlayers, maxPerPlayerFor, cleanText, tallyVotes, moveTo } from './game.js';
+import { dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, cleanMaxPlayers, maxPerPlayerFor, cleanText, tallyVotes, moveTo, placeInto, takeOut } from './game.js';
 
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
 const MIN_PLAYERS = 2;
@@ -67,7 +67,7 @@ export class LineupRoom {
       options: [], // 投票時的三個主題（第幾個，主持人的手機抽的）
       votes: {}, // 投票：{ [id]: 選第幾個選項 }
       cards: {}, // 這一輪：{ [牌 id（主人 id.第幾張）]: { owner, n } }
-      line: [], // 排好的順序（牌 id），大家自己排進去
+      line: [], // 那一排（牌 id，空格是 null），大家自己排進去
       flipped: 0, // 公布時：翻開了幾張
     };
     await this.saveRoom({ touch: true });
@@ -109,6 +109,8 @@ export class LineupRoom {
     if (msg.t === 'leave') return this.handleLeave(ws, room, who);
     if (msg.t === 'vote') return this.handleVote(room, who, msg);
     if (msg.t === 'place') return this.handlePlace(room, who, msg);
+    if (msg.t === 'takeOut') return this.handleTakeOut(room, who, msg);
+    if (msg.t === 'moveTo') return this.handleMoveTo(room, msg);
     if (msg.t === 'flip') return this.handleFlip(ws, room, who);
 
     if (who.clientId !== room.hostId) return this.sendError(ws, 'host_only');
@@ -119,8 +121,6 @@ export class LineupRoom {
         return this.handleSetPerPlayer(room, msg);
       case 'decide':
         return this.handleDecide(room);
-      case 'moveTo':
-        return this.handleMoveTo(room, msg);
       case 'reveal':
         return this.handleReveal(room);
       case 'nextRound':
@@ -240,28 +240,44 @@ export class LineupRoom {
     this.broadcast(room);
   }
 
-  /* ---------- 排：自己的牌排進去（從第一格依序往後填），主持人拖曳換順序 ---------- */
+  /* ---------- 排：自己的牌排進去（最左邊的空格）、拿出來（空著不順移）；大家都能拖曳換位置 ---------- */
 
-  async handlePlace(room, who, msg) {
+  ownCard(room, who, msg) {
     const id = typeof msg.card === 'string' ? msg.card : '';
     const card = room.cards[id];
-    if (room.phase !== 'playing' || !card || card.owner !== who.clientId || room.line.includes(id)) return;
-    room.line.push(id);
+    return room.phase === 'playing' && card && card.owner === who.clientId ? id : null;
+  }
+
+  async handlePlace(room, who, msg) {
+    const id = this.ownCard(room, who, msg);
+    if (!id || room.line.includes(id)) return;
+    placeInto(room.line, id);
     await this.saveRoom({ touch: true });
     this.broadcast(room);
   }
 
-  // 主持人把一張牌拖到第 to 格（老闆 11/20：全部排上去之後最後確認，只有主持人的手機可以換順序）
+  // 點自己排進去的牌：拿出來，那一格空著（老闆 11/20：拿出來後其他的不順沿）
+  async handleTakeOut(room, who, msg) {
+    const id = this.ownCard(room, who, msg);
+    if (!id || !takeOut(room.line, id)) return;
+    await this.saveRoom({ touch: true });
+    this.broadcast(room);
+  }
+
+  // 拖到第 to 格（老闆 11/20：不只主持人，大家都可以拖）
   async handleMoveTo(room, msg) {
-    if (room.phase !== 'playing' || typeof msg.card !== 'string') return;
-    if (!moveTo(room.line, msg.card, Number(msg.to) | 0)) return;
+    if (room.phase !== 'playing' || typeof msg.card !== 'string' || !room.cards[msg.card]) return;
+    const to = Math.min(Number(msg.to) | 0, Object.keys(room.cards).length - 1);
+    if (!moveTo(room.line, msg.card, to)) return;
     await this.saveRoom();
     this.broadcast(room);
   }
 
   // 開始翻（主持人）：照排好的順序從第一張翻。還沒排進去的牌這一輪不算（客戶端會先問）
   async handleReveal(room) {
-    if (room.phase !== 'playing' || !room.line.length) return;
+    // 空格拿掉、從第一張開始翻（還沒排進去的牌這一輪不算）
+    if (room.phase !== 'playing' || !room.line.some(Boolean)) return;
+    room.line = room.line.filter(Boolean);
     room.flipped = 0;
     room.phase = 'reveal';
     await this.saveRoom({ touch: true });
@@ -325,8 +341,12 @@ export class LineupRoom {
       delete room.cards[cardId];
       const at = room.line.indexOf(cardId);
       if (at < 0) continue;
-      room.line.splice(at, 1);
-      if (at < room.flipped) room.flipped -= 1;
+      if (room.phase === 'reveal') {
+        room.line.splice(at, 1);
+        if (at < room.flipped) room.flipped -= 1;
+      } else {
+        takeOut(room.line, cardId); // 排的時候：空著，其他不動
+      }
     }
   }
 
@@ -447,7 +467,9 @@ function publicState(room, online) {
     n: room.roundNo,
     topic: room.topic,
     total: Object.keys(room.cards).length, // 這一輪發出去幾張（還沒排進去的也算）
+    placed: room.line.filter(Boolean).length,
     line: room.line.map((id, i) => {
+      if (!id) return null; // 空格
       const item = { id, owner: room.cards[id].owner };
       if (i < shown) {
         item.n = numbers[i];

@@ -2,7 +2,7 @@
  * 數字默契排排站的規則，不碰 Durable Object（方便單元測試）。
  *   - 每張牌一個不重複的 1～NUM_MAX 祕密數字（老闆 11/19：一人一支手機、1～100 不會重複）
  *   - 每人 1～3 張（老闆 11/20：預設一張，人少可以玩進階一人 2～3 張）
- *   - 大家在手機上排好順序、一張一張翻：比前面翻開的任何一張小就是排錯（老闆 11/20：10、31、13、19 的 19 也算錯）
+ *   - 大家在手機上排好順序、一張一張翻：跟任何一張大小順序顛倒就是排錯（老闆 11/20）
  */
 
 export const NUM_MAX = 100;
@@ -39,14 +39,22 @@ export function usedNumbers(cards) {
   return new Set(Object.values(cards).map((c) => c.n));
 }
 
-// 翻開的這幾張對不對：比前面翻開的每一張都大才對（比前面最大的那張小就是排錯）
+// 翻開的這幾張對不對：跟任何一張的大小順序顛倒就是排錯——前面有比它大的、或後面有比它小的（老闆 11/20：
+// 10、31、13、19 的 19 算錯；30、58、55、79 的 58 和 55 都算錯）。翻到後面才發現前面的錯，前面那張會跟著變成錯
 export function judge(numbers) {
+  const n = numbers.length;
+  const ok = new Array(n).fill(true);
   let max = -Infinity;
-  return numbers.map((n) => {
-    const ok = n > max;
-    if (ok) max = n;
-    return ok;
-  });
+  for (let i = 0; i < n; i += 1) {
+    if (numbers[i] < max) ok[i] = false;
+    max = Math.max(max, numbers[i]);
+  }
+  let min = Infinity;
+  for (let i = n - 1; i >= 0; i -= 1) {
+    if (numbers[i] > min) ok[i] = false;
+    min = Math.min(min, numbers[i]);
+  }
+  return ok;
 }
 
 export function cleanPerPlayer(value) {
@@ -82,13 +90,51 @@ export function tallyVotes(votes, optionCount, random = Math.random) {
   return top[Math.floor(random() * top.length)];
 }
 
-// 把一張牌挪到第 to 個位置（主持人拖曳換順序）
-export function moveTo(line, id, to) {
+/*
+ * 那一排是「固定的格子」，中間可以有空格（老闆 11/20：放進去的可以點拿出來，拿出來之後其他的不往前移）。
+ * line 裡空格是 null，結尾的空格會修掉。
+ */
+
+// 排進去：放到最左邊的空格，沒有空格就接在最後
+export function placeInto(line, id) {
+  const hole = line.indexOf(null);
+  if (hole >= 0) line[hole] = id;
+  else line.push(id);
+}
+
+// 拿出來：那一格變空格，其他不動
+export function takeOut(line, id) {
   const at = line.indexOf(id);
   if (at < 0) return false;
-  const target = Math.max(0, Math.min(line.length - 1, to));
-  if (target === at) return false;
-  line.splice(at, 1);
-  line.splice(target, 0, id);
+  line[at] = null;
+  trimLine(line);
   return true;
+}
+
+// 拖到第 to 格（大家都可以拖）：牌一定落在第 to 格；那一格有牌的話，往最近的空格那一邊擠一格（原本的位置也算空格）
+export function moveTo(line, id, to) {
+  const at = line.indexOf(id);
+  const k = Math.max(0, Math.floor(Number(to) || 0));
+  if (at < 0 || k === at) return false;
+  line[at] = null;
+  while (line.length <= k) line.push(null);
+  if (line[k] == null) {
+    line[k] = id;
+  } else {
+    let right = -1;
+    for (let i = k + 1; i < line.length; i += 1) if (line[i] == null) { right = i; break; }
+    let left = -1;
+    for (let i = k - 1; i >= 0; i -= 1) if (line[i] == null) { left = i; break; }
+    if (right < 0 && left < 0) { line.push(null); right = line.length - 1; }
+    const useRight = right >= 0 && (left < 0 || right - k <= k - left);
+    if (useRight) for (let i = right; i > k; i -= 1) line[i] = line[i - 1];
+    else for (let i = left; i < k; i += 1) line[i] = line[i + 1];
+    line[k] = id;
+  }
+  trimLine(line);
+  return true;
+}
+
+export function trimLine(line) {
+  while (line.length && line[line.length - 1] == null) line.pop();
 }

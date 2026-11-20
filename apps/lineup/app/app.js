@@ -8,7 +8,7 @@
  * 伺服器每次送 state 都附上 you（只給這支手機的）：這一輪自己的牌（數字、排在第幾張）。共用的 state 只有誰的牌排在第幾張、翻開的那幾張。
  * 老闆 11/20 再加：開房設人數上限、每人 1～3 張（大廳裡主持人選）、大家在手機上把牌排進去、牌的主人一張一張翻（另一頁）、最後展開整排看排錯幾張。
  * 主題是「第幾個」：每一輪主持人的手機從自己的 T.topics 抽三個送上去，大家投票選一個（老闆 11/20），大家照自己那份 T.topics 顯示。
- * 排的時候一排 6 格、格子先畫好，排進去從第一格往後填；全部排上去之後「我的牌」收起來，只有主持人能拖曳換順序。
+ * 排的時候格子先畫好（一排幾格看螢幕寬度），排進去放最左邊的空格；點自己的牌拿出來（空著不順移），大家都能拖曳換位置；全部排上去之後「我的牌」收起來。
  */
 (function () {
   'use strict';
@@ -745,7 +745,7 @@
   }
 
   function allPlaced(s) {
-    return s.phase === 'playing' && s.round.total > 0 && s.round.line.length >= s.round.total;
+    return s.phase === 'playing' && s.round.total > 0 && s.round.placed >= s.round.total;
   }
 
   // 翻完的那一輪：最後一張先停一下再展開整排（每支手機自己算，晚進來的直接展開）
@@ -760,9 +760,8 @@
     return Date.now() - revealShownAt[r.n] >= EXPAND_DELAY_MS;
   }
 
-  // 大家排的那一排：一排 6 格，格子照這一輪的張數先畫好（空的是虛線框）；自己的牌直接看得到數字。翻完展開時有數字和對錯
-  var dragging = null; // 主持人正在拖的那張：{ id, from, el, ghost, holder, x, y, moved }
-  var selected = null; // 主持人點選要換位置的那張（不用拖的方式）
+  // 大家排的那一排：格子照這一輪的張數先畫好（空的是虛線框，一排幾格看螢幕寬度）；自己的牌直接看得到數字。翻完展開時有數字和對錯
+  var dragging = null; // 正在拖的那張：{ id, from, ghost, cells, to, x, y, moved }
 
   function renderLine(s) {
     if (dragging) return; // 拖到一半不重畫，放開再畫
@@ -775,22 +774,35 @@
     }
     var full = allPlaced(s);
     el['line-title'].textContent = reveal ? T.flipTitle : T.lineTitle;
-    el['line-count'].textContent = t('lineCount', { n: r.line.length, total: reveal ? r.line.length : r.total });
+    el['line-count'].textContent = t('lineCount', { n: reveal ? r.line.length : r.placed, total: reveal ? r.line.length : r.total });
     var hint = '';
     if (!reveal) {
-      if (!r.line.length) hint = T.lineEmpty;
-      else if (!full) hint = t('linePlacing', { n: r.total - r.line.length });
-      else hint = me.host ? T.lineFullHost : T.lineFull;
+      if (!r.placed) hint = T.lineEmpty;
+      else if (!full) hint = t('linePlacing', { n: r.total - r.placed });
+      else hint = T.lineFull;
     }
     el['line-hint'].textContent = hint;
     el['line-hint'].hidden = !hint;
-    if (selected && r.line.map(function (c) { return c.id; }).indexOf(selected) < 0) selected = null;
-    var canDrag = me.host && !reveal && r.line.length > 1;
+    // 大家都可以拖（老闆 11/20），點自己的牌拿出來
+    el['line'].classList.toggle('is-draggable', !reveal && r.placed > 0);
+    drawLine(r.line, reveal ? r.line.length : Math.max(r.total, r.line.length), reveal, null);
+  }
+
+  // 畫那一排；holder＝拖曳時「會放在這一格」的牌 id（畫成虛線框）
+  function drawLine(line, slots, reveal, holder) {
     var list = el['line'];
-    list.classList.toggle('is-draggable', canDrag);
     list.replaceChildren();
-    var slots = reveal ? r.line.length : Math.max(r.total, r.line.length);
-    for (var i = 0; i < slots; i += 1) list.append(slotNode(r.line[i], i, reveal));
+    for (var i = 0; i < slots; i += 1) {
+      var card = line[i] || null;
+      if (holder && card && card.id === holder) {
+        var h = node('li', 'lu-slot is-holder');
+        h.dataset.index = String(i);
+        h.append(node('span', 'lu-slot-face', ''), node('span', 'lu-slot-who', ''));
+        list.append(h);
+        continue;
+      }
+      list.append(slotNode(card, i, reveal));
+    }
   }
 
   function slotNode(card, i, reveal) {
@@ -804,7 +816,6 @@
     var p = nameOf(card.owner);
     li.dataset.card = card.id;
     if (isMine(card)) li.classList.add('is-mine');
-    if (card.id === selected) li.classList.add('is-selected');
     var flipped = card.n != null;
     if (flipped) li.classList.add('is-flipped', card.ok ? 'is-ok' : 'is-bad');
     li.setAttribute('aria-label', t('cardOf', { nickname: p.nickname }) + ' · ' + t('placedAt', { k: i + 1 }) + (flipped ? ' · ' + card.n : ''));
@@ -849,7 +860,7 @@
         hand.append(col);
       });
     }
-    el['reveal'].disabled = s.round.line.length < 1;
+    el['reveal'].disabled = s.round.placed < 1;
   }
 
   // 翻牌頁（老闆 11/20）：一次一張大牌。還沒翻就是下一張（問號），翻開的那張顯示數字和對錯；全部翻完停一下，展開整排＋結果
@@ -946,7 +957,7 @@
     // 開始翻：還有牌沒排進去就先問（那幾張這一輪不算）
     el['reveal'].addEventListener('click', function () {
       var r = lastState.round;
-      var left = r.total - r.line.length;
+      var left = r.total - r.placed;
       if (left > 0) {
         askConfirm(t('revealNotAllTitle', { n: left }), T.revealNotAllDesc, T.revealButton, function () { send({ t: 'reveal' }); });
         return;
@@ -962,9 +973,9 @@
   }
 
   /*
-   * 那一排：主持人（排的時候）可以拖曳換位置，或點一張、再點要放的位置。
-   * 拖的時候那張牌跟著手指走，原本的位置換成一個虛線框，手指移到哪裡虛線框就插到哪裡（老闆 11/20：看得出會放進哪個位置），
-   * 放開就放進虛線框那一格（moveTo，其他照順序往後擠）
+   * 那一排（老闆 11/20）：大家都可以拖曳換位置；點自己排進去的牌就拿出來（那一格空著，其他不動）。
+   * 拖的時候牌變成跟著手指走的浮動卡，格子的位置在開始拖時記下來（格子是固定的，不會跟著內容跑），
+   * 手指在哪一格，就照伺服器同一套規則（moveTo：牌落在那一格，擋路的往最近的空格擠）預覽，那一格畫成虛線框
    */
   function bindLine() {
     var list = el['line'];
@@ -973,8 +984,8 @@
       var li = e.target.closest('.lu-slot');
       if (!li || !li.dataset.card || e.button > 0 || !list.classList.contains('is-draggable')) return;
       e.preventDefault();
-      dragging = { id: li.dataset.card, from: Number(li.dataset.index), el: li, x: e.clientX, y: e.clientY, moved: false };
-      // 移動、放開掛在 window：拖的那格會被換成虛線框（離開 DOM），事件不能靠它冒泡
+      dragging = { id: li.dataset.card, from: Number(li.dataset.index), el: li, x: e.clientX, y: e.clientY, moved: false, to: Number(li.dataset.index) };
+      // 移動、放開掛在 window：拖的時候那一排會重畫，事件不能靠原本那格冒泡
       window.addEventListener('pointermove', move);
       window.addEventListener('pointerup', end);
       window.addEventListener('pointercancel', end);
@@ -987,7 +998,10 @@
         startDrag(d);
       }
       d.ghost.style.transform = 'translate(' + (e.clientX - d.x) + 'px,' + (e.clientY - d.y) + 'px)';
-      placeHolder(d, e.clientX, e.clientY);
+      var k = cellAt(d.cells, e.clientX, e.clientY);
+      if (k < 0 || k === d.to) return;
+      d.to = k;
+      previewLine(d);
     };
     var end = function (e) {
       window.removeEventListener('pointermove', move);
@@ -996,32 +1010,22 @@
       if (!dragging) return;
       var d = dragging;
       dragging = null;
+      if (d.ghost) d.ghost.remove();
       if (d.moved) {
-        var to = Array.prototype.indexOf.call(list.children, d.holder);
-        if (d.ghost) d.ghost.remove();
-        if (e.type === 'pointerup' && to >= 0 && to !== d.from) send({ t: 'moveTo', card: d.id, to: to });
-        selected = null;
-        render();
-        return;
-      }
-      // 沒有拖：點一張選起來，再點另一張就放到那一格
-      if (e.type === 'pointerup') {
-        if (selected && selected !== d.id) {
-          send({ t: 'moveTo', card: selected, to: d.from });
-          selected = null;
-        } else {
-          selected = selected === d.id ? null : d.id;
-        }
+        if (e.type === 'pointerup' && d.to !== d.from) send({ t: 'moveTo', card: d.id, to: d.to });
+      } else if (e.type === 'pointerup' && d.el.classList.contains('is-mine')) {
+        // 沒有拖、點的是自己的牌：拿出來
+        send({ t: 'takeOut', card: d.id });
       }
       render();
     };
   }
 
-  // 開始拖：原本那格換成虛線框，牌本身變成跟著手指走的浮動卡（放在 body 上，不會被格子擠來擠去）
+  // 開始拖：記下每一格的位置，牌變成 body 上跟著手指走的浮動卡，原本那格畫成虛線框
   function startDrag(d) {
     d.moved = true;
+    d.cells = Array.prototype.map.call(el['line'].children, function (n) { return n.getBoundingClientRect(); });
     var rect = d.el.getBoundingClientRect();
-    d.rect = rect;
     var ghost = d.el.cloneNode(true);
     ghost.classList.add('lu-ghost');
     ghost.style.left = rect.left + 'px';
@@ -1029,29 +1033,43 @@
     ghost.style.width = rect.width + 'px';
     document.body.append(ghost);
     d.ghost = ghost;
-    var holder = node('li', 'lu-slot is-holder');
-    holder.append(node('span', 'lu-slot-face', ''), node('span', 'lu-slot-who', ''));
-    d.el.replaceWith(holder);
-    d.holder = holder;
+    previewLine(d);
   }
 
-  // 虛線框插到手指下面那張的前面或後面（手指在那張的左半邊＝前面）
-  function placeHolder(d, x, y) {
-    var list = el['line'];
-    var cards = Array.prototype.filter.call(list.children, function (n) { return n !== d.holder && !n.classList.contains('is-empty'); });
-    var target = null;
-    var after = false;
-    for (var i = 0; i < cards.length; i += 1) {
-      var r = cards[i].getBoundingClientRect();
-      if (y >= r.top - 6 && y <= r.bottom + 6 && x >= r.left - 6 && x <= r.right + 6) {
-        target = cards[i];
-        after = x > r.left + r.width / 2;
-        break;
-      }
+  function cellAt(cells, x, y) {
+    for (var i = 0; i < cells.length; i += 1) {
+      var r = cells[i];
+      if (x >= r.left - 4 && x <= r.right + 4 && y >= r.top - 4 && y <= r.bottom + 4) return i;
     }
-    if (!target) return;
-    var ref = after ? target.nextSibling : target;
-    if (ref !== d.holder) list.insertBefore(d.holder, ref);
+    return -1;
+  }
+
+  // 照 moveTo 的規則（跟 src/game.js 同一套）算出放下去之後的樣子，畫出來
+  function previewLine(d) {
+    var r = lastState.round;
+    var line = r.line.map(function (c) { return c ? c.id : null; });
+    var slots = Math.max(r.total, line.length);
+    if (d.to !== d.from) moveToLocal(line, d.id, d.to);
+    var byId = {};
+    r.line.forEach(function (c) { if (c) byId[c.id] = c; });
+    drawLine(line.map(function (id) { return id ? byId[id] : null; }), slots, false, d.id);
+  }
+
+  function moveToLocal(line, id, k) {
+    var at = line.indexOf(id);
+    if (at < 0 || k === at) return;
+    line[at] = null;
+    while (line.length <= k) line.push(null);
+    if (line[k] == null) { line[k] = id; return; }
+    var right = -1;
+    var left = -1;
+    var i;
+    for (i = k + 1; i < line.length; i += 1) if (line[i] == null) { right = i; break; }
+    for (i = k - 1; i >= 0; i -= 1) if (line[i] == null) { left = i; break; }
+    if (right < 0 && left < 0) { line.push(null); right = line.length - 1; }
+    if (right >= 0 && (left < 0 || right - k <= k - left)) for (i = right; i > k; i -= 1) line[i] = line[i - 1];
+    else for (i = left; i < k; i += 1) line[i] = line[i + 1];
+    line[k] = id;
   }
 
   /* ---------- 離開 / 關閉房間（照搶答：頂欄返回鍵＝離開，開始後先確認） ---------- */
@@ -1160,7 +1178,6 @@
     you = { cards: [] };
     handKey = '';
     dragging = null;
-    selected = null;
     revealShownAt = {};
     prevPhaseKey = '';
     renderedQrUrl = null;

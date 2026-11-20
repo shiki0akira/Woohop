@@ -32,10 +32,14 @@ test('中途補發不會跟已經用掉的重複；用光就回 null', () => {
   assert.deepEqual(Object.keys(cards).filter((k) => k.startsWith('late.')), ['late.0', 'late.1']);
 });
 
-test('翻牌對錯：比前面翻開的任何一張小就是排錯', () => {
+test('翻牌對錯：跟任何一張大小順序顛倒就是排錯', () => {
   assert.deepEqual(judge([3, 12, 50, 99]), [true, true, true, true]);
-  // 老闆 11/20 的例子：19 比前面的 31 小，也算錯
-  assert.deepEqual(judge([10, 31, 13, 19, 67, 51]), [true, true, false, false, true, false]);
+  // 老闆 11/20 的例子：30、58、55、79 的 58 和 55 都算錯
+  assert.deepEqual(judge([30, 58, 55, 79]), [true, false, false, true]);
+  // 10、31、13、19 的 19 也算錯（比前面的 31 小）
+  assert.deepEqual(judge([10, 31, 13, 19]), [true, false, false, false]);
+  // 翻到一半：前面那張是不是錯，後面翻開才知道
+  assert.deepEqual(judge([30, 58]), [true, true]);
   assert.deepEqual(judge([]), []);
 });
 
@@ -65,13 +69,35 @@ test('主題投票：票最多的贏，平手只會在最高票裡挑', async ()
   for (let i = 0; i < 50; i += 1) assert.ok([0, 1, 2].includes(tallyVotes({}, 3)));
 });
 
-test('主持人拖曳：挪到指定位置，其他照順序往後擠', async () => {
+test('排進去填最左邊的空格、拿出來不順移', async () => {
+  const { placeInto, takeOut } = await import('../src/game.js');
+  const line = [];
+  placeInto(line, 'a'); placeInto(line, 'b'); placeInto(line, 'c');
+  assert.deepEqual(line, ['a', 'b', 'c']);
+  assert.ok(takeOut(line, 'b'));
+  assert.deepEqual(line, ['a', null, 'c']);
+  placeInto(line, 'd');
+  assert.deepEqual(line, ['a', 'd', 'c']);
+  takeOut(line, 'c');
+  assert.deepEqual(line, ['a', 'd']);
+});
+
+test('拖曳：牌落在指定的格子，擋路的往最近的空格擠', async () => {
   const { moveTo } = await import('../src/game.js');
-  const line = ['a', 'b', 'c', 'd'];
-  assert.ok(moveTo(line, 'd', 0));
+  let line = ['a', 'b', 'c', 'd'];
+  assert.ok(moveTo(line, 'd', 0)); // 最後一張拖到第一格：原本的位置空出來，前面三張往後擠
   assert.deepEqual(line, ['d', 'a', 'b', 'c']);
-  assert.ok(moveTo(line, 'd', 9));
+  assert.ok(moveTo(line, 'd', 3)); // 再拖回最後一格
   assert.deepEqual(line, ['a', 'b', 'c', 'd']);
+  line = ['a', null, 'c', 'd'];
+  assert.ok(moveTo(line, 'a', 1)); // 拖到空格：直接放
+  assert.deepEqual(line, [null, 'a', 'c', 'd']);
+  line = ['a', 'b', null, 'c', 'd'];
+  assert.ok(moveTo(line, 'd', 1)); // 拖到 b：b 往右邊最近的空格擠
+  assert.deepEqual(line, ['a', 'd', 'b', 'c']);
+  line = ['a', 'b'];
+  assert.ok(moveTo(line, 'a', 3)); // 拖到後面的空格
+  assert.deepEqual(line, [null, 'b', null, 'a']);
   assert.equal(moveTo(line, 'x', 1), false);
   assert.equal(moveTo(line, 'b', 1), false);
 });

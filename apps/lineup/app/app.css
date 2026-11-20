@@ -123,28 +123,27 @@
 .scale-line::before { left: -1px; transform: rotate(135deg); }
 .scale-line::after { right: -1px; transform: rotate(-45deg); }
 
-/* ---------- 大家排的那一排：一排 6 格，格子先畫好，空的是虛線框；方塊一律正方形（老闆 11/20） ---------- */
-.lineup-app { --slot: 52px; --hand-size: 96px; }
-.lu-row { display: grid; grid-template-columns: repeat(6, var(--slot)); justify-content: center; gap: 10px 8px; margin: 10px 0 0; padding: 0; list-style: none; }
-@media (max-width: 400px) { .lineup-app { --slot: 44px; } .lu-row { column-gap: 6px; } }
+/* ---------- 大家排的那一排：格子先畫好，空的是虛線框；方塊正方形、填滿寬度，一排幾格看螢幕寬度（老闆 11/20） ---------- */
+.lineup-app { --slot-min: 64px; --hand-size: 96px; }
+.lu-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--slot-min), 1fr)); gap: 12px 8px; margin: 10px 0 0; padding: 0; list-style: none; }
+@media (max-width: 400px) { .lineup-app { --slot-min: 54px; } }
 .lu-row:empty { display: none; }
-.lu-slot { position: relative; display: grid; justify-items: center; gap: 3px; width: var(--slot); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.lu-slot { position: relative; display: grid; justify-items: center; gap: 6px; min-width: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .lu-slot-face {
-  position: relative; display: grid; place-items: center; width: var(--slot); height: var(--slot); box-sizing: border-box; border: 2px solid var(--outline); border-radius: 12px;
+  position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1; box-sizing: border-box; border: 2px solid var(--outline); border-radius: 14px;
   background: var(--surface); box-shadow: 0 3px 0 var(--outline);
-  font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-size: 20px; font-weight: 700; color: var(--muted);
+  font-family: "Fredoka", "Nunito", system-ui, sans-serif; font-size: 24px; font-weight: 700; color: var(--muted);
 }
 .lu-slot-pos { position: absolute; top: 3px; left: 5px; font: 800 10px/1 Nunito, system-ui, sans-serif; color: var(--muted); }
 /* 還沒放牌的格子：虛線框＋第幾格 */
 .lu-slot.is-empty .lu-slot-face { border-style: dashed; background: transparent; box-shadow: none; font-size: 14px; opacity: .7; }
-.lu-slot-who { display: flex; align-items: center; justify-content: center; gap: 2px; max-width: calc(var(--slot) + 8px); min-height: 16px; font-size: 11px; font-weight: 800; }
+.lu-slot-who { display: flex; align-items: center; justify-content: center; gap: 2px; max-width: 100%; min-height: 16px; font-size: 11px; font-weight: 800; }
 .lu-slot-who > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lu-slot-who svg.avatar { width: 16px; height: 16px; }
 /* 自己的牌：藍色，數字直接看得到 */
 .lu-slot.is-mine .lu-slot-face { border-color: var(--blue-edge); background: var(--blue-face); box-shadow: 0 3px 0 var(--blue-edge); color: var(--ink); }
-/* 主持人換順序：可以拖的牌、點選中的牌 */
+/* 大家都可以拖（老闆 11/20），點自己的牌拿出來 */
 .lu-row.is-draggable .lu-slot:not(.is-empty) { touch-action: none; cursor: grab; }
-.lu-slot.is-selected .lu-slot-face { outline: 3px solid var(--ink); outline-offset: 2px; }
 /* 拖的時候：要插進去的位置是一個虛線框（老闆 11/20），牌本身浮在手指下面 */
 .lu-slot.is-holder .lu-slot-face { border: 2px dashed var(--mint-edge); background: var(--mint-face); box-shadow: none; opacity: .8; }
 .lu-ghost { position: fixed; z-index: 80; margin: 0; pointer-events: none; list-style: none; }
@@ -163,7 +162,7 @@
 
 /* ---------- 我的牌：數字直接看得到（老闆 11/20）；下面是「排進去」或第幾張。排進去前後一樣大 ---------- */
 .hand { display: flex; justify-content: center; gap: 12px; margin-top: 8px; }
-.hand-col { flex: none; display: grid; justify-items: center; align-content: start; gap: 6px; width: var(--hand-size); }
+.hand-col { flex: none; display: grid; justify-items: center; align-content: start; gap: 12px; width: var(--hand-size); }
 .hand-card {
   display: grid; place-items: center; width: var(--hand-size); height: var(--hand-size); box-sizing: border-box;
   border: 3px solid var(--mint-edge); border-radius: 20px; background: var(--mint-face); box-shadow: 0 5px 0 var(--mint-edge);
@@ -232,4 +231,11 @@
   .topic-card strong { font-size: 22px; }
   .vote-option { padding: 10px 12px; gap: 6px; }
   .vote-name { font-size: 18px; }
+}
+/* 很矮的手機（375×667 這種，排兩行的時候）：我的牌再小一號 */
+@media (max-height: 700px) {
+  .lineup-app { --hand-size: 64px; }
+  .hand-col { gap: 8px; }
+  .lu-slot { gap: 4px; }
+  .lu-row { row-gap: 8px; }
 }
