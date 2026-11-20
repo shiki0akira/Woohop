@@ -5,8 +5,10 @@
  * 老闆 11/20：大家掃**同一個** QR code 加入、伺服器分配不同的數字、每支手機都看得到題目；主持人用自己那支手機一起玩。
  * 「我是不是主持人」由伺服器在 welcome 回答（clientId 存在 localStorage，重整後還是主持人）。
  *
- * 伺服器每次送 state 都附上 you（只給這支手機的）：這一輪自己的數字。共用的 state 只有翻開的那幾張。
- * 主題是「第幾個」：主持人的手機從自己的 T.topics 抽、送上去，大家照自己那份 T.topics 顯示。
+ * 伺服器每次送 state 都附上 you（只給這支手機的）：這一輪自己的牌（數字、排在第幾張）。共用的 state 只有誰的牌排在第幾張、翻開的那幾張。
+ * 老闆 11/20 再加：每人 1～3 張（開房時選）、大家在手機上把牌排進去、牌的主人一張一張翻、最後看排錯幾張。
+ * 主題是「第幾個」：每一輪主持人的手機從自己的 T.topics 抽三個送上去，大家投票選一個（老闆 11/20），大家照自己那份 T.topics 顯示。
+ * 排的時候一排 6 格、格子先畫好，排進去從第一格往後填；全部排上去之後「我的牌」收起來，只有主持人能拖曳換順序。
  */
 (function () {
   'use strict';
@@ -30,7 +32,9 @@
   var roomCode = null;
   var me = null; // { id, host, nickname }
   var lastState = null;
-  var you = { number: null };
+  var you = { cards: [] };
+  var perPlayer = 1; // 開房時選的每人幾張牌
+  var handKey = ''; // 我的牌畫過的樣子，沒變就不重畫（不然按住看數字的時候被廣播洗掉）
   var pendingNickname = '';
   var currentView = null;
   var currentAvatar = 'initial';
@@ -49,6 +53,7 @@
     if (profile.nickname) el['nickname'].value = profile.nickname;
     renderAvatarPicker();
     bindHome();
+    bindPerPlayer();
     bindJoin();
     bindRoom();
     bindExit();
@@ -70,13 +75,14 @@
   function cacheElements() {
     [
       'view-home', 'view-join', 'view-room', 'view-error',
-      'create-room', 'create-error', 'join-code', 'join-room', 'join-error',
+      'per-stepper', 'per-player-out', 'per-player-tag', 'create-room', 'create-error', 'join-code', 'join-room', 'join-error',
       'join-title', 'avatar-picker', 'nickname', 'enter-room', 'nickname-error',
       'share-card', 'host-room-code', 'copy-link', 'share-link', 'qr-box',
       'player-count', 'player-list', 'start-game', 'start-need',
-      'round-tag', 'topic-name', 'scale-lo', 'scale-lo-ex', 'scale-hi', 'scale-hi-ex', 'topic-shuffle',
-      'you-card', 'you-number', 'you-hold', 'you-hint', 'reveal',
-      'flip-count', 'mine-line', 'lineup', 'reveal-done', 'flip', 'next-round', 'wait-flip',
+      'vote-title', 'vote-count', 'vote-list', 'decide',
+      'round-tag', 'topic-name', 'scale-lo', 'scale-hi',
+      'line-title', 'line-count', 'line', 'line-hint', 'hand-panel', 'hand', 'hand-wait', 'reveal',
+      'flip-actions', 'flip', 'flip-wait', 'result', 'result-title', 'result-desc', 'next-round',
       'error-title', 'error-desc', 'conn-banner',
       'confirm-dialog', 'confirm-title', 'confirm-desc', 'confirm-cancel', 'confirm-ok',
       'closed-dialog', 'closed-ok', 'kicked-dialog', 'kicked-ok',
@@ -365,6 +371,24 @@
     return location.origin + BASE + '/' + LANG + '/?room=' + roomCode;
   }
 
+  // 每人幾張牌：設計系統的 .stepper（照喜好二選一的人數上限），1～3
+  function bindPerPlayer() {
+    el['per-stepper'].addEventListener('click', function (event) {
+      var button = event.target.closest('button[data-step]');
+      if (!button) return;
+      perPlayer = Math.min(3, Math.max(1, perPlayer + Number(button.dataset.step)));
+      el['per-player-out'].textContent = String(perPlayer);
+      syncStepper();
+    });
+    syncStepper();
+  }
+
+  function syncStepper() {
+    var buttons = el['per-stepper'].querySelectorAll('button[data-step]');
+    buttons[0].disabled = perPlayer <= 1;
+    buttons[1].disabled = perPlayer >= 3;
+  }
+
   function createRoom() {
     hideFieldError(el['create-error']);
     var button = el['create-room'];
@@ -373,14 +397,14 @@
     fetch(API_ORIGIN + BASE + '/api/rooms', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ hostId: clientId(), lang: LANG }),
+      body: JSON.stringify({ hostId: clientId(), lang: LANG, perPlayer: perPlayer }),
     })
       .then(function (res) {
         if (!res.ok) throw new Error('create_failed');
         return res.json();
       })
       .then(function (data) {
-        track('lineup_room_created', { room_id: data.code });
+        track('lineup_room_created', { room_id: data.code, per_player: perPlayer });
         justCreated = true;
         enterRoom(data.code);
       })
@@ -554,28 +578,34 @@
   // 換階段時要做一次的事：新的一輪震一下（拿到新數字了）
   function onPhaseChange(prev, state) {
     if (state.phase === 'playing' && navigator.vibrate) navigator.vibrate(60);
-    setOpen(false);
+    handKey = '';
   }
 
-  /* ---------- 主題：主持人的手機抽（洗牌，抽完才重洗），送「第幾個」上去 ---------- */
+  /* ---------- 主題：主持人的手機一次抽三個給大家投票（洗牌，抽完才重洗），送「第幾個」上去 ---------- */
 
-  function drawTopic(avoid) {
-    if (!topicDeck.length) {
-      topicDeck = T.topics.map(function (_, i) { return i; });
-      for (var i = topicDeck.length - 1; i > 0; i -= 1) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = topicDeck[i];
-        topicDeck[i] = topicDeck[j];
-        topicDeck[j] = tmp;
+  function drawTopics() {
+    var avoid = lastState && lastState.round && lastState.round.topic;
+    var picks = [];
+    var guard = 0;
+    while (picks.length < Math.min(3, T.topics.length) && guard < 200) {
+      guard += 1;
+      if (!topicDeck.length) {
+        topicDeck = T.topics.map(function (_, i) { return i; });
+        for (var i = topicDeck.length - 1; i > 0; i -= 1) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = topicDeck[i];
+          topicDeck[i] = topicDeck[j];
+          topicDeck[j] = tmp;
+        }
       }
-      if (topicDeck.length > 1 && topicDeck[topicDeck.length - 1] === avoid) topicDeck.unshift(topicDeck.pop());
+      var n = topicDeck.pop();
+      if (picks.indexOf(n) < 0 && n !== avoid) picks.push(n);
     }
-    return topicDeck.pop();
+    return picks;
   }
 
-  function currentTopic() {
-    var r = lastState && lastState.round;
-    return r ? r.topic : -1;
+  function topicOf(index) {
+    return T.topics[index % T.topics.length];
   }
 
   /* ---------- 房間畫面 ---------- */
@@ -600,9 +630,13 @@
     view.querySelectorAll('[data-player]').forEach(function (n) { if (me.host) n.hidden = true; });
 
     if (s.phase === 'lobby') renderLobby(s);
-    if (s.phase === 'playing' || s.phase === 'reveal') renderTopic(s);
-    if (s.phase === 'playing') renderYou(s);
-    if (s.phase === 'reveal') renderReveal(s);
+    if (s.phase === 'voting') renderVote(s);
+    if (s.phase === 'playing' || s.phase === 'reveal') {
+      renderTopic(s);
+      renderLine(s);
+    }
+    if (s.phase === 'playing') renderHand(s);
+    if (s.phase === 'reveal') renderFlip(s);
   }
 
   function renderLobby(s) {
@@ -621,6 +655,7 @@
       el['start-need'].textContent = t('startNeed', { n: s.minPlayers });
     }
     el['player-count'].textContent = t('playerCount', { n: s.players.length, max: s.maxPlayers });
+    el['per-player-tag'].textContent = t('perPlayerTag', { n: s.perPlayer });
     renderPlayers(el['player-list'], s.players);
   }
 
@@ -649,61 +684,181 @@
     });
   }
 
-  // 主題卡：每支手機都一樣（主持人多一顆骰子）
+  // 投票：三個主題（例子寫在這裡），每個選項下面是投它的人
+  function renderVote(s) {
+    var r = s.round;
+    var votes = r.votes || {};
+    var voted = Object.keys(votes).length;
+    var online = s.players.filter(function (p) { return p.online; }).length;
+    el['vote-title'].textContent = t('voteTitle', { n: r.n });
+    el['vote-count'].textContent = t('voteCount', { n: voted, total: online });
+    var list = el['vote-list'];
+    list.replaceChildren();
+    r.options.forEach(function (index, pick) {
+      var topic = topicOf(index);
+      var b = node('button', 'vote-option');
+      b.type = 'button';
+      if (votes[me.id] === pick) b.classList.add('is-picked');
+      b.setAttribute('aria-pressed', votes[me.id] === pick ? 'true' : 'false');
+      b.append(node('strong', 'vote-name', topic[0]));
+      var ends = node('span', 'vote-ends');
+      var lo = node('span', 'vote-end');
+      lo.append(node('b', '', '1'), document.createTextNode(t('voteEnd', { lo: topic[1], ex: topic[2] })));
+      var hi = node('span', 'vote-end');
+      hi.append(node('b', '', '100'), document.createTextNode(t('voteEnd', { lo: topic[3], ex: topic[4] })));
+      ends.append(lo, hi);
+      b.append(ends);
+      var voters = node('span', 'vote-voters');
+      Object.keys(votes).forEach(function (id) {
+        if (votes[id] !== pick) return;
+        var p = nameOf(id);
+        voters.append(avatarSvg(p.avatar, 22, p.nickname));
+      });
+      b.append(voters);
+      b.addEventListener('click', function () { send({ t: 'vote', pick: pick }); });
+      list.append(b);
+    });
+    el['decide'].disabled = false;
+  }
+
+  // 主題卡：排的時候只有題目和「1 越小 ←→ 100 越大」
   function renderTopic(s) {
-    var topic = T.topics[s.round.topic % T.topics.length];
+    var topic = topicOf(s.round.topic);
     el['round-tag'].textContent = t('roundLabel', { n: s.round.n });
     el['topic-name'].textContent = topic[0];
     el['scale-lo'].textContent = topic[1];
-    el['scale-lo-ex'].textContent = t('exampleLabel', { text: topic[2] });
     el['scale-hi'].textContent = topic[3];
-    el['scale-hi-ex'].textContent = t('exampleLabel', { text: topic[4] });
   }
 
-  // 自己的數字：按住才看得到（公布中才加入的人這一輪沒有數字）
-  function renderYou(s) {
-    var has = you.number != null;
-    el['you-number'].textContent = has ? you.number : '';
-    el['you-card'].disabled = !has;
-    el['you-hold'].textContent = has ? T.youHold : T.youWaitNext;
-    el['reveal'].disabled = s.round.total < 1;
+  function isMine(card) {
+    return card.owner === me.id;
   }
 
-  function setOpen(open) {
-    if (el['you-card']) el['you-card'].classList.toggle('is-open', open);
+  function myNumber(cardId) {
+    var c = (you.cards || []).filter(function (x) { return x.id === cardId; })[0];
+    return c ? c.n : null;
   }
 
-  // 公布：翻開的那幾張（第 k 位、誰、幾號）＋還沒翻的空格
-  function renderReveal(s) {
+  function allPlaced(s) {
+    return s.phase === 'playing' && s.round.total > 0 && s.round.line.length >= s.round.total;
+  }
+
+  // 大家排的那一排：一排 6 格，格子照這一輪的張數先畫好（空的是虛線框），翻開的有數字和對錯
+  var dragging = null; // 主持人正在拖的那張：{ id, from, el, x, y, moved }
+  var selected = null; // 主持人點選要換位置的那張（不用拖的方式）
+
+  function renderLine(s) {
+    if (dragging) return; // 拖到一半不重畫，放開再畫
     var r = s.round;
-    var opened = r.flipped.length;
-    el['flip-count'].textContent = t('flipCount', { n: opened, total: r.total });
-    el['mine-line'].textContent = you.number != null ? t('mineLine', { n: you.number }) : '';
-    el['mine-line'].hidden = you.number == null;
-    var list = el['lineup'];
+    var reveal = s.phase === 'reveal';
+    var full = allPlaced(s);
+    el['line-title'].textContent = reveal ? T.flipTitle : T.lineTitle;
+    el['line-count'].textContent = t('lineCount', { n: reveal ? r.flipped : r.line.length, total: reveal ? r.line.length : r.total });
+    var hint = '';
+    if (!reveal) {
+      if (!r.line.length) hint = T.lineEmpty;
+      else if (!full) hint = t('linePlacing', { n: r.total - r.line.length });
+      else hint = me.host ? T.lineFullHost : T.lineFull;
+    }
+    el['line-hint'].textContent = hint;
+    el['line-hint'].hidden = !hint;
+    if (selected && r.line.map(function (c) { return c.id; }).indexOf(selected) < 0) selected = null;
+    var canDrag = me.host && !reveal && r.line.length > 1;
+    var list = el['line'];
+    list.classList.toggle('is-draggable', canDrag);
     list.replaceChildren();
-    for (var i = 0; i < r.total; i += 1) {
-      var card = r.flipped[i];
-      var li = node('li', card ? 'is-flipped' : '');
-      li.append(node('span', 'place', t('placeLabel', { k: i + 1 })));
-      var face = node('span', 'num', card ? String(card.n) : '?');
-      li.append(face);
-      if (card) {
-        var p = nameOf(card.id);
-        if (card.id === me.id) li.classList.add('is-me');
-        var who = node('span', 'who');
-        who.append(avatarSvg(p.avatar, 22, p.nickname), node('span', '', p.nickname));
-        li.append(who);
+    var slots = reveal ? r.line.length : Math.max(r.total, r.line.length);
+    for (var i = 0; i < slots; i += 1) {
+      var card = r.line[i];
+      var li = node('li', 'lu-slot');
+      li.dataset.index = String(i);
+      if (!card) {
+        li.classList.add('is-empty');
+        li.append(node('span', 'lu-slot-face', String(i + 1)), node('span', 'lu-slot-who', ''));
+        list.append(li);
+        continue;
       }
+      var p = nameOf(card.owner);
+      li.dataset.card = card.id;
+      if (isMine(card)) li.classList.add('is-mine');
+      if (card.id === selected) li.classList.add('is-selected');
+      var flipped = card.n != null;
+      if (flipped) li.classList.add('is-flipped', card.ok ? 'is-ok' : 'is-bad');
+      if (reveal && i === r.flipped) li.classList.add('is-next');
+      li.setAttribute('aria-label', t('cardOf', { nickname: p.nickname }) + ' · ' + t('placedAt', { k: i + 1 }) + (flipped ? ' · ' + card.n : ''));
+      var face = node('span', 'lu-slot-face');
+      face.append(node('span', 'lu-slot-pos', String(i + 1)));
+      // 自己的牌按住也看得到數字（「我的牌」收起來之後還能看）
+      var mineN = !flipped && isMine(card) ? myNumber(card.id) : null;
+      face.append(node('span', 'lu-slot-num', flipped ? String(card.n) : '?'));
+      if (mineN != null) face.append(node('span', 'lu-slot-peek', String(mineN)));
+      if (flipped) face.append(node('span', 'lu-slot-mark', card.ok ? '✓' : '✗'));
+      li.append(face);
+      var who = node('span', 'lu-slot-who');
+      who.append(avatarSvg(p.avatar, 16, p.nickname), node('span', '', p.nickname));
+      li.append(who);
       list.append(li);
     }
-    var done = opened >= r.total;
-    el['reveal-done'].hidden = !done;
-    if (me.host) {
-      el['flip'].hidden = done;
-      el['next-round'].hidden = !done;
+  }
+
+  // 我的牌（照數字小到大）：按住看數字；沒排的「排進去」（放到下一個空格），排了的顯示第幾張。大家都排完就收起來
+  function renderHand(s) {
+    var cards = you.cards || [];
+    var full = allPlaced(s);
+    el['hand-panel'].hidden = full;
+    el['hand-wait'].hidden = cards.length > 0;
+    var key = s.round.n + '|' + cards.map(function (c) { return c.id + ':' + c.n + ':' + c.at; }).join(',');
+    if (key !== handKey) {
+      handKey = key;
+      var hand = el['hand'];
+      hand.replaceChildren();
+      hand.style.setProperty('--hand-count', String(Math.max(1, cards.length)));
+      cards.forEach(function (c) {
+        var col = node('div', 'hand-col');
+        var card = node('button', 'hand-card');
+        card.type = 'button';
+        card.setAttribute('aria-label', T.holdHint);
+        card.append(node('span', 'hand-num', String(c.n)));
+        col.append(card);
+        if (c.at < 0) {
+          var place = node('button', 'btn btn-sm btn-solid hand-place', T.placeButton);
+          place.type = 'button';
+          place.addEventListener('click', function () { send({ t: 'place', card: c.id }); });
+          col.append(place);
+        } else {
+          col.classList.add('is-placed');
+          col.append(node('span', 'hand-at', t('placedAt', { k: c.at + 1 })));
+        }
+        hand.append(col);
+      });
     }
-    el['wait-flip'].hidden = me.host || done;
+    el['reveal'].disabled = s.round.line.length < 1;
+  }
+
+  // 翻牌：下一張的主人翻（主持人可以幫忙）；全部翻完換成結果
+  function renderFlip(s) {
+    var r = s.round;
+    var done = r.flipped >= r.line.length;
+    el['flip-actions'].hidden = done;
+    el['result'].hidden = !done;
+    if (done) {
+      var ok = r.line.length - r.wrong;
+      el['result'].classList.toggle('is-perfect', r.wrong === 0);
+      el['result-title'].textContent = r.wrong === 0 ? T.resultAllTitle : t('resultWrongTitle', { n: r.wrong });
+      el['result-desc'].textContent = r.wrong === 0 ? t('resultAllDesc', { n: r.line.length }) : t('resultWrongDesc', { ok: ok });
+      if (me.host && revealedRound !== r.n) {
+        revealedRound = r.n;
+        track('lineup_revealed', { round_number: r.n, cards: r.line.length, wrong: r.wrong, per_player: s.perPlayer, topic: topicOf(r.topic)[0] });
+      }
+      return;
+    }
+    var next = r.line[r.flipped];
+    var owner = nameOf(next.owner);
+    var mine = isMine(next);
+    el['flip'].hidden = !mine && !me.host;
+    el['flip'].textContent = mine ? T.flipMine : t('flipFor', { nickname: owner.nickname });
+    el['flip-wait'].hidden = mine;
+    el['flip-wait'].textContent = t('flipWait', { nickname: owner.nickname });
   }
 
   function renderQr(url) {
@@ -728,42 +883,121 @@
 
   function bindRoom() {
     el['start-game'].addEventListener('click', function () {
-      track('lineup_game_started', { player_count: lastState.players.length });
-      send({ t: 'startGame', topic: drawTopic(-1) });
+      track('lineup_game_started', { player_count: lastState.players.length, per_player: lastState.perPlayer });
+      send({ t: 'startGame', topics: drawTopics() });
       requestWakeLock();
     });
-    el['topic-shuffle'].addEventListener('click', function () {
-      var topic = drawTopic(currentTopic());
-      send({ t: 'setTopic', topic: topic });
-      track('lineup_topic_changed', { round_number: lastState.round.n, topic: T.topics[topic][0] });
-    });
-    el['reveal'].addEventListener('click', function () { send({ t: 'reveal' }); });
-    el['flip'].addEventListener('click', function () {
-      send({ t: 'flip' });
+    el['decide'].addEventListener('click', function () { send({ t: 'decide' }); });
+    // 開始翻：還有牌沒排進去就先問（那幾張這一輪不算）
+    el['reveal'].addEventListener('click', function () {
       var r = lastState.round;
-      if (r.flipped.length + 1 >= r.total && revealedRound !== r.n) {
-        revealedRound = r.n;
-        track('lineup_revealed', { round_number: r.n, player_count: r.total, topic: T.topics[r.topic % T.topics.length][0] });
+      var left = r.total - r.line.length;
+      if (left > 0) {
+        askConfirm(t('revealNotAllTitle', { n: left }), T.revealNotAllDesc, T.revealButton, function () { send({ t: 'reveal' }); });
+        return;
       }
+      send({ t: 'reveal' });
     });
+    el['flip'].addEventListener('click', function () { send({ t: 'flip' }); });
     el['next-round'].addEventListener('click', function () {
-      send({ t: 'nextRound', topic: drawTopic(currentTopic()) });
+      send({ t: 'nextRound', topics: drawTopics() });
     });
 
-    // 自己的數字：按住看、放開蓋起來；鍵盤（沒有按住可言）就是按一下切換
-    var card = el['you-card'];
-    card.addEventListener('pointerdown', function (e) {
-      if (e.button > 0 || card.disabled) return;
+    // 我的牌：按住看、放開蓋起來（事件掛在外層，牌重畫也不用重綁）；鍵盤（沒有按住可言）就是按一下切換
+    var hand = el['hand'];
+    hand.addEventListener('pointerdown', function (e) {
+      var card = e.target.closest('.hand-card');
+      if (!card || e.button > 0) return;
       e.preventDefault();
-      setOpen(true);
+      card.classList.add('is-open');
+      try { card.setPointerCapture(e.pointerId); } catch (err) { /* 舊瀏覽器 */ }
     });
-    ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (type) {
-      card.addEventListener(type, function () { setOpen(false); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (type) {
+      hand.addEventListener(type, function (e) {
+        var card = e.target.closest && e.target.closest('.hand-card');
+        if (card) card.classList.remove('is-open');
+      });
     });
-    card.addEventListener('click', function (e) {
-      if (e.detail === 0) setOpen(!card.classList.contains('is-open'));
+    hand.addEventListener('click', function (e) {
+      var card = e.target.closest('.hand-card');
+      if (card && e.detail === 0) card.classList.toggle('is-open');
     });
-    card.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    hand.addEventListener('contextmenu', function (e) { if (e.target.closest('.hand-card, .lu-slot')) e.preventDefault(); });
+    bindLine();
+  }
+
+  /*
+   * 那一排：自己的牌按住看數字；主持人（排的時候）可以拖曳換位置，或點一張、再點要放的格子。
+   * 拖的時候那張牌跟著手指走，放開時手指下面是哪一格就放到哪一格（moveTo，其他照順序往後擠）
+   */
+  function bindLine() {
+    var list = el['line'];
+    list.addEventListener('contextmenu', function (e) { if (e.target.closest('.lu-slot')) e.preventDefault(); });
+    list.addEventListener('pointerdown', function (e) {
+      var li = e.target.closest('.lu-slot');
+      if (!li || !li.dataset.card || e.button > 0) return;
+      var canDrag = list.classList.contains('is-draggable');
+      if (li.classList.contains('is-mine')) li.classList.add('is-peek');
+      if (!canDrag && !li.classList.contains('is-mine')) return;
+      e.preventDefault();
+      dragging = { id: li.dataset.card, from: Number(li.dataset.index), el: li, x: e.clientX, y: e.clientY, moved: false, canDrag: canDrag };
+      try { li.setPointerCapture(e.pointerId); } catch (err) { /* 舊瀏覽器 */ }
+    });
+    list.addEventListener('pointermove', function (e) {
+      if (!dragging || !dragging.canDrag) return;
+      var dx = e.clientX - dragging.x;
+      var dy = e.clientY - dragging.y;
+      if (!dragging.moved && Math.abs(dx) + Math.abs(dy) < 8) return;
+      dragging.moved = true;
+      dragging.el.classList.remove('is-peek');
+      dragging.el.classList.add('is-dragging');
+      dragging.el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+      var target = slotAt(e.clientX, e.clientY);
+      list.querySelectorAll('.is-drop').forEach(function (n) { n.classList.remove('is-drop'); });
+      if (target && target !== dragging.el) target.classList.add('is-drop');
+    });
+    var end = function (e) {
+      if (!dragging) return;
+      var d = dragging;
+      dragging = null;
+      d.el.classList.remove('is-peek', 'is-dragging');
+      d.el.style.transform = '';
+      if (d.moved) {
+        var target = e.type === 'pointerup' ? slotAt(e.clientX, e.clientY) : null;
+        if (target && target !== d.el) send({ t: 'moveTo', card: d.id, to: Number(target.dataset.index) });
+        selected = null;
+        render();
+        return;
+      }
+      // 沒有拖：主持人點一張選起來，再點另一格就放過去
+      if (d.canDrag && e.type === 'pointerup') {
+        if (selected && selected !== d.id) {
+          send({ t: 'moveTo', card: selected, to: d.from });
+          selected = null;
+        } else {
+          selected = selected === d.id ? null : d.id;
+        }
+      }
+      render();
+    };
+    list.addEventListener('pointerup', end);
+    list.addEventListener('pointercancel', end);
+    // 選了一張之後點空格（排的時候後面的虛線框）也算
+    list.addEventListener('click', function (e) {
+      var li = e.target.closest('.lu-slot.is-empty');
+      if (!li || !selected) return;
+      send({ t: 'moveTo', card: selected, to: Number(li.dataset.index) });
+      selected = null;
+    });
+  }
+
+  function slotAt(x, y) {
+    var hit = document.elementsFromPoint(x, y);
+    for (var i = 0; i < hit.length; i += 1) {
+      var li = hit[i].closest && hit[i].closest('.lu-slot');
+      if (li && !li.classList.contains('is-dragging') && el['line'].contains(li)) return li;
+    }
+    return null;
   }
 
   /* ---------- 離開 / 關閉房間（照搶答：頂欄返回鍵＝離開，開始後先確認） ---------- */
@@ -869,7 +1103,10 @@
     roomCode = null;
     me = null;
     lastState = null;
-    you = { number: null };
+    you = { cards: [] };
+    handKey = '';
+    dragging = null;
+    selected = null;
     prevPhaseKey = '';
     renderedQrUrl = null;
     joinReported = false;

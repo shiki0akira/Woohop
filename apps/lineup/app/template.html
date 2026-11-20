@@ -18,9 +18,14 @@
           <p>{{heroDesc}}</p>
         </div>
 
-        <section class="panel">
+        <!-- 開房：版面照喜好二選一（apps/match）的「開一個房間」，數量增減換成每人幾張牌（1～3，老闆 11/20） -->
+        <section class="panel create-panel">
           <h2>{{createHeading}}</h2>
-          <p class="hint">{{createHint}}</p>
+          <span class="field-label" id="per-player-label">{{perPlayerLabel}}</span>
+          <div class="stepper" id="per-stepper" role="group" aria-labelledby="per-player-label">
+            <button type="button" data-step="-1" aria-label="−">−</button><output id="per-player-out" aria-live="polite">1</output><button type="button" data-step="1" aria-label="+">+</button>
+          </div>
+          <p class="hint">{{perPlayerHint}}</p>
           <button class="btn btn-lg btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
           <p class="form-error" id="create-error" role="alert" hidden></p>
         </section>
@@ -80,6 +85,7 @@
             <span class="counter" id="player-count"></span>
           </div>
           <ul class="player-list" id="player-list"></ul>
+          <p class="hint per-player-tag" id="per-player-tag"></p>
           <div class="start-block" data-host>
             <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
             <p class="hint start-need" id="start-need" hidden></p>
@@ -87,47 +93,71 @@
           </div>
         </section>
 
-        <!-- 主題：每支手機都看得到（老闆 11/20），主持人多一顆骰子換主題 -->
+        <!-- 投票選主題（老闆 11/20）：每一輪抽三個，例子寫在這裡；大家都投完、或主持人按決定，票最多的（平手隨機） -->
+        <section class="panel vote-panel" data-show="voting">
+          <div class="panel-head">
+            <h2 id="vote-title"></h2>
+            <span class="counter" id="vote-count"></span>
+          </div>
+          <p class="hint vote-hint">{{voteHint}}</p>
+          <div class="vote-list" id="vote-list"></div>
+          <button class="btn btn-lg btn-solid btn-block" id="decide" type="button" data-host>{{decideButton}}</button>
+          <p class="hint" data-player>{{voteWait}}</p>
+        </section>
+
+        <!-- 主題：排的時候只留題目和「1 越小 ←→ 100 越大」，不佔位置（例子在投票時看過了） -->
         <section class="topic-panel" data-show="playing reveal">
           <div class="topic-card">
             <span class="round-tag" id="round-tag"></span>
             <strong id="topic-name"></strong>
-            <!-- 刻度：1 那一端是什麼（例：…）←→ 100 那一端（老闆 11/20：寫成「越不想收到（例：一包衛生紙）」） -->
             <div class="scale">
-              <span class="scale-end"><b>1</b><span class="scale-word" id="scale-lo"></span><span class="scale-ex" id="scale-lo-ex"></span></span>
+              <span class="scale-end"><b>1</b><span class="scale-word" id="scale-lo"></span></span>
               <span class="scale-line" aria-hidden="true"></span>
-              <span class="scale-end"><b>100</b><span class="scale-word" id="scale-hi"></span><span class="scale-ex" id="scale-hi-ex"></span></span>
+              <span class="scale-end"><b>100</b><span class="scale-word" id="scale-hi"></span></span>
             </div>
-            <button class="btn btn-sm btn-secondary topic-shuffle" id="topic-shuffle" type="button" data-host data-show="playing" aria-label="{{topicShuffle}}" title="{{topicShuffle}}"><svg aria-hidden="true"><use href="#i-dice"/></svg></button>
           </div>
         </section>
 
-        <!-- 自己的祕密數字：按住才看得到，放開就蓋起來 -->
-        <section class="panel you-panel" data-show="playing">
-          <button class="you-card" id="you-card" type="button">
-            <span class="you-number" id="you-number" aria-live="polite"></span>
-            <span class="you-hold" id="you-hold">{{youHold}}</span>
-          </button>
-          <p class="hint" id="you-hint">{{playHint}}</p>
+        <!--
+          大家排的那一排（老闆 11/20）：一排 6 格、不左右滑，格子先全部畫出來（還沒放牌的是虛線框），排進去就從第一格往後填。
+          全部排上去之後「我的牌」收起來，大家最後確認，只有主持人能拖曳換順序。翻牌時翻開的有數字和對錯。
+        -->
+        <section class="panel line-panel" data-show="playing reveal">
+          <div class="panel-head">
+            <h2 id="line-title"></h2>
+            <span class="counter" id="line-count"></span>
+          </div>
+          <ol class="lu-row" id="line"></ol>
+          <p class="hint line-hint" id="line-hint"></p>
+        </section>
+
+        <!-- 我的牌：按住才看得到數字；按「排進去」放到下一個空格 -->
+        <section class="panel hand-panel" id="hand-panel" data-show="playing">
+          <div class="panel-head">
+            <h2>{{handTitle}}</h2>
+            <span class="t-caption">{{holdHint}}</span>
+          </div>
+          <div class="hand" id="hand"></div>
+          <p class="hint" id="hand-wait" hidden>{{youWaitNext}}</p>
+        </section>
+
+        <div class="room-actions" data-show="playing">
           <button class="btn btn-lg btn-solid btn-block" id="reveal" type="button" data-host>{{revealButton}}</button>
           <p class="hint" data-player>{{waitHostReveal}}</p>
-        </section>
+        </div>
 
-        <!-- 公布：照數字從小到大一張一張翻（誰、幾號），每支手機同步看到 -->
-        <section class="panel reveal-panel" data-show="reveal">
-          <div class="panel-head">
-            <h2>{{revealTitle}}</h2>
-            <span class="counter" id="flip-count"></span>
-          </div>
-          <p class="mine-line" id="mine-line"></p>
-          <ol class="lineup" id="lineup"></ol>
-          <div class="reveal-done" id="reveal-done" hidden>
-            <p class="reveal-done-title">{{revealDoneTitle}}</p>
-            <p class="hint">{{revealDoneHint}}</p>
-          </div>
-          <button class="btn btn-lg btn-solid btn-block" id="flip" type="button" data-host>{{flipButton}}</button>
-          <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button" data-host hidden>{{nextRound}}</button>
-          <p class="hint" id="wait-flip" data-player>{{waitHostFlip}}</p>
+        <!-- 翻牌：下一張的主人翻（主持人也可以幫離線的人翻） -->
+        <div class="room-actions" id="flip-actions" data-show="reveal">
+          <button class="btn btn-lg btn-solid btn-block" id="flip" type="button"></button>
+          <p class="hint flip-wait" id="flip-wait"></p>
+        </div>
+
+        <!-- 全部翻完：成功，或排錯幾張 -->
+        <section class="panel result-panel" id="result" data-show="reveal">
+          <p class="result-title" id="result-title"></p>
+          <p class="hint" id="result-desc"></p>
+          <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button" data-host>{{nextRound}}</button>
+          <p class="hint" data-player>{{waitNextRound}}</p>
         </section>
       </div>
 

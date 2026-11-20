@@ -3,20 +3,23 @@
  * WebSocket 用 Hibernation API，喚醒後記憶體會清空，所以每次改動都寫回 storage，連線身分放在 attachment。
  *
  * 數字默契排排站的流程（phase）：
- *   lobby 等人 → playing 每個人拿到一個不重複的 1～100 祕密數字，大家看同一個主題、互相形容、排隊
- *   → reveal 主持人一張一張翻（照數字從小到大，翻開的才廣播）→ playing 下一輪（新數字、新主題）⋯⋯
+ *   lobby 等人 → voting 抽三個主題，大家投一個（全部投完、或主持人按決定，票最多的；平手隨機）
+ *   → playing 每個人拿到 1～3 張不重複的 1～100 祕密數字，大家互相形容，在自己的手機上把牌「排進去」，
+ *     從第一格依序往後填；全部排上去之後大家最後確認，只有主持人能拖曳換順序
+ *   → reveal 從第一張一張翻（下一張的主人或主持人翻），比前一張小就是排錯；全部翻完看排錯幾張
+ *   → playing 下一輪（新數字、新主題）⋯⋯
  *
  * 老闆 11/20：大家掃**同一個** QR code、伺服器分配不同的數字、每支手機都看得到題目，主持人用自己那一支手機就能玩
- * （先做過的不開房間版要主持人另外一支手機出 QR，改掉了）。合作遊戲，沒有分數。
+ * （先做過的不開房間版要主持人另外一支手機出 QR，改掉了）。同一天再加：每人 1～3 張（開房時選）、順序排在手機上、
+ * 大家一張一張翻、最後看成功或排錯幾張。合作遊戲，沒有分數。
  *
  * 主題是「第幾個」（topic index），由主持人的手機從自己語言的主題庫抽、送上來；大家照自己那份 T.topics 顯示。
- * 自己的數字只放在每條連線各自的 you（broadcast 逐條送），共用的 state 只有翻開的那幾張。
+ * 自己的牌只放在每條連線各自的 you（broadcast 逐條送），共用的 state 只有誰的牌排在第幾張、翻開的那幾張的數字。
  */
 
-import { dealNumbers, pickNumber, lineupOrder, cleanText } from './game.js';
+import { dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, maxPlayersFor, cleanText, tallyVotes, moveTo } from './game.js';
 
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
-const MAX_PLAYERS = 15; // 站成一排、一張一張翻，15 個人已經很長了
 const MIN_PLAYERS = 2;
 const MAX_NICKNAME_LENGTH = 16;
 const MAX_TOPIC_INDEX = 999;
@@ -48,19 +51,22 @@ export class LineupRoom {
 
   async handleCreate(request) {
     if (await this.loadRoom()) return jsonResponse({ error: 'room_exists' }, 409);
-    const { code, hostId, lang } = await request.json();
+    const { code, hostId, lang, perPlayer } = await request.json();
     this.room = {
       code,
       hostId,
       lang,
+      perPlayer: cleanPerPlayer(perPlayer), // 每人幾張（1～3）
       createdAt: Date.now(),
       phase: 'lobby',
       started: false,
       players: {}, // { [id]: { nickname, avatar, joinedAt } }
       roundNo: 0,
-      topic: 0, // 主題是第幾個（主持人的手機抽的）
-      numbers: {}, // 這一輪：{ [id]: 數字 }
-      order: [], // 公布時：照數字從小到大的 id
+      topic: 0, // 主題是第幾個（投票選出來的）
+      options: [], // 投票時的三個主題（第幾個，主持人的手機抽的）
+      votes: {}, // 投票：{ [id]: 選第幾個選項 }
+      cards: {}, // 這一輪：{ [牌 id（主人 id.第幾張）]: { owner, n } }
+      line: [], // 排好的順序（牌 id），大家自己排進去
       flipped: 0, // 公布時：翻開了幾張
     };
     await this.saveRoom({ touch: true });
@@ -100,17 +106,20 @@ export class LineupRoom {
     const who = ws.deserializeAttachment();
     if (!who) return this.sendError(ws, 'not_joined');
     if (msg.t === 'leave') return this.handleLeave(ws, room, who);
+    if (msg.t === 'vote') return this.handleVote(room, who, msg);
+    if (msg.t === 'place') return this.handlePlace(room, who, msg);
+    if (msg.t === 'flip') return this.handleFlip(ws, room, who);
 
     if (who.clientId !== room.hostId) return this.sendError(ws, 'host_only');
     switch (msg.t) {
       case 'startGame':
         return this.handleStartGame(ws, room, msg);
-      case 'setTopic':
-        return this.handleSetTopic(room, msg);
+      case 'decide':
+        return this.handleDecide(room);
+      case 'moveTo':
+        return this.handleMoveTo(room, msg);
       case 'reveal':
         return this.handleReveal(room);
-      case 'flip':
-        return this.handleFlip(room);
       case 'nextRound':
         return this.handleNextRound(room, msg);
       case 'kick':
@@ -144,17 +153,16 @@ export class LineupRoom {
     if (!nickname) return this.sendError(ws, 'nickname_required');
 
     const known = room.players[clientId];
-    if (!known && Object.keys(room.players).length >= MAX_PLAYERS) return this.sendError(ws, 'room_full', true);
+    if (!known && Object.keys(room.players).length >= maxPlayersFor(room.perPlayer)) return this.sendError(ws, 'room_full', true);
 
     room.players[clientId] = {
       nickname,
       avatar: cleanAvatar(msg.avatar),
       joinedAt: known?.joinedAt ?? Date.now(),
     };
-    // 排隊的時候才加入：補一個沒用過的數字（公布到一半加入的人等下一輪）
-    if (room.phase === 'playing' && !(clientId in room.numbers)) {
-      const n = pickNumber(new Set(Object.values(room.numbers)));
-      if (n != null) room.numbers[clientId] = n;
+    // 排隊的時候才加入：補發沒用過的數字（公布到一半加入的人等下一輪）
+    if (room.phase === 'playing' && !hasCards(room, clientId)) {
+      dealTo(room.cards, clientId, room.perPlayer, usedNumbers(room.cards));
     }
 
     ws.serializeAttachment({ clientId });
@@ -170,48 +178,94 @@ export class LineupRoom {
     if (room.phase !== 'lobby') return;
     if (Object.keys(room.players).length < MIN_PLAYERS) return this.sendError(ws, 'need_players');
     room.started = true;
-    await this.newRound(room, msg.topic);
+    await this.newRound(room, msg.topics);
   }
 
-  // 新的一輪：名單上每個人重新發一個不重複的數字、換主題
-  async newRound(room, topic) {
+  // 新的一輪：先投票選主題（三個選項由主持人的手機抽、送上來）
+  async newRound(room, topics) {
     room.roundNo += 1;
-    room.topic = cleanTopic(topic);
-    room.numbers = dealNumbers(sortedIds(room));
-    room.order = [];
+    room.options = cleanOptions(topics);
+    room.votes = {};
+    room.cards = {};
+    room.line = [];
     room.flipped = 0;
+    room.phase = 'voting';
+    await this.saveRoom({ touch: true });
+    this.broadcast(room);
+  }
+
+  /* ---------- 投票選主題 ---------- */
+
+  async handleVote(room, who, msg) {
+    if (room.phase !== 'voting') return;
+    const pick = Number(msg.pick);
+    if (!Number.isInteger(pick) || pick < 0 || pick >= room.options.length) return;
+    room.votes[who.clientId] = pick;
+    // 在線上的人都投了就直接決定
+    const online = this.onlineIds();
+    const waiting = Object.keys(room.players).filter((id) => online.has(id) && !(id in room.votes));
+    if (!waiting.length) return this.decide(room);
+    await this.saveRoom({ touch: true });
+    this.broadcast(room);
+  }
+
+  // 主持人不等了：用現在票最多的
+  async handleDecide(room) {
+    if (room.phase !== 'voting') return;
+    await this.decide(room);
+  }
+
+  // 決定主題、發牌（名單上每個人，不重複）
+  async decide(room) {
+    room.topic = room.options[tallyVotes(room.votes, room.options.length)] ?? 0;
+    room.cards = dealCards(sortedIds(room), room.perPlayer);
+    room.line = [];
     room.phase = 'playing';
     await this.saveRoom({ touch: true });
     this.broadcast(room);
   }
 
-  async handleSetTopic(room, msg) {
-    if (room.phase !== 'playing') return;
-    room.topic = cleanTopic(msg.topic);
+  /* ---------- 排：自己的牌排進去（從第一格依序往後填），主持人拖曳換順序 ---------- */
+
+  async handlePlace(room, who, msg) {
+    const id = typeof msg.card === 'string' ? msg.card : '';
+    const card = room.cards[id];
+    if (room.phase !== 'playing' || !card || card.owner !== who.clientId || room.line.includes(id)) return;
+    room.line.push(id);
+    await this.saveRoom({ touch: true });
+    this.broadcast(room);
+  }
+
+  // 主持人把一張牌拖到第 to 格（老闆 11/20：全部排上去之後最後確認，只有主持人的手機可以換順序）
+  async handleMoveTo(room, msg) {
+    if (room.phase !== 'playing' || typeof msg.card !== 'string') return;
+    if (!moveTo(room.line, msg.card, Number(msg.to) | 0)) return;
     await this.saveRoom();
     this.broadcast(room);
   }
 
-  // 公布：照數字從小到大排好，一張都還沒翻
+  // 開始翻（主持人）：照排好的順序從第一張翻。還沒排進去的牌這一輪不算（客戶端會先問）
   async handleReveal(room) {
-    if (room.phase !== 'playing') return;
-    room.order = lineupOrder(room.numbers);
+    if (room.phase !== 'playing' || !room.line.length) return;
     room.flipped = 0;
     room.phase = 'reveal';
     await this.saveRoom({ touch: true });
     this.broadcast(room);
   }
 
-  async handleFlip(room) {
-    if (room.phase !== 'reveal' || room.flipped >= room.order.length) return;
+  // 翻下一張：那張牌的主人自己翻，主持人也可以（主人離線的時候）
+  async handleFlip(ws, room, who) {
+    if (room.phase !== 'reveal' || room.flipped >= room.line.length) return;
+    const next = room.cards[room.line[room.flipped]];
+    if (who.clientId !== room.hostId && next?.owner !== who.clientId) return this.sendError(ws, 'not_your_turn');
     room.flipped += 1;
     await this.saveRoom();
     this.broadcast(room);
   }
 
   async handleNextRound(room, msg) {
-    if (room.phase !== 'reveal' && room.phase !== 'playing') return;
-    await this.newRound(room, msg.topic);
+    if (room.phase === 'lobby') return;
+    await this.newRound(room, msg.topics);
   }
 
   /* ---------- 名單：移出、離開、關房 ---------- */
@@ -247,16 +301,17 @@ export class LineupRoom {
     this.broadcast(room);
   }
 
-  // 走掉的人：數字收回來；公布中也從那一排拿掉（翻開的張數不超過剩下的）
+  // 走掉的人：牌收回來、從那一排拿掉（翻開的張數跟著調）
   removePlayer(room, id) {
     delete room.players[id];
-    delete room.numbers[id];
-    if (room.phase === 'reveal') {
-      const at = room.order.indexOf(id);
-      if (at >= 0) {
-        room.order.splice(at, 1);
-        if (at < room.flipped) room.flipped -= 1;
-      }
+    delete room.votes[id];
+    for (const [cardId, card] of Object.entries(room.cards)) {
+      if (card.owner !== id) continue;
+      delete room.cards[cardId];
+      const at = room.line.indexOf(cardId);
+      if (at < 0) continue;
+      room.line.splice(at, 1);
+      if (at < room.flipped) room.flipped -= 1;
     }
   }
 
@@ -285,14 +340,14 @@ export class LineupRoom {
     return online;
   }
 
-  // 廣播：大家共用的 state ＋ 每條連線自己的 you（自己的數字）
+  // 廣播：大家共用的 state ＋ 每條連線自己的 you（自己的牌：數字、排在第幾張，照數字小到大）
   broadcast(room) {
     const state = publicState(room, this.onlineIds());
     for (const socket of this.ctx.getWebSockets()) {
       const who = socket.deserializeAttachment();
       if (!who) continue;
       try {
-        socket.send(JSON.stringify({ t: 'state', state, you: { number: room.numbers[who.clientId] ?? null } }));
+        socket.send(JSON.stringify({ t: 'state', state, you: { cards: myCards(room, who.clientId) } }));
       } catch {
         /* 正在關閉 */
       }
@@ -334,9 +389,20 @@ function sortedIds(room) {
     .map(([id]) => id);
 }
 
+function hasCards(room, id) {
+  return Object.values(room.cards).some((c) => c.owner === id);
+}
+
+function myCards(room, id) {
+  return Object.entries(room.cards)
+    .filter(([, c]) => c.owner === id)
+    .map(([cardId, c]) => ({ id: cardId, n: c.n, at: room.line.indexOf(cardId) }))
+    .sort((a, b) => a.n - b.n);
+}
+
 /*
- * 廣播給所有人的狀態。**沒翻開的數字不在這裡**：公布時只給前 flipped 張（id＋數字），其他只給總共幾張。
- * 每個人有沒有拿到這一輪的數字（hasNumber）給名單用（公布中才加入的人這一輪沒有）
+ * 廣播給所有人的狀態。**沒翻開的數字不在這裡**：那一排只給牌 id 和主人，翻開的才多 n（數字）和 ok（比前一張大）。
+ * 每個人這一輪有沒有牌（hasCards）給名單用（公布中才加入的人這一輪沒有）
  */
 function publicState(room, online) {
   const state = {
@@ -344,21 +410,46 @@ function publicState(room, online) {
     hostId: room.hostId,
     phase: room.phase,
     started: room.started,
-    maxPlayers: MAX_PLAYERS,
+    perPlayer: room.perPlayer,
+    maxPlayers: maxPlayersFor(room.perPlayer),
     minPlayers: MIN_PLAYERS,
     players: sortedIds(room).map((id) => {
       const p = room.players[id];
-      return { id, nickname: p.nickname, avatar: p.avatar, online: online.has(id), hasNumber: id in room.numbers };
+      return { id, nickname: p.nickname, avatar: p.avatar, online: online.has(id), hasCards: hasCards(room, id) };
     }),
     round: null,
   };
   if (room.phase === 'lobby') return state;
-  state.round = { n: room.roundNo, topic: room.topic, total: Object.keys(room.numbers).length };
-  if (room.phase === 'reveal') {
-    state.round.total = room.order.length;
-    state.round.flipped = room.order.slice(0, room.flipped).map((id) => ({ id, n: room.numbers[id] }));
+  if (room.phase === 'voting') {
+    state.round = { n: room.roundNo, options: room.options, votes: room.votes };
+    return state;
   }
+  const shown = room.phase === 'reveal' ? room.flipped : 0;
+  const numbers = room.line.slice(0, shown).map((id) => room.cards[id].n);
+  const ok = judge(numbers);
+  state.round = {
+    n: room.roundNo,
+    topic: room.topic,
+    total: Object.keys(room.cards).length, // 這一輪發出去幾張（還沒排進去的也算）
+    line: room.line.map((id, i) => {
+      const item = { id, owner: room.cards[id].owner };
+      if (i < shown) {
+        item.n = numbers[i];
+        item.ok = ok[i];
+      }
+      return item;
+    }),
+    flipped: shown,
+    wrong: ok.filter((x) => !x).length,
+  };
   return state;
+}
+
+// 三個主題選項（第幾個），不重複；壞掉的就給 [0]
+function cleanOptions(value) {
+  const list = Array.isArray(value) ? value.map(cleanTopic) : [];
+  const unique = [...new Set(list)].slice(0, 3);
+  return unique.length ? unique : [0];
 }
 
 function cleanTopic(value) {

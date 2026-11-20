@@ -7,6 +7,7 @@
  */
 
 import { LineupRoom } from './room.js';
+import { cleanPerPlayer } from './game.js';
 
 export { LineupRoom };
 
@@ -74,6 +75,7 @@ async function createRoom(request, env) {
   const hostId = typeof body.hostId === 'string' ? body.hostId.slice(0, 64) : '';
   if (!hostId) return json({ error: 'bad_request' }, 400);
   const lang = LANGS.includes(body.lang) ? body.lang : DEFAULT_LANG;
+  const perPlayer = cleanPerPlayer(body.perPlayer); // 每人幾張（1～3，老闆 11/20）
 
   for (let attempt = 0; attempt < MAX_CREATE_ATTEMPTS; attempt += 1) {
     const code = randomCode();
@@ -81,7 +83,7 @@ async function createRoom(request, env) {
     const created = await stub.fetch('https://room/create', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ code, hostId, lang }),
+      body: JSON.stringify({ code, hostId, lang, perPlayer }),
     });
 
     if (created.ok) return json({ code });
