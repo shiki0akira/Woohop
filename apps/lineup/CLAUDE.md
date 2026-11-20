@@ -8,8 +8,9 @@
 `scripts/build.js` 產生各語言靜態頁、頭像與暱稱共用 `web100-profile`、返回鍵與離開房間的做法都一樣，**細節與理由看 `apps/buzzer/CLAUDE.md`**。
 （同一天先做過不開房間、主持人手機一次出一個 QR 的版本放在 `apps/warmup/games/lineup`，老闆試玩後說主持人要兩支手機不好，改成房間版，那份刪掉了，主題庫搬過來。）
 
-⚠️ **還沒上線、只有繁中**（`app/strings.js` 與 `src/worker.js` 的 `LANGS`），老闆確認後補 7 語、接首頁（`/web100-launch-check`）。
-`public/` 還沒有 og 縮圖（上線時 `node scripts/og-image.mjs lineup`）。
+**已上線（2026-11-20，8 語）**：Worker `woohop-lineup`，首頁 `vercel.json` 照兩真一假那一組代理 `/lineup/*`。各語言名稱在 `CONCEPT.md` 第四節。
+首頁插圖是 `woohop-art.js` 的 `art.lineup`（三張牌由矮到高排排站：3、42、97，最高那張有表情），分享縮圖 `node scripts/og-image.mjs lineup`。
+首頁清單手機欄標 **each**，目的 know＋team＋sit。補外語主題庫：`locales/{lang}.js` 是 scratchpad 產生器寫的，之後直接改檔就好（key 跟 zh-TW 一致，build 會檢查）。
 
 ## 指令
 
