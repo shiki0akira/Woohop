@@ -2,22 +2,21 @@
 <html lang="{{htmlLang}}">
   <head>
     {{head}}
-    {{jsonLd}}
   </head>
 
-  <body class="lineup-app woohop-game" data-screen="rules" data-game-mode="browse">
+  <body class="lineup-app woohop-game" data-game-mode="browse">
     {{header}}
 
-    <main id="main" class="lineup-main game-rules game-main">
+    <!-- 玩法頁刻意精簡（2026-10-17，跟定時炸彈、喜好二選一同一個格式）：一眼資訊、4 步怎麼玩、主持人怎麼帶 -->
+    <main id="main" class="game-main game-rules">
       <div class="page-head">
         <nav class="crumbs" aria-label="breadcrumb">
           <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><a href="{{base}}/{{lang}}/">{{navTitle}}</a><span>›</span><span>{{navRules}}</span>
         </nav>
-        <h1>{{rulesTitle}}</h1>
+        <h1>{{rulesHeading}}</h1>
         <p>{{rulesIntro}}</p>
       </div>
 
-      <!-- 一眼看到：幾個人、多久、要準備什麼 -->
       <ul class="rules-facts">
         {{rulesFactsList}}
       </ul>
@@ -44,7 +43,7 @@
     {{footer}}
 
     <script>
-      window.LINEUP = { lang: '{{lang}}', base: '{{base}}' };
+      window.LINEUP = { lang: '{{lang}}', base: '{{base}}', page: 'rules/' };
     </script>
     <script src="{{base}}/header.js?v={{assetVersion}}"></script>
   </body>

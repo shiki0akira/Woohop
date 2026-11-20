@@ -17,7 +17,6 @@
 | 秒數挑戰 | `games/seconds` | `/seconds/{lang}/` |
 | 我從來沒有 | `games/never` | `/never/{lang}/` |
 | 終極密碼 | `games/password` | `/password/{lang}/` |
-| 數字默契排排站（繁中，還沒接首頁） | `games/lineup` | `/lineup/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 

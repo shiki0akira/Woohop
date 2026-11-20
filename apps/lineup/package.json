@@ -1,0 +1,18 @@
+{
+  "name": "woohop-lineup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Woohop 數字默契排排站：大家掃同一個 QR code 加入房間，各自拿到不重複的祕密數字，用主題形容、合力從小排到大（Cloudflare Workers + Durable Objects）",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test test/*.test.js",
+    "dev": "npm run build && wrangler dev",
+    "dev:lan": "npm run build && wrangler dev --ip 0.0.0.0",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "qrcode-generator": "^1.4.4",
+    "wrangler": "^4.118.0"
+  }
+}

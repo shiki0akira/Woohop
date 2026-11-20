@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+  </head>
+
+  <body class="lineup-app woohop-game" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="game-main">
+      <!-- 首頁：建立房間／加入房間。版面照兩真一假（沒有開房選項：數字 1～100、主題主持人在房間裡換） -->
+      <div class="view" id="view-home">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <section class="panel">
+          <h2>{{createHeading}}</h2>
+          <p class="hint">{{createHint}}</p>
+          <button class="btn btn-lg btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
+          <p class="form-error" id="create-error" role="alert" hidden></p>
+        </section>
+
+        <section class="panel">
+          <h2>{{joinHeading}}</h2>
+          <span class="field-label" id="join-code-label">{{codeLabel}}</span>
+          <div class="code-input" id="code-boxes" role="group" aria-labelledby="join-code-label">
+            <input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="1" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="2" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="3" /><input maxlength="1" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="4" />
+          </div>
+          <input id="join-code" type="hidden" value="" />
+          <button class="btn btn-lg btn-secondary btn-block" id="join-room" type="button">{{joinButton}}</button>
+          <p class="form-error" id="join-error" role="alert" hidden></p>
+        </section>
+
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 加入房間：挑頭像、填暱稱（主持人也要，他也一起玩） -->
+      <div class="view" id="view-join" hidden>
+        <section class="panel">
+          <h1 class="join-title" id="join-title">{{joinTitle}}</h1>
+          <span class="field-label">{{avatarLabel}}</span>
+          <div class="avatar-picker" id="avatar-picker" role="radiogroup" aria-label="{{avatarLabel}}"></div>
+          <label class="field-label" for="nickname">{{nicknameLabel}}</label>
+          <input class="input" id="nickname" type="text" autocomplete="nickname" maxlength="16" placeholder="{{nicknamePlaceholder}}" />
+          <button class="btn btn-lg btn-solid btn-block" id="enter-room" type="button">{{enterButton}}</button>
+          <p class="form-error" id="nickname-error" role="alert" hidden></p>
+        </section>
+      </div>
+
+      <!--
+        房間：所有人同一個畫面，依 phase 露出不同區塊（app.js 的 render），主持人多了控場的按鈕（[data-host]）。
+          lobby 等人 → playing 主題＋自己的祕密數字（按住才看得到）→ reveal 一張一張翻 → playing 下一輪
+      -->
+      <div class="view" id="view-room" data-phase="lobby" hidden>
+        <!-- 等待大廳：房號卡只有主持人看得到 -->
+        <section class="room-code-card share-card" id="share-card" data-host data-show="lobby">
+          <span class="t-caption">{{roomCodeLabel}}</span>
+          <div class="room-code" id="host-room-code" aria-live="polite"></div>
+          <div class="qr qr-box" id="qr-box" role="img" aria-label="{{qrAlt}}"></div>
+          <div class="row share-actions">
+            <button class="btn btn-secondary btn-sm" id="copy-link" type="button"><svg><use href="#i-copy"/></svg><span class="label">{{copyLink}}</span></button>
+            <button class="btn btn-secondary btn-sm" id="share-link" type="button" hidden><svg><use href="#i-share"/></svg>{{shareButton}}</button>
+          </div>
+          <span class="t-small">{{shareHint}}</span>
+        </section>
+
+        <section class="panel play-status" data-show="lobby" data-player>
+          <h1>{{lobbyWaitTitle}}</h1>
+          <p>{{lobbyWaitDesc}}</p>
+        </section>
+
+        <section class="panel" data-show="lobby">
+          <div class="panel-head">
+            <h2>{{playersHeading}}</h2>
+            <span class="counter" id="player-count"></span>
+          </div>
+          <ul class="player-list" id="player-list"></ul>
+          <div class="start-block" data-host>
+            <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
+            <p class="hint start-need" id="start-need" hidden></p>
+            <p class="hint">{{startGameHint}}</p>
+          </div>
+        </section>
+
+        <!-- 主題：每支手機都看得到（老闆 11/20），主持人多一顆骰子換主題 -->
+        <section class="topic-panel" data-show="playing reveal">
+          <div class="topic-card">
+            <span class="round-tag" id="round-tag"></span>
+            <strong id="topic-name"></strong>
+            <!-- 刻度：1 那一端是什麼（例：…）←→ 100 那一端（老闆 11/20：寫成「越不想收到（例：一包衛生紙）」） -->
+            <div class="scale">
+              <span class="scale-end"><b>1</b><span class="scale-word" id="scale-lo"></span><span class="scale-ex" id="scale-lo-ex"></span></span>
+              <span class="scale-line" aria-hidden="true"></span>
+              <span class="scale-end"><b>100</b><span class="scale-word" id="scale-hi"></span><span class="scale-ex" id="scale-hi-ex"></span></span>
+            </div>
+            <button class="btn btn-sm btn-secondary topic-shuffle" id="topic-shuffle" type="button" data-host data-show="playing" aria-label="{{topicShuffle}}" title="{{topicShuffle}}"><svg aria-hidden="true"><use href="#i-dice"/></svg></button>
+          </div>
+        </section>
+
+        <!-- 自己的祕密數字：按住才看得到，放開就蓋起來 -->
+        <section class="panel you-panel" data-show="playing">
+          <button class="you-card" id="you-card" type="button">
+            <span class="you-number" id="you-number" aria-live="polite"></span>
+            <span class="you-hold" id="you-hold">{{youHold}}</span>
+          </button>
+          <p class="hint" id="you-hint">{{playHint}}</p>
+          <button class="btn btn-lg btn-solid btn-block" id="reveal" type="button" data-host>{{revealButton}}</button>
+          <p class="hint" data-player>{{waitHostReveal}}</p>
+        </section>
+
+        <!-- 公布：照數字從小到大一張一張翻（誰、幾號），每支手機同步看到 -->
+        <section class="panel reveal-panel" data-show="reveal">
+          <div class="panel-head">
+            <h2>{{revealTitle}}</h2>
+            <span class="counter" id="flip-count"></span>
+          </div>
+          <p class="mine-line" id="mine-line"></p>
+          <ol class="lineup" id="lineup"></ol>
+          <div class="reveal-done" id="reveal-done" hidden>
+            <p class="reveal-done-title">{{revealDoneTitle}}</p>
+            <p class="hint">{{revealDoneHint}}</p>
+          </div>
+          <button class="btn btn-lg btn-solid btn-block" id="flip" type="button" data-host>{{flipButton}}</button>
+          <button class="btn btn-lg btn-solid btn-block" id="next-round" type="button" data-host hidden>{{nextRound}}</button>
+          <p class="hint" id="wait-flip" data-player>{{waitHostFlip}}</p>
+        </section>
+      </div>
+
+      <!-- 連不上 / 房間有問題 -->
+      <div class="view" id="view-error" hidden>
+        <section class="panel center">
+          <h1 id="error-title">{{errorTitle}}</h1>
+          <p id="error-desc">{{errorDesc}}</p>
+          <a class="btn btn-lg btn-solid" href="{{base}}/{{lang}}/">{{backHome}}</a>
+        </section>
+      </div>
+    </main>
+
+    <div class="conn-banner" id="conn-banner" role="status" hidden></div>
+
+    <dialog class="modal" id="confirm-dialog">
+      <div class="m-body">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-desc"></p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="confirm-cancel" type="button">{{cancelButton}}</button>
+        <button class="btn btn-danger" id="confirm-ok" type="button"></button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="closed-dialog">
+      <div class="m-body">
+        <h2>{{roomClosedTitle}}</h2>
+        <p>{{roomClosedDesc}}</p>
+      </div>
+      <div class="m-actions m-one">
+        <button class="btn btn-solid" id="closed-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="kicked-dialog">
+      <div class="m-body">
+        <h2>{{kickedTitle}}</h2>
+        <p>{{kickedDesc}}</p>
+      </div>
+      <div class="m-actions m-one">
+        <button class="btn btn-solid" id="kicked-ok" type="button">{{backHome}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script src="{{base}}/vendor/qrcode.js"></script>
+    <script>
+      window.T = {{stringsJson}};
+      window.AVATARS = {{avatarsJson}};
+      window.LINEUP = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        page: '',
+        siteOrigin: '{{siteOrigin}}',
+        workerOrigin: '{{workerOrigin}}',
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>
