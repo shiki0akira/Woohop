@@ -10,14 +10,14 @@
  *   → playing 下一輪（新數字、新主題）⋯⋯
  *
  * 老闆 11/20：大家掃**同一個** QR code、伺服器分配不同的數字、每支手機都看得到題目，主持人用自己那一支手機就能玩
- * （先做過的不開房間版要主持人另外一支手機出 QR，改掉了）。同一天再加：每人 1～3 張（開房時選）、順序排在手機上、
- * 大家一張一張翻、最後看成功或排錯幾張。合作遊戲，沒有分數。
+ * （先做過的不開房間版要主持人另外一支手機出 QR，改掉了）。同一天再加：開房設人數上限、每人 1～3 張（大廳裡主持人選）、
+ * 每輪投票選主題、順序排在手機上、大家一張一張翻、最後看排錯幾張。合作遊戲，沒有分數。
  *
  * 主題是「第幾個」（topic index），由主持人的手機從自己語言的主題庫抽、送上來；大家照自己那份 T.topics 顯示。
  * 自己的牌只放在每條連線各自的 you（broadcast 逐條送），共用的 state 只有誰的牌排在第幾張、翻開的那幾張的數字。
  */
 
-import { dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, maxPlayersFor, cleanText, tallyVotes, moveTo } from './game.js';
+import { dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, cleanMaxPlayers, maxPerPlayerFor, cleanText, tallyVotes, moveTo } from './game.js';
 
 const IDLE_MS = 3 * 60 * 60 * 1000; // 3 小時沒有人動作就清空房間
 const MIN_PLAYERS = 2;
@@ -51,12 +51,13 @@ export class LineupRoom {
 
   async handleCreate(request) {
     if (await this.loadRoom()) return jsonResponse({ error: 'room_exists' }, 409);
-    const { code, hostId, lang, perPlayer } = await request.json();
+    const { code, hostId, lang, maxPlayers } = await request.json();
     this.room = {
       code,
       hostId,
       lang,
-      perPlayer: cleanPerPlayer(perPlayer), // 每人幾張（1～3）
+      maxPlayers: cleanMaxPlayers(maxPlayers), // 人數上限（開房時設）
+      perPlayer: 1, // 每人幾張（1～3，大廳裡主持人選）
       createdAt: Date.now(),
       phase: 'lobby',
       started: false,
@@ -114,6 +115,8 @@ export class LineupRoom {
     switch (msg.t) {
       case 'startGame':
         return this.handleStartGame(ws, room, msg);
+      case 'setPerPlayer':
+        return this.handleSetPerPlayer(room, msg);
       case 'decide':
         return this.handleDecide(room);
       case 'moveTo':
@@ -153,13 +156,15 @@ export class LineupRoom {
     if (!nickname) return this.sendError(ws, 'nickname_required');
 
     const known = room.players[clientId];
-    if (!known && Object.keys(room.players).length >= maxPlayersFor(room.perPlayer)) return this.sendError(ws, 'room_full', true);
+    if (!known && Object.keys(room.players).length >= room.maxPlayers) return this.sendError(ws, 'room_full', true);
 
     room.players[clientId] = {
       nickname,
       avatar: cleanAvatar(msg.avatar),
       joinedAt: known?.joinedAt ?? Date.now(),
     };
+    // 人變多、每人張數放不下了（一整排最多 30 張）：還沒發牌的時候自動降一級
+    if (room.phase === 'lobby' || room.phase === 'voting') room.perPlayer = Math.min(room.perPlayer, maxPerPlayerFor(Object.keys(room.players).length));
     // 排隊的時候才加入：補發沒用過的數字（公布到一半加入的人等下一輪）
     if (room.phase === 'playing' && !hasCards(room, clientId)) {
       dealTo(room.cards, clientId, room.perPlayer, usedNumbers(room.cards));
@@ -190,6 +195,16 @@ export class LineupRoom {
     room.line = [];
     room.flipped = 0;
     room.phase = 'voting';
+    await this.saveRoom({ touch: true });
+    this.broadcast(room);
+  }
+
+  // 每人幾張（大廳、投票時主持人可以改；發牌之後下一輪才算）
+  async handleSetPerPlayer(room, msg) {
+    if (room.phase !== 'lobby' && room.phase !== 'voting') return;
+    const n = cleanPerPlayer(msg.n);
+    if (n > maxPerPlayerFor(Object.keys(room.players).length)) return;
+    room.perPlayer = n;
     await this.saveRoom({ touch: true });
     this.broadcast(room);
   }
@@ -347,7 +362,7 @@ export class LineupRoom {
       const who = socket.deserializeAttachment();
       if (!who) continue;
       try {
-        socket.send(JSON.stringify({ t: 'state', state, you: { cards: myCards(room, who.clientId) } }));
+        socket.send(JSON.stringify({ t: 'state', state, you: { cards: myCards(room, who.clientId), vote: room.votes?.[who.clientId] ?? null } }));
       } catch {
         /* 正在關閉 */
       }
@@ -411,7 +426,8 @@ function publicState(room, online) {
     phase: room.phase,
     started: room.started,
     perPlayer: room.perPlayer,
-    maxPlayers: maxPlayersFor(room.perPlayer),
+    maxPlayers: room.maxPlayers,
+    maxPerPlayer: maxPerPlayerFor(Object.keys(room.players).length),
     minPlayers: MIN_PLAYERS,
     players: sortedIds(room).map((id) => {
       const p = room.players[id];
@@ -421,7 +437,7 @@ function publicState(room, online) {
   };
   if (room.phase === 'lobby') return state;
   if (room.phase === 'voting') {
-    state.round = { n: room.roundNo, options: room.options, votes: room.votes };
+    state.round = { n: room.roundNo, options: room.options, voted: Object.keys(room.votes).length };
     return state;
   }
   const shown = room.phase === 'reveal' ? room.flipped : 0;

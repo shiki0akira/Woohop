@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { NUM_MAX, pickNumber, dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, maxPlayersFor, cleanText } from '../src/game.js';
+import { NUM_MAX, pickNumber, dealCards, dealTo, usedNumbers, judge, cleanPerPlayer, cleanMaxPlayers, maxPerPlayerFor, cleanText } from '../src/game.js';
 
 test('一輪發的牌不重複、都在 1～100、每人張數對', () => {
   const ids = Array.from({ length: 10 }, (_, i) => 'p' + i);
@@ -32,19 +32,24 @@ test('中途補發不會跟已經用掉的重複；用光就回 null', () => {
   assert.deepEqual(Object.keys(cards).filter((k) => k.startsWith('late.')), ['late.0', 'late.1']);
 });
 
-test('翻牌對錯：比前一張小就是排錯', () => {
+test('翻牌對錯：比前面翻開的任何一張小就是排錯', () => {
   assert.deepEqual(judge([3, 12, 50, 99]), [true, true, true, true]);
-  assert.deepEqual(judge([10, 90, 20, 30]), [true, true, false, true]);
+  // 老闆 11/20 的例子：19 比前面的 31 小，也算錯
+  assert.deepEqual(judge([10, 31, 13, 19, 67, 51]), [true, true, false, false, true, false]);
   assert.deepEqual(judge([]), []);
 });
 
-test('每人張數 1～3、決定人數上限', () => {
+test('人數上限 2～15、每人張數 1～3（人多就不能選太多張）', () => {
   assert.equal(cleanPerPlayer(2), 2);
   assert.equal(cleanPerPlayer(4), 1);
   assert.equal(cleanPerPlayer('x'), 1);
-  assert.equal(maxPlayersFor(1), 15);
-  assert.equal(maxPlayersFor(2), 15);
-  assert.equal(maxPlayersFor(3), 10);
+  assert.equal(cleanMaxPlayers(8), 8);
+  assert.equal(cleanMaxPlayers(1), 10);
+  assert.equal(cleanMaxPlayers(20), 10);
+  assert.equal(maxPerPlayerFor(4), 3);
+  assert.equal(maxPerPlayerFor(10), 3);
+  assert.equal(maxPerPlayerFor(11), 2);
+  assert.equal(maxPerPlayerFor(15), 2);
 });
 
 test('暱稱收掉換行與多餘空白、截斷', () => {

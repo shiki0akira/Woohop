@@ -18,14 +18,14 @@
           <p>{{heroDesc}}</p>
         </div>
 
-        <!-- 開房：版面照喜好二選一（apps/match）的「開一個房間」，數量增減換成每人幾張牌（1～3，老闆 11/20） -->
+        <!-- 開房：照喜好二選一（apps/match）的「開一個房間」設人數上限（老闆 11/20：這裡設人數，每人幾張牌進房間再設） -->
         <section class="panel create-panel">
           <h2>{{createHeading}}</h2>
-          <span class="field-label" id="per-player-label">{{perPlayerLabel}}</span>
-          <div class="stepper" id="per-stepper" role="group" aria-labelledby="per-player-label">
-            <button type="button" data-step="-1" aria-label="−">−</button><output id="per-player-out" aria-live="polite">1</output><button type="button" data-step="1" aria-label="+">+</button>
+          <span class="field-label" id="max-players-label">{{maxPlayersLabel}}</span>
+          <div class="stepper" id="max-stepper" role="group" aria-labelledby="max-players-label">
+            <button type="button" data-step="-1" aria-label="−">−</button><output id="max-players-out" aria-live="polite">10</output><button type="button" data-step="1" aria-label="+">+</button>
           </div>
-          <p class="hint">{{perPlayerHint}}</p>
+          <p class="hint">{{maxPlayersHint}}</p>
           <button class="btn btn-lg btn-solid btn-block" id="create-room" type="button">{{createButton}}</button>
           <p class="form-error" id="create-error" role="alert" hidden></p>
         </section>
@@ -59,7 +59,7 @@
 
       <!--
         房間：所有人同一個畫面，依 phase 露出不同區塊（app.js 的 render），主持人多了控場的按鈕（[data-host]）。
-          lobby 等人 → playing 主題＋自己的祕密數字（按住才看得到）→ reveal 一張一張翻 → playing 下一輪
+          lobby 等人 → voting 投票選主題 → playing 自己的牌＋大家排的那一排 → reveal 一張一張翻、翻完展開整排 → voting 下一輪
       -->
       <div class="view" id="view-room" data-phase="lobby" hidden>
         <!-- 等待大廳：房號卡只有主持人看得到 -->
@@ -85,7 +85,17 @@
             <span class="counter" id="player-count"></span>
           </div>
           <ul class="player-list" id="player-list"></ul>
-          <p class="hint per-player-tag" id="per-player-tag"></p>
+          <p class="hint per-player-tag" id="per-player-tag" data-player></p>
+          <!-- 每人幾張牌：主持人在房間裡選（分段選項照終極密碼的密碼範圍） -->
+          <div class="per-player-block" data-host>
+            <span class="field-label">{{perPlayerLabel}}</span>
+            <div class="seg seg-3" id="per-seg" role="radiogroup" aria-label="{{perPlayerLabel}}">
+              <label class="seg-item"><input type="radio" name="per" value="1" checked>{{perOne}}</label>
+              <label class="seg-item"><input type="radio" name="per" value="2">{{perTwo}}</label>
+              <label class="seg-item"><input type="radio" name="per" value="3">{{perThree}}</label>
+            </div>
+            <p class="hint">{{perPlayerHint}}</p>
+          </div>
           <div class="start-block" data-host>
             <button class="btn btn-lg btn-solid btn-block" id="start-game" type="button">{{startGameButton}}</button>
             <p class="hint start-need" id="start-need" hidden></p>
@@ -131,11 +141,10 @@
           <p class="hint line-hint" id="line-hint"></p>
         </section>
 
-        <!-- 我的牌：按住才看得到數字；按「排進去」放到下一個空格 -->
+        <!-- 我的牌：數字直接看得到（老闆 11/20）；按「排進去」放到下一個空格 -->
         <section class="panel hand-panel" id="hand-panel" data-show="playing">
           <div class="panel-head">
             <h2>{{handTitle}}</h2>
-            <span class="t-caption">{{holdHint}}</span>
           </div>
           <div class="hand" id="hand"></div>
           <p class="hint" id="hand-wait" hidden>{{youWaitNext}}</p>
@@ -146,13 +155,30 @@
           <p class="hint" data-player>{{waitHostReveal}}</p>
         </div>
 
-        <!-- 翻牌：下一張的主人翻（主持人也可以幫離線的人翻） -->
+        <!--
+          翻牌（另一頁，老闆 11/20）：一次一張大牌，從第一張開始，牌的主人翻（主持人可以幫離線的人翻）。
+          翻開的那張顯示數字和對錯，旁邊寫「前面最大是幾」；全部翻完展開整排＋結果
+        -->
+        <section class="panel flip-panel" id="flip-panel" data-show="reveal">
+          <div class="panel-head">
+            <h2>{{flipTitle}}</h2>
+            <span class="counter" id="flip-count"></span>
+          </div>
+          <div class="flip-stage" id="flip-stage">
+            <span class="flip-pos" id="flip-pos"></span>
+            <div class="flip-card" id="flip-card"><span class="flip-num" id="flip-num">?</span><span class="flip-mark" id="flip-mark"></span></div>
+            <span class="flip-who" id="flip-who"></span>
+            <span class="flip-note" id="flip-note"></span>
+          </div>
+          <ol class="flip-dots" id="flip-dots" aria-hidden="true"></ol>
+        </section>
+
         <div class="room-actions" id="flip-actions" data-show="reveal">
           <button class="btn btn-lg btn-solid btn-block" id="flip" type="button"></button>
           <p class="hint flip-wait" id="flip-wait"></p>
         </div>
 
-        <!-- 全部翻完：成功，或排錯幾張 -->
+        <!-- 全部翻完：展開整排（用上面那一排 .lu-row）＋成功，或排錯幾張 -->
         <section class="panel result-panel" id="result" data-show="reveal">
           <p class="result-title" id="result-title"></p>
           <p class="hint" id="result-desc"></p>

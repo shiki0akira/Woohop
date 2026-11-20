@@ -2,7 +2,7 @@
  * 數字默契排排站的規則，不碰 Durable Object（方便單元測試）。
  *   - 每張牌一個不重複的 1～NUM_MAX 祕密數字（老闆 11/19：一人一支手機、1～100 不會重複）
  *   - 每人 1～3 張（老闆 11/20：預設一張，人少可以玩進階一人 2～3 張）
- *   - 大家在手機上排好順序、一張一張翻：比前一張小就是排錯（老闆 11/20：最後看成功或排錯幾張）
+ *   - 大家在手機上排好順序、一張一張翻：比前面翻開的任何一張小就是排錯（老闆 11/20：10、31、13、19 的 19 也算錯）
  */
 
 export const NUM_MAX = 100;
@@ -39,9 +39,14 @@ export function usedNumbers(cards) {
   return new Set(Object.values(cards).map((c) => c.n));
 }
 
-// 翻開的這幾張對不對：第一張一定對，之後比前一張大才對
+// 翻開的這幾張對不對：比前面翻開的每一張都大才對（比前面最大的那張小就是排錯）
 export function judge(numbers) {
-  return numbers.map((n, i) => i === 0 || n > numbers[i - 1]);
+  let max = -Infinity;
+  return numbers.map((n) => {
+    const ok = n > max;
+    if (ok) max = n;
+    return ok;
+  });
 }
 
 export function cleanPerPlayer(value) {
@@ -49,9 +54,17 @@ export function cleanPerPlayer(value) {
   return Number.isInteger(n) && n >= 1 && n <= MAX_PER_PLAYER ? n : 1;
 }
 
-// 一人幾張決定房間最多幾個人（最多 15 人）
-export function maxPlayersFor(perPlayer) {
-  return Math.min(15, Math.floor(MAX_CARDS / perPlayer));
+export const MAX_PLAYERS = 15;
+
+// 人數上限：開房時設（老闆 11/20：開房設人數，每人幾張進房間再設），2～15，預設 10
+export function cleanMaxPlayers(value) {
+  const n = Number(value);
+  return Number.isInteger(n) && n >= 2 && n <= MAX_PLAYERS ? n : 10;
+}
+
+// 現在這些人最多可以每人幾張（一整排最多 MAX_CARDS 張：3 張最多 10 人、2 張最多 15 人）
+export function maxPerPlayerFor(players) {
+  return Math.max(1, Math.min(MAX_PER_PLAYER, Math.floor(MAX_CARDS / Math.max(1, players))));
 }
 
 // 暱稱：去掉換行和多餘空白、截斷（跟兩真一假一樣）
