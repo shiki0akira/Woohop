@@ -45,7 +45,7 @@
 #view-play[data-phase="relay"] .play-lead,
 #view-play[data-phase="guess"] .play-lead { display: none; }
 
-.round-progress { display: grid; gap: 8px; margin-top: 20px; }
+.round-progress { display: grid; gap: 8px; }
 /* 第幾題｜碼錶 一行排開（猜中幾題只在結束畫面說） */
 .round-meta { display: flex; align-items: baseline; gap: 12px; }
 .round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }

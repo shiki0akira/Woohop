@@ -78,7 +78,6 @@ dialog.modal h2 { margin: 0 0 4px; font-size: 20px; }
  * 沒有剩餘時間、沒有已抽題數、沒有進度條——理由見 CONCEPT.md 2.2、2.3。
  * 卡片貼著導覽列下方，不撐滿也不置中：題目一載入就在視線裡，按鈕落在拇指構得到的高度。
  */
-.view-play { padding-top: 20px; }
 .play-card { display: flex; flex-direction: column; gap: 20px; padding: 20px 20px 24px; }
 .play-stage { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
 .bomb svg { display: block; width: 150px; height: auto; overflow: visible; }

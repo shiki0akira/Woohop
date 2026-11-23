@@ -45,7 +45,7 @@
 #view-play:not([data-phase="acting"]) .phase-acting { display: none; }
 
 /* 第幾題・輪到第幾個人＋進度條（照倒放猜猜看的 .round-progress） */
-.round-progress { display: grid; gap: 8px; margin-top: 20px; }
+.round-progress { display: grid; gap: 8px; }
 .round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
 .round-progress .progress { max-width: none; }
 .round-progress .progress[hidden] { display: none; }

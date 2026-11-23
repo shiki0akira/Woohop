@@ -42,7 +42,7 @@
   .cup-stage.is-drawing .cup-cam, .cup-stage.is-drawn .cup-cam { animation: none; }
 }
 
-.turn { margin: 20px 0 0; text-align: center; font-weight: 800; color: var(--muted); }
+.turn { margin: 0; text-align: center; font-weight: 800; color: var(--muted); }
 
 /* ---------- 杯子：這個遊戲唯一的儀表板，畫面上沒有百分比 ---------- */
 .cup-wrap { position: relative; display: grid; justify-items: center; margin: 2px 0 10px; }

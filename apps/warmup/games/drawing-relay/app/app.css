@@ -43,7 +43,6 @@
 /* 步驟頭只在主持人對大家說話的兩段（app.js 的 PLAY_LEAD：draw、reveal） */
 #view-play:not([data-phase="draw"]):not([data-phase="reveal"]) .play-lead { display: none; }
 
-.round-progress { margin-top: 20px; }
 .round-no { margin: 0; font-size: 14px; font-weight: 800; color: var(--muted); }
 
 /* 題卡七面（app.js 的 setPhase 設 data-stage） */

@@ -21,7 +21,6 @@
  */
 .statue-app .namer .name-card[data-stage="draw"] .stage-draw { display: grid; }
 /* 抽卡那段沒有步驟頭，面板會直接頂到頂欄：空出跟 go 那段步驟頭一樣的 20px */
-.statue-app .namer.phase-card { margin-top: 20px; }
 .statue-app .namer .stage-draw .hint { margin: 0; }
 /* 翻出來的卡換成這個遊戲的黃色 */
 .statue-app .namer .drawn-card { display: grid; justify-items: center; gap: 10px; border-color: var(--yellow-edge); background: var(--yellow-face); box-shadow: 0 5px 0 var(--yellow-edge); }

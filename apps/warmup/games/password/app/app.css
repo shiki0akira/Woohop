@@ -22,7 +22,7 @@
  * 老闆 11/17 試玩：頂欄下面要有間距（跟定時炸彈的 .view-play 一樣 20px）；
  * 電腦上不要捲動、一個畫面看得完：整塊最寬 440px 置中，鍵盤高度跟著視窗高度縮
  */
-#view-play { padding-top: 20px; width: 100%; max-width: 440px; margin: 0 auto; }
+#view-play { width: 100%; max-width: 440px; margin: 0 auto; }
 /* 猜的時候頁面底下不留全站的 40px 留白（多那一段就會出現捲軸） */
 .password-app[data-screen="play"] .game-main { padding-bottom: 12px; }
 /* 矮的筆電螢幕（高度 760 以下）：範圍卡收緊一點 */

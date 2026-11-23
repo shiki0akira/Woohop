@@ -100,6 +100,13 @@
 .woohop-game { --game-edge: var(--blue-edge); }
 .woohop-game .view { display: flex; flex-direction: column; gap: 16px; }
 .woohop-game .view[hidden] { display: none; }
+/*
+ * 每一步跟頂欄的距離統一規格（2026-11-23 老闆：每次新遊戲都有 gap 問題）：
+ *   開場標題 .page-head 自己有 28px、步驟頭 .lead-head 自己有 20px；
+ *   第一個元素是別的東西（手機在大家手上傳、沒有步驟頭的 play 這類）就由這條補上 20px。
+ * 新遊戲不用再自己寫 #view-play { padding-top }，也不要在第一張卡片加 margin-top（會變兩倍）。
+ */
+.woohop-game .game-main > .view:not(:has(> .page-head:first-child, > .lead-slot:first-child)) { padding-top: 20px; }
 
 /* 頁首：麵包屑＋標題＋一句說明 */
 .game-main .page-head { padding: 28px 0 4px; }
