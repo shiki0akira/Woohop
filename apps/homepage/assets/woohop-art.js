@@ -293,6 +293,19 @@
       <text x="80" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>
       <text x="100" y="79" text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">7</text>
       ${makeFace('happy', 80, 100, 1.9)}`,
+    // 俄羅斯輪盤（2026-11-23）：一支斜放的粉紅拉炮、開口噴出彩帶。
+    // 跟遊戲裡砰的那一下同一支（games/roulette/app/app.js 的 popperArt('pop')），首頁表情放大到 2
+    roulette: () => `
+      ${ground}${dot(132, 22, '#FF9419', 4)}${dot(146, 44, '#7489E6', 3.5)}${dot(118, 12, '#4FB59A', 3)}${dot(150, 76, '#FFC628', 4)}${plus(76, 16, '#EE7B6A', 4)}${burst(140, 60, '#FFC628')}
+      <path d="M96 50q8-14 4-24t6-20" fill="none" stroke="#FFC628" stroke-width="5" stroke-linecap="round"/>
+      <path d="M100 54q14-6 22-2t18-8" fill="none" stroke="#7489E6" stroke-width="5" stroke-linecap="round"/>
+      <path d="M98 58q16 4 24 14t20 4" fill="none" stroke="#4FB59A" stroke-width="5" stroke-linecap="round"/>
+      <path d="M92 48q-2-14 -10-20t-6-18" fill="none" stroke="#EE7B6A" stroke-width="5" stroke-linecap="round"/>
+      <path d="M102 52q12-16 24-14" fill="none" stroke="#F3A4FB" stroke-width="5" stroke-linecap="round"/>
+      <path d="M30 114q-10 2-10 6" fill="none" ${K}/>
+      ${body('<path d="M30 114L75 31L117 73Z"/>', '#F3A4FB', '<path d="M26 78l41 41M63 42l43 43" fill="none" stroke="#e48aee" stroke-width="9"/>')}
+      ${body('<ellipse cx="96" cy="52" rx="30" ry="10" transform="rotate(45 96 52)"/>', '#FFC628', '', false)}
+      ${makeFace('grin', 66, 82, 1.8)}`,
     // 數字默契排排站（2026-11-20）：三張牌從矮到高站成一排（3、42、97），最高那張有表情。
     // 跟動作抽卡、抽題目的「一疊卡」和終極密碼的鎖分得開：這裡是排排站、由小到大
     lineup: () => {

@@ -210,6 +210,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.password()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 俄羅斯輪盤（apps/warmup/games/roulette/app/strings.js 的 LANGS）
+  roulette: async () => {
+    const { STRINGS: Rr, LANGS: RRL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'roulette', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'warmup', 'games', 'roulette', 'public', 'og'),
+      langs: RRL,
+      title: (lang) => splitTitle(Rr[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.roulette()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 木頭人動作版（apps/warmup/games/statue/app/strings.js 的 LANGS）
   statue: async () => {
     const { STRINGS: Tm, LANGS: TL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'statue', 'app', 'strings.js')).href);
