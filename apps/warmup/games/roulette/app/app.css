@@ -1,0 +1,86 @@
+/*
+ * 拉炮輪盤自己的樣式。步驟頭、規則卡、拉霸、按鈕、計數器都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面（彈夾、拉炮、彩帶）。
+ * 跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ */
+
+/* 這個遊戲的代表色：粉紅（彩帶） */
+.roulette-app { --game-edge: var(--pink-edge); }
+.roulette-app .panel { padding: 20px; }
+
+/* 頂欄的聲音開關在開場藏起來：開始玩才有聲音（全站規則） */
+.roulette-app[data-screen="setup"] .game-music { display: none; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場：幾個人、會爆幾發、彈夾格數（照比手畫腳接力賽的 .setup-row） ---------- */
+.setup-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px 12px; }
+.setup-panel .field-label { margin-top: 0; }
+.setup-panel .stepper button { width: 44px; height: 48px; }
+.setup-panel .stepper button:disabled { opacity: .4; cursor: default; }
+.setup-panel .stepper output { min-width: 48px; }
+#chambers-panel { margin-top: 10px; }
+/* 「自己調彈夾格數」收合鍵：跟我從來沒有的「自己選主題」一樣 */
+.chambers-toggle {
+  display: flex; width: fit-content; align-items: center; gap: 4px; margin-top: 16px; padding: 4px 0;
+  border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800;
+}
+.chambers-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.chambers-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
+
+/* ---------- 開始玩：還剩幾格、彈夾、拉炮 ---------- */
+.play-panel { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.play-status { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.play-status #bangs-left { color: var(--pink-text); }
+
+/* 彈夾：一格一個圓。格子多（最多 20）就自動換行 */
+.cylinder { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 340px; margin: 0; padding: 0; list-style: none; }
+.cylinder li {
+  position: relative; width: 26px; height: 26px; border: 2px solid var(--ink); border-radius: 50%; background: #fff;
+  box-shadow: 0 2px 0 var(--ink); transition: transform .2s, background .2s;
+}
+/* 輪到這一格：粉紅、放大一點 */
+.cylinder li.is-next { background: var(--pink-face); transform: scale(1.15); }
+/* 拉過、沒事：灰底打勾 */
+.cylinder li.is-safe { background: var(--disabled-face); border-color: var(--disabled-edge); box-shadow: 0 2px 0 var(--disabled-edge); }
+.cylinder li.is-safe::after {
+  content: ""; position: absolute; left: 7px; top: 3px; width: 6px; height: 11px;
+  border: solid var(--disabled-text); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+}
+/* 砰過：黃底星星 */
+.cylinder li.is-pop { background: var(--yellow-face); border-color: var(--yellow-edge); box-shadow: 0 2px 0 var(--yellow-edge); }
+.cylinder li.is-pop::after { content: "★"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 14px; line-height: 1; color: var(--yellow-text); }
+
+.popper-stage { width: min(240px, 70vw); }
+.popper-art { display: block; width: 100%; height: auto; overflow: visible; }
+/* 拉下去之後、還沒揭曉：抖一抖（app.js 的 SUSPENSE_MS） */
+.popper-stage.is-shaking { animation: popper-shake .12s linear infinite; }
+@keyframes popper-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  25% { transform: translate(-3px, 1px) rotate(-3deg); }
+  75% { transform: translate(3px, -1px) rotate(3deg); }
+}
+/* 喀：往後縮一下 */
+.popper-stage.is-click { animation: popper-click .3s ease-out; }
+@keyframes popper-click {
+  30% { transform: scale(.92) rotate(-4deg); }
+  100% { transform: none; }
+}
+.play-title { margin: 0; min-height: 1.3em; font-size: 28px; font-weight: 900; line-height: 1.3; }
+.play-hint { margin: 0; min-height: 1.4em; font-size: 15px; color: var(--muted); }
+
+/* 拉！：大顆粉紅鍵 */
+.pull-btn { --face: var(--pink-face); --edge: var(--pink-edge); --text: var(--pink-text); --h: 76px; font-size: 26px; }
+
+/* ---------- 砰 ---------- */
+.pop-panel { display: grid; gap: 12px; }
+.pop-count { margin: 0; text-align: center; font-size: 15px; font-weight: 800; color: var(--pink-text); }
+
+/* 全畫面彩帶：fixed 一層，不擋點擊 */
+.confetti { position: fixed; inset: 0; z-index: 50; overflow: hidden; pointer-events: none; }
+.confetti i { position: absolute; display: block; border-radius: 2px; will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce) {
+  .popper-stage.is-shaking, .popper-stage.is-click { animation: none; }
+}

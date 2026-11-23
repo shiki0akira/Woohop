@@ -17,6 +17,7 @@
 | 秒數挑戰 | `games/seconds` | `/seconds/{lang}/` |
 | 我從來沒有 | `games/never` | `/never/{lang}/` |
 | 終極密碼 | `games/password` | `/password/{lang}/` |
+| 俄羅斯輪盤（還沒上線，只有繁中） | `games/roulette` | `/roulette/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 
@@ -53,6 +54,8 @@ npm run deploy         # build + wrangler deploy（一次部署全部暖場遊�
 4. 首頁的遊戲清單照 `apps/homepage/CLAUDE.md` 的「加新遊戲時要改的地方」
 5. 分享縮圖：`apps/homepage/scripts/og-image.mjs` 的 `TARGETS` 加一筆，跑 `node scripts/og-image.mjs {新代號}`
 6. `npm run deploy`，再 push 首頁
+
+**每一步跟頂欄的距離不用自己寫**（2026-11-23 統一規格，在首頁 `assets/game.css`）：`.view` 第一個元素是 `.page-head` 或 `.lead-slot` 就照它們自己的間距，其他（例如沒有步驟頭的 play）共用 CSS 自動補 20px。新遊戲不要再寫 `#view-play { padding-top }`，也不要在第一張卡片加 `margin-top`，會變成兩倍。
 
 ## 部署與線上網址
 

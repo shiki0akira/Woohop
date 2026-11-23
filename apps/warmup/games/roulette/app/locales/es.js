@@ -1,0 +1,96 @@
+export default {
+  htmlLang: 'es',
+  ogLocale: 'es_ES',
+
+  seoTitle: 'Ruleta rusa para fiestas: pasa el móvil, a quien le haga PUM le toca verdad o reto',
+  seoDesc:
+    'La ruleta rusa en versión fiesta: el móvil se convierte en un cañón de confeti que va pasando por el círculo. Cada uno tira una vez, las recámaras usadas no vuelven y cada turno da más nervios. Las recámaras se ajustan al grupo (6, 12, 18…) o las eliges tú, con tantos disparos como quieras: la partida termina cuando han explotado todos. A quien le hace PUM le cae una lluvia de confeti y gira la máquina de verdad o reto. Sin material, sin descargas, sin registro.',
+  rulesSeoTitle: 'Ruleta rusa (versión confeti): cómo se juega',
+  rulesSeoDesc: 'Las reglas de la ruleta rusa con cañón de confeti: cuántos juegan, cómo elegir recámaras y disparos, qué pasa cuando hace PUM y una frase que quien dirige puede leer para empezar.',
+
+  navTitle: 'Ruleta rusa',
+  navRules: 'Reglas',
+  gameBack: 'Volver',
+  rulesLinkText: 'Reglas completas →',
+
+  heroTitle: 'Ruleta rusa: pasa el móvil, ¿a quién le hará PUM?',
+  heroDesc: 'La ruleta rusa en versión fiesta. El móvil es un cañón de confeti: cada uno tira una vez, las recámaras usadas no vuelven y cada turno da más nervios. A quien le hace PUM le cae una lluvia de confeti y luego gira la máquina de verdad o reto.',
+
+  playersLabel: 'Jugadores',
+  playersLess: 'Un jugador menos',
+  playersMore: 'Un jugador más',
+  bangsLabel: 'Disparos',
+  bangsLess: 'Un disparo menos',
+  bangsMore: 'Un disparo más',
+  chambersToggle: 'Elegir recámaras y disparos',
+  chambersLabel: 'Recámaras',
+  chambersLess: 'Una recámara menos',
+  chambersMore: 'Una recámara más',
+  setupHint: '{chambers} recámaras, {bangs} hacen PUM. La partida termina cuando han explotado todas.',
+  setupHintMore: 'Hay más recámaras que jugadores: puede pasar una vuelta entera sin PUM, seguid pasándolo.',
+
+  lead: {
+    setup: ['Empezamos', '¡Vamos a jugar a la ruleta rusa! Poneos en círculo: este móvil va a ser un cañón de confeti.'],
+    rules: ['Las reglas', 'Quien tenga el móvil tira una vez. Casi siempre hace «clic» y se pasa al siguiente. Si hace «PUM», recordad quién fue: cuando hayan explotado todos los disparos, a quienes les tocó giran la máquina de verdad o reto. Las recámaras usadas no vuelven, así que cada vez es más arriesgado.'],
+    pop: ['¿A quién le tocó?', '¡Le tocó a {who}! Elige verdad, reto o al azar y gira la máquina.'],
+    popMany: ['¿A quién le tocó?', '¡Les tocó a {who}! De uno en uno: elegid verdad, reto o al azar y girad la máquina.'],
+  },
+  seat: 'el jugador n.º {n}',
+  seatTimes: 'el jugador n.º {n} ({times} veces)',
+  seatJoin: ', ',
+  ruleCards: [
+    ['El móvil es el cañón', 'Quien tenga el móvil pulsa «¡Tirar!» una vez.'],
+    ['Clic, te libras', '¿No hizo PUM? Pásalo al siguiente. Las recámaras usadas no vuelven.'],
+    ['¡PUM! A la máquina', '¡Confeti! Recordad quién fue. Cuando exploten todos, a quienes les tocó giran la máquina.'],
+  ],
+  rulesNext: 'Siguiente: a jugar',
+
+  startButton: 'Empezar',
+  soundLabel: 'Sonido',
+  popperAlt: 'Cañón de confeti',
+
+  chambersLeft: 'Quedan {left} recámaras',
+  bangsLeft: 'Faltan {bangs} PUM',
+  pullButton: '¡Tirar!',
+  pullHint: 'Te toca, ¡tira!',
+  pulling: '…',
+  safeTitle: '¡Clic! Te libras',
+  clickBubble: 'clic',
+  safeHint: 'Uf… pásalo al siguiente',
+  passButton: 'Pasar al siguiente',
+  lastSafe: '¡Todas las recámaras que quedan hacen PUM!',
+  popTitle: '¡PUM!',
+  popHint: '¡Le tocó a {seat}! Recordadlo y seguid pasándolo',
+
+  popDone: 'Han explotado los {n} disparos',
+  againButton: 'Otra vez',
+
+  leaveTitle: '¿Volver al principio?',
+  leaveDesc: 'La partida termina y se vuelven a cargar las recámaras.',
+  leaveConfirm: 'Volver al principio',
+  leaveCancel: 'Seguir jugando',
+
+  rulesTitle: 'Cómo se juega a la ruleta rusa',
+  rulesIntro: 'La ruleta rusa en versión fiesta: un móvil va pasando como cañón de confeti, cada uno tira una vez y las recámaras usadas no vuelven. Cuando explotan todos los disparos, a quienes les tocó giran por turnos la máquina de verdad o reto.',
+  rulesFacts: [
+    ['Jugadores', 'De 2 a 20'],
+    ['Duración', '5–15 minutos'],
+    ['Material', 'Nada, un móvil para ir pasando'],
+  ],
+  rulesHowHeading: 'Cómo se juega',
+  rulesHowSteps: [
+    'Elige cuántos jugadores sois y el móvil se carga solo: 6 recámaras hasta 4 jugadores, 12 de 5 a 8 y más si sois más, con 1 disparo por defecto. También puedes elegir recámaras y disparos (hasta 10).',
+    'Poneos en círculo. Quien tenga el móvil pulsa «¡Tirar!».',
+    '«Clic» significa que te libras: pásalo al siguiente. Las recámaras usadas no vuelven, así que cada vez es más arriesgado.',
+    'Si hace «PUM», vuela el confeti. Si hay varios disparos, recordad quién fue y seguid pasándolo.',
+    'Cuando exploten todos, el móvil dice a qué jugadores les tocó. De uno en uno, eligen verdad, reto o al azar y giran la máquina.',
+  ],
+  rulesLeadHeading: 'Consejos para quien dirige',
+  rulesLeadSay: '¡Este móvil ahora es un cañón de confeti! Quien lo tenga tira una vez. Si hace «clic», te libras; si hace «PUM», luego te toca la máquina de verdad o reto. Las recámaras usadas no vuelven, ¡así que cada vez es más peligroso!',
+  rulesLeadSteps: [
+    'En grupos pequeños basta con un disparo; en grupos grandes poned varios, así juega más gente y la partida no se acaba enseguida.',
+    'Con más recámaras que jugadores puede pasar una vuelta entera sin PUM, y los nervios suben.',
+    'Contad juntos «tres, dos, uno» antes de cada tirada: es lo mejor del juego.',
+  ],
+  rulesBack: '← Volver al juego',
+};

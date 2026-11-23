@@ -1,0 +1,96 @@
+export default {
+  htmlLang: 'de',
+  ogLocale: 'de_DE',
+
+  seoTitle: 'Russisches Roulette als Partyspiel – Handy reihum, wer PENG macht, bekommt Wahrheit oder Pflicht',
+  seoDesc:
+    'Russisches Roulette in der Partyversion: Das Handy wird zur Konfettikanone und geht reihum. Jeder zieht einmal, gezogene Kammern kommen nicht zurück – mit jeder Runde wird es spannender. Die Kammern richten sich nach der Gruppengröße (6, 12, 18 …) oder du stellst sie selbst ein, auch mehrere Treffer sind möglich. Die Runde endet erst, wenn alle Treffer geknallt haben. Wer PENG macht, bekommt Konfetti und dreht den Wahrheit-oder-Pflicht-Automaten. Ohne Material, ohne Download, ohne Anmeldung.',
+  rulesSeoTitle: 'Russisches Roulette (Konfetti-Version): Spielregeln',
+  rulesSeoDesc: 'So geht Russisches Roulette mit Konfettikanone: wie viele mitspielen, wie man Kammern und Treffer einstellt, was bei PENG passiert – und ein Satz, den die Spielleitung zum Start vorlesen kann.',
+
+  navTitle: 'Russisches Roulette',
+  navRules: 'Regeln',
+  gameBack: 'Zurück',
+  rulesLinkText: 'Alle Regeln →',
+
+  heroTitle: 'Russisches Roulette: Handy reihum – wer macht PENG?',
+  heroDesc: 'Russisches Roulette in der Partyversion. Das Handy ist eine Konfettikanone: Jeder zieht einmal, gezogene Kammern kommen nicht zurück, und es wird von Mal zu Mal spannender. Wer PENG macht, bekommt eine Ladung Konfetti – und dreht danach den Wahrheit-oder-Pflicht-Automaten.',
+
+  playersLabel: 'Mitspieler',
+  playersLess: 'Eine Person weniger',
+  playersMore: 'Eine Person mehr',
+  bangsLabel: 'Treffer',
+  bangsLess: 'Ein Treffer weniger',
+  bangsMore: 'Ein Treffer mehr',
+  chambersToggle: 'Kammern und Treffer selbst einstellen',
+  chambersLabel: 'Kammern',
+  chambersLess: 'Eine Kammer weniger',
+  chambersMore: 'Eine Kammer mehr',
+  setupHint: '{chambers} Kammern, davon {bangs} mit PENG. Die Runde endet, wenn alle geknallt haben.',
+  setupHintMore: 'Mehr Kammern als Mitspieler – vielleicht knallt es eine ganze Runde lang nicht. Einfach weitergeben.',
+
+  lead: {
+    setup: ['Los geht’s', 'Wir spielen Russisches Roulette! Setzt euch in einen Kreis – dieses Handy wird gleich zur Konfettikanone.'],
+    rules: ['Die Regeln', 'Wer das Handy hat, zieht einmal. Meistens macht es nur „klick“ und ihr gebt weiter. Bei „PENG“ merkt ihr euch, wer es war – wenn alle Treffer geknallt haben, drehen die Getroffenen den Wahrheit-oder-Pflicht-Automaten! Gezogene Kammern kommen nicht zurück, also wird es immer riskanter.'],
+    pop: ['Wen hat’s erwischt?', 'Erwischt hat es {who}! Wähle Wahrheit, Pflicht oder Zufall und dreh den Automaten!'],
+    popMany: ['Wen hat’s erwischt?', 'Erwischt hat es {who}! Einer nach dem anderen: Wahrheit, Pflicht oder Zufall wählen und den Automaten drehen!'],
+  },
+  seat: 'Person {n}',
+  seatTimes: 'Person {n} ({times}×)',
+  seatJoin: ', ',
+  ruleCards: [
+    ['Das Handy ist die Kanone', 'Wer das Handy hat, tippt einmal auf „Ziehen!“.'],
+    ['Klick – Glück gehabt', 'Kein PENG? Weiter an die nächste Person. Gezogene Kammern kommen nicht zurück.'],
+    ['PENG! Ab zum Automaten', 'Konfetti! Merkt euch, wer es war. Sind alle Treffer weg, drehen die Getroffenen den Automaten.'],
+  ],
+  rulesNext: 'Weiter: Spiel starten',
+
+  startButton: 'Spiel starten',
+  soundLabel: 'Ton',
+  popperAlt: 'Konfettikanone',
+
+  chambersLeft: 'Noch {left} Kammern',
+  bangsLeft: 'Noch {bangs} × PENG',
+  pullButton: 'Ziehen!',
+  pullHint: 'Du bist dran – zieh!',
+  pulling: '…',
+  safeTitle: 'Klick! Glück gehabt',
+  clickBubble: 'klick',
+  safeHint: 'Puh – weitergeben',
+  passButton: 'An die nächste Person',
+  lastSafe: 'Jede restliche Kammer macht PENG!',
+  popTitle: 'PENG!',
+  popHint: '{seat} hat’s erwischt! Merkt es euch und gebt weiter',
+
+  popDone: 'Alle {n} Treffer haben geknallt',
+  againButton: 'Noch mal',
+
+  leaveTitle: 'Zurück zum Anfang?',
+  leaveDesc: 'Diese Runde endet und die Kammern werden neu geladen.',
+  leaveConfirm: 'Zum Anfang',
+  leaveCancel: 'Weiterspielen',
+
+  rulesTitle: 'So spielt man Russisches Roulette',
+  rulesIntro: 'Russisches Roulette in der Partyversion: Ein Handy geht als Konfettikanone reihum, jeder zieht einmal, gezogene Kammern kommen nicht zurück. Haben alle Treffer geknallt, drehen die Getroffenen nacheinander den Wahrheit-oder-Pflicht-Automaten.',
+  rulesFacts: [
+    ['Mitspieler', '2–20'],
+    ['Dauer', '5–15 Minuten'],
+    ['Material', 'Nichts, nur ein Handy zum Weitergeben'],
+  ],
+  rulesHowHeading: 'So geht’s',
+  rulesHowSteps: [
+    'Anzahl der Mitspieler wählen – das Handy lädt sich selbst: bis 4 Personen 6 Kammern, 5–8 Personen 12, bei mehr noch mehr, standardmäßig mit 1 Treffer. Kammern und Treffer (bis zu 10) kannst du auch selbst einstellen.',
+    'Setzt euch in einen Kreis. Wer das Handy hat, tippt auf „Ziehen!“.',
+    '„Klick“ heißt Glück gehabt – weitergeben. Gezogene Kammern kommen nicht zurück, also wird es immer riskanter.',
+    'Bei „PENG“ fliegt Konfetti. Gibt es mehrere Treffer, merkt euch, wer es war, und gebt weiter.',
+    'Sind alle Treffer weg, sagt das Handy, welche Personen es erwischt hat. Nacheinander wählen sie Wahrheit, Pflicht oder Zufall und drehen den Automaten.',
+  ],
+  rulesLeadHeading: 'Tipps für die Spielleitung',
+  rulesLeadSay: 'Dieses Handy ist jetzt eine Konfettikanone! Wer es hat, zieht einmal. „Klick“ heißt Glück gehabt – bei „PENG“ geht’s später an den Wahrheit-oder-Pflicht-Automaten. Gezogene Kammern kommen nicht zurück, also wird es immer gefährlicher!',
+  rulesLeadSteps: [
+    'In kleinen Gruppen reicht ein Treffer; in großen Gruppen lieber ein paar mehr, damit mehr Leute drankommen und die Runde nicht sofort vorbei ist.',
+    'Mehr Kammern als Mitspieler: Dann kann eine ganze Runde ohne PENG vergehen – und die Spannung steigt.',
+    'Vor jedem Ziehen gemeinsam „drei, zwei, eins“ zählen – das macht die Stimmung.',
+  ],
+  rulesBack: '← Zurück zum Spiel',
+};

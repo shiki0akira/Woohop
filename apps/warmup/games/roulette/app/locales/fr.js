@@ -1,0 +1,96 @@
+export default {
+  htmlLang: 'fr',
+  ogLocale: 'fr_FR',
+
+  seoTitle: 'Roulette russe version soirée – le téléphone tourne, celui qui fait PAN tire action ou vérité',
+  seoDesc:
+    'La roulette russe version soirée : le téléphone devient un canon à confettis qui passe de main en main. Chacun tire une fois, les chambres tirées ne reviennent pas, et le suspense monte à chaque tour. Le nombre de chambres suit le groupe (6, 12, 18…) ou se règle à la main, avec autant de coups gagnants que vous voulez : la partie s’arrête quand tout a éclaté. Celui qui fait PAN reçoit une pluie de confettis et lance la machine action ou vérité. Sans accessoire, sans téléchargement, sans inscription.',
+  rulesSeoTitle: 'Roulette russe (version confettis) : règles du jeu',
+  rulesSeoDesc: 'Les règles de la roulette russe version canon à confettis : combien de joueurs, comment régler les chambres et les coups, ce qui se passe quand ça fait PAN, et une phrase que l’animateur peut lire pour lancer la partie.',
+
+  navTitle: 'Roulette russe',
+  navRules: 'Règles',
+  gameBack: 'Retour',
+  rulesLinkText: 'Toutes les règles →',
+
+  heroTitle: 'Roulette russe : le téléphone tourne, qui va faire PAN ?',
+  heroDesc: 'La roulette russe version soirée. Le téléphone est un canon à confettis : chacun tire une fois, les chambres tirées ne reviennent pas, et le suspense monte à chaque tour. Celui qui fait PAN reçoit une pluie de confettis, puis lance la machine action ou vérité.',
+
+  playersLabel: 'Joueurs',
+  playersLess: 'Un joueur de moins',
+  playersMore: 'Un joueur de plus',
+  bangsLabel: 'Coups',
+  bangsLess: 'Un coup de moins',
+  bangsMore: 'Un coup de plus',
+  chambersToggle: 'Régler les chambres et les coups',
+  chambersLabel: 'Chambres',
+  chambersLess: 'Une chambre de moins',
+  chambersMore: 'Une chambre de plus',
+  setupHint: '{chambers} chambres, dont {bangs} qui font PAN. La partie s’arrête quand tout a éclaté.',
+  setupHintMore: 'Plus de chambres que de joueurs : un tour complet peut passer sans PAN, on continue.',
+
+  lead: {
+    setup: ['C’est parti', 'On joue à la roulette russe ! Mettez-vous en cercle : ce téléphone va devenir un canon à confettis.'],
+    rules: ['Les règles', 'Celui qui a le téléphone tire une fois. La plupart du temps, ça fait juste « clic » et on passe au suivant. Si ça fait « PAN », retenez qui c’était : quand tous les coups sont partis, ceux qui ont été touchés lancent la machine action ou vérité ! Les chambres tirées ne reviennent pas, donc c’est de plus en plus risqué.'],
+    pop: ['Qui a été touché ?', 'Touché : {who} ! Choisis action, vérité ou au hasard, puis lance la machine !'],
+    popMany: ['Qui a été touché ?', 'Touchés : {who} ! Chacun son tour : choisissez action, vérité ou au hasard, puis lancez la machine !'],
+  },
+  seat: 'joueur n° {n}',
+  seatTimes: 'joueur n° {n} ({times} fois)',
+  seatJoin: ', ',
+  ruleCards: [
+    ['Le téléphone est le canon', 'Celui qui a le téléphone appuie une fois sur « Tirer ! ».'],
+    ['Clic, ouf', 'Pas de PAN ? On passe au suivant. Les chambres tirées ne reviennent pas.'],
+    ['PAN ! À la machine', 'Confettis ! Retenez qui c’était. Quand tout a éclaté, les touchés lancent la machine.'],
+  ],
+  rulesNext: 'Suivant : on joue',
+
+  startButton: 'Commencer',
+  soundLabel: 'Son',
+  popperAlt: 'Canon à confettis',
+
+  chambersLeft: 'Encore {left} chambres',
+  bangsLeft: 'Encore {bangs} PAN',
+  pullButton: 'Tirer !',
+  pullHint: 'À toi, tire !',
+  pulling: '…',
+  safeTitle: 'Clic ! Ouf',
+  clickBubble: 'clic',
+  safeHint: 'Ouf… passe au suivant',
+  passButton: 'Passer au suivant',
+  lastSafe: 'Toutes les chambres restantes font PAN !',
+  popTitle: 'PAN !',
+  popHint: 'Touché : {seat} ! Retenez-le et continuez',
+
+  popDone: 'Les {n} coups sont partis',
+  againButton: 'Rejouer',
+
+  leaveTitle: 'Revenir au début ?',
+  leaveDesc: 'La partie s’arrête et les chambres sont rechargées.',
+  leaveConfirm: 'Revenir au début',
+  leaveCancel: 'Continuer',
+
+  rulesTitle: 'Comment jouer à la roulette russe',
+  rulesIntro: 'La roulette russe version soirée : un téléphone passe de main en main comme un canon à confettis, chacun tire une fois et les chambres tirées ne reviennent pas. Quand tous les coups sont partis, les joueurs touchés lancent tour à tour la machine action ou vérité.',
+  rulesFacts: [
+    ['Joueurs', '2 à 20'],
+    ['Durée', '5 à 15 minutes'],
+    ['Matériel', 'Rien, un téléphone à faire passer'],
+  ],
+  rulesHowHeading: 'Comment jouer',
+  rulesHowSteps: [
+    'Choisissez le nombre de joueurs : le téléphone se charge tout seul, 6 chambres jusqu’à 4 joueurs, 12 de 5 à 8, davantage au-delà, avec 1 coup par défaut. Vous pouvez aussi régler les chambres et les coups (jusqu’à 10).',
+    'Mettez-vous en cercle. Celui qui a le téléphone appuie sur « Tirer ! ».',
+    '« Clic » : ouf, on passe au suivant. Les chambres tirées ne reviennent pas, donc c’est de plus en plus risqué.',
+    '« PAN » : pluie de confettis. S’il y a plusieurs coups, retenez qui c’était et continuez.',
+    'Quand tout a éclaté, le téléphone annonce quels joueurs ont été touchés. Chacun son tour, ils choisissent action, vérité ou au hasard et lancent la machine.',
+  ],
+  rulesLeadHeading: 'Conseils pour l’animateur',
+  rulesLeadSay: 'Ce téléphone est maintenant un canon à confettis ! Celui qui l’a tire une fois. « Clic », c’est bon – mais si ça fait « PAN », tu passeras à la machine action ou vérité. Les chambres tirées ne reviennent pas, donc c’est de plus en plus dangereux !',
+  rulesLeadSteps: [
+    'En petit groupe, un seul coup suffit ; en grand groupe, mettez-en plusieurs pour que plus de monde y passe et que ça ne finisse pas trop vite.',
+    'Avec plus de chambres que de joueurs, un tour entier peut passer sans PAN : le suspense grimpe.',
+    'Comptez ensemble « trois, deux, un » avant chaque tir, c’est là que l’ambiance monte.',
+  ],
+  rulesBack: '← Retour au jeu',
+};

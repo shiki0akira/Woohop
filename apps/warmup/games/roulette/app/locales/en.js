@@ -1,0 +1,96 @@
+export default {
+  htmlLang: 'en',
+  ogLocale: 'en_US',
+
+  seoTitle: 'Russian Roulette Party Game – pass the phone, the one who goes POP takes a truth or dare',
+  seoDesc:
+    'A party version of Russian roulette: the phone is a party popper you pass around the circle. Everyone takes one pull, used chambers never spin back, and it gets tenser every turn. The chamber count follows the group size (6, 12, 18…) or set your own, with as many poppers as you like – the round ends only when they have all gone off. Whoever goes POP gets showered in confetti and spins the truth-or-dare slot. No props, no download, no sign-up.',
+  rulesSeoTitle: 'How to play Russian Roulette (party popper version)',
+  rulesSeoDesc: 'Rules for the party popper version of Russian roulette: how many players, how to set chambers and poppers, what happens when someone goes POP, plus a line the host can read out to start.',
+
+  navTitle: 'Russian Roulette',
+  navRules: 'Rules',
+  gameBack: 'Back',
+  rulesLinkText: 'Full rules →',
+
+  heroTitle: 'Russian Roulette: pass the phone – who goes POP?',
+  heroDesc: 'A party version of Russian roulette. The phone is a party popper: everyone takes one pull, and used chambers never spin back, so it gets tenser every turn. Whoever goes POP gets showered in confetti – then spins the truth-or-dare slot.',
+
+  playersLabel: 'Players',
+  playersLess: 'One fewer player',
+  playersMore: 'One more player',
+  bangsLabel: 'Poppers',
+  bangsLess: 'One fewer popper',
+  bangsMore: 'One more popper',
+  chambersToggle: 'Set chambers and poppers',
+  chambersLabel: 'Chambers',
+  chambersLess: 'One fewer chamber',
+  chambersMore: 'One more chamber',
+  setupHint: '{chambers} chambers, {bangs} of them go POP. The round ends when they have all gone off.',
+  setupHintMore: 'More chambers than players – a full lap might pass with no POP, so keep going.',
+
+  lead: {
+    setup: ['Get ready', 'Let’s play Russian Roulette! Everyone sit in a circle – this phone is about to become a party popper.'],
+    rules: ['The rules', 'Whoever has the phone takes one pull. Most of the time it just clicks and you pass it on. If it goes POP, remember who – once every popper has gone off, everyone who got popped spins the truth-or-dare slot! Used chambers never come back, so it gets riskier every turn.'],
+    pop: ['Who got popped?', '{who} got popped! Pick truth, dare or random, then spin the slot!'],
+    popMany: ['Who got popped?', '{who} got popped! One at a time: pick truth, dare or random, then spin the slot!'],
+  },
+  seat: 'player {n}',
+  seatTimes: 'player {n} (×{times})',
+  seatJoin: ', ',
+  ruleCards: [
+    ['The phone is the popper', 'Whoever has the phone taps “Pull!” once.'],
+    ['Click – you’re safe', 'No POP? Pass the phone to the next person. Used chambers never come back.'],
+    ['POP! Spin the slot', 'Confetti everywhere – remember who it was. When all poppers are gone, they spin truth or dare.'],
+  ],
+  rulesNext: 'Next: start playing',
+
+  startButton: 'Start game',
+  soundLabel: 'Sound',
+  popperAlt: 'Party popper',
+
+  chambersLeft: '{left} chambers left',
+  bangsLeft: '{bangs} still to go POP',
+  pullButton: 'Pull!',
+  pullHint: 'Your turn – pull the popper',
+  pulling: '…',
+  safeTitle: 'Click! Safe',
+  clickBubble: 'click',
+  safeHint: 'Phew – pass it on',
+  passButton: 'Pass to the next person',
+  lastSafe: 'Every chamber left will go POP!',
+  popTitle: 'POP!',
+  popHint: '{seat} got popped! Remember who, and keep passing',
+
+  popDone: 'All {n} poppers have gone off',
+  againButton: 'Play again',
+
+  leaveTitle: 'Back to the start?',
+  leaveDesc: 'This round ends and the chambers are reloaded.',
+  leaveConfirm: 'Back to start',
+  leaveCancel: 'Keep playing',
+
+  rulesTitle: 'How to play Russian Roulette',
+  rulesIntro: 'A party version of Russian roulette: one phone is a party popper passed around the circle. Everyone pulls once and used chambers never spin back. When every popper has gone off, the people who got popped take turns on the truth-or-dare slot.',
+  rulesFacts: [
+    ['Players', '2–20'],
+    ['Time', '5–15 minutes'],
+    ['You need', 'No props, one phone to pass around'],
+  ],
+  rulesHowHeading: 'How to play',
+  rulesHowSteps: [
+    'Choose how many players. The phone loads itself: 6 chambers for up to 4 players, 12 for 5–8, and more for bigger groups, with 1 popper by default. You can set chambers and poppers (up to 10) yourself.',
+    'Sit in a circle. Whoever has the phone taps “Pull!”.',
+    'A click means you’re safe – pass the phone on. Used chambers never come back, so it gets riskier every turn.',
+    'If it goes POP, confetti flies. With more than one popper, remember who it was and keep passing.',
+    'When all poppers are gone, the phone tells you which players got popped. One at a time, they pick truth, dare or random and spin the slot.',
+  ],
+  rulesLeadHeading: 'Tips for the host',
+  rulesLeadSay: 'This phone is now a party popper! Whoever has it takes one pull. A click means you’re safe – but if it goes POP, you’ll be spinning the truth-or-dare slot. Used chambers never come back, so it gets riskier every turn!',
+  rulesLeadSteps: [
+    'With a small group one popper is plenty; with a big group add a few so more people get a turn and the round doesn’t end too fast.',
+    'Set more chambers than players and a whole lap may go by with no POP – the tension builds.',
+    'Count down “three, two, one” together before each pull. It’s the best part.',
+  ],
+  rulesBack: '← Back to the game',
+};
