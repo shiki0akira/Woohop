@@ -6,7 +6,7 @@
 
 建置與部署跟其他暖場遊戲共用（`apps/warmup`，見那裡的 CLAUDE.md）。骨架照抄我從來沒有（`games/never`），拿掉主題與配樂。
 
-- **2026-11-23 只有繁中**（`strings.js` 的 `LANGS`），老闆確認後才補其他 7 語。還沒接首頁、沒有分享縮圖（`/roulette/og/zh-TW.png` 目前 404）。`public/apple-touch-icon.png` 是從 never 複製的暫用檔。
+- **8 語，2026-11-23 上線**（`strings.js` 的 `LANGS`）。外語名在 CONCEPT.md 第四節。首頁插圖是 `woohop-art.js` 的 `art.roulette`，分享縮圖在 `public/og/`（`node scripts/og-image.mjs roulette`）。`public/apple-touch-icon.png` 是從 never 複製的（全站一樣的 W）。
 - 本機：`.claude/launch.json` 的 `warmup-dev`（port 8790），開 `/roulette/zh-TW/`。
 
 ## `app/app.js` 的結構
