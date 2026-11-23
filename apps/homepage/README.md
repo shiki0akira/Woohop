@@ -34,6 +34,7 @@ Woohop 系列小遊戲/小工具的入口首頁，純 HTML/CSS/JS，不用框架
 | 我從來沒有 | [www.vibeweb100.com/never](https://www.vibeweb100.com/never/zh-TW/) | `apps/warmup/games/never` | 已上線（2026-11-17，8 語） |
 | 終極密碼 | [www.vibeweb100.com/password](https://www.vibeweb100.com/password/zh-TW/) | `apps/warmup/games/password` | 已上線（2026-11-17，8 語） |
 | 俄羅斯輪盤 | [www.vibeweb100.com/roulette](https://www.vibeweb100.com/roulette/zh-TW/) | `apps/warmup/games/roulette` | 已上線（2026-11-23，8 語） |
+| 誰是臥底 | [www.vibeweb100.com/undercover](https://www.vibeweb100.com/undercover/zh-TW/) | `apps/warmup/games/undercover` | 已上線（2026-11-23，8 語） |
 | web100_06_HappinessSimulator | [www.vibeweb100.com/happiness](https://www.vibeweb100.com/happiness/zh-TW/) | [GitHub](https://github.com/shiki0akira/web100_06_HappinessSimulator)（獨立） | 已上線 |
 
 ## 架構說明
