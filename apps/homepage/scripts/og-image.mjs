@@ -220,6 +220,16 @@ const TARGETS = {
       scripts: [], art: 'window.Woohop.art.roulette()', viewBox: '0 0 160 128', artWidth: 500,
     };
   },
+  // 誰是臥底（apps/warmup/games/undercover/app/strings.js 的 LANGS）
+  undercover: async () => {
+    const { STRINGS: Uc, LANGS: UCL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'undercover', 'app', 'strings.js')).href);
+    return {
+      out: path.join(ROOT, '..', 'warmup', 'games', 'undercover', 'public', 'og'),
+      langs: UCL,
+      title: (lang) => splitTitle(Uc[lang].heroTitle),
+      scripts: [], art: 'window.Woohop.art.undercover()', viewBox: '0 0 160 128', artWidth: 500,
+    };
+  },
   // 木頭人動作版（apps/warmup/games/statue/app/strings.js 的 LANGS）
   statue: async () => {
     const { STRINGS: Tm, LANGS: TL } = await import(pathToFileURL(path.join(ROOT, '..', 'warmup', 'games', 'statue', 'app', 'strings.js')).href);

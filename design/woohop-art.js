@@ -306,6 +306,15 @@
       ${body('<path d="M30 114L75 31L117 73Z"/>', '#F3A4FB', '<path d="M26 78l41 41M63 42l43 43" fill="none" stroke="#e48aee" stroke-width="9"/>')}
       ${body('<ellipse cx="96" cy="52" rx="30" ry="10" transform="rotate(45 96 52)"/>', '#FFC628', '', false)}
       ${makeFace('grin', 66, 82, 1.8)}`,
+    // 誰是臥底（2026-11-23）：中間戴墨鏡和偵探帽的珊瑚色臥底，旁邊一個藍色平民在冒問號。
+    // 跟遊戲裡的角色圖示同一個樣子（games/undercover/app/app.js 的 figure()）
+    undercover: () => `
+      ${ground}${burst(144, 24, '#FFC628')}${ring(20, 30, '#4FB59A')}${dot(150, 96, '#7489E6', 4)}
+      ${body('<circle cx="40" cy="96" r="20"/>', '#aebcf3')}${makeFace('worry', 40, 98, 1.2)}
+      <text x="40" y="62" text-anchor="middle" font-size="22" font-weight="900" fill="#22222c" font-family="Fredoka, Nunito, sans-serif">?</text>
+      ${body('<circle cx="96" cy="80" r="34"/>', '#EE7B6A', '<path d="M118 50a38 38 0 0 1-28 66h40z" fill="#d4685a"/>')}${makeFace('cool', 96, 84, 2)}
+      ${body('<path d="M76 54l5-22h30l5 22z"/>', '#3a3f5c', '', false)}
+      ${body('<rect x="62" y="50" width="68" height="10" rx="5"/>', '#3a3f5c', '', false)}`,
     // 數字默契排排站（2026-11-20）：三張牌從矮到高站成一排（3、42、97），最高那張有表情。
     // 跟動作抽卡、抽題目的「一疊卡」和終極密碼的鎖分得開：這裡是排排站、由小到大
     lineup: () => {

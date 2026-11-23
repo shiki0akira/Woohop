@@ -73,6 +73,7 @@
     { key: 'password', players: [3, 20], minutes: 5, phones: 'one', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-17' },
     { key: 'lineup', players: [2, 15], minutes: 15, phones: 'each', purpose: ['know', 'team', 'sit'], color: '#4FB59A', added: '2026-11-20' },
     { key: 'roulette', players: [2, 20], minutes: 10, phones: 'one', purpose: ['warmup', 'sit'], color: '#F3A4FB', added: '2026-11-23' },
+    { key: 'undercover', players: [4, 20], minutes: 15, phones: 'one', purpose: ['know', 'sit'], color: '#7489E6', added: '2026-11-23' },
     // 房間型：每人一支手機，一間 3～8 人
     { key: 'sneaky-artist', players: [2, 8], minutes: 10, phones: 'each', purpose: ['warmup', 'sit'], color: '#7489E6', added: '2026-11-04' },
     // 兩真一假：房間型、每人一支手機（玩法頁也寫了不用手機也能玩，但篩選照網站實際玩法標 each，老闆 11/12）
