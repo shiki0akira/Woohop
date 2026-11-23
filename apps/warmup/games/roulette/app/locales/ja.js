@@ -62,7 +62,6 @@ export default {
   popTitle: 'パーン！',
   popHint: '{seat}が当たり！誰か覚えておいて、そのまま回して',
 
-  popDone: '当たり{n}個、全部鳴りました',
   againButton: 'もう一回',
 
   leaveTitle: '最初に戻りますか？',

@@ -62,7 +62,6 @@ export default {
   popTitle: 'PENG!',
   popHint: '{seat} hat’s erwischt! Merkt es euch und gebt weiter',
 
-  popDone: 'Alle {n} Treffer haben geknallt',
   againButton: 'Noch mal',
 
   leaveTitle: 'Zurück zum Anfang?',

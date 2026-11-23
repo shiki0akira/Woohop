@@ -76,7 +76,6 @@
 
 /* ---------- 砰 ---------- */
 .pop-panel { display: grid; gap: 12px; }
-.pop-count { margin: 0; text-align: center; font-size: 15px; font-weight: 800; color: var(--pink-text); }
 
 /* 全畫面彩帶：fixed 一層，不擋點擊 */
 .confetti { position: fixed; inset: 0; z-index: 50; overflow: hidden; pointer-events: none; }

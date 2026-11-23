@@ -67,7 +67,6 @@
     playHint: $('play-hint'),
     pull: $('pull'),
     pass: $('pass'),
-    popCount: $('pop-count'),
     slotRoot: $('slot-root'),
     again: $('again'),
     confetti: $('confetti'),
@@ -517,7 +516,6 @@
     if (next === 'rules') Leader.ruleCards(el.ruleCards, T.ruleCards, RULE_ART);
     if (next === 'play') readyToPull();
     if (next === 'pop') {
-      el.popCount.textContent = fill(T.popDone, { n: game.bangs });
       resetSlot();
     }
     renderLead();

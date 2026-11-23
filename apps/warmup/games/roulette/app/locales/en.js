@@ -62,7 +62,6 @@ export default {
   popTitle: 'POP!',
   popHint: '{seat} got popped! Remember who, and keep passing',
 
-  popDone: 'All {n} poppers have gone off',
   againButton: 'Play again',
 
   leaveTitle: 'Back to the start?',

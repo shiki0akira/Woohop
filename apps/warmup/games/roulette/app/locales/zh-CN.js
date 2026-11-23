@@ -62,7 +62,6 @@ export default {
   popTitle: '砰！',
   popHint: '{seat}中了！记住是谁，继续传下去',
 
-  popDone: '{n} 发全部砰完了',
   againButton: '再玩一次',
 
   leaveTitle: '要回到开头吗？',

@@ -62,7 +62,6 @@ export default {
   popTitle: '펑!',
   popHint: '{seat}이 터졌어요! 누군지 기억하고 계속 넘겨요',
 
-  popDone: '{n}개 모두 터졌어요',
   againButton: '한 번 더',
 
   leaveTitle: '처음으로 돌아갈까요?',

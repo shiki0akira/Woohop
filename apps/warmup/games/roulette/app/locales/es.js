@@ -62,7 +62,6 @@ export default {
   popTitle: '¡PUM!',
   popHint: '¡Le tocó a {seat}! Recordadlo y seguid pasándolo',
 
-  popDone: 'Han explotado los {n} disparos',
   againButton: 'Otra vez',
 
   leaveTitle: '¿Volver al principio?',

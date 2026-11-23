@@ -62,7 +62,6 @@ export default {
   popTitle: 'PAN !',
   popHint: 'Touché : {seat} ! Retenez-le et continuez',
 
-  popDone: 'Les {n} coups sont partis',
   againButton: 'Rejouer',
 
   leaveTitle: 'Revenir au début ?',
