@@ -18,6 +18,7 @@
 | 我從來沒有 | `games/never` | `/never/{lang}/` |
 | 終極密碼 | `games/password` | `/password/{lang}/` |
 | 俄羅斯輪盤 | `games/roulette` | `/roulette/{lang}/` |
+| 誰是臥底 | `games/undercover` | `/undercover/{lang}/` |
 
 房間型的搶答、喜好二選一、幸福賓果（有 Durable Object）不在這裡，各自獨立。
 

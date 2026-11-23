@@ -1,0 +1,128 @@
+/*
+ * 誰是臥底自己的樣式。步驟頭、規則卡、拉霸、按鈕、輸入框、開關都在全站共用的 woohop.css＋game.css，
+ * 這裡只排這個遊戲的版面（暱稱清單、看詞卡、投票格、揭曉、結果）。
+ * 跟首頁 site.css 在同一頁，class 避開首頁用過的名字（.hero、.stage、.card⋯）。
+ * 跟頂欄的距離交給 game.css 的共用規格，第一張卡片不要加 margin-top。
+ */
+
+/* 這個遊戲的代表色：藍（偵探） */
+.undercover-app { --game-edge: var(--blue-edge); }
+.undercover-app .panel { padding: 20px; }
+
+/* 頂欄的聲音開關在開場藏起來：開始玩才有聲音（全站規則） */
+.undercover-app[data-screen="setup"] .game-music { display: none; }
+
+/* 「開始遊戲」「下一步」黏在畫面底部（祖先不能有 overflow: hidden） */
+.btn-start { position: sticky; bottom: 16px; z-index: 2; margin-top: 4px; }
+.btn-start.btn-solid:not(:active) { box-shadow: 0 5px 0 var(--edge), 0 10px 28px #252c4b33; }
+
+/* ---------- 開場：人數、暱稱、自己調 ---------- */
+.setup-panel .field-label:first-child { margin-top: 0; }
+.setup-panel .stepper button { width: 44px; height: 48px; }
+.setup-panel .stepper button:disabled { opacity: .4; cursor: default; }
+.setup-panel .stepper output { min-width: 48px; }
+/* 暱稱：手機一欄、寬一點兩欄 */
+.name-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: n; }
+.name-list li { display: flex; align-items: center; gap: 6px; counter-increment: n; }
+.name-list li::before { content: counter(n); flex: none; width: 22px; text-align: right; font-size: 13px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.name-list .input { min-width: 0; flex: 1; }
+@media (max-width: 340px) { .name-list { grid-template-columns: 1fr; } }
+/* 「自己調」收合鍵：跟俄羅斯輪盤一樣 */
+.adv-toggle {
+  display: flex; width: fit-content; align-items: center; gap: 4px; margin-top: 16px; padding: 4px 0;
+  border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800;
+}
+.adv-toggle::after { content: ""; width: 8px; height: 8px; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: translateY(-2px) rotate(45deg); transition: transform .15s; }
+.adv-toggle[aria-expanded="true"]::after { transform: translateY(2px) rotate(-135deg); }
+/* 自己調：題目類型、臥底幾個、白板開關，一項一行、上下留一樣的距離 */
+.adv-panel { display: grid; justify-items: start; gap: 8px; margin-top: 8px; padding: 14px 16px 16px; border-radius: var(--r-md); background: var(--hover-faint); }
+.adv-panel .field-label { margin: 6px 0 0; }
+.adv-panel .field-label:first-child { margin-top: 0; }
+.cat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* 白板開關：自己一行，開關和文字垂直置中（老闆 11/23） */
+.blank-switch { display: flex; align-items: center; gap: 12px; margin-top: 10px; line-height: 1.3; }
+.blank-switch .track { flex: none; }
+.blank-switch.is-disabled { opacity: .5; cursor: default; }
+
+/* ---------- 傳手機看詞 ---------- */
+.deal-panel { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.deal-progress { font-size: 14px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.deal-panel .deal-name { margin: 0; font-size: 32px; line-height: 1.25; font-weight: 900; overflow-wrap: anywhere; }
+.deal-hint { margin: 0; font-size: 15px; color: var(--muted); }
+/* 看詞卡：平常蓋著（大問號），按住才翻開。不能被選取、長按不跳選單 */
+.word-card {
+  position: relative; display: grid; place-items: center; width: min(280px, 100%); aspect-ratio: 4 / 3; margin-top: 6px;
+  border: 2px solid var(--blue-edge); border-radius: var(--r-lg); background: var(--blue-face); color: var(--ink);
+  box-shadow: 0 5px 0 var(--blue-edge); cursor: pointer; font: inherit;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
+}
+.word-card:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--blue-edge); }
+.word-cover { font-size: 88px; font-weight: 900; line-height: 1; color: var(--blue-text); font-family: Fredoka, Nunito, sans-serif; }
+.word-text, .word-sub { display: none; }
+.word-card.is-open { background: #fff; }
+.word-card.is-open .word-cover { display: none; }
+.word-card.is-open .word-text { display: block; padding: 0 12px; font-size: 40px; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
+.word-card.is-open .word-sub { display: block; position: absolute; left: 12px; right: 12px; bottom: 12px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.word-card.is-open:has(.word-sub:not(:empty)) .word-text { margin-bottom: 28px; }
+:root[data-theme="dark"] .word-card.is-open { background: var(--surface); }
+.peek-hint { margin: 4px 0 0; }
+
+/* ---------- 描述和投票 ---------- */
+.vote-panel { display: grid; gap: 12px; }
+.vote-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.round-tag { font-size: 14px; font-weight: 800; color: var(--blue-text); }
+.vote-hint { font-size: 14px; color: var(--muted); }
+.vote-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.vote-grid .btn { --h: 56px; white-space: normal; line-height: 1.2; overflow-wrap: anywhere; }
+/* 出局的人：灰掉、劃線，旁邊標身分 */
+.vote-grid .btn.is-out { text-decoration: line-through; opacity: .55; }
+.vote-grid .btn small { display: block; font-size: 12px; font-weight: 700; text-decoration: none; }
+.vote-grid .btn.is-out { flex-wrap: wrap; gap: 0 6px; }
+.vote-grid .btn .role-icon { width: 24px; height: 24px; }
+
+/* 角色小圖示：出局的變灰、蓋一個叉叉（老闆 11/23） */
+.role-icon { position: relative; display: inline-block; flex: none; width: 36px; height: 36px; }
+.role-icon svg { display: block; width: 100%; height: 100%; }
+.is-out .role-icon svg { filter: grayscale(1); opacity: .5; }
+.is-out .role-icon::before, .is-out .role-icon::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 120%; height: 3px; border-radius: 2px; background: var(--ink);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.is-out .role-icon::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.forgot-toggle { justify-self: start; padding: 4px 0; border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800; }
+.forgot-hint { margin: 0; }
+.vote-panel.is-forgot .vote-grid .btn:not(.is-out) { --face: var(--yellow-face); --edge: var(--yellow-edge); --text: var(--yellow-text); }
+
+/* 揭曉 */
+.reveal-panel { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.reveal-art { width: 140px; }
+.reveal-art svg { display: block; width: 100%; height: auto; }
+.reveal-title { margin: 0; font-size: 28px; font-weight: 900; line-height: 1.3; }
+.reveal-hint { margin: 0 0 6px; color: var(--muted); }
+.reveal-panel.is-spy .reveal-title { color: var(--coral-text); }
+
+/* ---------- 結果 ---------- */
+.result-panel { display: grid; gap: 14px; }
+.result-panel .field-label { margin: 6px 0 -4px; }
+/* 哪一方獲勝：大字＋那一方的圖示 */
+.win-banner { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 6px 0 2px; }
+.win-banner .role-icon { width: 64px; height: 64px; }
+.win-banner strong { font-size: 34px; font-weight: 900; line-height: 1.2; color: var(--blue-text); }
+.win-banner.is-spy strong { color: var(--coral-text); }
+.word-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pair-side {
+  display: grid; gap: 4px; justify-items: center; padding: 12px; text-align: center;
+  border: 2px solid var(--blue-edge); border-radius: var(--r-md); background: var(--blue-face); box-shadow: 0 4px 0 var(--blue-edge);
+}
+.pair-side.is-spy { border-color: var(--coral-edge); background: var(--coral-face); box-shadow: 0 4px 0 var(--coral-edge); }
+.pair-side span { font-size: 13px; font-weight: 800; }
+.pair-side strong { font-size: 24px; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; color: var(--ink); }
+.role-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.role-list li { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: var(--r-sm); background: var(--hover-faint); }
+.role-list li b { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.role-list li span { flex: none; font-size: 14px; font-weight: 800; }
+.role-list li.is-spy span, .role-list li.is-blank span { color: var(--coral-text); }
+.role-list li.is-out b { text-decoration: line-through; opacity: .6; }
+
+/* 玩法頁：題目範例一類一行 */
+.rules-pairs li b { margin-right: 2px; }

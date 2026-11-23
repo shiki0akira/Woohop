@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="{{htmlLang}}">
+  <head>
+    {{head}}
+    {{jsonLd}}
+  </head>
+
+  <body class="undercover-app woohop-game" data-screen="setup" data-game-mode="browse">
+    {{header}}
+
+    <main id="main" class="undercover-main game-main">
+      <!-- 第 1 步：開場＋設定（人數、暱稱；臥底幾個、白板收在「自己調」底下。老闆 11/23：照他用過的 app，先設人數和暱稱） -->
+      <div class="view" id="view-setup">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="/{{lang}}/">{{crumbHome}}</a><span>›</span><a href="/{{lang}}/games/">{{crumbGames}}</a><span>›</span><span>{{navTitle}}</span>
+          </nav>
+          <h1>{{heroTitleHtml}}</h1>
+          <p>{{heroDesc}}</p>
+        </div>
+
+        <div class="lead-slot"></div>
+
+        <section class="panel setup-panel">
+          <span class="field-label">{{playersLabel}}</span>
+          <div class="stepper">
+            <button type="button" id="players-less" aria-label="{{playersLess}}">−</button>
+            <output id="players-value" aria-live="polite"></output>
+            <button type="button" id="players-more" aria-label="{{playersMore}}">+</button>
+          </div>
+          <span class="field-label field-label-gap">{{namesLabel}}</span>
+          <ol class="name-list" id="name-list"></ol>
+          <button class="link adv-toggle" id="adv-toggle" type="button" aria-expanded="false" aria-controls="adv-panel">{{advancedToggle}}</button>
+          <!-- 自己調：題目類型（預設全選，至少留一類）、臥底幾個、白板開關（自己一行，老闆 11/23） -->
+          <div class="adv-panel" id="adv-panel" hidden>
+            <span class="field-label">{{catsLabel}}</span>
+            <div class="cat-chips" id="cat-chips"></div>
+            <span class="field-label">{{spiesLabel}}</span>
+            <div class="stepper">
+              <button type="button" id="spies-less" aria-label="{{spiesLess}}">−</button>
+              <output id="spies-value" aria-live="polite"></output>
+              <button type="button" id="spies-more" aria-label="{{spiesMore}}">+</button>
+            </div>
+            <label class="switch blank-switch"><input type="checkbox" id="blank-input"><span class="track"></span><span id="blank-label">{{blankLabel}}</span></label>
+          </div>
+          <p class="hint" id="setup-hint"></p>
+        </section>
+
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="start" type="button">{{startButton}}</button>
+        <p class="rules-link"><a class="link" href="{{base}}/{{lang}}/rules/">{{rulesLinkText}}</a></p>
+      </div>
+
+      <!-- 第 2 步：說明規則。三張插圖卡（Leader.ruleCards） -->
+      <div class="view" id="view-rules" hidden>
+        <div class="lead-slot"></div>
+        <ol class="rule-cards" id="rule-cards"></ol>
+        <button class="btn btn-lg btn-solid btn-block btn-start" id="rules-next" type="button">{{rulesNext}}</button>
+      </div>
+
+      <!-- 第 3 步：傳手機看詞。手機在大家手上傳，不放步驟頭。看到自己的名字才按住看（放開就蓋起來）
+           忘了詞的人在投票畫面點自己的名字，也是來這一頁再看一次（data-mode="forgot"） -->
+      <div class="view" id="view-deal" hidden>
+        <section class="panel deal-panel">
+          <span class="deal-progress" id="deal-progress"></span>
+          <h2 class="deal-name" id="deal-name"></h2>
+          <p class="deal-hint" id="deal-hint"></p>
+          <button class="word-card" id="word-card" type="button">
+            <span class="word-cover" aria-hidden="true">?</span>
+            <span class="word-text" id="word-text"></span>
+            <span class="word-sub" id="word-sub"></span>
+          </button>
+          <p class="hint peek-hint">{{peekHint}}</p>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block" id="deal-next" type="button"></button>
+      </div>
+
+      <!-- 第 4 步：描述和投票。手機回到主持人手上：念誰先說、投完點被投出去的人、揭曉身分 -->
+      <div class="view" id="view-play" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel vote-panel">
+          <div class="vote-head">
+            <span class="round-tag" id="round-tag"></span>
+            <span class="vote-hint">{{voteHint}}</span>
+          </div>
+          <div class="vote-grid" id="vote-grid"></div>
+          <button class="link forgot-toggle" id="forgot-toggle" type="button">{{forgotToggle}}</button>
+          <p class="hint forgot-hint" id="forgot-hint" hidden>{{forgotHint}}</p>
+        </section>
+        <!-- 揭曉：被投出去的人是平民／臥底／白板 -->
+        <section class="panel reveal-panel" id="reveal-panel" hidden>
+          <div class="reveal-art" id="reveal-art" aria-hidden="true"></div>
+          <h2 class="reveal-title" id="reveal-title" aria-live="polite"></h2>
+          <p class="reveal-hint" id="reveal-hint"></p>
+          <button class="btn btn-lg btn-solid btn-block" id="reveal-next" type="button"></button>
+        </section>
+      </div>
+
+      <!-- 第 5 步：結果。哪一方獲勝（大字＋圖示）、兩個詞、每個人的身分（平民／臥底圖示，出局的變灰加叉叉）。
+           不拉拉霸（老闆 11/23） -->
+      <div class="view" id="view-end" hidden>
+        <div class="lead-slot"></div>
+        <section class="panel result-panel">
+          <div class="win-banner" id="win-banner">
+            <span class="role-icon" id="win-icon" aria-hidden="true"></span>
+            <strong id="win-title"></strong>
+          </div>
+          <div class="word-pair">
+            <div class="pair-side"><span>{{civilianWordLabel}}</span><strong id="civilian-word"></strong></div>
+            <div class="pair-side is-spy"><span>{{spyWordLabel}}</span><strong id="spy-word"></strong></div>
+          </div>
+          <span class="field-label">{{rolesLabel}}</span>
+          <ul class="role-list" id="role-list"></ul>
+        </section>
+        <button class="btn btn-lg btn-solid btn-block" id="again" type="button">{{againButton}}</button>
+        <button class="btn btn-lg btn-secondary btn-block" id="change-players" type="button">{{changePlayers}}</button>
+      </div>
+    </main>
+
+    <dialog class="modal" id="vote-modal">
+      <div class="m-body">
+        <h2 id="vote-title"></h2>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="vote-cancel" type="button">{{voteCancel}}</button>
+        <button class="btn btn-danger" id="vote-ok" type="button">{{voteOk}}</button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="leave-modal">
+      <div class="m-body">
+        <h2>{{leaveTitle}}</h2>
+        <p>{{leaveDesc}}</p>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-secondary" id="leave-cancel" type="button">{{leaveCancel}}</button>
+        <button class="btn btn-danger" id="leave-confirm" type="button">{{leaveConfirm}}</button>
+      </div>
+    </dialog>
+
+    {{footer}}
+
+    <script>
+      window.UNDERCOVER = {
+        lang: '{{lang}}',
+        base: '{{base}}',
+        T: {{stringsJson}},
+      };
+    </script>
+    <script src="{{base}}/header.js?v={{assetVersion}}"></script>
+    <script src="{{base}}/app.js?v={{assetVersion}}"></script>
+  </body>
+</html>
