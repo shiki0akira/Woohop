@@ -174,7 +174,8 @@ function jsonLd(s, lang, page, title, desc) {
       })),
     });
   }
-  const faq = page === 'home' ? faqItems(s.faq) : [];
+  // 首頁的常見問題；小工具頁有寫 faq 的（目前只有 zh-TW 抽題目）也輸出
+  const faq = page === 'home' ? faqItems(s.faq) : isTool(page) ? faqItems(s.tools.items[page].faq) : [];
   if (faq.length) {
     graph.push({
       '@type': 'FAQPage',
@@ -572,7 +573,7 @@ const toolPage = (key) => (lang) => {
       <main id="main">
         <div class="page-head">
           ${toolCrumbs(s, lang, key)}
-          <h1>${esc(it.name)}</h1>
+          <h1>${esc(it.h1 || it.name)}</h1>
           <p>${esc(it.lead)}</p>
         </div>
         <section class="tool-section">
@@ -584,11 +585,22 @@ const toolPage = (key) => (lang) => {
             <ol>${it.how.map((step) => `<li>${esc(step)}</li>`).join('')}</ol>
           </div>
         </section>
-        <section class="tool-used">
+${it.examplesHeading && tool.words ? `        <section class="tool-how tool-examples">
+          <div class="panel prose">
+            <h2>${esc(it.examplesHeading)}</h2>
+            <p>${esc(it.examplesNote)}</p>
+            ${tool.words.map(([, cat, list]) => `<p><strong>${esc(cat)}</strong>：${list.slice(0, 8).map(esc).join('、')}</p>`).join('')}
+          </div>
+        </section>
+` : ''}        <section class="tool-used">
           <div class="section-head"><div><h2>${esc(T.usedIn)}</h2></div></div>
           <div class="game-grid" data-games="${games.join(',')}">${staticGames(s, lang, games)}</div>
         </section>
-      </main>
+${it.faq ? `        <section class="tool-how" id="faq">
+          <div class="section-head"><div><h2>${esc(it.faqHeading)}</h2></div></div>
+          <div class="faq">${faqHtml(faqItems(it.faq))}</div>
+        </section>
+` : ''}      </main>
 ${footer(s, lang, key, (l) => local(l, key))}
 ${scripts(s, lang, key, ['game.js', 'tools.js'], { navPage: 'tools', tool })}
   </body>
