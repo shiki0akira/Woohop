@@ -28,11 +28,11 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 ## SEO 要守的
 
 - 網址不變：`/{lang}/` 是舊網址；`/games/`、`/combo/`、`/guides/` 是改版新增的
-- **`/guides/` 列表頁目前 noindex、不進 sitemap**：寫滿 5 篇再拿掉 `prerender.js` 的 `NOINDEX`（roadmap）。**文章本身**（`/zh-TW/guides/{slug}/`，只有 zh-TW，2026-11-23 第一篇）會收錄、進 sitemap，內容在 `src/guides.mjs`；新增一篇要改三處：`ARTICLES`、`vercel.json` 三條 `/zh-TW/guides/:slug(...)` 白名單、zh-TW `guides`／`moreGuides` 卡片的第 5 欄填 slug（建置時會檢查三邊對得上）
+- **`/guides/` 列表頁目前 noindex、不進 sitemap**：寫滿 5 篇再拿掉 `prerender.js` 的 `NOINDEX`（roadmap）。**文章本身**（`/{lang}/guides/{slug}/`，8 語，2026-11-23 第一篇）會收錄、進 sitemap（互相帶 hreflang），索引在 `src/guides.mjs`、內容一語一檔在 `src/guides/{slug}.{lang}.mjs`；新增一篇要改三處：`ARTICLES`、`vercel.json` 三條 `/:lang/guides/:slug(...)` 白名單、各語言 `guides`／`moreGuides` 放 slug 字串（建置時會檢查三邊對得上）
 - 常見問題（`faq`）只有 zh-TW，另外輸出 FAQPage 結構化資料
 - 網站名稱 `Woohop`，結構化資料的 `alternateName` 保留 `Web100`
 - 幸福模擬器不是遊戲（獨立專案），只出現在首頁專區與頁尾，不進遊戲清單與結構化資料的 ItemList
-- 中文長文不硬翻成其他語言（2026/8 降權的成因）
+- 長文（帶領指南）8 語都寫，但**不丟翻譯 API 硬翻**：外語版照各語言遊戲頁的名稱、口令、例子重寫（2026/8 降權的教訓是翻譯品質，見 `src/guides.mjs` 開頭）
 
 ## 加新遊戲時要改的地方
 
