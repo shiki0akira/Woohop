@@ -478,3 +478,63 @@
 .fb-done { display: grid; gap: 16px; justify-items: start; }
 .about-mail { margin: 16px 0 0; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .legal .prose h2 { margin: 28px 0 8px; font-size: 19px; }
+
+/* ---------- 帶領指南文章（/zh-TW/guides/{slug}/，prerender.js 的 articlePage） ----------
+ * 寬螢幕：左邊內文、右邊章節列表（無底色、跟著捲動）；窄螢幕章節列表在內文上面。 */
+.article-page main > article { padding: 24px 0 56px; }
+.guide-article { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (min-width: 1100px) {
+  .guide-article { grid-template-columns: minmax(0, 820px) 240px; gap: 40px; }
+  .guide-article .article-toc { grid-column: 2; grid-row: 1; position: sticky; top: 120px; }
+}
+.guide-article .prose p.lead { font-size: 17px; }
+.guide-article .prose h2 { margin: 44px 0 14px; font-size: 22px; line-height: 1.45; scroll-margin-top: 110px; }
+.guide-article .prose ul { margin: 0 0 16px; }
+/* 章節列表：窄螢幕收合（點「這篇有什麼」展開），寬螢幕一直展開（guides.js 打開 details、summary 不能點）。
+ * 捲到哪一段，那一項標成 .is-active（guides.js） */
+.article-toc summary { list-style: none; display: flex; align-items: center; gap: 8px; padding: 12px 2px; border-top: 2px solid var(--edge-n); border-bottom: 2px solid var(--edge-n); font-weight: 900; cursor: pointer; }
+.article-toc summary::-webkit-details-marker { display: none; }
+.article-toc summary::after { content: "+"; margin-left: auto; font-size: 20px; line-height: 1; }
+.article-toc details[open] summary::after { content: "−"; }
+.article-toc .toc-count { font-size: 13px; font-weight: 700; color: var(--muted); }
+.article-toc details[open] ol { margin-top: 12px; }
+@media (min-width: 1100px) {
+  .article-toc summary { pointer-events: none; padding: 0; border: 0; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
+  .article-toc summary::after, .article-toc .toc-count { display: none; }
+  .article-toc details[open] ol { margin-top: 0; }
+}
+.article-toc ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; border-left: 2px solid var(--edge-n); }
+.article-toc a { display: block; padding: 6px 8px 6px 14px; margin-left: -2px; border-left: 3px solid transparent; border-radius: 0 var(--r-xs) var(--r-xs) 0; font-size: 14px; line-height: 1.5; font-weight: 700; color: var(--muted); text-decoration: none; transition: color .15s, border-color .15s, background-color .15s; }
+.article-toc a:hover { color: var(--blue-text); }
+.article-toc a.is-active { color: var(--blue-text); border-left-color: var(--blue-edge); background: var(--blue-face); }
+.article-toc a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.guide-article .table-wrap { overflow-x: auto; margin: 0 0 16px; border: 2px solid var(--edge-n); border-radius: var(--r-md); }
+.guide-article table { width: 100%; border-collapse: collapse; font-size: 15px; white-space: nowrap; }
+.guide-article th, .guide-article td { padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--edge-n); }
+.guide-article thead th { background: var(--hover-faint); font-weight: 900; }
+.guide-article tbody tr:last-child > * { border-bottom: 0; }
+.guide-article tbody th { font-weight: 700; }
+/* 連到遊戲的名稱後面一個 >（i-back 翻過來） */
+.guide-article .chev { width: .8em; height: .8em; margin-left: 3px; vertical-align: -.05em; transform: scaleX(-1); flex: none; }
+.guide-game { margin: 32px 0 0; padding-top: 28px; border-top: 2px dashed var(--edge-n); scroll-margin-top: 110px; }
+.guide-game h3 { margin: 0 0 6px; font-size: 20px; }
+.guide-game .need { font-size: 14px; font-weight: 700; color: var(--muted); }
+.guide-game .tip { padding: 12px 16px; border-radius: var(--r-md); background: var(--yellow-face); color: var(--yellow-text); }
+/* 每個遊戲介紹完的連結塊：左邊小插圖、右邊名稱＋說明（最多兩行） */
+.guide-link {
+  --game: var(--blue-edge);
+  display: flex; align-items: center; gap: 16px; margin-top: 16px; padding: 12px 18px 12px 12px; max-width: 520px;
+  border: 2px solid var(--edge-n); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raise-n);
+  color: inherit; text-decoration: none; transition: transform .15s, box-shadow .15s;
+}
+.guide-link:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--edge-n), var(--shadow); }
+.guide-link:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.guide-link .art { flex: none; width: 84px; height: 66px; display: grid; place-items: center; border-radius: calc(var(--r-md) - 4px); background: color-mix(in srgb, var(--game) 18%, transparent); }
+.guide-link .art svg { width: 100%; height: 100%; }
+.guide-link .txt { display: grid; gap: 2px; min-width: 0; }
+.guide-link b { display: flex; align-items: center; font-size: 16px; }
+.guide-link .txt > span { font-size: 14px; line-height: 1.55; color: var(--muted); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.guide-article .faq { margin-bottom: 32px; }
+.guide-article .faq details p { color: var(--muted); }
+/* .prose 的 p:last-child 會把下邊距歸零，展開的答案貼著框底：補回來 */
+.guide-article .faq details p:last-child { margin-bottom: 20px; }

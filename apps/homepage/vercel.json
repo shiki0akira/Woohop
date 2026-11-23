@@ -125,6 +125,16 @@
       "permanent": true
     },
     {
+      "source": "/zh-TW/guides/:slug(no-props-indoor-icebreakers)",
+      "destination": "/zh-TW/guides/:slug/",
+      "permanent": true
+    },
+    {
+      "source": "/zh-TW/guides/:slug(no-props-indoor-icebreakers)/index.html",
+      "destination": "/zh-TW/guides/:slug/",
+      "permanent": true
+    },
+    {
       "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/:page(games|combo|tools|guides|about|terms|privacy)/index.html",
       "destination": "/:lang/:page/",
       "permanent": true
@@ -630,6 +640,10 @@
     {
       "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/tools/:tool(truth-or-dare|metronome|names|recorder|actions|words|timer)/",
       "destination": "/:lang/tools/:tool/index.html"
+    },
+    {
+      "source": "/zh-TW/guides/:slug(no-props-indoor-icebreakers)/",
+      "destination": "/zh-TW/guides/:slug/index.html"
     },
     {
       "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)",

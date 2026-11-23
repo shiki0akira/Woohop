@@ -28,7 +28,7 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 ## SEO 要守的
 
 - 網址不變：`/{lang}/` 是舊網址；`/games/`、`/combo/`、`/guides/` 是改版新增的
-- **`/guides/` 目前 noindex、不進 sitemap**：指南文章還沒寫，只有「即將推出」卡片會被當成內容太薄。文章寫好後拿掉 `prerender.js` 的 `NOINDEX`
+- **`/guides/` 列表頁目前 noindex、不進 sitemap**：寫滿 5 篇再拿掉 `prerender.js` 的 `NOINDEX`（roadmap）。**文章本身**（`/zh-TW/guides/{slug}/`，只有 zh-TW，2026-11-23 第一篇）會收錄、進 sitemap，內容在 `src/guides.mjs`；新增一篇要改三處：`ARTICLES`、`vercel.json` 三條 `/zh-TW/guides/:slug(...)` 白名單、zh-TW `guides`／`moreGuides` 卡片的第 5 欄填 slug（建置時會檢查三邊對得上）
 - 常見問題（`faq`）只有 zh-TW，另外輸出 FAQPage 結構化資料
 - 網站名稱 `Woohop`，結構化資料的 `alternateName` 保留 `Web100`
 - 幸福模擬器不是遊戲（獨立專案），只出現在首頁專區與頁尾，不進遊戲清單與結構化資料的 ItemList

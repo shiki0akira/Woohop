@@ -27,6 +27,7 @@ import { wordsFor, checkWords } from '../src/word-bank.mjs';
 
 import { ABOUT, FEEDBACK_TYPES } from '../src/about-strings.mjs';
 import { TERMS } from '../src/terms-strings.mjs';
+import { ARTICLES, articleBySlug } from '../src/guides.mjs';
 
 // 小工具頁、關於／隱私頁的文案併進當頁語言的 STRINGS（s.tools、s.about），head／jsonLd／window.WOOHOP.t 都讀得到
 // 動作抽卡：每個動作代號都要有插圖（woohop-art.js 的 actionArt）
@@ -40,7 +41,7 @@ const OUT = path.resolve('dist');
 // 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
 const NOINDEX = new Set(['guides']);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-11-20b';
+const ASSET_VERSION = '2026-11-23d';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -52,8 +53,11 @@ const jsonForScript = (data) => JSON.stringify(data).replace(/</g, '\\u003c');
 
 /* ---------- 共用的頁首、頁尾 ---------- */
 
-function head(s, lang, page, title, desc, jsonLd, css = []) {
-  const alternates = LANGS.map((l) => `    <link rel="alternate" hreflang="${l}" href="${url(l, page)}" />`).join('\n');
+// opts.path：不在 PAGES 裡的頁面（帶領指南文章）自己給網址；這種頁面只有一個語言，不輸出 hreflang
+function head(s, lang, page, title, desc, jsonLd, css = [], opts = {}) {
+  const self = opts.path ? SITE + opts.path : url(lang, page);
+  const alternates = opts.path ? '' : LANGS.map((l) => `    <link rel="alternate" hreflang="${l}" href="${url(l, page)}" />`).join('\n')
+    + `\n    <link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}" />\n`;
   const asset = (f) => `/assets/${f}?v=${ASSET_VERSION}`;
   return `<!doctype html>
 <html lang="${lang}">
@@ -66,14 +70,12 @@ function head(s, lang, page, title, desc, jsonLd, css = []) {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(desc)}" />
-${NOINDEX.has(page) ? '    <meta name="robots" content="noindex, follow" />\n' : ''}    <link rel="canonical" href="${url(lang, page)}" />
-${alternates}
-    <link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}" />
-    <meta property="og:type" content="website" />
+${NOINDEX.has(page) && !opts.path ? '    <meta name="robots" content="noindex, follow" />\n' : ''}    <link rel="canonical" href="${self}" />
+${alternates}    <meta property="og:type" content="${opts.path ? 'article' : 'website'}" />
     <meta property="og:site_name" content="Woohop" />
     <meta property="og:title" content="${esc(title)}" />
     <meta property="og:description" content="${esc(desc)}" />
-    <meta property="og:url" content="${url(lang, page)}" />
+    <meta property="og:url" content="${self}" />
     <meta property="og:locale" content="${lang.replace('-', '_')}" />
     <meta property="og:image" content="${SITE}/og/${lang}.png?v=${OG_VERSION}" />
     <meta property="og:image:width" content="1200" />
@@ -220,11 +222,15 @@ function faqHtml(items) {
     .join('');
 }
 
-/* ---------- 指南卡片（文章還沒寫：不是連結，標即將推出） ---------- */
+/* ---------- 指南卡片：第 5 個欄位是文章 slug（src/guides.mjs 有這篇才變成連結，其他標即將推出） ---------- */
 
 const GUIDE_BADGE = { beginner: 'b-new', scene: 'b-info', tip: 'b-live' };
-function guideCard(s, [type, title, desc, min]) {
-  return `<div class="guide is-disabled" aria-disabled="true" data-type="${type}"><span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span><span class="badge b-soon">${esc(s.soon)}</span></div>`;
+const articlePath = (a) => `/zh-TW/guides/${a.slug}/`;
+function guideCard(s, [type, title, desc, min, slug]) {
+  const a = slug && articleBySlug(slug);
+  const inner = `<span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span>`;
+  if (a) return `<a class="guide" href="${articlePath(a)}" data-type="${type}">${inner}</a>`;
+  return `<div class="guide is-disabled" aria-disabled="true" data-type="${type}">${inner}<span class="badge b-soon">${esc(s.soon)}</span></div>`;
 }
 
 /* ---------- 頁面 ---------- */
@@ -390,6 +396,112 @@ function guidesPage(lang) {
       </main>
 ${footer(s, lang, 'guides')}
 ${scripts(s, lang, 'guides', ['guides.js'])}
+  </body>
+</html>
+`;
+}
+
+/* ---------- 帶領指南文章（只有 zh-TW，內容在 src/guides.mjs） ----------
+ * 遊戲區塊：標題連到遊戲頁（後面一個 >），介紹完放一塊橫式連結（左邊插圖由 guides.js 依 data-art 畫上，右邊名稱＋兩行說明）。
+ * 寬螢幕章節列表放右邊、跟著捲動；窄螢幕放在內文上面。
+ */
+// 段落：**粗體**、[文字](/網址)；chev：連結文字後面加一個 >（遊戲名稱用）
+const CHEV = '<svg class="chev" aria-hidden="true"><use href="#i-back"/></svg>';
+const inline = (p, chev = false) => rich(p).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => `<a class="link" href="${href}">${t}${chev ? CHEV : ''}</a>`);
+const anchor = (h, i) => `s${i + 1}`;
+
+function articleBlock(s, lang, b, i) {
+  if (b.h2) return `<h2 id="${anchor(b.h2, i)}">${esc(b.h2)}</h2>`;
+  if (typeof b.p === 'string' && !b.game) return `<p>${inline(b.p)}</p>`;
+  if (b.ul) return `<ul>${b.ul.map((x) => `<li>${inline(x)}</li>`).join('')}</ul>`;
+  if (b.table) {
+    const { head: th, rows } = b.table;
+    return `<div class="table-wrap"><table><thead><tr>${th.map((x) => `<th scope="col">${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows
+      .map((r) => `<tr>${r.map((x, j) => (j === 0 ? `<th scope="row">${inline(x, true)}</th>` : `<td>${esc(x)}</td>`)).join('')}</tr>`)
+      .join('')}</tbody></table></div>`;
+  }
+  if (b.game) {
+    const [name, desc] = s.games[b.game];
+    const href = gameUrl(lang, b.game);
+    return `<div class="guide-game" id="${b.game}">
+            <h3><a class="link" href="${href}">${esc(name)}${CHEV}</a></h3>
+            <p class="need">${esc(b.need)}</p>
+            ${b.p.map((x) => `<p>${inline(x)}</p>`).join('')}
+            <p class="tip"><strong>帶的時候：</strong>${inline(b.tip)}</p>
+            <a class="guide-link" href="${href}"><span class="art" data-art="${b.game}" aria-hidden="true"></span><span class="txt"><b>${esc(name)}${CHEV}</b><span>${esc(desc)}</span></span></a>
+          </div>`;
+  }
+  if (b.faq) return `<div class="faq">${faqHtml(faqItems(b.faq))}</div>`;
+  throw new Error(`指南區塊看不懂：${JSON.stringify(b)}`);
+}
+
+function articlePage(a) {
+  const lang = 'zh-TW';
+  const s = STRINGS[lang];
+  const path_ = articlePath(a);
+  const self = SITE + path_;
+  const faq = a.blocks.filter((b) => b.faq).flatMap((b) => faqItems(b.faq));
+  const games = a.blocks.filter((b) => b.game).map((b) => b.game);
+  const toc = a.blocks.map((b, i) => [b, i]).filter(([b]) => b.h2);
+  const ld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: 'Woohop', alternateName: ['Web100', 'vibeweb100'] },
+      {
+        '@type': 'Article',
+        '@id': `${self}#article`,
+        headline: a.h1,
+        description: a.seoDesc,
+        inLanguage: lang,
+        datePublished: a.published,
+        dateModified: a.updated,
+        mainEntityOfPage: self,
+        image: `${SITE}/og/${lang}.png?v=${OG_VERSION}`,
+        author: { '@type': 'Organization', name: 'Woohop', url: `${SITE}/` },
+        publisher: { '@type': 'Organization', name: 'Woohop', url: `${SITE}/` },
+        isPartOf: { '@id': `${SITE}/#website` },
+      },
+      {
+        '@type': 'ItemList',
+        name: a.h1,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: games.length,
+        itemListElement: games.map((k, i) => ({ '@type': 'ListItem', position: i + 1, name: s.games[k][0], url: SITE + gameUrl(lang, k) })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: s.home, item: url(lang, 'home') },
+          { '@type': 'ListItem', position: 2, name: s.guidesH1, item: url(lang, 'guides') },
+          { '@type': 'ListItem', position: 3, name: a.title, item: self },
+        ],
+      },
+      ...(faq.length ? [{
+        '@type': 'FAQPage',
+        '@id': `${self}#faq`,
+        mainEntity: faq.map((it) => ({ '@type': 'Question', name: it.q, acceptedAnswer: { '@type': 'Answer', text: it.a.map(plain).join('\n') } })),
+      }] : []),
+    ],
+  };
+  const toGuides = (l) => local(l, 'guides');
+  return `${head(s, lang, 'guides', a.seoTitle, a.seoDesc, ld, ['game.css'], { path: path_ })}
+  <body class="article-page">${navbar(s, lang, 'guides', toGuides)}
+      <main id="main">
+        <div class="page-head">
+          <nav class="crumbs" aria-label="breadcrumb"><a href="${local(lang, 'home')}">${esc(s.home)}</a><span>›</span><a href="${local(lang, 'guides')}">${esc(s.guidesH1)}</a><span>›</span><span>${esc(a.title)}</span></nav>
+          <h1>${esc(a.h1)}</h1>
+          <p class="t-small">${esc(fmt(s.readMin, { n: a.min }))}・更新於 <time datetime="${a.updated}">${a.updated.replace(/-/g, '/')}</time></p>
+        </div>
+        <article class="guide-article">
+          <nav class="article-toc" aria-label="目錄"><details><summary>這篇有什麼<span class="toc-count">${toc.length} 段</span></summary><ol>${toc.map(([b, i]) => `<li><a href="#${anchor(b.h2, i)}">${esc(b.h2)}</a></li>`).join('')}</ol></details></nav>
+          <div class="panel prose">
+            ${a.lead.map((p) => `<p class="lead">${inline(p)}</p>`).join('')}
+            ${a.blocks.map((b, i) => articleBlock(s, lang, b, i)).join('\n            ')}
+          </div>
+        </article>
+      </main>
+${footer(s, lang, 'guides', toGuides)}
+${scripts(s, lang, 'guides', ['guides.js'], { navPage: 'guides' })}
   </body>
 </html>
 `;
@@ -588,6 +700,8 @@ function buildSitemap() {
     const xDefault = `    <xhtml:link rel="alternate" hreflang="x-default" href="${url(DEFAULT_LANG, page)}"/>`;
     for (const l of LANGS) entries.push(`  <url>\n    <loc>${url(l, page)}</loc>\n${alternates}\n${xDefault}\n  </url>`);
   }
+  // 帶領指南文章：只有 zh-TW，沒有其他語言版本
+  for (const a of ARTICLES) entries.push(`  <url>\n    <loc>${SITE}${articlePath(a)}</loc>\n    <lastmod>${a.updated}</lastmod>\n  </url>`);
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entries.join('\n')}\n</urlset>\n`;
 }
 
@@ -615,6 +729,24 @@ for (const lang of LANGS) {
     count++;
   }
 }
+
+// 帶領指南文章：卡片連過去的 slug 一定要有文章，反過來每篇文章也要有一張卡片
+const cardSlugs = new Set([...STRINGS['zh-TW'].guides, ...STRINGS['zh-TW'].moreGuides].map((c) => c[4]).filter(Boolean));
+for (const a of ARTICLES) {
+  if (!cardSlugs.has(a.slug)) throw new Error(`指南文章 ${a.slug} 在 locales.mjs 的 zh-TW guides／moreGuides 沒有卡片`);
+  const html = articlePage(a);
+  if (/\{\{|undefined|\[object Object\]/.test(html.replace(/<script>window\.WOOHOP[\s\S]*?<\/script>/, ''))) {
+    throw new Error(`[guides/${a.slug}] 產出的 HTML 有沒填到的值（undefined 或 [object Object]）`);
+  }
+  const dir = path.join(OUT, 'zh-TW', 'guides', a.slug);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(path.join(dir, 'index.html'), html);
+  count++;
+}
+for (const slug of cardSlugs) if (!articleBySlug(slug)) throw new Error(`指南卡片連到 ${slug}，但 src/guides.mjs 沒有這篇`);
+// vercel.json 的 /zh-TW/guides/:slug(...) 白名單要列到每一篇，不然正式站會 404
+const guideRule = readFileSync('vercel.json', 'utf8').match(/"\/zh-TW\/guides\/:slug\(([^)]+)\)\/"/);
+for (const a of ARTICLES) if (!guideRule || !guideRule[1].split('|').includes(a.slug)) throw new Error(`vercel.json 的指南白名單沒有 ${a.slug}（三條 /zh-TW/guides/:slug(...) 規則都要加）`);
 
 // 根目錄留一份預設語言的首頁（vercel.json 會先把 / 轉到 /zh-TW/，這是保險）
 writeFileSync(path.join(OUT, 'index.html'), homePage(DEFAULT_LANG));
