@@ -41,7 +41,7 @@ const OUT = path.resolve('dist');
 // 不給 Google 收錄、不放進 sitemap 的頁面。帶領指南列表 2026-11-24 起開放（老闆：有兩篇文章、列表改成一排一篇，可以做 SEO 了）
 const NOINDEX = new Set([]);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-11-24g';
+const ASSET_VERSION = '2026-11-24h';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -274,7 +274,7 @@ function guideRows(s, lang) {
   const list = guideList(s);
   const rows = list.filter((g) => typeof g === 'string').map((g) => {
     const a = articleBySlug(g), t = a.langs[lang];
-    return `<a class="guide-row" href="${articlePath(a, lang)}" data-type="${a.type}">${newTab(a)}${heroBox(a)}<div class="guide-row-text"><span class="badge ${GUIDE_BADGE[a.type]}">${esc(s.guideTypes[a.type])}</span><h2>${esc(t.title)}</h2><p>${esc(t.desc)}</p><span class="meta">${guideDate(a, lang)} · ${esc(fmt(s.readMin, { n: t.min }))}</span></div></a>`;
+    return `<a class="guide-row" href="${articlePath(a, lang)}" data-type="${a.type}">${newTab(a)}${heroBox(a)}<div class="guide-row-text"><h2>${esc(t.title)}</h2><p>${esc(t.desc)}</p><span class="meta"><span class="badge ${GUIDE_BADGE[a.type]}">${esc(s.guideTypes[a.type])}</span><span>${guideDate(a, lang)} · ${esc(fmt(s.readMin, { n: t.min }))}</span></span></div></a>`;
   });
   const soon = list.filter((g) => typeof g !== 'string').map(([type, title]) => `<li data-type="${type}"><span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><span>${esc(title)}</span></li>`);
   return `<div class="guide-rows">${rows.join('')}</div>${soon.length ? `
