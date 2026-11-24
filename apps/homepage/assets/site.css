@@ -113,7 +113,8 @@
   .feature .w-row { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; opacity: .1; z-index: -1; }
 
   /* 帶領指南 */
-  .guides { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  /* 上下間距要留給右上角的 NEW／即將推出小標（往上凸 13px），手機直排時才不會頂到上一張 */
+  .guides { display: grid; gap: 28px 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); padding-top: 4px; }
   .guide { display: grid; gap: 8px; padding: 20px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); text-decoration: none; color: inherit; transition: transform .15s; }
   .guide:hover { transform: translateY(-3px); }
   .guide > .badge { justify-self: start; align-self: start; } /* grid 子元素預設會撐滿整列，徽章要維持文字寬度 */
@@ -569,7 +570,7 @@
   .guide-filter { gap: 8px; }
   .guide-filter .chip { height: 36px; padding: 0 10px; font-size: 13px; }
 }
-.guide-rows { display: grid; gap: 18px; margin-top: 4px; }
+.guide-rows { display: grid; gap: 28px; margin-top: 8px; }
 .guide-row { display: grid; gap: 18px; padding: 16px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
 .guide-row:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--edge-n), var(--shadow); }
 .guide-row:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
