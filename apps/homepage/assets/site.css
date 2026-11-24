@@ -549,6 +549,8 @@
 .new-tab { position: absolute; top: -13px; right: 22px; z-index: 2; background: var(--yellow); color: var(--yellow-text); border: 2px solid var(--yellow-edge); font-size: 12px; font-weight: 900; letter-spacing: .04em; padding: 1px 10px; border-radius: var(--r-pill); }
 :root[data-theme="dark"] .new-tab { color: #3a2b03; }
 .new-tab[hidden] { display: none; }
+.new-tab.soon-tab { background: var(--sunken); color: var(--text-2); border-color: var(--edge-strong); letter-spacing: 0; }
+:root[data-theme="dark"] .new-tab.soon-tab { color: var(--text-2); }
 /* 情境主圖：依文章主題畫的插圖（woohop-art.js 的 guideScene），底下一層淡淡的文章代表色。
  * 高度固定：手機 120px、寬螢幕 150px；插圖照比例放在中間，主描邊照顯示大小調細 */
 .guide-hero { height: 112px; border-radius: var(--r-md); background: color-mix(in srgb, var(--hero, var(--blue-edge)) 16%, var(--surface)); display: grid; place-items: center; overflow: hidden; padding: 10px 12px 0; }

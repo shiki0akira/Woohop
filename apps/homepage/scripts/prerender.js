@@ -41,7 +41,7 @@ const OUT = path.resolve('dist');
 // 不給 Google 收錄、不放進 sitemap 的頁面。帶領指南列表 2026-11-24 起開放（老闆：有兩篇文章、列表改成一排一篇，可以做 SEO 了）
 const NOINDEX = new Set([]);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-11-24i';
+const ASSET_VERSION = '2026-11-24j';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -261,7 +261,8 @@ function guideCard(s, lang, g) {
   }
   const [type, title, desc, min] = g;
   const inner = `<span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span>`;
-  return `<div class="guide is-disabled" aria-disabled="true" data-type="${type}">${inner}<span class="badge b-soon">${esc(s.soon)}</span></div>`;
+  // 即將推出：跟 NEW 一樣騎在右上角框線上（灰色）
+  return `<div class="guide is-disabled" aria-disabled="true" data-type="${type}"><span class="new-tab soon-tab">${esc(s.soon)}</span>${inner}</div>`;
 }
 // NEW：騎在卡片右上角框線上的黃色小標（跟「照著念」同款）
 const newTab = (a) => `<span class="new-tab" data-new-until="${newUntil(a)}" hidden>NEW</span>`;
