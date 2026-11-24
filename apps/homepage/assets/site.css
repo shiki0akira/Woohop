@@ -116,7 +116,9 @@
   .guides { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
   .guide { display: grid; gap: 8px; padding: 20px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); text-decoration: none; color: inherit; transition: transform .15s; }
   .guide:hover { transform: translateY(-3px); }
-  .guide > .badge { justify-self: start; } /* grid 子元素預設會撐滿整列，徽章要維持文字寬度 */
+  .guide > .badge { justify-self: start; align-self: start; } /* grid 子元素預設會撐滿整列，徽章要維持文字寬度 */
+  /* 卡片被同一排較高的卡撐高時，多出的高度不要分給每一列（標籤會被撐成橢圓），內容一律靠上 */
+  .guide { align-content: start; }
   .guide h4 { margin: 0; font-size: 18px; line-height: 1.45; }
   .guide p { margin: 0; color: var(--muted); font-size: 14px; }
   .guide .link { margin-top: 6px; }
@@ -549,9 +551,9 @@
 .new-tab[hidden] { display: none; }
 /* 情境主圖：依文章主題畫的插圖（woohop-art.js 的 guideScene），底下一層淡淡的文章代表色。
  * 高度固定：手機 120px、寬螢幕 150px；插圖照比例放在中間，主描邊照顯示大小調細 */
-.guide-hero { height: 120px; border-radius: var(--r-md); background: color-mix(in srgb, var(--hero, var(--blue-edge)) 16%, var(--surface)); display: grid; place-items: center; overflow: hidden; padding: 10px 12px 0; }
+.guide-hero { height: 112px; border-radius: var(--r-md); background: color-mix(in srgb, var(--hero, var(--blue-edge)) 16%, var(--surface)); display: grid; place-items: center; overflow: hidden; padding: 10px 12px 0; }
 .guide-hero svg { width: 100%; height: 100%; display: block; --ill-sw: 2.5px; }
-@media (min-width: 760px) { .guide-hero { height: 150px; } }
+@media (min-width: 760px) { .guide-hero { height: 128px; } }
 .article-hero { margin: 0 0 20px; }
 /* 列表頁：寫好的文章一排一篇（寬螢幕主圖在左、文字在右；手機主圖在上） */
 /* 指南列表頁：說明一行不折（寬螢幕放得下），篩選離說明近一點 */
@@ -576,7 +578,7 @@
 /* 最下面一排：類型標籤＋日期＋幾分鐘讀完（標籤原本在標題上面，2026-11-24 移下來） */
 .guide-row .meta { font-size: 13px; color: var(--muted); font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 @media (min-width: 760px) {
-  .guide-row { grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 28px; padding: 16px 28px 16px 16px; align-items: center; }
+  .guide-row { grid-template-columns: minmax(0, 290px) minmax(0, 1fr); gap: 28px; padding: 16px 28px 16px 16px; align-items: center; }
   .guide-row h2 { font-size: 24px; }
 }
 /* 即將推出：縮成一小塊清單 */

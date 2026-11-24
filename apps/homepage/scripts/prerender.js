@@ -41,7 +41,7 @@ const OUT = path.resolve('dist');
 // 不給 Google 收錄、不放進 sitemap 的頁面。帶領指南列表 2026-11-24 起開放（老闆：有兩篇文章、列表改成一排一篇，可以做 SEO 了）
 const NOINDEX = new Set([]);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-11-24h';
+const ASSET_VERSION = '2026-11-24i';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
