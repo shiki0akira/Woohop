@@ -557,6 +557,14 @@
 /* 指南列表頁：說明一行不折（寬螢幕放得下），篩選離說明近一點 */
 .guides-page .page-head p { max-width: none; }
 .guides-page .guide-filter { margin: 12px 0 20px; }
+/* 篩選按鈕每個語言都排一行：不折行，放不下就左右滑（底線陰影要留空間，不然會被裁掉）；窄螢幕按鈕縮小一點 */
+.guide-filter { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 6px; margin-left: -2px; margin-right: -2px; }
+.guide-filter::-webkit-scrollbar { display: none; }
+.guide-filter .chip { flex: none; white-space: nowrap; }
+@media (max-width: 480px) {
+  .guide-filter { gap: 8px; }
+  .guide-filter .chip { height: 36px; padding: 0 10px; font-size: 13px; }
+}
 .guide-rows { display: grid; gap: 18px; margin-top: 4px; }
 .guide-row { display: grid; gap: 18px; padding: 16px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
 .guide-row:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--edge-n), var(--shadow); }
