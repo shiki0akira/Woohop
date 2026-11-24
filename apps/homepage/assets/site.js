@@ -363,5 +363,9 @@
     a.hidden = false;
   });
 
+  /* ================= NEW 標籤（帶領指南卡片）：data-new-until 那天之前才顯示，用瀏覽器當下的日期判斷 ================= */
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll('[data-new-until]').forEach(el => { el.hidden = today > el.dataset.newUntil; });
+
   window.Site = { GAMES, card, artSvg, finder, combo, nav, track, fmt, esc, pageUrl };
 })();

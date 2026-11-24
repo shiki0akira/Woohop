@@ -28,7 +28,7 @@ Woohop 的網站首頁。純 HTML/CSS/JS、沒有框架，部署在 Vercel（pus
 ## SEO 要守的
 
 - 網址不變：`/{lang}/` 是舊網址；`/games/`、`/combo/`、`/guides/` 是改版新增的
-- **`/guides/` 列表頁目前 noindex、不進 sitemap**：寫滿 5 篇再拿掉 `prerender.js` 的 `NOINDEX`（roadmap）。**文章本身**（`/{lang}/guides/{slug}/`，8 語，2026-11-23 第一篇）會收錄、進 sitemap（互相帶 hreflang），索引在 `src/guides.mjs`、內容一語一檔在 `src/guides/{slug}.{lang}.mjs`；新增一篇要改三處：`ARTICLES`、`vercel.json` 三條 `/:lang/guides/:slug(...)` 白名單、各語言 `guides`／`moreGuides` 放 slug 字串（建置時會檢查三邊對得上）
+- **`/guides/` 列表頁 2026-11-24 起開放收錄、進 sitemap**（原本 noindex，老闆說兩篇＋一排一篇的版型就可以做 SEO），結構化資料是 CollectionPage＋文章 ItemList。**文章本身**（`/{lang}/guides/{slug}/`，8 語，2026-11-23 第一篇）會收錄、進 sitemap（互相帶 hreflang），索引在 `src/guides.mjs`、內容一語一檔在 `src/guides/{slug}.{lang}.mjs`；新增一篇要改三處：`ARTICLES`、`vercel.json` 三條 `/:lang/guides/:slug(...)` 白名單、各語言 `guides`／`moreGuides` 放 slug 字串（建置時會檢查三邊對得上）。列表頁寫好的文章一排一篇、新的在前，發布 14 天內有 NEW 小標（site.js 依當天日期打開）；情境主圖是 `ARTICLES` 的 `scene`（三個遊戲插圖，woohop-art.js 的 `guideScene`）；分享縮圖跑 `node scripts/og-image.mjs guide:{slug}` 產生到 `og/guides/{slug}/`，有檔案文章頁才會用
 - 常見問題（`faq`）只有 zh-TW，另外輸出 FAQPage 結構化資料
 - 網站名稱 `Woohop`，結構化資料的 `alternateName` 保留 `Web100`
 - 幸福模擬器不是遊戲（獨立專案），只出現在首頁專區與頁尾，不進遊戲清單與結構化資料的 ItemList

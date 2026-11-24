@@ -3,6 +3,7 @@
  *
  *   node scripts/og-image.mjs          首頁 → apps/homepage/og/{lang}.png
  *   node scripts/og-image.mjs bomb     定時炸彈 → apps/warmup/games/bomb/public/og/{lang}.png
+ *   node scripts/og-image.mjs guide:no-props-indoor-icebreakers   帶領指南文章 → apps/homepage/og/guides/{slug}/{lang}.png
  *
  * 各遊戲改版成 Woohop 新設計時，在下面的 TARGETS 加一筆（標題兩行＋那個遊戲的插圖）。
  *
@@ -252,6 +253,23 @@ const TARGETS = {
   },
 };
 const which = process.argv[2] || 'home';
+// 帶領指南文章：node scripts/og-image.mjs guide:{slug} → og/guides/{slug}/{lang}.png（有寫的語言才產生）。
+// 標題第一行是列表卡片的標題，第二行是 h1 冒號後面那句；插圖是文章的情境主圖（woohop-art.js 的 guideSceneInner，鍵是 slug）
+if (which.startsWith('guide:')) {
+  const slug = which.slice(6);
+  TARGETS[which] = async () => {
+    const { articleBySlug } = await import(pathToFileURL(path.join(ROOT, 'src', 'guides.mjs')).href);
+    const a = articleBySlug(slug);
+    if (!a) throw new Error('src/guides.mjs 沒有這篇：' + slug);
+    return {
+      out: path.join(ROOT, 'og', 'guides', slug),
+      langs: Object.keys(a.langs),
+      // 數字和後面的字黏在一起（中文「10 個…」不會把 10 單獨擠成一行）
+      title: (lang) => [a.langs[lang].title.replace(/(d) /g, '$1 '), splitTitle(a.langs[lang].h1)[1]],
+      scripts: [], art: 'window.Woohop.guideSceneInner(' + JSON.stringify(slug) + ')', viewBox: '0 0 440 130', artWidth: 520, centerWidth: 540, stroke: 5, cjkBreak: true,
+    };
+  };
+}
 if (!TARGETS[which]) throw new Error('不認得的對象：' + which + '（可用：' + Object.keys(TARGETS).join('、') + '）');
 const T = await TARGETS[which]();
 // OG_LAYOUT=side：舊的左右排版（比較用）；OG_OUT 可以改輸出到別的資料夾
@@ -296,7 +314,8 @@ const page = (lang, [t1, t2]) => `<!doctype html>
   .og.center .mid { position: absolute; left: 285px; width: 630px; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; }
   .og.center h1 { margin: 0; font-size: 76px; max-width: 590px; }
   .og.center h1 span { font-size: 0.42em; line-height: 1.3; margin-top: 6px; }
-  .og.center .art { position: static; transform: none; width: 400px; margin-top: 6px; }
+  ${T.cjkBreak ? 'h1:lang(zh-TW), h1:lang(zh-CN), h1:lang(ja) { word-break: normal; line-break: strict; }' : ''}
+  .og.center .art { position: static; transform: none; width: ${T.centerWidth || 400}px; margin-top: 6px; }
 </style>
 </head>
 <body>

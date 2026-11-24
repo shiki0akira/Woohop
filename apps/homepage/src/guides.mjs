@@ -10,7 +10,7 @@
 // 內容檔欄位：min（幾分鐘讀完）、title／desc（列表卡片）、h1、seoTitle、seoDesc、lead（開頭段落）、blocks。
 // blocks 一個區塊一種型別：
 //   { h2 }                     小標（右側章節列表會列出來）
-//   { p: '…' }                 段落；**粗體**、[文字](game:代號)、[文字](page:combo) 會轉成連結（網址自動帶當頁語言）
+//   { p: '…' }                 段落；**粗體**、[文字](game:代號)、[文字](page:combo)、[文字](guide:另一篇的slug) 會轉成連結（網址自動帶當頁語言）
 //   { ul: ['…', …] }           條列
 //   { table: { head, rows } }  表格：每列第一格放遊戲代號，自動換成該語言的遊戲名＋連結
 //   { game, need, p: [], tip } 一個遊戲：標題（該語言遊戲名）連到遊戲頁，人數／時間／準備、說明、帶的時候的小撇步，最後一塊連結
@@ -18,10 +18,17 @@
 
 import { LANGS } from './locales.mjs';
 
-const load = async (slug) => Object.fromEntries(await Promise.all(LANGS.map(async (l) => [l, (await import(`./guides/${slug}.${l}.mjs`)).default])));
+// 還沒寫的語言就沒有內容檔：那個語言不產生頁面、不進 sitemap／hreflang（新文章先寫繁中，老闆確認後再補其他語言）
+import { existsSync } from 'node:fs';
+const load = async (slug) => Object.fromEntries(await Promise.all(LANGS
+  .filter((l) => existsSync(new URL(`./guides/${slug}.${l}.mjs`, import.meta.url)))
+  .map(async (l) => [l, (await import(`./guides/${slug}.${l}.mjs`)).default])));
 
+// 情境主圖：依文章主題畫在 woohop-art.js 的 guideScene（鍵是 slug，新文章要畫一張）；color：主圖底色（淡淡一層）
+// 分享縮圖：node scripts/og-image.mjs guide:{slug} → og/guides/{slug}/{lang}.png（有這個檔案，文章頁的 og:image 才會用它）
 export const ARTICLES = [
-  { slug: 'no-props-indoor-icebreakers', type: 'scene', published: '2026-11-23', updated: '2026-11-23', langs: await load('no-props-indoor-icebreakers') },
+  { slug: 'no-props-indoor-icebreakers', type: 'scene', published: '2026-11-23', updated: '2026-11-23', color: '#4FB59A', langs: await load('no-props-indoor-icebreakers') },
+  { slug: 'big-group-icebreakers', type: 'scene', published: '2026-11-23', updated: '2026-11-23', color: '#FF9419', langs: await load('big-group-icebreakers') },
 ];
 
 export const articleBySlug = (slug) => ARTICLES.find((a) => a.slug === slug);

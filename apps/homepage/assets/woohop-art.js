@@ -660,3 +660,53 @@
 
   W.actionArt = ART;
 })();
+
+/* 帶領指南的情境主圖（2026-11-24 改成依文章主題畫的插圖，原本是三個遊戲角色排一排）。
+ * 一篇文章一張，鍵是文章的 slug；畫在 viewBox 0 0 440 130 裡（寬扁，列表上手機約 120px 高）。
+ * guideSceneInner(slug) 給內容（分享縮圖腳本用），guideScene(slug) 包成完整的 <svg>（網站用）。
+ * 主描邊是固定像素（--ill-sw），由外面的 CSS 依顯示大小調。 */
+(function () {
+  var W = window.Woohop, K = W.K, body = W.body, face = W.makeFace;
+  var line = function (d, extra) { return '<path d="' + d + '" fill="none" ' + K + (extra || '') + '/>'; };
+  // 一個人：肩膀（半個圓角塊，底部切在畫面下緣）＋圓頭；arm：'up' 舉手、'' 不畫手
+  var person = function (x, y, r, c, f, arm) {
+    var sh = r * 1.25;
+    var hx = x + r * 1.9, hy = y - r * 1.3;
+    var raised = arm === 'up' ? line('M' + (x + sh * 0.7) + ' ' + (y + r * 1.5) + 'Q' + (x + r * 2.1) + ' ' + (y + r * 0.4) + ' ' + hx + ' ' + (hy + r * 0.45)) +
+      '<circle cx="' + hx + '" cy="' + hy + '" r="' + (r * 0.38) + '" fill="#ffe2c6" ' + K + '/>' : '';
+    return body('<path d="M' + (x - sh) + ' 130v' + (-(130 - y - r * 1.3)) + 'a' + sh + ' ' + (r * 0.9) + ' 0 0 1 ' + (sh * 2) + ' 0v' + (130 - y - r * 1.3) + 'z"/>', c, '', false) +
+      raised + body('<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/>', '#ffe2c6', '', false) +
+      face(f, x, y + r * 0.1, r / 11);
+  };
+  var ART = {
+    // 不用道具：左邊球和鉛筆被「禁止」符號劃掉，中間一支開心的手機，右邊兩個人舉手歡呼
+    'no-props-indoor-icebreakers': function () {
+      var no = '<circle cx="84" cy="78" r="40" fill="none" stroke="#EE7B6A" stroke-width="7"/><path d="M56 50l56 56" stroke="#EE7B6A" stroke-width="7" stroke-linecap="round"/>';
+      return line('M14 118h96M122 118h14M148 118h150M310 118h10M332 118h96') +
+        body('<circle cx="70" cy="92" r="17"/>', '#FFC628', '<path d="M53 88q17 8 34 0" fill="none" stroke="#e0a400" stroke-width="3"/>', false) +
+        body('<path d="M96 104V58l7-12 7 12v46z"/>', '#7489E6', '', false) + line('M96 60h14') + no +
+        W.burst(172, 26, '#FFC628') + W.plus(274, 22, '#4FB59A') + W.ring(160, 70, '#F3A4FB') +
+        body('<rect x="190" y="14" width="64" height="104" rx="14"/>', '#3D54B6') +
+        '<rect x="199" y="27" width="46" height="74" rx="6" fill="#fff"/>' + line('M216 110h12') +
+        face('grin', 222, 60, 2.2) + W.dot(209, 70, '#F3A4FB', 3) + W.dot(235, 70, '#F3A4FB', 3) +
+        '<path d="M268 52q10 -6 8 -18M276 66q12 -2 14 -14" fill="none" stroke="#FFC628" stroke-width="4" stroke-linecap="round"/>' +
+        person(338, 78, 17, '#4FB59A', 'happy', 'up') + person(392, 84, 15, '#F3A4FB', 'tongue', 'up');
+    },
+    // 30 人以上：上面一塊大螢幕顯示排名，下面兩排擠滿大家的頭，有人舉手
+    'big-group-icebreakers': function () {
+      var screen = body('<rect x="146" y="6" width="148" height="66" rx="8"/>', '#aebcf3') +
+        '<rect x="160" y="18" width="120" height="42" rx="4" fill="#fff"/>' +
+        '<rect x="176" y="40" width="22" height="16" rx="2" fill="#FFC628"/><rect x="209" y="28" width="22" height="28" rx="2" fill="#FF9419"/><rect x="242" y="46" width="22" height="10" rx="2" fill="#4FB59A"/>' +
+        line('M220 72v8') + W.burst(126, 18, '#FFC628') + W.plus(318, 16, '#4FB59A') + W.ring(330, 52, '#F3A4FB');
+      var back = [[64, '#7489E6', 'smile'], [122, '#FFC628', 'wink'], [180, '#4FB59A', 'happy'], [262, '#F3A4FB', 'smile'], [320, '#EE7B6A', 'grin'], [378, '#7489E6', 'wink']]
+        .map(function (b, i) { return person(b[0], 92, 12, b[1], b[2], i === 4 ? 'up' : ''); }).join('');
+      var front = [[34, '#FF9419', 'grin'], [92, '#F3A4FB', 'happy'], [150, '#3D54B6', 'tongue'], [210, '#FFC628', 'love'], [270, '#4FB59A', 'grin'], [330, '#7489E6', 'happy'], [394, '#FF9419', 'wink']]
+        .map(function (b, i) { return person(b[0], 104, 14, b[1], b[2], i === 1 || i === 5 ? 'up' : ''); }).join('');
+      return screen + back + front;
+    },
+  };
+  W.guideSceneInner = function (slug) { return ART[slug] ? ART[slug]() : ''; };
+  W.guideScene = function (slug) {
+    return '<svg viewBox="0 0 440 130" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' + W.guideSceneInner(slug) + '</svg>';
+  };
+})();

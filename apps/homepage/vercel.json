@@ -125,12 +125,12 @@
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/guides/:slug(no-props-indoor-icebreakers)",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/guides/:slug(no-props-indoor-icebreakers|big-group-icebreakers)",
       "destination": "/:lang/guides/:slug/",
       "permanent": true
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/guides/:slug(no-props-indoor-icebreakers)/index.html",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/guides/:slug(no-props-indoor-icebreakers|big-group-icebreakers)/index.html",
       "destination": "/:lang/guides/:slug/",
       "permanent": true
     },
@@ -650,7 +650,7 @@
       "destination": "/:lang/tools/:tool/index.html"
     },
     {
-      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/guides/:slug(no-props-indoor-icebreakers)/",
+      "source": "/:lang(zh-TW|en|de|fr|ja|ko|es|zh-CN)/guides/:slug(no-props-indoor-icebreakers|big-group-icebreakers)/",
       "destination": "/:lang/guides/:slug/index.html"
     },
     {

@@ -1,8 +1,9 @@
-/* 帶領指南：列表頁的分類篩選（單選：點哪一類就只看那一類）；
+/* 帶領指南：情境主圖（列表與文章頁）、列表頁的分類篩選（單選：點哪一類就只看那一類）；
  * 文章頁：遊戲連結塊畫上插圖、章節列表（寬螢幕一直展開，窄螢幕收合、點了章節就收起來）、捲到哪一段就標哪一項。 */
 (() => {
   const { nav, esc, GAMES, artSvg } = window.Site;
   nav();
+  document.querySelectorAll('.guide-hero[data-scene]').forEach(el => { el.innerHTML = window.Woohop.guideScene(el.dataset.scene); });
   document.querySelectorAll('.guide-link .art[data-art]').forEach(el => {
     const g = GAMES.find(x => x.key === el.dataset.art);
     el.innerHTML = artSvg(el.dataset.art);
@@ -37,7 +38,9 @@
   }
   const filter = document.getElementById('guide-filter');
   if (!filter) return;
-  const cards = [...document.querySelectorAll('#guides-root .guide')];
+  // 寫好的文章（一排一篇）和下面的即將推出清單一起篩；即將推出整塊沒有符合的就藏起標題
+  const cards = [...document.querySelectorAll('#guides-root [data-type]')];
+  const soon = document.getElementById('guide-soon');
   filter.addEventListener('click', e => {
     const b = e.target.closest('.chip'); if (!b) return;
     filter.querySelectorAll('.chip').forEach(c => {
@@ -46,5 +49,6 @@
       c.innerHTML = (on ? '<svg><use href="#i-check"/></svg>' : '') + esc(c.textContent);
     });
     cards.forEach(card => { card.hidden = b.dataset.type !== 'all' && card.dataset.type !== b.dataset.type; });
+    if (soon) soon.hidden = !soon.querySelector('li:not([hidden])');
   });
 })();

@@ -488,7 +488,7 @@
   .guide-article .article-toc { grid-column: 2; grid-row: 1; position: sticky; top: 120px; }
 }
 .guide-article .prose p.lead { font-size: 17px; }
-.guide-article .prose h2 { margin: 44px 0 14px; font-size: 22px; line-height: 1.45; scroll-margin-top: 110px; }
+.guide-article .prose h2 { margin: 32px 0 12px; font-size: 22px; line-height: 1.45; scroll-margin-top: 110px; }
 .guide-article .prose ul { margin: 0 0 16px; }
 /* 章節列表：窄螢幕收合（點「這篇有什麼」展開），寬螢幕一直展開（guides.js 打開 details、summary 不能點）。
  * 捲到哪一段，那一項標成 .is-active（guides.js） */
@@ -519,7 +519,8 @@
 .guide-game { margin: 32px 0 0; padding-top: 28px; border-top: 2px dashed var(--edge-n); scroll-margin-top: 110px; }
 .guide-game h3 { margin: 0 0 6px; font-size: 20px; }
 .guide-game .need { font-size: 14px; font-weight: 700; color: var(--muted); }
-.guide-game .tip { padding: 12px 16px; border-radius: var(--r-md); background: var(--yellow-face); color: var(--yellow-text); }
+/* 底色：黃色和卡片底色各半，原本的 --yellow-face 整塊太深 */
+.guide-game .tip { padding: 12px 16px; border-radius: var(--r-md); background: color-mix(in srgb, var(--yellow-face) 50%, var(--surface)); color: var(--yellow-text); }
 /* 每個遊戲介紹完的連結塊：左邊小插圖、右邊名稱＋說明（最多兩行） */
 .guide-link {
   --game: var(--blue-edge);
@@ -530,7 +531,8 @@
 .guide-link:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--edge-n), var(--shadow); }
 .guide-link:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .guide-link .art { flex: none; width: 84px; height: 66px; display: grid; place-items: center; border-radius: calc(var(--r-md) - 4px); background: color-mix(in srgb, var(--game) 18%, transparent); }
-.guide-link .art svg { width: 100%; height: 100%; }
+/* 插圖主描邊是固定 4px（--ill-sw、不跟著縮放），遊戲卡的插圖約 100px 高，這裡只有 66px：照比例調細 */
+.guide-link .art svg { width: 100%; height: 100%; --ill-sw: 2.5px; }
 .guide-link .txt { display: grid; gap: 2px; min-width: 0; }
 .guide-link b { display: flex; align-items: center; font-size: 16px; }
 .guide-link .txt > span { font-size: 14px; line-height: 1.55; color: var(--muted); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
@@ -538,3 +540,39 @@
 .guide-article .faq details p { color: var(--muted); }
 /* .prose 的 p:last-child 會把下邊距歸零，展開的答案貼著框底：補回來 */
 .guide-article .faq details p:last-child { margin-bottom: 20px; }
+
+/* ---------- 帶領指南：NEW 小標、情境主圖、列表頁一排一篇 ---------- */
+/* NEW：騎在卡片右上角的框線上，跟「照著念」同款的黃色小標（woohop.css 的 .prompt-card .say） */
+.guide, .guide-row { position: relative; }
+.new-tab { position: absolute; top: -13px; right: 22px; z-index: 2; background: var(--yellow); color: var(--yellow-text); border: 2px solid var(--yellow-edge); font-size: 12px; font-weight: 900; letter-spacing: .04em; padding: 1px 10px; border-radius: var(--r-pill); }
+:root[data-theme="dark"] .new-tab { color: #3a2b03; }
+.new-tab[hidden] { display: none; }
+/* 情境主圖：依文章主題畫的插圖（woohop-art.js 的 guideScene），底下一層淡淡的文章代表色。
+ * 高度固定：手機 120px、寬螢幕 150px；插圖照比例放在中間，主描邊照顯示大小調細 */
+.guide-hero { height: 120px; border-radius: var(--r-md); background: color-mix(in srgb, var(--hero, var(--blue-edge)) 16%, var(--surface)); display: grid; place-items: center; overflow: hidden; padding: 10px 12px 0; }
+.guide-hero svg { width: 100%; height: 100%; display: block; --ill-sw: 2.5px; }
+@media (min-width: 760px) { .guide-hero { height: 150px; } }
+.article-hero { margin: 0 0 20px; }
+/* 列表頁：寫好的文章一排一篇（寬螢幕主圖在左、文字在右；手機主圖在上） */
+/* 指南列表頁：說明一行不折（寬螢幕放得下），篩選離說明近一點 */
+.guides-page .page-head p { max-width: none; }
+.guides-page .guide-filter { margin: 12px 0 20px; }
+.guide-rows { display: grid; gap: 18px; margin-top: 4px; }
+.guide-row { display: grid; gap: 18px; padding: 16px; border-radius: var(--r-lg); background: var(--surface); border: 2px solid var(--edge-n); box-shadow: var(--raise-n); text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
+.guide-row:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--edge-n), var(--shadow); }
+.guide-row:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.guide-row-text { display: grid; gap: 8px; align-content: center; }
+.guide-row-text > .badge { justify-self: start; }
+.guide-row h2 { margin: 0; font-size: 22px; line-height: 1.4; }
+.guide-row p { margin: 0; color: var(--muted); line-height: 1.7; }
+.guide-row .meta { font-size: 13px; color: var(--muted); font-weight: 700; }
+@media (min-width: 760px) {
+  .guide-row { grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 28px; padding: 16px 28px 16px 16px; align-items: center; }
+  .guide-row h2 { font-size: 24px; }
+}
+/* 即將推出：縮成一小塊清單 */
+.guide-soon { margin-top: 36px; padding: 0; }
+.guide-soon h2 { margin: 0 0 12px; font-size: 16px; color: var(--muted); }
+.guide-soon ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.guide-soon li { display: flex; align-items: center; gap: 10px; color: var(--muted); font-weight: 700; }
+.guide-soon li[hidden], .guide-soon[hidden] { display: none; }

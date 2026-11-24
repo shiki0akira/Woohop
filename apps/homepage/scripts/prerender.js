@@ -15,7 +15,7 @@
 //   /{lang}/about/    關於我們＋聯絡表單（舊的 /contact/ 轉過來），/{lang}/terms/  服務條款，/{lang}/privacy/  隱私權政策（2026-10-22）
 // 舊網址只有 /{lang}/，維持不變；其他是新增的。
 
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { STRINGS, LANGS, DEFAULT_LANG, LANG_NAMES, GAME_LANGS, gameInLang } from '../src/locales.mjs';
 import { navbar, footer, PAGES, local, esc, THEME_HEAD } from '../src/chrome.mjs';
@@ -38,10 +38,10 @@ const isTool = (page) => TOOL_KEYS.includes(page);
 
 const SITE = 'https://www.vibeweb100.com';
 const OUT = path.resolve('dist');
-// 帶領指南的文章還沒寫：頁面先不給 Google 收錄、也不放進 sitemap，免得被當成內容太薄的頁面
-const NOINDEX = new Set(['guides']);
+// 不給 Google 收錄、不放進 sitemap 的頁面。帶領指南列表 2026-11-24 起開放（老闆：有兩篇文章、列表改成一排一篇，可以做 SEO 了）
+const NOINDEX = new Set([]);
 // 改了 assets/ 底下的檔案要換這個版本號，瀏覽器才會抓新的（檔名後面的 ?v=）
-const ASSET_VERSION = '2026-11-23u';
+const ASSET_VERSION = '2026-11-24d';
 // 分享縮圖改版時加一：LINE、Facebook 認圖片網址快取，檔名不變的話會一直顯示舊圖（2026-10-23 改成置中版 → 2）
 const OG_VERSION = 2;
 
@@ -79,10 +79,10 @@ ${alternates}    <meta property="og:type" content="${opts.path ? 'article' : 'we
     <meta property="og:description" content="${esc(desc)}" />
     <meta property="og:url" content="${self}" />
     <meta property="og:locale" content="${lang.replace('-', '_')}" />
-    <meta property="og:image" content="${SITE}/og/${lang}.png?v=${OG_VERSION}" />
+    <meta property="og:image" content="${opts.ogImage || `${SITE}/og/${lang}.png?v=${OG_VERSION}`}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="${esc(s.heroAlt)}" />
+    <meta property="og:image:alt" content="${esc(opts.ogImage ? title : s.heroAlt)}" />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json">${jsonForScript(jsonLd)}</script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-S7PE5687BG"></script>
@@ -142,7 +142,7 @@ function jsonLd(s, lang, page, title, desc) {
     inLanguage: LANGS,
   };
   const pageNode = {
-    '@type': { about: 'AboutPage' }[page] || 'WebPage',
+    '@type': { about: 'AboutPage', guides: 'CollectionPage' }[page] || 'WebPage',
     '@id': `${url(lang, page)}#webpage`,
     url: url(lang, page),
     name: title,
@@ -175,6 +175,17 @@ function jsonLd(s, lang, page, title, desc) {
     });
   }
   // 首頁的常見問題；小工具頁有寫 faq 的（目前只有 zh-TW 抽題目）也輸出
+  if (page === 'guides') {
+    // 指南列表：宣告這頁是這個語言寫好的文章清單（新的在前）
+    const list = guideList(s).filter((g) => typeof g === 'string').map((g) => articleBySlug(g));
+    graph.push({
+      '@type': 'ItemList',
+      name: s.guidesH1,
+      itemListOrder: 'https://schema.org/ItemListOrderDescending',
+      numberOfItems: list.length,
+      itemListElement: list.map((a, i) => ({ '@type': 'ListItem', position: i + 1, name: a.langs[lang].title, url: SITE + articlePath(a, lang) })),
+    });
+  }
   const faq = page === 'home' ? faqItems(s.faq) : isTool(page) ? faqItems(s.tools.items[page].faq) : [];
   if (faq.length) {
     graph.push({
@@ -229,15 +240,45 @@ function faqHtml(items) {
 
 const GUIDE_BADGE = { beginner: 'b-new', scene: 'b-info', tip: 'b-live' };
 const articlePath = (a, lang) => `/${lang}/guides/${a.slug}/`;
+// NEW 標籤：發布 14 天內。先藏在 HTML 裡，由 site.js 依瀏覽器當下的日期打開——頁面只在部署時產生，寫死的話兩週後沒部署就會一直掛著
+const NEW_DAYS = 14;
+const newUntil = (a) => new Date(Date.parse(a.published) + NEW_DAYS * 864e5).toISOString().slice(0, 10);
+// 列表順序：寫好的文章照發布日期由新到舊（同一天就後加進 ARTICLES 的在前），即將推出的排在後面、維持 locales.mjs 的順序
+function guideList(s) {
+  const all = [...s.guides, ...s.moreGuides];
+  const rank = (g) => { const a = articleBySlug(g); return [a.published, ARTICLES.indexOf(a)]; };
+  const done = all.filter((g) => typeof g === 'string').sort((x, y) => {
+    const [dx, ix] = rank(x), [dy, iy] = rank(y);
+    return dx === dy ? iy - ix : dy.localeCompare(dx);
+  });
+  return [...done, ...all.filter((g) => typeof g !== 'string')];
+}
 function guideCard(s, lang, g) {
   if (typeof g === 'string') {
     const a = articleBySlug(g), t = a && a.langs[lang];
     if (!t) throw new Error(`[${lang}] 指南卡片連到 ${g}，但 src/guides.mjs 沒有這篇的 ${lang} 版`);
-    return `<a class="guide" href="${articlePath(a, lang)}" data-type="${a.type}"><span class="badge ${GUIDE_BADGE[a.type]}">${esc(s.guideTypes[a.type])}</span><h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: t.min }))}</span></a>`;
+    return `<a class="guide" href="${articlePath(a, lang)}" data-type="${a.type}">${newTab(a)}<span class="badge ${GUIDE_BADGE[a.type]}">${esc(s.guideTypes[a.type])}</span><h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p><span class="meta">${guideDate(a, lang)} · ${esc(fmt(s.readMin, { n: t.min }))}</span></a>`;
   }
   const [type, title, desc, min] = g;
   const inner = `<span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><h3>${esc(title)}</h3><p>${esc(desc)}</p><span class="meta">${esc(fmt(s.readMin, { n: min }))}</span>`;
   return `<div class="guide is-disabled" aria-disabled="true" data-type="${type}">${inner}<span class="badge b-soon">${esc(s.soon)}</span></div>`;
+}
+// NEW：騎在卡片右上角框線上的黃色小標（跟「照著念」同款）
+const newTab = (a) => `<span class="new-tab" data-new-until="${newUntil(a)}" hidden>NEW</span>`;
+// 情境主圖：guides.js 依 data-scene（文章 slug）用 Woohop.guideScene 畫上；--hero 是淡淡的底色
+const heroBox = (a, cls = '') => `<div class="guide-hero${cls}" data-scene="${a.slug}" style="--hero:${a.color}" aria-hidden="true"></div>`;
+// 文章日期（列表與卡片上）：依語言的日期格式
+const guideDate = (a, lang) => `<time datetime="${a.published}">${esc(new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(a.published)))}</time>`;
+// 指南列表頁：寫好的文章一排一篇（左邊主圖、右邊文字，手機上主圖在上），即將推出的縮成下面一小塊清單
+function guideRows(s, lang) {
+  const list = guideList(s);
+  const rows = list.filter((g) => typeof g === 'string').map((g) => {
+    const a = articleBySlug(g), t = a.langs[lang];
+    return `<a class="guide-row" href="${articlePath(a, lang)}" data-type="${a.type}">${newTab(a)}${heroBox(a)}<div class="guide-row-text"><span class="badge ${GUIDE_BADGE[a.type]}">${esc(s.guideTypes[a.type])}</span><h2>${esc(t.title)}</h2><p>${esc(t.desc)}</p><span class="meta">${guideDate(a, lang)} · ${esc(fmt(s.readMin, { n: t.min }))}</span></div></a>`;
+  });
+  const soon = list.filter((g) => typeof g !== 'string').map(([type, title]) => `<li data-type="${type}"><span class="badge ${GUIDE_BADGE[type]}">${esc(s.guideTypes[type])}</span><span>${esc(title)}</span></li>`);
+  return `<div class="guide-rows">${rows.join('')}</div>${soon.length ? `
+        <section class="guide-soon" id="guide-soon"><h2>${esc(s.soon)}</h2><ul>${soon.join('')}</ul></section>` : ''}`;
 }
 
 /* ---------- 頁面 ---------- */
@@ -317,7 +358,7 @@ function homePage(lang) {
 
         <section id="guides">
           <div class="section-head"><div><span class="kicker">${esc(s.guidesKicker)}</span><h2>${esc(s.guidesTitle)}</h2></div><a class="link" href="${local(lang, 'guides')}">${esc(s.seeAllGuides)}</a></div>
-          <div class="guides">${[...s.guides, ...s.moreGuides].slice(0, 4).map((g) => guideCard(s, lang, g)).join('')}</div>
+          <div class="guides">${guideList(s).slice(0, 4).map((g) => guideCard(s, lang, g)).join('')}</div>
         </section>
 ${s.faq ? `
         <section id="faq">
@@ -392,14 +433,14 @@ function guidesPage(lang) {
   const title = s.guidesSeoTitle, desc = s.guidesSeoDesc;
   const types = [['all', s.guidesAll], ...Object.entries(s.guideTypes)];
   return `${head(s, lang, 'guides', title, desc, jsonLd(s, lang, 'guides', title, desc))}
-  <body>${navbar(s, lang, 'guides')}
+  <body class="guides-page">${navbar(s, lang, 'guides')}
       <main id="main">
         <div class="page-head">
           <h1>${esc(s.guidesH1)}</h1>
           <p>${esc(s.guidesLead)}</p>
         </div>
         <div class="row guide-filter" role="group" aria-label="${esc(s.guidesH1)}" id="guide-filter">${types.map(([k, label], i) => `<button class="chip" type="button" aria-pressed="${i === 0}" data-type="${k}">${i === 0 ? '<svg><use href="#i-check"/></svg>' : ''}${esc(label)}</button>`).join('')}</div>
-        <div class="guides" id="guides-root">${[...s.guides, ...s.moreGuides].map((g) => guideCard(s, lang, g)).join('')}</div>
+        <div id="guides-root">${guideRows(s, lang)}</div>
       </main>
 ${footer(s, lang, 'guides')}
 ${scripts(s, lang, 'guides', ['guides.js'])}
@@ -417,6 +458,7 @@ const CHEV = '<svg class="chev" aria-hidden="true"><use href="#i-back"/></svg>';
 const resolveHref = (href, lang) => {
   if (href.startsWith('game:')) return gameUrl(lang, href.slice(5));
   if (href.startsWith('page:')) return local(lang, href.slice(5));
+  if (href.startsWith('guide:')) return `/${lang}/guides/${href.slice(6)}/`;
   return href;
 };
 const inline = (p, lang, chev = false) => rich(p).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, href) => `<a class="link" href="${resolveHref(href, lang)}">${t}${chev ? CHEV : ''}</a>`);
@@ -457,6 +499,9 @@ function articlePage(a, lang) {
   const faq = t.blocks.filter((b) => b.faq).flatMap((b) => faqItems(b.faq));
   const games = t.blocks.filter((b) => b.game).map((b) => b.game);
   const toc = t.blocks.map((b, i) => [b, i]).filter(([b]) => b.h2);
+  // 文章自己的分享縮圖（scripts/og-image.mjs guide:{slug} 產生）；還沒產生就用全站的
+  const ogFile = `og/guides/${a.slug}/${lang}.png`;
+  const ogImage = existsSync(ogFile) ? `${SITE}/${ogFile}?v=${OG_VERSION}` : null;
   const date = new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(a.updated));
   const ld = {
     '@context': 'https://schema.org',
@@ -471,7 +516,7 @@ function articlePage(a, lang) {
         datePublished: a.published,
         dateModified: a.updated,
         mainEntityOfPage: self,
-        image: `${SITE}/og/${lang}.png?v=${OG_VERSION}`,
+        image: ogImage || `${SITE}/og/${lang}.png?v=${OG_VERSION}`,
         author: { '@type': 'Organization', name: 'Woohop', url: `${SITE}/` },
         publisher: { '@type': 'Organization', name: 'Woohop', url: `${SITE}/` },
         isPartOf: { '@id': `${SITE}/#website` },
@@ -501,7 +546,7 @@ function articlePage(a, lang) {
   // 語言選單：有這個語言的版本就連到同一篇，沒有就連到那個語言的指南列表
   const langHref = (l) => (a.langs[l] ? articlePath(a, l) : local(l, 'guides'));
   const alt = (l) => (a.langs[l] ? SITE + articlePath(a, l) : null);
-  return `${head(s, lang, 'guides', t.seoTitle, t.seoDesc, ld, ['game.css'], { path: path_, alt })}
+  return `${head(s, lang, 'guides', t.seoTitle, t.seoDesc, ld, ['game.css'], { path: path_, alt, ogImage })}
   <body class="article-page">${navbar(s, lang, 'guides', langHref)}
       <main id="main">
         <div class="page-head">
@@ -512,6 +557,7 @@ function articlePage(a, lang) {
         <article class="guide-article">
           <nav class="article-toc" aria-label="${esc(ui.tocLabel)}"><details><summary>${esc(ui.toc)}<span class="toc-count">${esc(fmt(ui.count, { n: toc.length }))}</span></summary><ol>${toc.map(([b, i]) => `<li><a href="#${anchor(i)}">${esc(b.h2)}</a></li>`).join('')}</ol></details></nav>
           <div class="panel prose">
+            ${heroBox(a, ' article-hero')}
             ${t.lead.map((p) => `<p class="lead">${inline(p, lang)}</p>`).join('')}
             ${t.blocks.map((b, i) => articleBlock(s, lang, ui, b, i)).join('\n            ')}
           </div>
@@ -792,7 +838,8 @@ for (const file of ['robots.txt', 'design-tokens.css', 'favicon.svg', 'apple-tou
 }
 // 分享縮圖：og/{lang}.png 是用 scripts/og-image.mjs 在本機產生後 commit 進來的（建置環境沒有瀏覽器）
 mkdirSync(path.join(OUT, 'og'), { recursive: true });
-for (const file of readdirSync('og')) copyFileSync(path.join('og', file), path.join(OUT, 'og', file));
+// og/guides/{slug}/ 是子資料夾（指南文章的縮圖），整個資料夾照搬
+cpSync('og', path.join(OUT, 'og'), { recursive: true });
 mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 for (const file of readdirSync('assets')) copyFileSync(path.join('assets', file), path.join(OUT, 'assets', file));
 
