@@ -574,5 +574,7 @@
 .guide-soon { margin-top: 36px; padding: 0; }
 .guide-soon h2 { margin: 0 0 12px; font-size: 16px; color: var(--muted); }
 .guide-soon ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-.guide-soon li { display: flex; align-items: center; gap: 10px; color: var(--muted); font-weight: 700; }
+/* 標籤不折行（英文 Start here 這類長的在手機上會被擠成兩行）；標題折行時跟標籤的頂端對齊 */
+.guide-soon li { display: flex; align-items: flex-start; gap: 10px; color: var(--muted); font-weight: 700; line-height: 1.5; }
+.guide-soon li .badge { flex: none; white-space: nowrap; margin-top: 1px; }
 .guide-soon li[hidden], .guide-soon[hidden] { display: none; }
